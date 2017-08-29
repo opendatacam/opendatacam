@@ -1,0 +1,15 @@
+{
+  "name": "lab-traffic-cam",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@moovel/yolo": "^0.1.9",
+    "lodash": "^4.17.4"
+  }
+}
