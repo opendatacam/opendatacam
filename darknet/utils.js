@@ -37,8 +37,8 @@ function formatDetections(detections, dimensions) {
     return {
       x: ~~(d.x*dimensions.width),
       y: ~~(d.y*dimensions.height),
-      w: ~~(d.w*100),
-      h: ~~(d.h*100),
+      w: ~~(d.w*dimensions.width),
+      h: ~~(d.h*dimensions.height),
       prob: ~~(d.prob*100),
       name: d.name
     }
