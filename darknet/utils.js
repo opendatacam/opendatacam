@@ -20,7 +20,6 @@ function encodeTimeRGB(frame, millis, frameDimensions, stampWidth, stampHeight) 
 function encodeTimeBW(frame, millis, frameDimensions, stampWidth, stampHeight) {
   let binStr = millis.toString(2);
   binStr = binStr.padStart(42, '0');
-  console.log(binStr, millis);
   let binValues = binStr.split('');
   binValues = binValues.map(function(b){ return Number(b)*255 });
   let repeatedChunks = binValues.map(function(c) { return Array(stampWidth*3).fill(c)});
