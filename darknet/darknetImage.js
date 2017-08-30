@@ -41,7 +41,8 @@ darknet.detectImage({
   }
   fs.appendFileSync('detected.txt', JSON.stringify(detectionsOut) + '\n');
 
-  utils.encodeTime(modified, millis, dimensions, 15, 3);
+  // utils.encodeTimeRGB(modified, millis, dimensions, 15, 3);
+  utils.encodeTimeBW(modified, millis, dimensions, 9, 3);
   ffmpegPipe(dimensions, 'detected.png').write(modified, function() {
     process.exit(0);
   });

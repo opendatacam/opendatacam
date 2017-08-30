@@ -43,6 +43,6 @@ darknet.detect({
   }
   fs.appendFileSync('detected.txt', JSON.stringify(detectionsOut) + '\n');
 
-  utils.encodeTime(original, millis, dimensions, 15, 3);
+  utils.encodeTimeRGB(original, millis, dimensions, 15, 3);
   ffmpegPipe(dimensions, 'detected.mp4').write(original);
 });
