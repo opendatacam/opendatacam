@@ -11,5 +11,6 @@
   "dependencies": {
     "@moovel/yolo": "^0.1.9",
     "lodash": "^4.17.4"
-  }
+  },
+  "engine": "node >= 8.0.0"
 }
