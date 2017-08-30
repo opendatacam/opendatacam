@@ -1,16 +1,19 @@
 const _ = require('lodash');
 
 // encodes a given time in millis into color channels of an image
-function encodeTime(frame, millis, size) {
+function encodeTime(frame, millis, frameDimensions, stampWidth, stampHeight) {
   let binStr = millis.toString(2);
   binStr = binStr.padStart(42, '0');
   let binValues = binStr.split('');
   binValues = binValues.map(function(b){ return Number(b)*255 });
   let chunks = _.chunk(binValues, 3);
-  let repeatedChunks = chunks.map(function(c) { return Array(size).fill(c)});
+  let repeatedChunks = chunks.map(function(c) { return Array(stampWidth).fill(c)});
   repeatedChunks = _.flattenDeep(repeatedChunks);
+  const w = frameDimensions.width;
   for (let i = 0; i < repeatedChunks.length; i++) {
-    frame.writeUInt8(repeatedChunks[i], i);
+    for (var ii = 0; ii < stampHeight; ii++) {
+      frame.writeUInt8(repeatedChunks[i], i + ii*w*3);
+    }
   }
 }
 
