@@ -9,7 +9,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@moovel/yolo": "^0.1.9",
+    "@moovel/yolo": "^0.2.0",
     "lodash": "^4.17.4"
   },
   "engine": "node >= 8.0.0"
