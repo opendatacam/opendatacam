@@ -1,0 +1,166 @@
+*{
+padding: 0;
+margin: 0;
+}
+
+body{
+  background-color: black;
+  color: white;
+}
+
+#splash_screen svg{
+  width: 10%;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  -webkit-transform: translateX(-50%) translateY(-50%);
+  -moz-transform: translateX(-50%) translateY(-50%);
+  -ms-transform: translateX(-50%) translateY(-50%);
+  -o-transform: translateX(-50%) translateY(-50%);
+  transform: translateX(-50%) translateY(-50%);
+  transition: 0.4s ease-in-out;
+}
+#splash_screen svg #first_blinking_circle{
+  border: 1px solid green;
+}
+.first_blinking_circle_animate{
+  -webkit-animation: blink linear 1s infinite;
+  animation: blink linear 1s infinite;
+}
+
+#splash_screen svg #second_blinking_circle{
+
+}
+.second_blinking_circle_animate{
+  -webkit-animation: blink linear 1s infinite;
+  animation: blink linear 1s infinite;
+  -webkit-animation-delay: 0.3s;
+  animation-delay: 0.3s;
+}
+
+#splash_screen #logo{
+  fill: white;
+  transition: 0.5s ease-in-out;
+}
+
+header{
+  display: none;
+}
+
+header #data_curve{
+  position: fixed;
+  left: 10px;
+  top: 10px;
+  width: 100px;
+  height: 60px;
+  background-color: white;
+  opacity: 0.8;
+  color: black;
+}
+
+header #menu{
+  position: fixed;
+  right: 0px;
+  top: 0px;
+}
+
+header .menu_item{
+  width: 30px;
+  height: 30px;
+  background-color: white;
+  border: 1px solid white;
+  margin: 10px;
+  opacity: 0.8;
+}
+
+header .menu_item:hover{
+  background-color:black;
+  border: 1px solid white;
+}
+
+header #about{
+  position: fixed;
+  right: 0px;
+  bottom: 0px;
+}
+
+header #about .menu_item{
+  border-radius: 20px;
+}
+
+header #location_info{
+  position: fixed;
+  left: 10px;
+  bottom: 10px;
+}
+
+main canvas{
+  position: fixed;
+  z-index: -10;
+  opacity: 0.6;
+}
+
+@media (min-aspect-ratio: 16/9) {
+  main canvas {
+    width: 100%;
+    height: auto;
+  }
+}
+
+@media (max-aspect-ratio: 16/9) {
+  main canvas {
+    width: auto;
+    height: 100%;
+  }
+}
+
+main{
+  display: none;
+}
+
+main #c{
+  top: 0;
+  left: 0;
+  image-rendering: pixelated;
+}
+
+main #v{
+  display: none;
+}
+
+main #timecode{
+  display: none;
+}
+
+main .content{
+  top: 10px;
+  left: -100%;
+  right: 100%;
+  bottom: 10px;
+  position: fixed;
+  background-color: lightgrey;
+  transition: 0.4s ease-in-out;
+  color: black;
+}
+
+main .content .close_content{
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+@-webkit-keyframes blink {
+    0% { fill:transparent;}
+    50% { fill:#651802;}
+    100% { fill:transparent;}
+}
+@-moz-keyframes blink {
+    0% { fill:transparent;}
+    50% { fill:#651802;}
+    100% { fill:transparent;}
+}
+@-ms-keyframes blink {
+    0% { fill:transparent;}
+    50% { fill:#651802;}
+    100% { fill:transparent;}
+}
