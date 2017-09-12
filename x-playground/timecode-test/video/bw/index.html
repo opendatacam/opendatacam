@@ -29,7 +29,7 @@
 <p id="timecode"></p>
 <canvas id=c></canvas>
 </br>
-<video loop id="v" width="1280" height="720" controls autoplay>
+<video loop id="v" width="1280" height="720" controls muted>
   <source src="C0082-47mm_detected.webm" type="video/webm">
   Your browser does not support the video tag.
 </video>
@@ -61,7 +61,12 @@ document.addEventListener('DOMContentLoaded', function(){
   var stampH = 3;
   canvas.width = 1280;
   canvas.height = 720;
+  v.addEventListener('loadeddata', function() {
+    console.log('video data loaded, we can start playing');
+    v.play();
+  });
   v.addEventListener('play', function(){
+    console.log('play video');
     draw(this, context, pixelSize, stampW, stampH);
   }, false);
 }, false);
@@ -111,7 +116,7 @@ function draw(v, ctx, s, w, h) {
   }
 
   // loop
-  setTimeout(draw, 50, v, ctx, s, w, h);
+  requestAnimationFrame(draw.bind(this, v, ctx, s, w, h));
 }
 
 </script>
