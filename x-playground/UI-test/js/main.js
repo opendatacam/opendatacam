@@ -23,6 +23,12 @@ document.addEventListener('DOMContentLoaded', function(){
   var stampH = 3;
   canvas.width = 1280;
   canvas.height = 720;
+
+  v.addEventListener('loadeddata', function() {
+    console.log('video data loaded, we can start playing');
+    v.play();
+  });
+
   v.addEventListener('play', function(){
     draw(this, context, pixelSize, stampW, stampH);
   }, false);
@@ -72,8 +78,10 @@ function draw(v, ctx, s, w, h) {
     });
   }
 
+  
+
   // loop
-  setTimeout(draw, 50, v, ctx, s, w, h);
+  requestAnimationFrame(draw.bind(this, v, ctx, s, w, h));
 }
 
   // animations
