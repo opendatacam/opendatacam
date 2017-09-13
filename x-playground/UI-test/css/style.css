@@ -94,35 +94,42 @@ header #location_info{
   bottom: 10px;
 }
 
-main canvas{
+main{
+  display: none;
+}
+
+main #c{
+  bottom: 0;
+  left: 0;
+  image-rendering: pixelated;
   position: fixed;
   z-index: -10;
   opacity: 0.6;
 }
 
 @media (min-aspect-ratio: 16/9) {
-  main canvas {
+  main #c {
     width: 100%;
     height: auto;
   }
 }
 
 @media (max-aspect-ratio: 16/9) {
-  main canvas {
+  main #c {
     width: auto;
     height: 100%;
   }
 }
 
-main{
-  display: none;
+@media (max-aspect-ratio: 16/9) AND (max-width: 720px) AND (min-height: 500px) {
+  main #c {
+    width: auto;
+    left: -520px;
+    height: 100%;
+  }
 }
 
-main #c{
-  top: 0;
-  left: 0;
-  image-rendering: pixelated;
-}
+
 
 main #v{
   display: none;
