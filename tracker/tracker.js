@@ -1,145 +1,119 @@
+var ItemTracked = require('./ItemTracked').ItemTracked;
+
 // A map of itemTracked 
+// key: uuid
+// value: ItemTracked object
 var mapOfItemsTracked = new Map();
 
+// CONSTANT representing the distance up to we can't
+// consider the item tracked to be the same between frame
+var DISTANCE_LIMIT = 50;
 
-function trackItemsInASingleFrame(detectionsOfThisFrame) {
+// Simple euclidian distance function between two points
+var computeDistance = function(item1, item2) {
+  return Math.sqrt( Math.pow((item1.x - item2.x), 2) + Math.pow((item1.y- item2.y), 2));
+}
+
+exports.updateTrackedItemsWithNewFrame = function(detectionsOfThisFrame) {
 
   // SCENARIO 1: itemsTracked map is empty
-  if(itemsTracked.size === 0) {
+  if(mapOfItemsTracked.size === 0) {
     // Just add every detected item as item Tracked
-    detectionsOfThisFrameWithIds = detectionsOfThisFrame.map(function(itemDetected) {
-      var newItemTracked = ItemTracked(itemDetected.x, itemDetected.y, itemDetected.w, itemDetected.h)
+    detectionsOfThisFrame.forEach(function(itemDetected) {
+      var newItemTracked = ItemTracked(itemDetected)
       // Add it to the map
       mapOfItemsTracked.set(newItemTracked.id, newItemTracked)
-      // TODO here see this works
-      // we want to enrich the detection with the id
-      itemDetected.id = newItemTracked.id;
-      return itemDetected;
     });
   }
-
   // SCENARIO 2: We have fewer itemTracked than item detected by YOLO in the new frame
   else if (mapOfItemsTracked.size <= detectionsOfThisFrame.length) {
-    var used = new Array(detectionsOfThisFrame.length);
+    var matchedList = new Array(detectionsOfThisFrame.length);
+    matchedList.fill(false);
     // Match existing Tracked items with the items detected in the new frame
+    // For each look in the new detection to find the closest match
     mapOfItemsTracked.forEach(function(itemTracked) {
-      // TO CONTINUE
+      var indexClosestNewDetectedItem = -1;
+      var closestDistance = DISTANCE_LIMIT;
+      detectionsOfThisFrame.forEach(function(newItemDetected, indexNewItemDetected) {
+        var distance = computeDistance(itemTracked, newItemDetected);
+        if(distance < closestDistance) {
+          // Something closer found
+          closestDistance = distance;
+          indexClosestNewDetectedItem = indexNewItemDetected;
+        }
+      });
+
+      // If something is found
+      if(indexClosestNewDetectedItem > -1)  {
+        matchedList[indexClosestNewDetectedItem] = true;
+        // Update properties of tracked object
+        var updatedTrackedItemProperties = detectionsOfThisFrame[indexClosestNewDetectedItem]
+        mapOfItemsTracked.get(itemTracked.id)
+                        .update(updatedTrackedItemProperties)
+
+      }
+    });
+
+    // Add any unmatched items as new trackedItems
+    matchedList.forEach(function(matched, index) {
+      if(!matched) {
+        var newItemTracked = ItemTracked(detectionsOfThisFrame[index])
+        // Add it to the map
+        mapOfItemsTracked.set(newItemTracked.id, newItemTracked)
+      }
+    });
+
+    // TODO
+    // We should start killing the itemTracked that haven't been matched also as scenario 3 
+  }
+  // SCENARIO 3 : We have more itemTracked than item detected by YOLO in the new frame
+  else {
+    // All itemTracked should start as beeing available for matching
+    mapOfItemsTracked.forEach(function(itemTracked) {
+      itemTracked.makeAvailable();
+    });
+
+    // For every new detection of this frame, try to find a match in the existing
+    // tracked items
+    detectionsOfThisFrame.forEach(function(newItemDetected, indexNewItemDetected) {
+      var idClosestExistingTrackedItem = null;
+      var closestDistance = DISTANCE_LIMIT;
+
+      mapOfItemsTracked.forEach(function(itemTracked) {
+        var distance = computeDistance(itemTracked, newItemDetected);
+        if(distance < closestDistance && itemTracked.available) {
+          // Something closer found
+          closestDistance = distance;
+          idClosestExistingTrackedItem = itemTracked.id;
+        }
+      });
+
+      // If we have found a match
+      if(idClosestExistingTrackedItem !== null) {
+        var itemTrackedMatched = mapOfItemsTracked.get(idClosestExistingTrackedItem);
+        itemTrackedMatched.makeUnavailable();
+        // Update properties
+        itemTrackedMatched.update(newItemDetected);
+      }
+
+      // Unmatched 
+    });
+
+    // Count unmatched frame for unmatched itemTracked
+    // and delete stalled itemTracked
+    mapOfItemsTracked.forEach(function(itemTracked) {
+      if(itemTracked.available) {
+        itemTracked.countDown();
+        if(itemTracked.isDead()) {
+          mapOfItemsTracked.delete(itemTracked.id);
+        }
+      }
     });
   }
-
-    // SCENARIO 3 : TO CONTINUE
-
-  return detectionsOfThisFrameWithIds;
 }
 
-// NB: Temporary to test the algorithm, in real world we would treat frame by frame
-// Treat a list of detections and output a list of detections with ids
-function trackItemsInDetections(framesDetections) {
-  framesDetectionsWithIds = framesDetections.map(function(detectionsOfThisFrame) {
-    return trackItemsInASingleFrame(detectionsOfThisFrame);
+exports.getJSONOfTrackedItems = function() {
+  return Array.from(mapOfItemsTracked.values()).map(function(itemTracked) {
+    return itemTracked.toJSON();
   });
-}
-
-
-// ORIGINAL ALGORITHM
-
-void draw() {
-  background(0);
-
-  opencv.read();
-  image(opencv.image(),0,0,width,height);
-  Rectangle[] faces = opencv.detect();
-  
-
-  // SCENARIO 1: faceList is empty
-  if (faceList.isEmpty()) {
-    // Just make a Face object for every face Rectangle
-    for (int i = 0; i < faces.length; i++) {
-      faceList.add(new Face(faces[i].x,faces[i].y,faces[i].width,faces[i].height));
-    }
-  // SCENARIO 2: We have fewer Face objects than face Rectangles found from OPENCV
-  } else if (faceList.size() <= faces.length) {
-    boolean[] used = new boolean[faces.length];
-    // Match existing Face objects with a Rectangle
-    for (Face f : faceList) {
-       // Find faces[index] that is closest to face f
-       // set used[index] to true so that it can't be used twice
-       float record = 50000;
-       int index = -1;
-       for (int i = 0; i < faces.length; i++) {
-         float d = dist(faces[i].x,faces[i].y,f.r.x,f.r.y);
-         if (d < record && !used[i]) {
-           record = d;
-           index = i;
-         } 
-       }
-       // Update Face object location
-       used[index] = true;
-       f.update(faces[index]);
-    }
-    // Add any unused faces
-    for (int i = 0; i < faces.length; i++) {
-      if (!used[i]) {
-        faceList.add(new Face(faces[i].x,faces[i].y,faces[i].width,faces[i].height));
-      }
-    }
-  // SCENARIO 3: We have more Face objects than face Rectangles found
-  } else {
-    // All Face objects start out as available
-    for (Face f : faceList) {
-      f.available = true;
-    } 
-    // Match Rectangle with a Face object
-    for (int i = 0; i < faces.length; i++) {
-      // Find face object closest to faces[i] Rectangle
-      // set available to false
-       float record = 50000;
-       int index = -1;
-       for (int j = 0; j < faceList.size(); j++) {
-         Face f = faceList.get(j);
-         float d = dist(faces[i].x,faces[i].y,f.r.x,f.r.y);
-         if (d < record && f.available) {
-           record = d;
-           index = j;
-         } 
-       }
-       // Update Face object location
-       Face f = faceList.get(index);
-       f.available = false;
-       f.update(faces[i]);
-    } 
-    // Start to kill any left over Face objects
-    for (Face f : faceList) {
-      if (f.available) {
-        f.countDown();
-        if (f.dead()) {
-          f.delete = true;
-        } 
-      }
-    } 
-  }
-  
-  // Delete any that should be deleted
-  for (int i = faceList.size()-1; i >= 0; i--) {
-    Face f = faceList.get(i);
-    if (f.delete) {
-      faceList.remove(i);
-    } 
-  }
-  
-  // Draw all the faces
-  for (int i = 0; i < faces.length; i++) {
-    noFill();
-    stroke(255,0,0);
-    rect(faces[i].x*scl,faces[i].y*scl,faces[i].width*scl,faces[i].height*scl);
-  }
-  
-  for (Face f : faceList) {
-    f.display();
-  }  
-}
-  
-  
-
-
-
+};
