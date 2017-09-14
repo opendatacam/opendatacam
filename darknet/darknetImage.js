@@ -31,7 +31,7 @@ darknet.detectImage({
   cfg: './cfg/yolo.cfg',
   weights: './yolo.weights',
   data: './cfg/coco.data',
-  image: './data/dog.jpg',
+  image: './data/night_test.jpg',
 }, function(modified, original, detections, dimensions) {
   const millis = new Date().getTime();
 

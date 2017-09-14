@@ -32,7 +32,8 @@ darknet.detect({
   cfg: './cfg/yolo.cfg',
   weights: './yolo.weights',
   data: './cfg/coco.data',
-  video: './C0082-47mm.mp4',
+  cameraIndex: 0,
+  //video: './data/C0082-47mm.mp4',
   thresh: 0.24,
 }, function(modified, original, detections, dimensions) {
   const millis = new Date().getTime();

@@ -17,6 +17,7 @@ function ffmpegPipe(dimensions) {
         '-s', `${dimensions.width}x${dimensions.height}`,
         '-y',
         '-r', '15', // target framerate
+        '-hwaccel',
         '-i', '-',
         'http://localhost:8090/feed1.ffm'
       ], {
@@ -32,7 +33,8 @@ darknet.detect({
   cfg: './cfg/yolo.cfg',
   weights: './yolo.weights',
   data: './cfg/coco.data',
-  video: './C0082-47mm.mp4',
+  cameraIndex: 0,
+  //video: './data/C0082-47mm.mp4',
   thresh: 0.24,
 }, function(modified, original, detections, dimensions) {
   const millis = new Date().getTime();
