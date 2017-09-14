@@ -15,7 +15,7 @@ var DEFAULT_UNMATCHEDFRAMES_TOLERANCE = 10;
 // Use a simple incremental unique id for the display
 var idDisplay = 0;
 
-exports.ItemTracked = function(properties){
+exports.ItemTracked = function(properties, DEFAULT_UNMATCHEDFRAMES_TOLERANCE){
   var itemTracked = {};
   // ==== Private =====
   // Am I available to be matched?
