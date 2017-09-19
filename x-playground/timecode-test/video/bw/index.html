@@ -68,6 +68,9 @@ document.addEventListener('DOMContentLoaded', function(){
   v.addEventListener('play', function(){
     console.log('play video');
     draw(this, context, pixelSize, stampW, stampH);
+    // setTimeout(() => {
+    //   v.pause();
+    // }, 1000);
   }, false);
 }, false);
 
