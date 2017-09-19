@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head>
+    <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    #c {
+      top: 0;
+      left: 0;
+/*      width: 378px;
+      height: 20px;*/
+      image-rendering: pixelated;
+      display: none;
+    }
+    .detectioncanvas {
+      top: 0;
+      left: 0;
+      position: fixed;
+      display: block;
+    }
+    #v {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+<script type="text/javascript" src="kdTree-min.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  crossorigin="anonymous"></script>
+
+<canvas id="detectioncanvas" class="detectioncanvas"></canvas>
+<canvas id="c"></canvas>
+<video loop id="v" width="1280" height="720" muted>
+  <source src="C0082-47mm_detected.webm" type="video/webm">
+  Your browser does not support the video tag.
+</video>
+
+<script>
+
+var yolo = {}
+var yoloKd = [];
+var tree;
+var lastTimecodeDrawn = null;
+
+document.addEventListener('DOMContentLoaded', function(){
+  // load detections
+  $.ajax({
+    url: 'C0082-47mm_detected.txt',
+    dataType: 'text',
+    success: function(data){
+      var lines = data.split('\n');
+      lines.forEach(function(l) {
+        if(l) {
+          var detection = JSON.parse(l);
+          yolo[detection.time] = detection.detections;
+          yoloKd.push({
+            time: detection.time,
+            detections: detection.detections
+          });
+        }
+      });
+
+      var distance = function(a, b){
+        return Math.abs(a.time - b.time);
+      }
+
+      tree = new kdTree(yoloKd, distance, ["time"]);
+    }
+  });
+
+  // handle video
+  var v = document.getElementById('v');
+  var canvas = document.getElementById('c');
+  var context = canvas.getContext('2d');
+  var pixelSize = 9;
+  var stampW = 42 * pixelSize;
+  var stampH = 3;
+  canvas.width = 1280;
+  canvas.height = 720;
+
+
+  //Canvas detection
+  var canvasDetection = document.getElementById('detectioncanvas');
+  var contextCanvasDetection = canvasDetection.getContext('2d');
+  canvasDetection.width = 1280;
+  canvasDetection.height = 720;
+
+  // Offset stuff
+  var timecodeFirstTimePlaying = null;
+  var currentTimeFirstTimePlaying = null;
+  var offsetVideoTimecode = null;
+
+  v.addEventListener('loadeddata', function() {
+    console.log('video data loaded, we can start playing');
+    v.play();
+  });
+  v.addEventListener('play', function(){
+    console.log('play video');
+    currentTimeFirstTimePlaying = v.currentTime * 1000;
+    timecodeFirstTimePlaying = getTimecode(this, context, pixelSize, stampW, stampH);
+    offsetVideoTimecode = timecodeFirstTimePlaying - currentTimeFirstTimePlaying;
+    console.log(`videoTime: ${currentTimeFirstTimePlaying}`);
+    console.log(`timecodeFirstTime: ${timecodeFirstTimePlaying}`);
+    console.log(`offsetVideoTimecode: ${offsetVideoTimecode}`);
+    updateDetectionsCanvas(v, contextCanvasDetection, pixelSize, stampW, stampH, offsetVideoTimecode);
+  }, false);
+}, false);
+
+function updateDetectionsCanvas(v, ctx, s, w, h, offsetVideoTimecode) {
+  if(v.paused || v.ended) return false;
+  // Get timecode using offset with currentTime of the video
+  var timecodeNow = offsetVideoTimecode + v.currentTime * 1000;
+  timecodeNow = Math.round(timecodeNow);
+  var nearestDetection = tree.nearest({time: timecodeNow}, 1)[0][0];
+  // console.log(nearestDetections.time)
+  // Draw detections on canvas
+  if (nearestDetection.time !== lastTimecodeDrawn) {
+    lastTimecodeDrawn = lastTimecodeDrawn;
+    ctx.clearRect(0, 0, 1280, 720);
+    ctx.strokeStyle = "#f00";
+    ctx.lineWidth = 5;
+    ctx.font = "15px Arial";
+    ctx.fillStyle = "#f00";
+    nearestDetection.detections.forEach(function(d) {
+      var x = d.x-d.w/2;
+      var y = d.y-d.h/2;
+      ctx.strokeRect(x,y,d.w,d.h);
+      ctx.fillText(d.name,x,y-10);
+    });
+  }
+  requestAnimationFrame(updateDetectionsCanvas.bind(this, v, ctx, s, w, h,offsetVideoTimecode));
+}
+
+
+function getTimecode(v, ctx, s, w, h) {
+  if(v.paused || v.ended) return false;
+  ctx.drawImage(v, 0, 0);
+
+  var pixels = ctx.getImageData(0, 0, w, 1).data;
+  ctx.fillStyle = "#0f0";
+  ctx.fillRect(0,3,w,h);
+
+  // remove alpha channels
+  pixels = _.filter(pixels, function(p, i) { return (i % 4) < 3 });
+  // group into RGB chunks
+  var rgbs = _.chunk(pixels, 3);
+  // sample only center pixel of "pixel window"
+  var centerL = Math.floor(s/2);
+  var centerR = Math.ceil(s/2);
+  var centerRgbs = _.filter(rgbs, function(p, i) {
+    var filtered = ((i % s >= centerL) && (i % s < centerR));
+    if (filtered) {
+      ctx.fillStyle = "rgba("+p[0]+","+p[1]+","+p[2]+","+1+")";
+      ctx.fillRect(i,1,1,6);
+    }
+    return filtered;
+  });
+  // map back from 0 - 255 to 0 - 1
+  var bits = centerRgbs.map(function(rgb) { return rgb[0] > 127 ? 1 : 0 });
+  var bitString = bits.join('');
+  var millis = parseInt(bitString, 2);
+  return millis;
+}
+
+</script>
+
+</body>
+</html>
