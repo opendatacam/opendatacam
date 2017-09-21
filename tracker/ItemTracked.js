@@ -31,6 +31,7 @@ exports.ItemTracked = function(properties, DEFAULT_UNMATCHEDFRAMES_TOLERANCE){
   itemTracked.delete = false;
   // How many unmatched frame should I survive?
   itemTracked.frameUnmatchedLeftBeforeDying = DEFAULT_UNMATCHEDFRAMES_TOLERANCE;
+  itemTracked.isZombie = false;
   // ==== Public =====
   itemTracked.x = properties.x;
   itemTracked.y = properties.y;
@@ -52,6 +53,7 @@ exports.ItemTracked = function(properties, DEFAULT_UNMATCHEDFRAMES_TOLERANCE){
   idDisplay++
   // Give me a new location / size
   itemTracked.update = function(properties){
+    this.isZombie = false;
     this.nbTimeMatched += 1;
     this.x = properties.x;
     this.y = properties.y;
@@ -73,6 +75,7 @@ exports.ItemTracked = function(properties, DEFAULT_UNMATCHEDFRAMES_TOLERANCE){
   }
   itemTracked.countDown = function() {
     this.frameUnmatchedLeftBeforeDying--;
+    this.isZombie = true;
     // If it was matched less than 1 time, it should die quick
     if(this.nbTimeMatched <= 1) {
       this.frameUnmatchedLeftBeforeDying = -1;
@@ -103,7 +106,8 @@ exports.ItemTracked = function(properties, DEFAULT_UNMATCHEDFRAMES_TOLERANCE){
       y: this.y,
       w: this.w,
       h: this.h,
-      name: this.name
+      name: this.name,
+      isZombie: this.isZombie
     }
   }
   return itemTracked;
