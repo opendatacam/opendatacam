@@ -4,6 +4,7 @@ const darknet = require('@moovel/yolo');
 const utils = require('./utils');
 
 let ffmpeg = null;
+let counter = 0;
 
 
 // ffmpeg -f rawvideo -s 768x576 -pix_fmt bgr24 -i data.modified.raw data.png
@@ -32,14 +33,15 @@ darknet.detect({
   cfg: './cfg/yolo.cfg',
   weights: './yolo.weights',
   data: './cfg/coco.data',
-  cameraIndex: 0,
-  //video: './data/C0082-47mm.mp4',
+  // cameraIndex: 0,
+  video: './data/C0082-47mm.mp4',
   thresh: 0.24,
 }, function(modified, original, detections, dimensions) {
   const millis = new Date().getTime();
 
   const detectionsOut = {
-    time: millis,
+    // time: millis,
+    frame: counter,
     detections: utils.formatDetections(detections, dimensions)
   }
   fs.appendFileSync('detected.txt', JSON.stringify(detectionsOut) + '\n');
@@ -47,4 +49,6 @@ darknet.detect({
   // utils.encodeTimeRGB(modified, millis, dimensions, 15, 3);
   utils.encodeTimeBW(original, millis, dimensions, 9, 5);
   ffmpegPipe(dimensions, 'detected.mp4').write(original);
+
+  counter++;
 });
