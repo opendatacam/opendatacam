@@ -1,9 +1,12 @@
 var ItemTracked = require('./ItemTracked').ItemTracked;
+var kdTree = require('./lib/kdTree-min.js').kdTree;
+
 
 // A dictionary of itemTracked 
 // key: uuid
 // value: ItemTracked object
 var mapOfItemsTracked = new Map();
+
 
 // DISTANCE_LIMIT is the limit tolerated of distance between
 // the center of the bbox across frames to be considered the same objects
@@ -18,7 +21,19 @@ var computeDistance = function(item1, item2) {
   return Math.sqrt( Math.pow((item1.x - item2.x), 2) + Math.pow((item1.y- item2.y), 2));
 }
 
+
+
 exports.updateTrackedItemsWithNewFrame = function(detectionsOfThisFrame) {
+
+  // A kd-tree containing all the itemtracked
+  // Need to rebuild on each frame, because itemTracked positions have changed
+  // don't know how to update the existing kdTree items instead of rebuilding it
+  // we could remove / insert updated ones as well if we want to improve perf
+  var treeItemsTracked = new kdTree(Array.from(mapOfItemsTracked.values()), computeDistance, ["x", "y"]);
+
+  // Contruct a kd tree for the detections of this frame
+  // For now don't add the index in yolo array
+  var treeDetectionsOfThisFrame = new kdTree(detectionsOfThisFrame, computeDistance, ["x", "y"]);
 
   // SCENARIO 1: itemsTracked map is empty
   if(mapOfItemsTracked.size === 0) {
@@ -27,6 +42,8 @@ exports.updateTrackedItemsWithNewFrame = function(detectionsOfThisFrame) {
       var newItemTracked = ItemTracked(itemDetected, DEFAULT_UNMATCHEDFRAMES_TOLERANCE)
       // Add it to the map
       mapOfItemsTracked.set(newItemTracked.id, newItemTracked)
+      // Add it to the kd tree
+      treeItemsTracked.insert(newItemTracked);
     });
   }
   // SCENARIO 2: We have fewer itemTracked than item detected by YOLO in the new frame
@@ -36,25 +53,17 @@ exports.updateTrackedItemsWithNewFrame = function(detectionsOfThisFrame) {
     // Match existing Tracked items with the items detected in the new frame
     // For each look in the new detection to find the closest match
     mapOfItemsTracked.forEach(function(itemTracked) {
-      var indexClosestNewDetectedItem = -1;
-      var closestDistance = DISTANCE_LIMIT;
-      detectionsOfThisFrame.forEach(function(newItemDetected, indexNewItemDetected) {
-        var distance = computeDistance(itemTracked, newItemDetected);
-        if(distance < closestDistance) {
-          // Something closer found
-          closestDistance = distance;
-          indexClosestNewDetectedItem = indexNewItemDetected;
-        }
-      });
+      
+      var treeSearchResult = treeDetectionsOfThisFrame.nearest(itemTracked, 1, DISTANCE_LIMIT)[0];
 
-      // If something is found
-      if(indexClosestNewDetectedItem > -1)  {
+      // If we have found something
+      if(treeSearchResult) {
+        var indexClosestNewDetectedItem = detectionsOfThisFrame.indexOf(treeSearchResult[0]);
         matchedList[indexClosestNewDetectedItem] = true;
         // Update properties of tracked object
         var updatedTrackedItemProperties = detectionsOfThisFrame[indexClosestNewDetectedItem]
         mapOfItemsTracked.get(itemTracked.id)
                         .update(updatedTrackedItemProperties)
-
       }
     });
 
@@ -64,6 +73,8 @@ exports.updateTrackedItemsWithNewFrame = function(detectionsOfThisFrame) {
         var newItemTracked = ItemTracked(detectionsOfThisFrame[index], DEFAULT_UNMATCHEDFRAMES_TOLERANCE)
         // Add it to the map
         mapOfItemsTracked.set(newItemTracked.id, newItemTracked)
+        // Add it to the kd tree
+        treeItemsTracked.insert(newItemTracked);
       }
     });
 
@@ -80,27 +91,18 @@ exports.updateTrackedItemsWithNewFrame = function(detectionsOfThisFrame) {
     // For every new detection of this frame, try to find a match in the existing
     // tracked items
     detectionsOfThisFrame.forEach(function(newItemDetected, indexNewItemDetected) {
-      var idClosestExistingTrackedItem = null;
-      var closestDistance = DISTANCE_LIMIT;
 
-      mapOfItemsTracked.forEach(function(itemTracked) {
-        var distance = computeDistance(itemTracked, newItemDetected);
-        if(distance < closestDistance && itemTracked.available) {
-          // Something closer found
-          closestDistance = distance;
-          idClosestExistingTrackedItem = itemTracked.id;
-        }
-      });
+      var treeSearchResult = treeItemsTracked.nearest(newItemDetected, 1, DISTANCE_LIMIT)[0];
 
-      // If we have found a match
-      if(idClosestExistingTrackedItem !== null) {
-        var itemTrackedMatched = mapOfItemsTracked.get(idClosestExistingTrackedItem);
+      // If we have found something
+      if(treeSearchResult) {
+        var itemTrackedMatched = mapOfItemsTracked.get(treeSearchResult[0].id);
+
         itemTrackedMatched.makeUnavailable();
         // Update properties
         itemTrackedMatched.update(newItemDetected);
       }
 
-      // Unmatched 
     });
 
     // Count unmatched frame for unmatched itemTracked
@@ -110,6 +112,7 @@ exports.updateTrackedItemsWithNewFrame = function(detectionsOfThisFrame) {
         itemTracked.countDown();
         if(itemTracked.isDead()) {
           mapOfItemsTracked.delete(itemTracked.id);
+          treeItemsTracked.remove(itemTracked);
         }
       }
     });
