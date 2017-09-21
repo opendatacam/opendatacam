@@ -73,8 +73,8 @@ exports.ItemTracked = function(properties, DEFAULT_UNMATCHEDFRAMES_TOLERANCE){
   }
   itemTracked.countDown = function() {
     this.frameUnmatchedLeftBeforeDying--;
-    // If it was matched only once, it should die quick
-    if(this.nbTimeMatched === 1) {
+    // If it was matched less than 1 time, it should die quick
+    if(this.nbTimeMatched <= 1) {
       this.frameUnmatchedLeftBeforeDying = -1;
     }
   }
