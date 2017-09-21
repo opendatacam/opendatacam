@@ -126,14 +126,15 @@ function draw(v, ctx, s, w, h) {
   // draw tracker data for that frame
   var trackerDetection = trackerData[millis];
   if (trackerDetection) {
+    ctx.globalAlpha = 1;
     ctx.strokeStyle = "blue";
     ctx.lineWidth = 5;
     ctx.font = "30px Arial";
     ctx.fillStyle = "blue";
     trackerDetection.forEach(function(d) {
       if(d.isZombie) {
-        ctx.fillStyle = "orange";
-        ctx.strokeStyle = "orange";
+        ctx.fillStyle = `rgba(255, 153, 0, ${d.zombieOpacity})`;
+        ctx.strokeStyle = `rgba(255, 153, 0, ${d.zombieOpacity})`;
       } else {
         ctx.fillStyle = "blue";
         ctx.strokeStyle = "blue";

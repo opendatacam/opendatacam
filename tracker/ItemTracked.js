@@ -10,8 +10,6 @@ var uuidv4 = require('uuid/v4');
 //   "name": "car"
 // }
 
-var DEFAULT_UNMATCHEDFRAMES_TOLERANCE = 10;
-
 // Use a simple incremental unique id for the display
 var idDisplay = 0;
 
@@ -23,6 +21,7 @@ var computeVelocityVector = function(item1, item2, nbFrame) {
 }
 
 exports.ItemTracked = function(properties, DEFAULT_UNMATCHEDFRAMES_TOLERANCE){
+  var DEFAULT_UNMATCHEDFRAMES_TOLERANCE = DEFAULT_UNMATCHEDFRAMES_TOLERANCE;
   var itemTracked = {};
   // ==== Private =====
   // Am I available to be matched?
@@ -107,7 +106,8 @@ exports.ItemTracked = function(properties, DEFAULT_UNMATCHEDFRAMES_TOLERANCE){
       w: this.w,
       h: this.h,
       name: this.name,
-      isZombie: this.isZombie
+      isZombie: this.isZombie,
+      zombieOpacity: this.frameUnmatchedLeftBeforeDying / DEFAULT_UNMATCHEDFRAMES_TOLERANCE
     }
   }
   return itemTracked;
