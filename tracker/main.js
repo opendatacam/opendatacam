@@ -21,7 +21,7 @@ fs.readFile("../x-playground/tracker-test/C0082-47mm_detected.txt", function(err
       tracked[timecode] = Tracker.getJSONOfTrackedItems();
     });
 
-    Tracker.printNbOfItemTracked();
+    Tracker.printNbOfItemMatchedOverTime();
 
     fs.writeFile('../x-playground/tracker-test/trackerData.json', JSON.stringify(tracked), function() {
       console.log('tracked data wrote');

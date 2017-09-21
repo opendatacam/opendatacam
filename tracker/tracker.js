@@ -7,33 +7,47 @@ var kdTree = require('./lib/kdTree-min.js').kdTree;
 // value: ItemTracked object
 var mapOfItemsTracked = new Map();
 
+
+//For stats only , to count need to have been matched at least MATCHED_MIN time
+var nbItemsReallyMatched = 0;
+var MATCHED_MIN = 30;
+//End stats only
+
+// This should be big
 var KTREESEARCH_LIMIT = 10000;
 // DISTANCE_LIMIT is the limit tolerated of distance between
 // the center of the bbox across frames to be considered the same objects
 var DISTANCE_LIMIT = 100;
-var SIZE_LIMIT = 1000;
+// Limit the grow of the bbox between two frame to be considered the same object
+var SIZE_VARIATION_LIMIT = 100;
 // DEFAULT_UNMATCHEDFRAMES_TOLERANCE 
 // is the number of frame we wait when an object isn't matched before 
 // considering it gone
 var DEFAULT_UNMATCHEDFRAMES_TOLERANCE = 30;
 
 // Simple euclidian distance function between two points
-var computeDistance = function(item1, item2) {
+var computeEuclidianDistance = function(item1, item2) {
   return Math.sqrt( Math.pow((item1.x - item2.x), 2) + Math.pow((item1.y- item2.y), 2));
 }
 
 // Distance function that takes in account bbox size + position
-computeDistance = function(item1, item2) {
-  var euclidianDistance = Math.sqrt( Math.pow((item1.x - item2.x), 2) + Math.pow((item1.y- item2.y), 2));
+var computeDistance = function(item1, item2) {
+  //** 1. COMPUTE EUCLIDIAN DISTANCE BETWEEN CENTERS */
+  var euclidianDistance = computeEuclidianDistance(item1, item2)
+  // Exclude this item1 to match the other is the distance between
+  // the two center has grown too much
   if (euclidianDistance > DISTANCE_LIMIT) {
-    // this shouldn't show up in result
+    // this is a way to exclude the item from beeing matched
     euclidianDistance = KTREESEARCH_LIMIT + 1;
   }
+  //** 2. COMPUTE SIZE VARITION OF BBOX */
   var widthVariation = Math.abs(item1.w - item2.w);
   var heightVariation = Math.abs(item1.h - item2.h);
   var sizeVariation = (widthVariation + heightVariation);
-  if (sizeVariation > SIZE_LIMIT) {
-    // this shouldn't show up in result
+  // Exclude this item1 to match the other is the distance between
+  // the two center has grown too much
+  if (sizeVariation > SIZE_VARIATION_LIMIT) {
+    // this is a way to exclude the item from beeing matched
     sizeVariation = KTREESEARCH_LIMIT + 1;
   }
   // console.log(`euclidianDistance ${euclidianDistance}`);
@@ -133,6 +147,10 @@ exports.updateTrackedItemsWithNewFrame = function(detectionsOfThisFrame) {
         if(itemTracked.isDead()) {
           mapOfItemsTracked.delete(itemTracked.id);
           treeItemsTracked.remove(itemTracked);
+          // If itemTracked was matched more than 30 times, count it
+          if(itemTracked.nbTimeMatched >= MATCHED_MIN) {
+            nbItemsReallyMatched++;
+          }
         }
       }
     });
@@ -146,7 +164,14 @@ exports.getJSONOfTrackedItems = function() {
 };
 
 
-exports.printNbOfItemTracked = function() {
-  console.log(Array.from(mapOfItemsTracked.values()).pop().idDisplay);
+exports.printNbOfItemMatchedOverTime = function() {
+  // Add the ones still in the tree
+  Array.from(mapOfItemsTracked.values()).forEach((itemTracked) => {
+    if(itemTracked.nbTimeMatched >= MATCHED_MIN) {
+      nbItemsReallyMatched++;
+    }
+  })
+  console.log(`Nb items really  matched ${nbItemsReallyMatched}`);
+  console.log(`Nb item matched: ${Array.from(mapOfItemsTracked.values()).pop().idDisplay}`);
 };
 

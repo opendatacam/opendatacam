@@ -43,6 +43,7 @@ exports.ItemTracked = function(properties, DEFAULT_UNMATCHEDFRAMES_TOLERANCE){
     dx: 0,
     dy: 0
   };
+  itemTracked.nbTimeMatched = 1;
   // TODO: add itemTracked.yoloIndex
   // Assign an unique id to each Item tracked
   itemTracked.id = uuidv4();
@@ -51,6 +52,7 @@ exports.ItemTracked = function(properties, DEFAULT_UNMATCHEDFRAMES_TOLERANCE){
   idDisplay++
   // Give me a new location / size
   itemTracked.update = function(properties){
+    this.nbTimeMatched += 1;
     this.x = properties.x;
     this.y = properties.y;
     this.positionHistory.push({x: this.x, y: this.y});
@@ -71,6 +73,10 @@ exports.ItemTracked = function(properties, DEFAULT_UNMATCHEDFRAMES_TOLERANCE){
   }
   itemTracked.countDown = function() {
     this.frameUnmatchedLeftBeforeDying--;
+    // If it was matched only once, it should die quick
+    if(this.nbTimeMatched === 1) {
+      this.frameUnmatchedLeftBeforeDying = -1;
+    }
   }
   itemTracked.updateTheoricalPosition = function() {
     this.positionHistory.push({x: this.x, y: this.y});
