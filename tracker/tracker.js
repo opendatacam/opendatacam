@@ -36,6 +36,7 @@ var computeDistance = function(item1, item2) {
   var euclidianDistance = computeEuclidianDistance(item1, item2)
   // Exclude this item1 to match the other is the distance between
   // the two center has grown too much
+  // TODO MAKE DISTANCE_LIMIT DYNAMIC WITH VELOCITY AND BBOX SIZE
   if (euclidianDistance > DISTANCE_LIMIT) {
     // this is a way to exclude the item from beeing matched
     euclidianDistance = KTREESEARCH_LIMIT + 1;
@@ -46,6 +47,7 @@ var computeDistance = function(item1, item2) {
   var sizeVariation = (widthVariation + heightVariation);
   // Exclude this item1 to match the other is the distance between
   // the two center has grown too much
+  // TODO MAKE SIZE_VARIATION_LIMIT DYNAMIC WITH BBOX SIZE
   if (sizeVariation > SIZE_VARIATION_LIMIT) {
     // this is a way to exclude the item from beeing matched
     sizeVariation = KTREESEARCH_LIMIT + 1;
