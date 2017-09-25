@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+<html>
+<head>
+    <style>
+    body {
+      margin: 0;
+      padding: 0;
+    }
+    .detectioncanvas {
+      top: 0;
+      left: 0;
+      position: fixed;
+      display: block;
+      will-change: transform;
+    }
+    #v {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+<script type="text/javascript" src="https://cdn.jsdelivr.net/lodash/4.17.4/lodash.min.js"></script>
+<script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.17.1/moment.min.js"></script>
+<script type="text/javascript" src="kdTree-min.js"></script>
+<script
+  src="https://code.jquery.com/jquery-3.2.1.min.js"
+  crossorigin="anonymous"></script>
+
+<canvas id="detectioncanvas" class="detectioncanvas"></canvas>
+<video loop id="v" width="1280" height="720" muted>
+  <source src="C0082-47mm.mp4" type="video/webm">
+  Your browser does not support the video tag.
+</video>
+
+<script>
+
+var yolo = {}
+var lastFrameDrawn = null;
+var trackerData = {};
+
+document.addEventListener('DOMContentLoaded', function(){
+  // load detections
+  $.ajax({
+    url: 'C0082-47mm-absolute.txt',
+    dataType: 'text',
+    success: function(data){
+      var lines = data.split('\n');
+      lines.forEach(function(l) {
+        if(l) {
+          var detection = JSON.parse(l);
+          yolo[detection.frame] = detection.detections;
+        }
+      });
+    }
+  });
+
+  //load tracking data
+  $.ajax({
+    url: 'trackerData.json',
+    dataType: 'json',
+    success: function(data){
+      trackerData = data;
+    }
+  });
+
+  // handle video
+  var v = document.getElementById('v');
+  var pixelSize = 9;
+  var stampW = 42 * pixelSize;
+  var stampH = 3;
+
+
+  //Canvas detection
+  var canvasDetection = document.getElementById('detectioncanvas');
+  var contextCanvasDetection = canvasDetection.getContext('2d');
+  canvasDetection.width = 1280;
+  canvasDetection.height = 720;
+
+  // Offset stuff
+  
+
+  v.addEventListener('loadeddata', function() {
+    console.log('video data loaded, we can start playing');
+    v.play();
+  });
+  v.addEventListener('play', function(){
+    console.log('play video');
+    updateDetectionsCanvas(v, contextCanvasDetection, pixelSize, stampW, stampH);
+  }, false);
+}, false);
+
+function updateDetectionsCanvas(v, ctx, s, w, h) {
+  if(v.paused || v.ended) return false;
+
+  var frameToDraw = Math.round(v.currentTime * 25);
+
+  // Get supposed timecode of this frame using offset computed on the first frame
+  // var timecodeNow = initialOffsetBetweenVideoAndYolo + v.currentTime * 1000;
+  // timecodeNow = Math.round(timecodeNow);
+  // var nearestDetection = tree.nearest({time: timecodeNow}, 1)[0][0];
+  // Draw detections on canvas
+  if (yolo[frameToDraw] && frameToDraw !== lastFrameDrawn) {
+    lastFrameDrawn = frameToDraw;
+    ctx.clearRect(0, 0, 1280, 720);
+    ctx.strokeStyle = "#f00";
+    ctx.lineWidth = 5;
+    ctx.font = "15px Arial";
+    ctx.fillStyle = "#f00";
+    yolo[frameToDraw].forEach(function(d) {
+      var x = d.x-d.w/2;
+      var y = d.y-d.h/2;
+      ctx.strokeRect(x,y,d.w,d.h);
+      ctx.fillText(d.name,x,y-10);
+    });
+
+    // draw tracker data for that frame
+    var trackerDetection = trackerData[frameToDraw];
+    if (trackerDetection) {
+      ctx.globalAlpha = 1;
+      ctx.strokeStyle = "blue";
+      ctx.lineWidth = 5;
+      ctx.font = "30px Arial";
+      ctx.fillStyle = "blue";
+      trackerDetection.forEach(function(d) {
+        if(d.isZombie) {
+          ctx.fillStyle = `rgba(255, 153, 0, ${d.zombieOpacity})`;
+          ctx.strokeStyle = `rgba(255, 153, 0, ${d.zombieOpacity})`;
+        } else {
+          ctx.fillStyle = "blue";
+          ctx.strokeStyle = "blue";
+        }
+        var x = d.x-d.w/2;
+        var y = d.y-d.h/2;
+        ctx.strokeRect(x+5,y+5,d.w-10,d.h-10);
+        ctx.fillText(d.idDisplay,x + d.w / 2 - 20,y + d.h / 2);
+      });
+    }
+  }
+  requestAnimationFrame(updateDetectionsCanvas.bind(this, v, ctx, s, w, h));
+}
+
+</script>
+
+</body>
+</html>
