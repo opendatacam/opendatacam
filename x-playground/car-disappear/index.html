@@ -32,6 +32,16 @@
       -webkit-clip-path: url(#svgPath);
       clip-path: url(#svgPath);
     }
+
+    .viewDebug {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      will-change: transform;
+      z-index: 10;
+      color: white;
+      font-size: 18px;
+    }
   </style>
 </head>
 <body>
@@ -48,6 +58,9 @@
     </clipPath>
   </defs>
 </svg>
+
+
+<label class="viewDebug"><input type="checkbox" id="checkbox-showdebug" />Show debug UI</label>
 
 <canvas id="detectioncanvas" class="detectioncanvas"></canvas>
 <video loop id="v" width="1280" height="720" muted>
@@ -127,6 +140,11 @@ document.addEventListener('DOMContentLoaded', function(){
     });
   });
 
+  document.getElementById("checkbox-showdebug").addEventListener("change", (e) => {
+    console.log(e.target.checked);
+    showDebugLayer = e.target.checked;
+  });
+
 }, false);
 
 
@@ -184,12 +202,15 @@ function updateDetectionsCanvas(v, ctx, s, w, h) {
     ctx.lineWidth = 5;
     ctx.font = "15px Arial";
     ctx.fillStyle = "#f00";
-    yolo[frameToDraw].forEach(function(d) {
-      var x = d.x-d.w/2;
-      var y = d.y-d.h/2;
-      ctx.strokeRect(x,y,d.w,d.h);
-      ctx.fillText(d.name,x,y-10);
-    });
+    
+    if(showDebugLayer) {
+      yolo[frameToDraw].forEach(function(d) {
+        var x = d.x-d.w/2;
+        var y = d.y-d.h/2;
+        ctx.strokeRect(x,y,d.w,d.h);
+        ctx.fillText(d.name,x,y-10);
+      });
+    }
 
     // draw tracker data for that frame
     var trackerDetection = trackerData[frameToDraw];
@@ -263,10 +284,13 @@ function updateDetectionsCanvas(v, ctx, s, w, h) {
           ctx.fillStyle = "blue";
           ctx.strokeStyle = "blue";
         }
-        var x = d.x-d.w/2;
-        var y = d.y-d.h/2;
-        ctx.strokeRect(x+5,y+5,d.w-10,d.h-10);
-        ctx.fillText(d.idDisplay,x + d.w / 2 - 20,y + d.h / 2);
+
+        if(showDebugLayer) {
+          var x = d.x-d.w/2;
+          var y = d.y-d.h/2;
+          ctx.strokeRect(x+5,y+5,d.w-10,d.h-10);
+          ctx.fillText(d.idDisplay,x + d.w / 2 - 20,y + d.h / 2);
+        }
       });
 
       // reset clickRecorded
