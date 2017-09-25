@@ -41,7 +41,7 @@
 <script
   src="https://code.jquery.com/jquery-3.2.1.min.js"
   crossorigin="anonymous"></script>
-<img class="average-img" id="average-img" src="debug-average.jpg" />
+<img class="average-img" id="average-img" src="average.jpg" />
 <svg height="0" width="0">
   <defs>
     <clipPath id="svgPath">
@@ -61,6 +61,11 @@ var yolo = {}
 var lastFrameDrawn = null;
 var trackerData = {};
 var maskedIds = {};
+var clickRecorded = [];
+var idsToMask = [];
+
+var showDebugLayer = false;
+
 
 document.addEventListener('DOMContentLoaded', function(){
   // load detections
@@ -114,6 +119,14 @@ document.addEventListener('DOMContentLoaded', function(){
     console.log('play video');
     updateDetectionsCanvas(v, contextCanvasDetection, pixelSize, stampW, stampH);
   }, false);
+
+  document.addEventListener("click", (event) => {
+    clickRecorded.push({
+      x: event.pageX,
+      y: event.pageY
+    });
+  });
+
 }, false);
 
 
@@ -140,6 +153,10 @@ function updateSvgMask(id, x, y, w, h) {
 function removeSvgMask(id) {
   maskedIds[id].parentNode.removeChild(maskedIds[id]);
   delete maskedIds[id];
+  var i = idsToMask.indexOf(id);
+  if(i != -1) {
+    idsToMask.splice(i, 1);
+  }
 }
 
 function cleanUpSvgMasks(trackerDetection) {
@@ -193,11 +210,28 @@ function updateDetectionsCanvas(v, ctx, s, w, h) {
         var wMask = d.w;
         var hMask = d.h;
 
-        // Add mask to 14
-        if(maskedIds[d.idDisplay]) {
-          updateSvgMask(d.idDisplay, xMask, yMask, wMask, hMask);
-        } else {
-          createSvgMask(d.idDisplay, xMask, yMask, wMask, hMask);
+        // Look if clicks to disappear things exists for this object
+        if(clickRecorded.length > 0) {
+          clickRecorded.forEach((click) => {
+            if(click.x >= xMask &&
+               click.x <= xMask + wMask &&
+               click.y >= yMask &&
+               click.y <= yMask + hMask) {
+                 console.log(`${d.idDisplay} clicked !`)
+                 idsToMask.push(d.idDisplay);
+               }
+          });
+        }
+
+        if(idsToMask.indexOf(d.idDisplay) > -1) {
+          // console.log(`Need to mask ${d.idDisplay}!`)
+          if(maskedIds[d.idDisplay]) {
+            // Update mask
+            updateSvgMask(d.idDisplay, xMask, yMask, wMask, hMask);
+          } else {
+            // Create mask
+            createSvgMask(d.idDisplay, xMask, yMask, wMask, hMask);
+          }
         }
 
         // DEMO COMPUTE INSET CSS FOR 1 ITEM;
@@ -234,6 +268,9 @@ function updateDetectionsCanvas(v, ctx, s, w, h) {
         ctx.strokeRect(x+5,y+5,d.w-10,d.h-10);
         ctx.fillText(d.idDisplay,x + d.w / 2 - 20,y + d.h / 2);
       });
+
+      // reset clickRecorded
+      clickRecorded = [];
     }
   }
   requestAnimationFrame(updateDetectionsCanvas.bind(this, v, ctx, s, w, h));
