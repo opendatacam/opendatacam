@@ -62,7 +62,7 @@
 <label class="viewDebug"><input type="checkbox" id="checkbox-showdebug" />Show debug UI</label>
 
 <canvas id="detectioncanvas" class="detectioncanvas"></canvas>
-<video loop id="v" width="1280" height="720" muted>
+<video id="v" width="1280" height="720" muted>
   <source src="C0082-47mm.mp4" type="video/webm">
   Your browser does not support the video tag.
 </video>
@@ -132,6 +132,16 @@ document.addEventListener('DOMContentLoaded', function(){
     updateDetectionsCanvas(v, contextCanvasDetection, pixelSize, stampW, stampH);
   }, false);
 
+  v.addEventListener('ended', function(){
+    console.log('looping')
+    // Looping clean up masks and stuff
+    cleanUpAllSvgMasks();
+    maskedIds = {};
+    clickRecorded = [];
+    idsToMask = [];
+    v.play();
+  }, false);
+
   document.addEventListener("click", (event) => {
     clickRecorded.push({
       x: event.pageX,
@@ -143,6 +153,7 @@ document.addEventListener('DOMContentLoaded', function(){
     console.log(e.target.checked);
     showDebugLayer = e.target.checked;
   });
+  
 
 }, false);
 
@@ -181,6 +192,12 @@ function cleanUpSvgMasks(trackerDetection) {
     if(!trackerDetection.find((detection) => detection.idDisplay === id)) {
       removeSvgMask(id);
     }
+  }
+}
+
+function cleanUpAllSvgMasks() {
+  for (var id in maskedIds) {
+    removeSvgMask(id);
   }
 }
 
