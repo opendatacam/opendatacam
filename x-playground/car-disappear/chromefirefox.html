@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <meta charset="utf-8">
+<meta name="viewport" content="width=device-width; initial-scale=1.0; maximum-scale=1.0; user-scalable=0;">
 <html>
 <head>
     <style>
@@ -27,8 +28,10 @@
       position: absolute;
       top: 0;
       left: 0;
-      /* will-change: transform; */
+      will-change: transform;
       z-index: 1;
+      -webkit-clip-path: url(#svgPath);
+      clip-path: url(#svgPath);
     }
 
     .viewDebug {
@@ -48,8 +51,8 @@
 <script
   src="https://code.jquery.com/jquery-3.2.1.min.js"
   crossorigin="anonymous"></script>
-<svg width="1280" height="720" id="average-img" class="average-img">
-  <image xlink:href="average.jpg" x="0" y="0" width="1280" height="720" clip-path="url(#svgPath)"/>
+<img class="average-img" id="average-img" src="average.jpg" />
+<svg height="0" width="0">
   <defs>
     <clipPath id="svgPath">
     </clipPath>
@@ -60,8 +63,8 @@
 <label class="viewDebug"><input type="checkbox" id="checkbox-showdebug" />Show debug UI</label>
 
 <canvas id="detectioncanvas" class="detectioncanvas"></canvas>
-<video id="v" width="1280" height="720" muted playsinline autoplay>
-  <source src="C0082-47mm.mp4" type="video/mp4">
+<video id="v" width="1280" height="720" muted>
+  <source src="C0082-47mm.mp4" type="video/webm">
   Your browser does not support the video tag.
 </video>
 
@@ -140,18 +143,7 @@ document.addEventListener('DOMContentLoaded', function(){
     v.play();
   }, false);
 
-  // a bit dirty should listen to touch or click, see fastclick lib..
-  document.addEventListener("touchstart", (event) => {
-    console.log("Touch recorded");
-    clickRecorded.push({
-      x: event.pageX,
-      y: event.pageY
-    });
-  });
-
-  // a bit dirty
   document.addEventListener("click", (event) => {
-    console.log("Click recorded");
     clickRecorded.push({
       x: event.pageX,
       y: event.pageY
@@ -251,14 +243,10 @@ function updateDetectionsCanvas(v, ctx, s, w, h) {
 
 
       trackerDetection.forEach(function(d) {
-
-        // Enlarge bbox of 20px
-        var ENLARGE_SIZE = 20;
-
-        var xMask = d.x-d.w/2 - ENLARGE_SIZE;
-        var yMask = d.y-d.h/2 - ENLARGE_SIZE;
-        var wMask = d.w + ENLARGE_SIZE * 2;
-        var hMask = d.h + ENLARGE_SIZE * 2;
+        var xMask = d.x-d.w/2;
+        var yMask = d.y-d.h/2;
+        var wMask = d.w;
+        var hMask = d.h;
 
         // Look if clicks to disappear things exists for this object
         if(clickRecorded.length > 0) {
