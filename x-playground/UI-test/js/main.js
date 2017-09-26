@@ -3,7 +3,7 @@ var yolo = {}
 document.addEventListener('DOMContentLoaded', function(){
   // load detections
   $.ajax({
-    url: 'data/C0082-47mm_detected.txt',
+    url: 'data/video/C0082-47mm_detected.txt',
     dataType: 'text',
     success: function(data){
       var lines = data.split('\n');
@@ -78,29 +78,107 @@ function draw(v, ctx, s, w, h) {
     });
   }
 
-  
+
 
   // loop
   requestAnimationFrame(draw.bind(this, v, ctx, s, w, h));
 }
 
-  // animations
+  // quick and dirty js for ui
   $(window).ready(function() {
-    setTimeout(function(e){
-      $("#splash_screen svg").css("width", "15%");
-      $("#splash_screen svg #first_blinking_circle").addClass("first_blinking_circle_animate");
-      $("#splash_screen svg #second_blinking_circle").addClass("second_blinking_circle_animate");
-      $("#splash_screen #logo").css("fill", "#C22C01");
-    }, 1000);
-    setTimeout(function(e){
-      $("#splash_screen").fadeOut();
-      $("main").fadeIn();
-      $("header").delay(600).fadeIn();
-    }, 3500);
-    $(".menu_item").click(function(){
-       $(".content").css("left", "10px").css("right", "10px");
+
+    //hovers
+    $("#item_one svg").on({
+      mouseenter: function () {
+          $('main #traffic_stats').fadeIn(100)
+          $('#item_one polyline').css('stroke', '#FFCC33');
+          $('#item_one #Fill-2').css('fill', '#FFCC33');
+          document.body.style.cursor = 'pointer';
+      },
+      mouseleave: function () {
+          $('main #traffic_stats').fadeOut(100)
+          document.body.style.cursor = 'default';
+          $('#item_one polyline').css('stroke', '#26262E');
+          $('#item_one #Fill-2').css('fill', '#26262E');
+      }
     });
-    $(".close_content").click(function(){
-       $(".content").css("left", "-100%").css("right", "100%");
+    $("#item_two svg").on({
+      mouseenter: function () {
+          $('main #info').fadeIn(100);
+          $('#item_two path').css('stroke', '#FFCC33');
+          document.body.style.cursor = 'pointer';
+      },
+      mouseleave: function () {
+          $('main #info').fadeOut(100);
+          $('#item_two path').css('stroke', '#26262E');
+          document.body.style.cursor = 'default';
+      }
     });
+    $("header #level").on({
+      mouseenter: function () {
+          $('#dropdown-button polygon').css('stroke', '#FFCC33');
+      },
+      mouseleave: function () {
+          $('#dropdown-button polygon').css('stroke', 'white');
+      }
+    });
+
+    $("header #dropdown #close_dropdown").on({
+      mouseenter: function () {
+          $('header #dropdown #close_dropdown path').css('stroke', '#FFCC33');
+          document.body.style.cursor = 'pointer';
+      },
+      mouseleave: function () {
+          $('header #dropdown #close_dropdown path').css('stroke', 'white');
+          document.body.style.cursor = 'default';
+      }
+    });
+
+    $("#close_subpage").on({
+      mouseenter: function () {
+          $('#close_subpage path').css('stroke', '#FFCC33');
+          document.body.style.cursor = 'pointer';
+      },
+      mouseleave: function () {
+          $('#close_subpage path').css('stroke', 'white');
+          document.body.style.cursor = 'default';
+      }
+    });
+
+
+    //clicks
+    $("#item_one svg").click(function(){
+      $('main #traffic_stats').hide();
+      $('main .subpage').delay(800).fadeIn(200);
+      $('main #traffic_stats_headline').show();
+      setTimeout( function(){
+        $('main #traffic_stats_headline').css({ top: "170px"})
+      },300);
+    });
+    $("#item_two svg").click(function(){
+      $('main #info').hide();
+      $('main .subpage').delay(800).fadeIn(200);
+      $('main #info_headline').show();
+      setTimeout( function(){
+        $('main #info_headline').css({ top: "30%"})
+      },500);
+    });
+    $("#close_subpage").click(function(){
+      $('main #traffic_stats').show();
+      $('main #traffic_stats').hide()
+      $('main .subpage').hide()
+      $('main #traffic_stats_headline').hide();
+      setTimeout( function(){
+        $('main #traffic_stats_headline').css({ top: "50%"});
+      },300);
+    });
+
+    $("header #level").click(function(){
+      $('header #dropdown').css({ top: "15px"});
+    });
+    $("header #close_dropdown").click(function(){
+      $('header #dropdown').css({ top: "-200px"});
+    });
+
+
   });
