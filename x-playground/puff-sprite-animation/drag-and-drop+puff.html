@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Drag and Drop + Puff</title>
+		
+		<style type="text/css">
+			* {
+				padding: 0px;
+				margin: 0px;
+				text-align: center;
+				font-family: sans-serif;
+				-webkit-user-select:none;
+				-moz-user-select:none;
+			}
+			
+			body {
+				overflow: hidden;
+			}
+			
+			p {
+				color: rgb(200,200,200);
+			}
+			
+			.box {
+				border: none;
+				position: absolute;
+				width: 55px;
+				height: 55px;
+			}
+			
+			#droppable {
+				position: absolute;
+				left: 50%;
+				top: 50%;
+				width: 100px; 
+				height: 100px; 
+				background: rgb(240,240,240);
+				border-style: solid;
+				border-color: rgb(200,200,200);
+				border-width: 2px;
+				border-radius: 15px;
+			}
+			#puff {
+				background: transparent url(puff-smoke.png) 0 0 no-repeat;
+				position: absolute;
+				top: 150px;
+				left: 65px;
+				width: 64px;
+				height: 64px;
+				z-index: 2000;
+			}
+		</style>
+		
+		<!--<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.4.4/jquery.min.js"></script>-->
+		<script type="text/javascript" src="jquery-1.4.4.min.js"></script>
+		<script type="text/javascript" src="jquery-ui-1.8.9.custom.js"></script>
+		<script type="text/javascript" src="jquery.spritely-0.3b.js" ></script>
+		<script type="text/javascript" src="bg.js"></script>
+		
+		
+		<script type="text/javascript">
+		
+			var app = {};
+			app.timer;
+
+			 $(document).ready(function(){
+				
+				// map touch event to mouse events
+				document.addEventListener("touchstart", bg.adaptTouchToMouse, true);
+				document.addEventListener("touchmove", bg.adaptTouchToMouse, true);
+				document.addEventListener("touchend", bg.adaptTouchToMouse, true);
+				document.addEventListener("touchcancel", bg.adaptTouchToMouse, true);
+				
+				$('#puff').hide().sprite({fps: 15, no_of_frames: 5, play_frames: 5});
+				
+				// dropzone
+				$("#droppable")
+					.draggable({zIndex:10000, opacity: .8, cursor: "move"})
+					.droppable({accept:".box", drop:function(event, ui) {
+						var dropzone = $(this);
+						// counter
+						var counter = dropzone.find("p:last").text();
+						counter = counter*1+1;
+						dropzone.find("p:last").text(counter);
+						// make it bigger
+						dropzone.animate({width: '+=35', height: '+=35'},{duration: 600, easing: 'easeOutBack'});
+						// delete puff animation
+						var dropedElement = $(event.srcElement);
+						//dropedElement.effect('puff',{},null);
+						$('#puff')
+							.css({left: dropedElement.offset().left, top: dropedElement.offset().top})
+							.show()
+							.sprite({fps: 15, no_of_frames: 5, play_frames: 5});
+						dropedElement.remove();
+						
+					}});
+				
+				// random drag objects
+				var count = bg.random(10,40);
+				for (i=0;i<count;i++) {
+					$("<div></div>")
+					.appendTo('#container')
+					.css({
+						left: bg.random($(document).width()*0.9),
+						top: bg.random($(document).height()*0.2),
+						backgroundColor: '#'+Math.floor(Math.random()*16777215).toString(16)
+					})
+					.addClass('box')
+					.animate({
+						left:'+='+Math.random()*100,
+						top:'+='+Math.random()*500
+						},
+						bg.random(500,2000)
+					)
+					.draggable({zIndex:10000, opacity: .8, cursor: "move"})
+					.text(i);
+				}
+				
+			});	
+		</script>
+	</head>
+
+	<body>
+		<div id="container">
+			<div id="droppable"><p>Dropzone</p><p>0</p></div>
+		</div>
+		<div id="puff"></div>
+	</body>
+</html>
