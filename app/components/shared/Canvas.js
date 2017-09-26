@@ -2,9 +2,13 @@ import { Component } from 'react';
 import Head from 'next/head'
 
 class Canvas extends Component {
+
+  
+
   render() { 
     return (
       <div>
+        {/* It is important to specify the canvas width and height for the ratio */}
         <canvas 
          width="1920"
          height="1080"

@@ -3,23 +3,23 @@ import axios from 'axios';
 
 // Initial state
 const initialState = fromJS({
-  test: true
+  showDebugUI: true
 });
 
 // Actions
-const TOGGLE_TEST = 'App/TOGGLE_TEST';
+const TOGGLE_SHOW_DEBUGUI = 'App/TOGGLE_SHOW_DEBUGUI';
 
 export function toggleTest() {
   return {
-    type: TOGGLE_TEST
+    type: TOGGLE_SHOW_DEBUGUI
   }
 }
 
 // Reducer
 export default function AppReducer(state = initialState, action = {}) {
   switch (action.type) {
-    case TOGGLE_TEST:
-      return state.set('test', !state.test);
+    case TOGGLE_SHOW_DEBUGUI:
+      return state.set('showDebugUI', !state.get('showDebugUI'));
     default:
       return state;
   }
