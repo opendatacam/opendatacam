@@ -5,6 +5,7 @@ import withRedux from 'next-redux-wrapper'
 
 import Layout from '../components/shared/Layout';
 import Video from '../components/shared/Video'; 
+import Canvas from '../components/shared/Canvas'; 
 
 class Index extends React.Component {
   static getInitialProps ({ store, pathname, query, asPath }) {
@@ -15,6 +16,7 @@ class Index extends React.Component {
     return (
       <Layout>
         <Video />
+        <Canvas />
       </Layout>
     )
   }
