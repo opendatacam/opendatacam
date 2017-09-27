@@ -16,7 +16,8 @@ class Canvas extends Component {
   render() { 
     return (
       <div>
-        {/* It is important to specify the canvas width and height for the ratio */}
+        {/* It is important to specify the canvas width 
+         and height for the ratio but it can be scaled down */}
         <canvas 
          width="1920"
          height="1080"
