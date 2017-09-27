@@ -7,10 +7,43 @@ h1{
   font-size: 50px;
 }
 
+#countdown{
+  color: white;
+  position: fixed;
+  right: 15px;
+  top: -20px;
+}
+
 p{
   font-size: 50px;
   margin-left: -7px;
   margin-top: -5px;
+}
+
+#looser{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0%;
+  left: 0%;
+  background-color: red;
+  display: none;
+}
+
+#winner{
+  position: fixed;
+  width: 100%;
+  height: 100%;
+  top: 0%;
+  left: 0%;
+  background-color: green;
+  display: none;
+}
+
+#looser h1, #winner h1{
+  position: fixed;
+  left: 40%;
+  top: 35%;
 }
 
 #Rectangle{
