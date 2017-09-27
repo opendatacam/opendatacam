@@ -6,7 +6,8 @@
     "build": "next build",
     "start": "next start",
     "export": "next build && next export",
-    "static": "serve out"
+    "static": "serve out",
+    "deploy": "now out"
   },
   "dependencies": {
     "axios": "^0.16.2",
