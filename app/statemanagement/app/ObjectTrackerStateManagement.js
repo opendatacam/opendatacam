@@ -63,7 +63,7 @@ export default function ObjectTrackerReducer(state = initialState, action = {}) 
     case FETCH_OBJECTTRACKER_SUCCESS:
       return state.set('isFetching', false)
                   .set('fetched', true)
-                  .set('data', action.payload);
+                  .set('data',  fromJS(action.payload));
     case FETCH_OBJECTTRACKER_ERROR:
       return state.set('isFetching', false)
                   .set('fetched', false)

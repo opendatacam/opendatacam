@@ -7,7 +7,7 @@ class DebugUI extends Component {
 
   constructor(props) {
     super(props);
-    this.updateSettings.bind(this);
+    this.updateSettings = this.updateSettings.bind(this);
   }
 
   updateSettings(settings) {

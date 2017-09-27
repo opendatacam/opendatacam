@@ -4,17 +4,28 @@ import Head from 'next/head';
 import NoSSR from 'react-no-ssr';
 import Loading from './Loading'; 
 
-import { setVideoReady, setVideoLoading, setVideoPlaying } from '../../statemanagement/app/VideoStateManagement';
+import { setVideoReady,
+  setVideoLoading,
+  setVideoPlaying,
+  setVideoPaused,
+  setCurrentFrame
+} from '../../statemanagement/app/VideoStateManagement';
 
 class Video extends Component {
 
   constructor(props) {
     super(props);
     props.dispatch(setVideoLoading());
+    this.monitorTime = this.monitorTime.bind(this);
   }
 
   componentDidMount() {
     this.videoEl.addEventListener('loadeddata', () => {
+      console.log('cancel autoplay')
+      // Cancel autoplay iOS
+      this.videoEl.pause();
+    });
+    this.videoEl.addEventListener('canplaythrough', () => {
       console.log('video ready to play');
       // TODO DISPATCH ACTION IS READY TO PLAY
       this.props.dispatch(setVideoReady());
@@ -25,12 +36,29 @@ class Video extends Component {
     this.videoEl.addEventListener('play', () => {
       // TODO DISPATCH ACTION IS PLAYING
       this.props.dispatch(setVideoPlaying());
+      this.monitorTime();
+    });
+
+    this.videoEl.addEventListener('pause', () => {
+      // TODO DISPATCH ACTION IS PLAYING
+      this.props.dispatch(setVideoPaused());
     });
 
     this.videoEl.addEventListener('ended', () => {
+      this.props.dispatch(setVideoPlaying());
       // TODO DISPATCH ACTION IS LOOPING TO CLEAN UP STUFF
-
     });
+  }
+
+  monitorTime() {
+    if(this.props.isPaused) {
+      return;
+    }
+    let newCurrentFrame = Math.round(this.videoEl.currentTime * 25)
+    if(this.props.currentFrame !== newCurrentFrame) {
+      window.currentFrame = newCurrentFrame;
+    }
+    requestAnimationFrame(this.monitorTime);
   }
 
   render() { 
@@ -90,6 +118,8 @@ class Video extends Component {
  
 export default connect((state) => {
   return {
-    isReadyToPlay: state.video.get('isReadyToPlay')
+    isReadyToPlay: state.video.get('isReadyToPlay'),
+    isPaused: state.video.get('isPaused'),
+    currentFrame: state.video.get('currentFrame')
   }
 })(Video);
