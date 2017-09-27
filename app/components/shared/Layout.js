@@ -21,18 +21,6 @@ class Layout extends Component {
             top: 0;
             font-size: 100%;
           }
-
-          :global(body > div:first-of-type) {
-            height: 100%;
-          }
-
-          :global(#__next) {
-            height: 100%;
-          }
-
-          :global(#__next > div) {
-            height: 100%;
-          }
         `}</style>
       </div>
     );

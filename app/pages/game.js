@@ -3,9 +3,9 @@ import { initStore } from '../statemanagement/store'
 import withRedux from 'next-redux-wrapper'
 
 import Layout from '../components/shared/Layout';
-import Landing from '../components/main/Landing'; 
+import Game from '../components/game/GamePage'; 
 
-class Index extends React.Component {
+class GamePage extends React.Component {
   static getInitialProps ({ store, pathname, query, asPath }) {
     // console.log('getInitialProps');
   }
@@ -13,10 +13,10 @@ class Index extends React.Component {
   render () {
     return (
       <Layout>
-        <Landing />
+        <GamePage />
       </Layout>
     )
   }
 }
 
-export default withRedux(initStore)(Index)
+export default withRedux(initStore)(Game)

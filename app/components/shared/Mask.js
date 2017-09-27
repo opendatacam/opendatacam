@@ -1,10 +1,9 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchRawDetections } from '../../statemanagement/app/RawDetectionsStateManagement';
-import { fetchObjectTracker } from '../../statemanagement/app/ObjectTrackerStateManagement';
+// TODO , for NOW BASED ON CANVAS COMPONENT
 
-class Canvas extends Component {
+class Mask extends Component {
 
   constructor(props) {
     super(props);

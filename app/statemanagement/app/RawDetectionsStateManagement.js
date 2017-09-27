@@ -4,7 +4,7 @@ import axios from 'axios';
 // Initial state
 const initialState = fromJS({
   src: "/static/sample/sample-detections.txt",
-  data: [],
+  data: {},
   isFetching: false,
   fetched: false,
   error: null

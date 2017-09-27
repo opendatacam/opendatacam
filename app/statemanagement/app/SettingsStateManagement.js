@@ -7,19 +7,20 @@ const initialState = fromJS({
 });
 
 // Actions
-const TOGGLE_SHOW_DEBUGUI = 'Settings/TOGGLE_SHOW_DEBUGUI';
+const UPDATE_SETTINGS = 'Settings/UPDATE'
 
-export function toggleTest() {
+export function updateSettings(newSettings) {
   return {
-    type: TOGGLE_SHOW_DEBUGUI
+    type: UPDATE_SETTINGS,
+    payload: newSettings
   }
 }
 
 // Reducer
 export default function SettingsReducer(state = initialState, action = {}) {
   switch (action.type) {
-    case TOGGLE_SHOW_DEBUGUI:
-      return state.set('showDebugUI', !state.get('showDebugUI'));
+    case UPDATE_SETTINGS:
+      return state.merge(action.payload)
     default:
       return state;
   }
