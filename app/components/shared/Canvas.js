@@ -1,4 +1,5 @@
 import { Component } from 'react';
+import { connect } from 'react-redux';
 import Head from 'next/head'
 
 import { fetchRawDetections } from '../../statemanagement/app/RawDetectionsStateManagement';
@@ -8,8 +9,8 @@ class Canvas extends Component {
 
   constructor(props) {
     super(props);
-    // props.dispatch(fetchObjectTracker());
-    // props.dispatch(fetchRawDetections());
+    props.dispatch(fetchObjectTracker());
+    props.dispatch(fetchRawDetections());
   }
 
   render() { 
@@ -48,4 +49,4 @@ class Canvas extends Component {
   }
 }
  
-export default Canvas;
+export default connect()(Canvas);

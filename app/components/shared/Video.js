@@ -1,15 +1,48 @@
 import { Component } from 'react';
+import { connect } from 'react-redux';
 import Head from 'next/head';
 import NoSSR from 'react-no-ssr';
 import Loading from './Loading'; 
 
+import { setVideoReady, setVideoLoading, setVideoPlaying } from '../../statemanagement/app/VideoStateManagement';
+
 class Video extends Component {
+
+  constructor(props) {
+    super(props);
+    props.dispatch(setVideoLoading());
+    this.videoMounted.bind(this); 
+  }
+
+  videoMounted() {
+    this.videoEl.addEventListener('loadeddata', () => {
+      console.log('video ready to play');
+      // TODO DISPATCH ACTION IS READY TO PLAY
+      this.props.dispatch(setVideoReady());
+      // For chrome android, autoplay doesn't work
+      this.videoEl.play();
+    });
+
+    this.videoEl.addEventListener('play', () => {
+      // TODO DISPATCH ACTION IS PLAYING
+      this.props.dispatch(setVideoPlaying());
+    });
+
+    this.videoEl.addEventListener('ended', () => {
+      // TODO DISPATCH ACTION IS LOOPING TO CLEAN UP STUFF
+
+    });
+  }
+
   render() { 
     return (
       <div className="video-container">
         <NoSSR onSSR={<Loading />}>
           <video
-            ref={(el) => { this.videoContainer = el; }}
+            ref={(el) => { 
+              this.videoEl = el; 
+              this.videoMounted();
+            }}
             className="video"
             loop
             muted
@@ -56,4 +89,4 @@ class Video extends Component {
   }
 }
  
-export default Video;
+export default connect()(Video);
