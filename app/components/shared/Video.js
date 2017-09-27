@@ -1,6 +1,5 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
-import Head from 'next/head';
 import NoSSR from 'react-no-ssr';
 import Loading from './Loading'; 
 
@@ -19,6 +18,8 @@ class Video extends Component {
     this.monitorFrames = this.monitorFrames.bind(this);
     this.isMonitoring = false;
   }
+
+  // TODO IMPLEMENT COMPONENT UNMOUNT TO CLEAN UP STUFF
 
   componentDidMount() {
     // Cancel autoplay (playing on canplaythrough callback)
