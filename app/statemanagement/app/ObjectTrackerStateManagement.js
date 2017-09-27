@@ -4,7 +4,7 @@ import axios from 'axios';
 // Initial state
 const initialState = fromJS({
   src: "/static/sample/sample-tracker.json",
-  data: [],
+  data: {},
   isFetching: false,
   fetched: false,
   error: null
@@ -63,7 +63,7 @@ export default function ObjectTrackerReducer(state = initialState, action = {}) 
     case FETCH_OBJECTTRACKER_SUCCESS:
       return state.set('isFetching', false)
                   .set('fetched', true)
-                  .set('data',  fromJS(action.payload));
+                  .set('data', action.payload);
     case FETCH_OBJECTTRACKER_ERROR:
       return state.set('isFetching', false)
                   .set('fetched', false)

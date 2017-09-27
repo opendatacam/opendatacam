@@ -16,49 +16,56 @@ class Video extends Component {
   constructor(props) {
     super(props);
     props.dispatch(setVideoLoading());
-    this.monitorTime = this.monitorTime.bind(this);
+    this.monitorFrames = this.monitorFrames.bind(this);
+    this.isMonitoring = false;
   }
 
   componentDidMount() {
-    this.videoEl.addEventListener('loadeddata', () => {
-      console.log('cancel autoplay')
-      // Cancel autoplay iOS
-      this.videoEl.pause();
-    });
+    // Cancel autoplay (playing on canplaythrough callback)
+    // Hack because iOS safari won't autoplay via javascript only
+    this.videoEl.pause();
     this.videoEl.addEventListener('canplaythrough', () => {
       console.log('video ready to play');
-      // TODO DISPATCH ACTION IS READY TO PLAY
       this.props.dispatch(setVideoReady());
       // For chrome android, autoplay doesn't work
       this.videoEl.play();
     });
 
     this.videoEl.addEventListener('play', () => {
-      // TODO DISPATCH ACTION IS PLAYING
+      console.log('playing');
       this.props.dispatch(setVideoPlaying());
-      this.monitorTime();
+
+      // If not already monitoring
+      if(!this.isMonitoring) {
+        console.log('Start monitoring frames');
+        this.isMonitoring = true;
+        this.monitorFrames();
+      }
     });
 
     this.videoEl.addEventListener('pause', () => {
-      // TODO DISPATCH ACTION IS PLAYING
+      console.log('video paused')
       this.props.dispatch(setVideoPaused());
     });
 
     this.videoEl.addEventListener('ended', () => {
-      this.props.dispatch(setVideoPlaying());
+      console.log('video ended');
+      // this.props.dispatch(setVideoPlaying());
       // TODO DISPATCH ACTION IS LOOPING TO CLEAN UP STUFF
     });
   }
 
-  monitorTime() {
-    if(this.props.isPaused) {
+  monitorFrames() {
+    if(this.props.isPaused || this.isMonitoring === false) {
+      console.log('cancel monitoring');
+      this.isMonitoring = false;
       return;
     }
     let newCurrentFrame = Math.round(this.videoEl.currentTime * 25)
-    if(this.props.currentFrame !== newCurrentFrame) {
+    if(window.currentFrame !== newCurrentFrame) {
       window.currentFrame = newCurrentFrame;
     }
-    requestAnimationFrame(this.monitorTime);
+    requestAnimationFrame(this.monitorFrames);
   }
 
   render() { 

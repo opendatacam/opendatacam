@@ -4,7 +4,7 @@ import axios from 'axios';
 // Initial state
 const initialState = fromJS({
   src: "/static/sample/sample-detections.txt",
-  data: [],
+  data: {},
   isFetching: false,
   fetched: false,
   error: null
@@ -72,7 +72,7 @@ export default function RawDetectionsReducer(state = initialState, action = {}) 
     case FETCH_RAWDETECTIONS_SUCCESS:
       return state.set('isFetching', false)
                   .set('fetched', true)
-                  .set('data', fromJS(action.payload));
+                  .set('data', action.payload);
     case FETCH_RAWDETECTIONS_ERROR:
       return state.set('isFetching', false)
                   .set('fetched', false)
