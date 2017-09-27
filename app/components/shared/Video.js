@@ -11,10 +11,9 @@ class Video extends Component {
   constructor(props) {
     super(props);
     props.dispatch(setVideoLoading());
-    this.videoMounted.bind(this); 
   }
 
-  videoMounted() {
+  componentDidMount() {
     this.videoEl.addEventListener('loadeddata', () => {
       console.log('video ready to play');
       // TODO DISPATCH ACTION IS READY TO PLAY
@@ -37,22 +36,22 @@ class Video extends Component {
   render() { 
     return (
       <div className="video-container">
-        <NoSSR onSSR={<Loading />}>
-          <video
-            ref={(el) => { 
-              this.videoEl = el; 
-              this.videoMounted();
-            }}
-            className="video"
-            loop
-            muted
-            playsInline
-            autoPlay
-          >
-            <source src="/static/sample/sample-video.mp4" type="video/mp4" />
-            Your browser does not support the video tag.
-          </video>
-        </NoSSR>
+        {!this.props.isReadyToPlay &&
+          <Loading />
+        }
+        <video
+          ref={(el) => { 
+            this.videoEl = el;
+          }}
+          className="video"
+          loop
+          muted
+          playsInline
+          autoPlay
+        >
+          <source src="/static/sample/sample-video.mp4" type="video/mp4" />
+          Your browser does not support the video tag.
+        </video>
         <style jsx>{`
           .video {
             display: block;
@@ -89,4 +88,8 @@ class Video extends Component {
   }
 }
  
-export default connect()(Video);
+export default connect((state) => {
+  return {
+    isReadyToPlay: state.video.get('isReadyToPlay')
+  }
+})(Video);

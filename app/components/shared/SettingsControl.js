@@ -18,6 +18,7 @@ class DebugUI extends Component {
 
     return (
       <div className="settings-control">
+        <p><strong>DEBUG</strong></p>
         <label>
         Show debug UI
         <input
