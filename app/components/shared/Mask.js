@@ -1,6 +1,8 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
+// TODO , for NOW BASED ON CANVAS COMPONENT
+
 class Mask extends Component {
 
   constructor(props) {

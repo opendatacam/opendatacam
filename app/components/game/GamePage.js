@@ -17,6 +17,8 @@ class GamePage extends React.Component {
   }
 
   render () {
+    // TODO ADD <Mask /> component that handles the masking
+    // TODO ADD click recorder manager
     return (
       <div className="landing-page">
         <LinkItem link="/" label="Go to home" />
