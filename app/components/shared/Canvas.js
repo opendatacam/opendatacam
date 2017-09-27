@@ -1,9 +1,16 @@
 import { Component } from 'react';
 import Head from 'next/head'
 
+import { fetchRawDetections } from '../../statemanagement/app/RawDetectionsStateManagement';
+import { fetchObjectTracker } from '../../statemanagement/app/ObjectTrackerStateManagement';
+
 class Canvas extends Component {
 
-  
+  constructor(props) {
+    super(props);
+    // props.dispatch(fetchObjectTracker());
+    // props.dispatch(fetchRawDetections());
+  }
 
   render() { 
     return (
