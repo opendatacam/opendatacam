@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Initial state
 const initialState = fromJS({
-  src: "/static/sample-detections.txt",
+  src: "/static/sample/sample-detections.txt",
   data: [],
   isFetching: false,
   fetched: false,
@@ -48,7 +48,7 @@ export function fetchRawDetections() {
         let lines = response.data.split('\n');
         lines.forEach(function(line) {
           if(line) {
-            let detection = JSON.parse(l);
+            let detection = JSON.parse(line);
             rawDetections[detection.frame] = detection.detections;
           }
         });
