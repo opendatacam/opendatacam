@@ -31,7 +31,7 @@ class Canvas extends Component {
 
           @media (min-aspect-ratio: 16/9) {
             .canvas {
-              width: 100%;
+              width: 100vw;
               height: auto;
             }
           }
@@ -39,7 +39,7 @@ class Canvas extends Component {
           @media (max-aspect-ratio: 16/9) {
             .canvas {
               width: auto;
-              height: 100%;
+              height: 100vh;
             }
           }
         `}</style>
