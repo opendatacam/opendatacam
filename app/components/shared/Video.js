@@ -4,11 +4,11 @@ import Head from 'next/head';
 import NoSSR from 'react-no-ssr';
 import Loading from './Loading'; 
 
-import { setVideoReady,
+import { 
+  setVideoReady,
   setVideoLoading,
   setVideoPlaying,
-  setVideoPaused,
-  setCurrentFrame
+  setVideoPaused
 } from '../../statemanagement/app/VideoStateManagement';
 
 class Video extends Component {
