@@ -1,0 +1,60 @@
+body{
+  background-color: black;
+}
+
+h1{
+  color: white;
+  font-size: 50px;
+}
+
+p{
+  font-size: 50px;
+  margin-left: -7px;
+  margin-top: -5px;
+}
+
+#Rectangle{
+  stroke: yellow;
+  stroke-linejoin: round;
+}
+
+#graphic{
+  position: fixed;
+  left: 30%;
+  top: 30%;
+}
+
+#graphic_2{
+  position: fixed;
+  left: 60%;
+  top: 40%;
+}
+
+#graphic_3{
+  position: fixed;
+  left: 20%;
+  top: 70%;
+}
+
+#graphic_4{
+  position: fixed;
+  left: 80%;
+  top: 60%;
+}
+
+#rect, #rect_2, #rect_3, #rect_4{
+  left: 20%;
+  width: 40px;
+  height: 40px;
+  border: 4px solid white;
+  transition: all 0.3s;
+  border-radius: 2px;
+}
+
+#line, #line_2, #line_3, #line_4{
+  height: 30px;
+  width: 4px;
+  background-color: white;
+  margin-left: auto;
+  margin-right: auto;
+}
