@@ -7,7 +7,7 @@ const initialState = fromJS({
 });
 
 // Actions
-const TOGGLE_SHOW_DEBUGUI = 'App/TOGGLE_SHOW_DEBUGUI';
+const TOGGLE_SHOW_DEBUGUI = 'Settings/TOGGLE_SHOW_DEBUGUI';
 
 export function toggleTest() {
   return {
@@ -16,7 +16,7 @@ export function toggleTest() {
 }
 
 // Reducer
-export default function AppReducer(state = initialState, action = {}) {
+export default function SettingsReducer(state = initialState, action = {}) {
   switch (action.type) {
     case TOGGLE_SHOW_DEBUGUI:
       return state.set('showDebugUI', !state.get('showDebugUI'));

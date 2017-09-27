@@ -9,7 +9,7 @@ import Canvas from '../components/shared/Canvas';
 
 class Index extends React.Component {
   static getInitialProps ({ store, pathname, query, asPath }) {
-    console.log('getInitialProps');
+    // console.log('getInitialProps');
   }
 
   render () {
