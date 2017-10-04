@@ -4,6 +4,16 @@ import { connect } from 'react-redux';
 import { fetchRawDetections } from '../../statemanagement/app/RawDetectionsStateManagement';
 import { fetchObjectTracker } from '../../statemanagement/app/ObjectTrackerStateManagement';
 
+const canvasResolution = {
+  w: 1280,
+  h: 720
+}
+
+const originalResolution = {
+  w: 1920,
+  h: 1080
+}
+
 class Canvas extends Component {
 
   constructor(props) {
@@ -31,16 +41,27 @@ class Canvas extends Component {
     // TODO IF VIDEO PAUSES, STOP UPDATING CANVAS
   }
 
+  scaleDetection(detection, canvasResolution, originalResolution) {
+    return {
+      ...detection,
+      x: detection.x * canvasResolution.w / originalResolution.w,
+      y: detection.y * canvasResolution.h / originalResolution.h,
+      w: detection.w * canvasResolution.w / originalResolution.w,
+      h: detection.h * canvasResolution.h / originalResolution.h
+    }
+  }
+
   drawRawDetections(context, detections) {
     context.strokeStyle = "#f00";
     context.lineWidth = 5;
     context.font = "15px Arial";
     context.fillStyle = "#f00";
     detections.map((detection) => {
-      let x = detection.x - detection.w / 2;
-      let y = detection.y - detection.h / 2;
-      context.strokeRect(x, y, detection.w, detection.h);
-      context.fillText(detection.name, x, y-10);
+      let scaledDetection = this.scaleDetection(detection, canvasResolution, originalResolution);
+      let x = scaledDetection.x - scaledDetection.w / 2;
+      let y = scaledDetection.y - scaledDetection.h / 2;
+      context.strokeRect(x, y, scaledDetection.w, scaledDetection.h);
+      context.fillText(scaledDetection.name, x, y-10);
     });
   }
 
@@ -50,18 +71,19 @@ class Canvas extends Component {
     context.lineWidth = 5;
     context.font = "30px Arial";
     context.fillStyle = "blue";
-    objectTrackerData.map((objectTracked) => {      
-      if(objectTracked.isZombie) {
-        context.fillStyle = `rgba(255, 153, 0, ${objectTracked.zombieOpacity})`;
-        context.strokeStyle = `rgba(255, 153, 0, ${objectTracked.zombieOpacity})`;
+    objectTrackerData.map((objectTracked) => { 
+      let objectTrackedScaled = this.scaleDetection(objectTracked, canvasResolution, originalResolution);     
+      if(objectTrackedScaled.isZombie) {
+        context.fillStyle = `rgba(255, 153, 0, ${objectTrackedScaled.zombieOpacity})`;
+        context.strokeStyle = `rgba(255, 153, 0, ${objectTrackedScaled.zombieOpacity})`;
       } else {
         context.fillStyle = "blue";
         context.strokeStyle = "blue";
       }
-      let x = objectTracked.x - objectTracked.w / 2;
-      let y = objectTracked.y - objectTracked.h / 2;
-      context.strokeRect(x+5, y+5, objectTracked.w-10, objectTracked.h-10);
-      context.fillText(objectTracked.idDisplay,x + objectTracked.w / 2 - 20,y + objectTracked.h / 2);
+      let x = objectTrackedScaled.x - objectTrackedScaled.w / 2;
+      let y = objectTrackedScaled.y - objectTrackedScaled.h / 2;
+      context.strokeRect(x+5, y+5, objectTrackedScaled.w-10, objectTrackedScaled.h-10);
+      context.fillText(objectTrackedScaled.idDisplay,x + objectTrackedScaled.w / 2 - 20,y + objectTrackedScaled.h / 2);
     });
   }
 

@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Initial state
 const initialState = fromJS({
-  src: "/static/sample/sample-video.mp4",
+  src: "https://player.vimeo.com/external/235911346.hd.mp4?s=079f01de35d181dbef705e7ec51da623b2f78de3",
   isPlaying: false,
   isPaused: false,
   isLoading: false,

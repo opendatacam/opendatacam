@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Initial state
 const initialState = fromJS({
-  src: "/static/sample/sample-tracker.json",
+  src: "/static/detections/2_prototype_video/235911344-tracker.json",
   data: {},
   isFetching: false,
   fetched: false,

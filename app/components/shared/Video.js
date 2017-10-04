@@ -85,7 +85,7 @@ class Video extends Component {
           playsInline
           autoPlay
         >
-          <source src="/static/sample/sample-video.mp4" type="video/mp4" />
+          <source src={this.props.src} type="video/mp4" />
           Your browser does not support the video tag.
         </video>
         <style jsx>{`
@@ -128,6 +128,7 @@ export default connect((state) => {
   return {
     isReadyToPlay: state.video.get('isReadyToPlay'),
     isPaused: state.video.get('isPaused'),
-    currentFrame: state.video.get('currentFrame')
+    currentFrame: state.video.get('currentFrame'),
+    src: state.video.get('src')
   }
 })(Video);
