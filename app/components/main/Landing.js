@@ -7,10 +7,16 @@ import Title from '../shared/Title';
 import LinkItem from '../shared/LinkItem';
 import VideoSelector from '../shared/VideoSelector';
 
+import { selectDefaultVideo } from '../../statemanagement/app/AppStateManagement';
+
 class Landing extends React.Component {
 
   constructor(props) {
     super(props);
+  }
+
+  componentDidMount() {
+    this.props.dispatch(selectDefaultVideo());
   }
 
   render () {
