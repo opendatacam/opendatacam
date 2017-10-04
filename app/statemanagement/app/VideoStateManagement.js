@@ -3,7 +3,7 @@ import axios from 'axios';
 
 // Initial state
 const initialState = fromJS({
-  src: "https://player.vimeo.com/external/236716453.hd.mp4?s=e04a63be206412806f3c615a5d06b596e9774547&profile_id=174",
+  src: null,
   isPlaying: false,
   isPaused: false,
   isLoading: false,
@@ -13,11 +13,18 @@ const initialState = fromJS({
 
 // Actions
 
+const SET_VIDEO_SRC = 'Video/SET_VIDEO_SRC';
 const SET_VIDEO_READY = 'Video/SET_VIDEO_READY';
 const SET_VIDEO_LOADING = 'Video/SET_VIDEO_LOADING';
 const SET_VIDEO_PLAYING = 'Video/SET_VIDEO_PLAYING';
 const SET_VIDEO_PAUSED = 'Video/SET_VIDEO_PAUSED';
 
+export function setVideoSrc(src) {
+  return {
+    type: SET_VIDEO_SRC,
+    payload: src
+  }
+}
 
 export function setVideoReady() {
   return {
@@ -44,6 +51,9 @@ export function setVideoPaused() {
 // Reducer
 export default function VideoReducer(state = initialState, action = {}) {
   switch (action.type) {
+    case SET_VIDEO_SRC:
+      return state.merge(initialState)
+                  .set('src', action.payload)
     case SET_VIDEO_READY:
       return state.set('isReadyToPlay', true);
     case SET_VIDEO_LOADING:

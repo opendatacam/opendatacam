@@ -3,7 +3,6 @@ import axios from 'axios';
 
 // Initial state
 const initialState = fromJS({
-  src: "/static/detections/2_prototype_video/236716453-rawdetections.txt",
   data: {},
   isFetching: false,
   fetched: false,
@@ -14,6 +13,7 @@ const initialState = fromJS({
 const FETCH_RAWDETECTIONS_START = 'RawDetections/FETCH_RAWDETECTIONS_START';
 const FETCH_RAWDETECTIONS_ERROR = 'RawDetections/FETCH_RAWDETECTIONS_ERROR';
 const FETCH_RAWDETECTIONS_SUCCESS = 'RawDetections/FETCH_RAWDETECTIONS_SUCCESS';
+
 
 export function startFetchingRawDetections() {
   return {
@@ -36,13 +36,13 @@ export function fetchRawDetectionsError(error) {
   };
 }
 
-export function fetchRawDetections() {
+export function fetchRawDetections(src) {
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
       // Notify UI we are fetching stuff
       dispatch(startFetchingRawDetections());
 
-      axios.get(getState().rawDetections.get('src')).then((response) => {
+      axios.get(src).then((response) => {
         // Parse txt file
         let rawDetections = {};
         let lines = response.data.split('\n');

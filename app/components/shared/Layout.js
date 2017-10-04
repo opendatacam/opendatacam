@@ -1,7 +1,15 @@
 import { Component } from 'react';
+import { connect } from 'react-redux';
 import Head from 'next/head'
 
+import { selectDefaultVideo } from '../../statemanagement/app/AppStateManagement';
+
 class Layout extends Component {
+
+  componentDidMount() {
+    this.props.dispatch(selectDefaultVideo());
+  }
+
   render() { 
     return (
       <div>
@@ -27,4 +35,4 @@ class Layout extends Component {
   }
 }
  
-export default Layout;
+export default connect()(Layout);

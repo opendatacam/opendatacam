@@ -1,9 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchRawDetections } from '../../statemanagement/app/RawDetectionsStateManagement';
-import { fetchObjectTracker } from '../../statemanagement/app/ObjectTrackerStateManagement';
-
 import { scaleDetection } from '../../utils/resolution';
 
 const canvasResolution = {
@@ -20,8 +17,6 @@ class Canvas extends Component {
 
   constructor(props) {
     super(props);
-    props.dispatch(fetchObjectTracker());
-    props.dispatch(fetchRawDetections());
     this.lastFrameDrawn = -1;
     this.loopUpdateCanvas = this.loopUpdateCanvas.bind(this);
     this.isUpdatingCanvas = false;

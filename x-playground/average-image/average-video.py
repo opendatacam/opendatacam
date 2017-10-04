@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 import time
 
-video = cv2.VideoCapture("C0082-47mm.mp4")
+video = cv2.VideoCapture("/Users/tdurand/Downloads/1_prototype_video.mp4")
 _,frame = video.read()
 avg = np.float32(frame)
 

@@ -5,6 +5,7 @@ import SettingsControl from '../shared/SettingsControl';
 
 import Title from '../shared/Title';
 import LinkItem from '../shared/LinkItem';
+import VideoSelector from '../shared/VideoSelector';
 
 class Landing extends React.Component {
 
@@ -15,7 +16,7 @@ class Landing extends React.Component {
   render () {
     return (
       <div className="landing-page">
-        <LinkItem link="/game" label="Go to game" />
+        <VideoSelector />
         <Title label="Traffic Cam Landing" />
         <SettingsControl />
         <Video />
