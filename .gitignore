@@ -2,5 +2,5 @@
 node_modules/
 *.weights
 */out/
-*/static/footage
+*/static/detections
 */long-video
