@@ -1,7 +1,19 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
-import MaskItem from './MaskItem';
+import Clippath from './Clippath';
+
+import { scaleDetection } from '../../utils/resolution';
+
+const canvasResolution = {
+  w: 1280,
+  h: 720
+}
+
+const originalResolution = {
+  w: 1920,
+  h: 1080
+}
 
 class Mask extends Component {
 
@@ -9,18 +21,19 @@ class Mask extends Component {
     super(props);
 
     this.state = {
-      masks: [] 
+      masks: []
     }
 
-    this.mounted = false;
+    this.clicksRecorded = [];
+
     this.isUpdatingMasks = false;
     this.lastFrameDrawn = -1;
     this.loopUpdateMasks = this.loopUpdateMasks.bind(this);
+    this.recordClick = this.recordClick.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
-    if(this.mounted === true &&
-       nextProps.isPlaying === true &&
+    if(nextProps.isPlaying === true &&
        nextProps.isObjectTrackerDataFetched === true) {
       if(!this.isUpdatingMasks) {
         console.log('Start loop update masks');
@@ -30,111 +43,83 @@ class Mask extends Component {
     }
   }
 
-  updateMasks(objectTrackerDataForThisFrame) {
-
-  }
-
   loopUpdateMasks() {
     if(window.currentFrame &&
       this.lastFrameDrawn !== window.currentFrame) {
 
+
+        
+
+
+        // Enlarge bbox of 30px
+        const ENLARGE_SIZE = 30;
+
         let objectTrackerDataForThisFrame = this.props.objectTrackerData[window.currentFrame];
         if(objectTrackerDataForThisFrame) {
-          // console.log('setState');
-          this.setState({ masks: objectTrackerDataForThisFrame});
+          let objectsMaskedToUpdate = this.state.masks;
+          let objectsMaskedUpdated = [];
+
+          // Clean up objects to mask that have disapeared
+          objectsMaskedToUpdate = objectsMaskedToUpdate.filter((objectMasked) => {
+            return objectTrackerDataForThisFrame.find((objectTracked) => objectTracked.id === objectMasked.id)
+          });
+          
+          objectTrackerDataForThisFrame.map((objectTracked) => {
+
+            let objectTrackedScaled = scaleDetection(objectTracked, canvasResolution, originalResolution);
+            let potentialObjectToMask = {
+              idDisplay: objectTrackedScaled.idDisplay,
+              id: objectTrackedScaled.id,
+              x: objectTrackedScaled.x - objectTrackedScaled.w/2 - ENLARGE_SIZE,
+              y: objectTrackedScaled.y - objectTrackedScaled.h/2 - ENLARGE_SIZE,
+              w: objectTrackedScaled.w + ENLARGE_SIZE * 2,
+              h: objectTrackedScaled.h + ENLARGE_SIZE * 2,
+            }
+
+            // If this is one of the objects we are already masking and that need update of its position
+            const objectToUpdate = objectsMaskedToUpdate.find((objectMasked) => objectMasked.id === potentialObjectToMask.id)
+            if(objectToUpdate) {
+              // Add it to the new list
+              objectsMaskedUpdated.push(potentialObjectToMask);
+            } else {
+              // Look if clicks to disappear things exists for this object
+              if(this.clicksRecorded.length > 0) {
+                this.clicksRecorded.forEach((click) => {
+                  if(click.x >= potentialObjectToMask.x &&
+                    click.x <= potentialObjectToMask.x + potentialObjectToMask.w &&
+                    click.y >= potentialObjectToMask.y &&
+                    click.y <= potentialObjectToMask.y + potentialObjectToMask.h) {
+                      console.log(`${potentialObjectToMask.idDisplay} clicked !`)
+                      objectsMaskedUpdated.push(potentialObjectToMask);
+                    }
+                });
+              }
+            }            
+          });
+          this.clicksRecorded = [];
+          this.setState({ masks: objectsMaskedUpdated });
         }
     }
-    // requestAnimationFrame(this.loopUpdateMasks.bind(this));
+    requestAnimationFrame(this.loopUpdateMasks.bind(this));
   }
 
-  componentDidMount() {
-    this.mounted = true;
+  recordClick(event) {
+    this.clicksRecorded.push({
+      x: event.pageX,
+      y: event.pageY
+    });
   }
-
-    // TODO IF VIDEO PAUSES, STOP UPDATING CANVAS
-  
-
-  // createSvgMask(id, x, y, w, h) {
-  //   var rect = document.createElementNS(xmlns, "rect");
-  //   rect.setAttributeNS (null, 'id', `mask-${id}`);
-  //   rect.setAttributeNS (null, 'x', x);
-  //   rect.setAttributeNS (null, 'y', y);
-  //   rect.setAttributeNS (null, 'stroke', "#000000");
-  //   rect.setAttributeNS (null, 'stroke-miterlimit', 10);
-  //   rect.setAttributeNS (null, 'width', w);
-  //   rect.setAttributeNS (null, 'height', h);
-  //   clipPath.appendChild(rect);
-  //   maskedIds[id] = rect;
-  // }
-  
-  // updateSvgMask(id, x, y, w, h) {
-  //   maskedIds[id].setAttributeNS(null, 'x', x);
-  //   maskedIds[id].setAttributeNS(null, 'y', y);
-  //   maskedIds[id].setAttributeNS(null, 'width', w);
-  //   maskedIds[id].setAttributeNS(null, 'height', h);
-  // }
-  
-  // removeSvgMask(id) {
-  //   maskedIds[id].parentNode.removeChild(maskedIds[id]);
-  //   delete maskedIds[id];
-  //   var i = idsToMask.indexOf(id);
-  //   if(i != -1) {
-  //     idsToMask.splice(i, 1);
-  //   }
-  // }
-  
-  // cleanUpSvgMasks(trackerDetection) {
-  //   for (var id in maskedIds) {
-  //     if(!trackerDetection.find((detection) => detection.idDisplay === id)) {
-  //       removeSvgMask(id);
-  //     }
-  //   }
-  // }
-  
-  // cleanUpAllSvgMasks() {
-  //   for (var id in maskedIds) {
-  //     removeSvgMask(id);
-  //   }
-  // }
-
-  // renderMask(mask) {
-  //   return (
-  //     <rect 
-  //       key={mask.id}
-  //       x={mask.x}
-  //       y={mask.y}
-  //       stroke="#000000"
-  //       strokeMiterlimit="10"
-  //       width={mask.w}
-  //       height={mask.h}
-  //     ></rect>
-  //   )
-  // }
 
   render() {
-
-
-    // const masks = [{
-    //   id: "blablalbla",
-    //   h: 87,
-    //   w: 100,
-    //   x: 500,
-    //   y: 400
-    // }
-    // ]
-
-    // const mask = {
-    //   id: "blablalbla",
-    //   h: 87,
-    //   w: 100,
-    //   x: 500,
-    //   y: 400
-    // }
 
     return (
       <svg 
         width="1280" 
-        height="720" id="average-img" className="average-img">
+        height="720"
+        id="average-img"
+        className="average-img"
+        onClick={this.recordClick}
+      >
         <image 
           xlinkHref="/static/detections/2_prototype_video/236716453-average-1280.jpg" 
           x="0" 
@@ -144,14 +129,7 @@ class Mask extends Component {
           clipPath="url(#svgPath)"
         />
         <defs>
-          <clipPath id="svgPath">
-            {this.state.masks.map((mask) =>
-              <MaskItem 
-                key={mask.id} 
-                mask={mask}
-              />
-            )}
-          </clipPath>
+          <Clippath masks={this.state.masks} />
         </defs>
         <style jsx>{`
           .average-img {

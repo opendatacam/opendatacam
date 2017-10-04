@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { fetchRawDetections } from '../../statemanagement/app/RawDetectionsStateManagement';
 import { fetchObjectTracker } from '../../statemanagement/app/ObjectTrackerStateManagement';
 
+import { scaleDetection } from '../../utils/resolution';
+
 const canvasResolution = {
   w: 1280,
   h: 720
@@ -41,23 +43,13 @@ class Canvas extends Component {
     // TODO IF VIDEO PAUSES, STOP UPDATING CANVAS
   }
 
-  scaleDetection(detection, canvasResolution, originalResolution) {
-    return {
-      ...detection,
-      x: detection.x * canvasResolution.w / originalResolution.w,
-      y: detection.y * canvasResolution.h / originalResolution.h,
-      w: detection.w * canvasResolution.w / originalResolution.w,
-      h: detection.h * canvasResolution.h / originalResolution.h
-    }
-  }
-
   drawRawDetections(context, detections) {
     context.strokeStyle = "#f00";
     context.lineWidth = 5;
     context.font = "15px Arial";
     context.fillStyle = "#f00";
     detections.map((detection) => {
-      let scaledDetection = this.scaleDetection(detection, canvasResolution, originalResolution);
+      let scaledDetection = scaleDetection(detection, canvasResolution, originalResolution);
       let x = scaledDetection.x - scaledDetection.w / 2;
       let y = scaledDetection.y - scaledDetection.h / 2;
       context.strokeRect(x, y, scaledDetection.w, scaledDetection.h);
@@ -72,7 +64,7 @@ class Canvas extends Component {
     context.font = "30px Arial";
     context.fillStyle = "blue";
     objectTrackerData.map((objectTracked) => { 
-      let objectTrackedScaled = this.scaleDetection(objectTracked, canvasResolution, originalResolution);     
+      let objectTrackedScaled = scaleDetection(objectTracked, canvasResolution, originalResolution);     
       if(objectTrackedScaled.isZombie) {
         context.fillStyle = `rgba(255, 153, 0, ${objectTrackedScaled.zombieOpacity})`;
         context.strokeStyle = `rgba(255, 153, 0, ${objectTrackedScaled.zombieOpacity})`;
