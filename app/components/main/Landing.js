@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import Video from '../shared/Video'; 
 import Canvas from '../shared/Canvas'; 
 import SettingsControl from '../shared/SettingsControl';
@@ -32,4 +33,4 @@ class Landing extends React.Component {
   }
 }
 
-export default Landing
+export default connect()(Landing)

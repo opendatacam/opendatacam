@@ -1,4 +1,5 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import Video from '../shared/Video'; 
 import Canvas from '../shared/Canvas'; 
@@ -37,4 +38,4 @@ class GamePage extends React.Component {
   }
 }
 
-export default GamePage;
+export default connect()(GamePage);

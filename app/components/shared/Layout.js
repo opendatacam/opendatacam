@@ -1,5 +1,4 @@
 import { Component } from 'react';
-import { connect } from 'react-redux';
 import Head from 'next/head'
 
 class Layout extends Component {
@@ -29,4 +28,4 @@ class Layout extends Component {
   }
 }
  
-export default connect()(Layout);
+export default Layout;

@@ -4,7 +4,9 @@ var Tracker = require('./Tracker');
 yolo = {};
 tracked = {};
 
-fs.readFile("../app/static/detections/1_prototype_video/235911346_rawdetections.txt", function(err, f){
+var file = "../app/static/detections/9_prototype_video";
+
+fs.readFile(`${file}.txt`, function(err, f){
     var lines = f.toString().split('\n');
     lines.forEach(function(l) {
       try {
@@ -23,7 +25,7 @@ fs.readFile("../app/static/detections/1_prototype_video/235911346_rawdetections.
 
     Tracker.printNbOfItemMatchedOverTime();
 
-    fs.writeFile('../app/static/detections/1_prototype_video/235911346_tracker.json', JSON.stringify(tracked), function() {
+    fs.writeFile(`${file}_tracker.json`, JSON.stringify(tracked), function() {
       console.log('tracked data wrote');
     });
 });
