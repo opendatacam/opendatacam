@@ -5,6 +5,8 @@ import Clippath from './Clippath';
 
 import { scaleDetection } from '../../utils/resolution';
 
+import { getAverageImgPath } from '../../statemanagement/app/AppStateManagement';
+
 const canvasResolution = {
   w: 1280,
   h: 720
@@ -46,10 +48,6 @@ class Mask extends Component {
   loopUpdateMasks() {
     if(window.currentFrame &&
       this.lastFrameDrawn !== window.currentFrame) {
-
-
-        
-
 
         // Enlarge bbox of 30px
         const ENLARGE_SIZE = 30;
@@ -120,8 +118,8 @@ class Mask extends Component {
         className="average-img"
         onClick={this.recordClick}
       >
-        <image 
-          xlinkHref="/static/detections/2_prototype_video/236716453-average-1280.jpg" 
+        <image
+          xlinkHref={this.props.averageImgSrc}
           x="0" 
           y="0" 
           width="1280" 
@@ -145,9 +143,15 @@ class Mask extends Component {
 }
  
 export default connect((state) => {
+
+  const selectedVideo = state.app.get('availableVideos').find((video) => {
+    return video.get('name') === state.app.get('selectedVideo')
+  });
+
   return {
     objectTrackerData: state.objectTracker.get('data'),
     isObjectTrackerDataFetched: state.objectTracker.get('fetched'),
-    isPlaying: state.video.get('isPlaying')
+    isPlaying: state.video.get('isPlaying'),
+    averageImgSrc: getAverageImgPath(selectedVideo.get('name'), selectedVideo.get('vimeoId'))
   }
 })(Mask);

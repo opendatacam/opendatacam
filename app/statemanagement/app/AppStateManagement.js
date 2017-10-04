@@ -35,6 +35,10 @@ export function getTrackerDataPath(videoName, vimeoId) {
   return `/static/detections/${videoName}/${vimeoId}_tracker.json`;
 }
 
+export function getAverageImgPath(videoName, vimeoId) {
+  return `/static/detections/${videoName}/${vimeoId}_average-1280.jpg`;
+}
+
 export function selectDefaultVideo() {
   return (dispatch, getState) => {
     dispatch(selectVideo(getState().app.get('selectedVideo')));
