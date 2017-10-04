@@ -2,6 +2,7 @@ import React from 'react';
 
 import Video from '../shared/Video'; 
 import Canvas from '../shared/Canvas'; 
+import Mask from '../shared/Mask'; 
 import SettingsControl from '../shared/SettingsControl';
 
 import Title from '../shared/Title';
@@ -24,6 +25,7 @@ class GamePage extends React.Component {
         <LinkItem link="/" label="Go to home" />
         <Title label="Beat the traffic !" />
         <SettingsControl />
+        <Mask />
         <Video />
         <Canvas />
       </div>
