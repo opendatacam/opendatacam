@@ -12,13 +12,15 @@ class Mask extends Component {
       masks: [] 
     }
 
+    this.mounted = false;
     this.isUpdatingMasks = false;
     this.lastFrameDrawn = -1;
     this.loopUpdateMasks = this.loopUpdateMasks.bind(this);
   }
 
   componentWillReceiveProps(nextProps) {
-    if(nextProps.isPlaying === true &&
+    if(this.mounted === true &&
+       nextProps.isPlaying === true &&
        nextProps.isObjectTrackerDataFetched === true) {
       if(!this.isUpdatingMasks) {
         console.log('Start loop update masks');
@@ -42,7 +44,11 @@ class Mask extends Component {
           this.setState({ masks: objectTrackerDataForThisFrame});
         }
     }
-    requestAnimationFrame(this.loopUpdateMasks.bind(this));
+    // requestAnimationFrame(this.loopUpdateMasks.bind(this));
+  }
+
+  componentDidMount() {
+    this.mounted = true;
   }
 
     // TODO IF VIDEO PAUSES, STOP UPDATING CANVAS
@@ -106,6 +112,25 @@ class Mask extends Component {
   // }
 
   render() {
+
+
+    // const masks = [{
+    //   id: "blablalbla",
+    //   h: 87,
+    //   w: 100,
+    //   x: 500,
+    //   y: 400
+    // }
+    // ]
+
+    // const mask = {
+    //   id: "blablalbla",
+    //   h: 87,
+    //   w: 100,
+    //   x: 500,
+    //   y: 400
+    // }
+
     return (
       <svg 
         width="1280" 
@@ -120,9 +145,12 @@ class Mask extends Component {
         />
         <defs>
           <clipPath id="svgPath">
-            {this.state.masks.map((mask) => {
-              <MaskItem key={mask.id} {...mask} />
-            })}
+            {this.state.masks.map((mask) =>
+              <MaskItem 
+                key={mask.id} 
+                mask={mask}
+              />
+            )}
           </clipPath>
         </defs>
         <style jsx>{`

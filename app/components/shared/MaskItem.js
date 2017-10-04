@@ -5,12 +5,12 @@ class MaskItem extends Component {
   render() {
     return (
       <rect
-        x={mask.x}
-        y={mask.y}
+        x={this.props.mask.x}
+        y={this.props.mask.y}
         stroke="#000000"
         strokeMiterlimit="10"
-        width={mask.w}
-        height={mask.h}
+        width={this.props.mask.w}
+        height={this.props.mask.h}
       ></rect>
     );
   }
