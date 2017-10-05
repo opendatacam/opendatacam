@@ -23,3 +23,10 @@ http://localhost:8090/test.webm
 
 Surpress CORS error of Chrome
 `$ open -a Google\ Chrome --args --disable-web-security --user-data-dir`
+
+Command line tool:
+
+```
+cd darknet-CLI
+$ node darknet-video --mode video --in ./data/videos/video1.MP4 --out ./detections/
+```
