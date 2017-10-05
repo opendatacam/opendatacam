@@ -74,7 +74,8 @@ class Video extends Component {
     if(this.videoEl) {
       // Cancel autoplay (playing on canplaythrough callback)
       // Hack because iOS safari won't autoplay via javascript only
-      this.videoEl.pause();
+      // seems not needed
+      // this.videoEl.pause();
       this.videoEl.addEventListener('canplaythrough', this.handleCanPlayThrough);
       this.videoEl.addEventListener('play', this.handlePlay);
       this.videoEl.addEventListener('pause', this.handlePause);

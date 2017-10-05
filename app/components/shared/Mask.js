@@ -141,7 +141,7 @@ class Mask extends Component {
           y="0"
           width="1280px" 
           height="720px"
-          clip-path="url(#svgPath)"
+          clipPath="url(#svgPath)"
         />
         <defs>
           <Clippath masks={this.state.masks} />
