@@ -10,7 +10,7 @@ class Title extends Component {
           .title-container {
             position: absolute;
             top: 30px;
-            z-index: 4;
+            z-index: 10;
             top: 5px;
             left: 40%;
             color: white;

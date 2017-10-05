@@ -32,6 +32,12 @@ class Mask extends Component {
     this.lastFrameDrawn = -1;
     this.loopUpdateMasks = this.loopUpdateMasks.bind(this);
     this.recordClick = this.recordClick.bind(this);
+    this.initClickRecorder = this.initClickRecorder.bind(this);
+    this.cleanClickRecorder = this.cleanClickRecorder.bind(this);
+  }
+
+  componentDidMount() {
+    this.initClickRecorder();
   }
 
   componentWillReceiveProps(nextProps) {
@@ -108,6 +114,18 @@ class Mask extends Component {
     });
   }
 
+  initClickRecorder() {
+    window.document.addEventListener("click", this.recordClick);
+  }
+
+  cleanClickRecorder() {
+    window.document.removeEventListener("click", this.recordClick);
+  }
+
+  componentWillUnmount() {
+    this.cleanClickRecorder();
+  }
+
   render() {
 
     return (
@@ -116,7 +134,6 @@ class Mask extends Component {
         height="720"
         id="average-img"
         className="average-img"
-        onClick={this.recordClick}
       >
         <image
           xlinkHref={this.props.averageImgSrc}

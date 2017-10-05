@@ -34,7 +34,7 @@ class VideoSelector extends Component {
         <style jsx>{`
           .video-selector {
             position: absolute;
-            z-index: 4;
+            z-index: 10;
             top: 5px;
             left: 5px;
           }

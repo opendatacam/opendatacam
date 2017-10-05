@@ -32,7 +32,7 @@ class DebugUI extends Component {
             position: absolute;
             left: 10px;
             bottom: 10px;
-            z-index: 2;
+            z-index: 10;
             transform: will-change;
             background-color: white;
             padding: 10px;

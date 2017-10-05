@@ -120,6 +120,7 @@ class Canvas extends Component {
             position: absolute;
             top:0;
             left:0;
+            z-index: 2;
           }
 
           @media (min-aspect-ratio: 16/9) {

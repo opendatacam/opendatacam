@@ -30,9 +30,9 @@ class GamePage extends React.Component {
         <VideoSelector />
         <Title label="Beat the traffic !" />
         <SettingsControl />
+        <Canvas />
         <Mask />
         <Video />
-        <Canvas />
       </div>
     )
   }
