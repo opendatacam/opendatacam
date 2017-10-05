@@ -2,6 +2,7 @@ import { Component } from 'react';
 import { connect } from 'react-redux';
 
 import Clippath from './Clippath';
+import PuffAnimation from './PuffAnimation';
 
 import { scaleDetection } from '../../utils/resolution';
 
@@ -23,7 +24,8 @@ class Mask extends Component {
     super(props);
 
     this.state = {
-      masks: []
+      masks: [],
+      puffAnimations: []
     }
 
     this.clicksRecorded = [];
@@ -34,6 +36,7 @@ class Mask extends Component {
     this.recordClick = this.recordClick.bind(this);
     this.initClickRecorder = this.initClickRecorder.bind(this);
     this.cleanClickRecorder = this.cleanClickRecorder.bind(this);
+    this.removePuffAnimation = this.removePuffAnimation.bind(this);
   }
 
   componentDidMount() {
@@ -95,6 +98,13 @@ class Mask extends Component {
                     click.y <= potentialObjectToMask.y + potentialObjectToMask.h) {
                       console.log(`${potentialObjectToMask.idDisplay} clicked !`)
                       objectsMaskedUpdated.push(potentialObjectToMask);
+                      this.setState({
+                        puffAnimations: [...this.state.puffAnimations, {
+                          x: click.xReal,
+                          y: click.yReal,
+                          id: potentialObjectToMask.id
+                        }]
+                      });
                     }
                 });
               }
@@ -133,6 +143,8 @@ class Mask extends Component {
     coordinates = {
       x: coordinates.x * 1280 / width,
       y: coordinates.y * 720 / height,
+      xReal: coordinates.x,
+      yReal: coordinates.y
     }
 
     this.clicksRecorded.push(coordinates);
@@ -147,6 +159,12 @@ class Mask extends Component {
     window.document.body.removeEventListener("click", this.recordClick);
   }
 
+  removePuffAnimation(id) {
+    this.setState({
+      puffAnimations: this.state.puffAnimations.filter((puffAnimation) => puffAnimation.id !== id)
+    });
+  }
+
   componentWillUnmount() {
     this.cleanClickRecorder();
   }
@@ -154,24 +172,42 @@ class Mask extends Component {
   render() {
 
     return (
-      <svg
-        id="average-img"
-        preserveAspectRatio="xMinYMax meet"
-        viewBox="0 0 1280 720"
-        className={`average-img ${!this.props.isVideoReadyToPlay ? 'hidden' : 'visible'}`}
-      >
-        <image
-          xlinkHref={this.props.averageImgSrc}
-          x="0" 
-          y="0"
-          width="1280px" 
-          height="720px"
-          clipPath="url(#svgPath)"
-        />
-        <defs>
-          <Clippath masks={this.state.masks} />
-        </defs>
+      <div className="mask-container">
+        <svg
+          id="average-img"
+          preserveAspectRatio="xMinYMax meet"
+          viewBox="0 0 1280 720"
+          className={`average-img ${!this.props.isVideoReadyToPlay ? 'hidden' : 'visible'}`}
+        >
+          <image
+            xlinkHref={this.props.averageImgSrc}
+            x="0" 
+            y="0"
+            width="1280px" 
+            height="720px"
+            clipPath="url(#svgPath)"
+          />
+          <defs>
+            <Clippath masks={this.state.masks} />
+          </defs>
+        </svg>
+        {this.state.puffAnimations.map((puffAnimation) => 
+          <PuffAnimation
+            key={puffAnimation.id}
+            id={puffAnimation.id}
+            x={puffAnimation.x}
+            y={puffAnimation.y}
+            removePuffAnimation={this.removePuffAnimation}
+          />
+        )}
         <style jsx>{`
+          .mask-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top:0;
+            left:0;
+          }
           .average-img {
             position: absolute;
             width: 100%;
@@ -200,7 +236,7 @@ class Mask extends Component {
             display: none;
           }
         `}</style>
-      </svg>
+      </div>
     );
   }
 }
