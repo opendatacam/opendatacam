@@ -133,7 +133,7 @@ class Mask extends Component {
         width="1280" 
         height="720"
         id="average-img"
-        className="average-img"
+        className={`average-img ${!this.props.isVideoReadyToPlay ? 'hidden' : 'visible'}`}
       >
         <image
           xlinkHref={this.props.averageImgSrc}
@@ -153,6 +153,10 @@ class Mask extends Component {
             left: 0;
             z-index: 1;
           }
+
+          .hidden {
+            display: none;
+          }
         `}</style>
       </svg>
     );
@@ -169,6 +173,7 @@ export default connect((state) => {
     objectTrackerData: state.objectTracker.get('data'),
     isObjectTrackerDataFetched: state.objectTracker.get('fetched'),
     isPlaying: state.video.get('isPlaying'),
-    averageImgSrc: getAverageImgPath(selectedVideo.get('name'), selectedVideo.get('vimeoId'))
+    averageImgSrc: getAverageImgPath(selectedVideo.get('name'), selectedVideo.get('vimeoId')),
+    isVideoReadyToPlay: state.video.get('isReadyToPlay')
   }
 })(Mask);
