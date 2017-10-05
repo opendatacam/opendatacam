@@ -99,7 +99,9 @@ class Canvas extends Component {
 
   render() { 
     return (
-      <div className="canvas-container">
+      <div
+        className={`canvas-container ${!this.props.isVideoReadyToPlay ? 'hidden' : 'visible'}`}
+      >
         {/* Canvas width and height must 
         be set the the yolo detections resolution
         Then it is scaled down to viewport */}
@@ -143,6 +145,10 @@ class Canvas extends Component {
               height: 100%;
             }
           }
+
+          .hidden {
+            display: none;
+          }
         `}</style>
       </div>
     );
@@ -156,6 +162,7 @@ export default connect((state) => {
     objectTrackerData: state.objectTracker.get('data'),
     isObjectTrackerDataFetched: state.objectTracker.get('fetched'),
     isPlaying: state.video.get('isPlaying'),
-    showDebugUI: state.settings.get('showDebugUI')
+    showDebugUI: state.settings.get('showDebugUI'),
+    isVideoReadyToPlay: state.video.get('isReadyToPlay')
   }
 })(Canvas);
