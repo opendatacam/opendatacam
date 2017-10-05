@@ -129,19 +129,19 @@ class Mask extends Component {
   render() {
 
     return (
-      <svg 
-        width="1280" 
-        height="720"
+      <svg
         id="average-img"
+        preserveAspectRatio="xMinYMax meet"
+        viewBox="0 0 1280 720"
         className={`average-img ${!this.props.isVideoReadyToPlay ? 'hidden' : 'visible'}`}
       >
         <image
           xlinkHref={this.props.averageImgSrc}
           x="0" 
-          y="0" 
-          width="1280" 
-          height="720" 
-          clipPath="url(#svgPath)"
+          y="0"
+          width="1280px" 
+          height="720px"
+          clip-path="url(#svgPath)"
         />
         <defs>
           <Clippath masks={this.state.masks} />
@@ -149,12 +149,26 @@ class Mask extends Component {
         <style jsx>{`
           .average-img {
             position: absolute;
+            width: 100%;
+            height: 100%;
             top: 0;
             left: 0;
             z-index: 1;
-            width: 100%;
-            height: 100%;
-            overflow: visible;
+            overflow: hidden;
+          }
+
+          @media (min-aspect-ratio: 16/9) {
+            .average-img {
+              width: 100%;
+              height: auto;
+            }
+          }
+
+          @media (max-aspect-ratio: 16/9) {
+            .average-img {
+              width: auto;
+              height: 100%;
+            }
           }
 
           .hidden {
