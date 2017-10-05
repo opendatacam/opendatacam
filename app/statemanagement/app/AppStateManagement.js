@@ -72,16 +72,20 @@ const initialState = fromJS({
 // Actions
 const SELECT_VIDEO = 'App/SELECT_VIDEO'
 
+let pathStatic = '/static/detections';
+// When static exporting use that path for static stuff
+// pathStatic = "https://static-lhpmcwardn.now.sh/detections"
+
 export function getRawDetectionPath(videoName) {
-  return `/static/detections/${videoName}/rawdetections.txt`;
+  return `${pathStatic}/${videoName}/rawdetections.txt`;
 }
 
 export function getTrackerDataPath(videoName) {
-  return `/static/detections/${videoName}/tracker.json`;
+  return `${pathStatic}/${videoName}/tracker.json`;
 }
 
 export function getAverageImgPath(videoName) {
-  return `/static/detections/${videoName}/average-1280.jpg`;
+  return `${pathStatic}/${videoName}/average-1280.jpg`;
 }
 
 export function selectDefaultVideo() {
