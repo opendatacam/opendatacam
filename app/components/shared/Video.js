@@ -70,7 +70,6 @@ class Video extends Component {
     this.videoEl = el;
     // debugger;
     console.log('registerListeners');
-    console.log(this.videoEl);
     if(this.videoEl) {
       // Cancel autoplay (playing on canplaythrough callback)
       // Hack because iOS safari won't autoplay via javascript only

@@ -108,18 +108,38 @@ class Mask extends Component {
   }
 
   recordClick(event) {
-    this.clicksRecorded.push({
+
+    let coordinates = {
       x: event.pageX,
       y: event.pageY
-    });
+    };
+
+    // Ignore Chrome mobile touchstart event
+    if(coordinates.x === undefined) {
+      return;
+    }
+
+    // Map coordinates to canvas coordinates
+    if(window.innerWidth / window.innerHeight < 16/9) {
+      const width = window.innerHeight * 1280 / 720;
+      const height = window.innerHeight;
+
+      coordinates = {
+        x: coordinates.x * 1280 / width,
+        y: coordinates.y * 720 / height,
+      }
+    }
+
+    this.clicksRecorded.push(coordinates);
   }
 
   initClickRecorder() {
-    window.document.addEventListener("click", this.recordClick);
+    window.document.body.addEventListener("click", this.recordClick);
+    window.document.body.addEventListener("touchstart", this.recordClick);
   }
 
   cleanClickRecorder() {
-    window.document.removeEventListener("click", this.recordClick);
+    window.document.body.removeEventListener("click", this.recordClick);
   }
 
   componentWillUnmount() {

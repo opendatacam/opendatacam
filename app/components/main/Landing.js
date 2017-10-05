@@ -24,7 +24,6 @@ class Landing extends React.Component {
     return (
       <div className="landing-page">
         <VideoSelector />
-        <Title label="Traffic Cam Landing" />
         <SettingsControl />
         <Video />
         <Canvas />

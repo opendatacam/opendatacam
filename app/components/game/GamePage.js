@@ -28,7 +28,6 @@ class GamePage extends React.Component {
     return (
       <div className="landing-page">
         <VideoSelector />
-        <Title label="Beat the traffic !" />
         <SettingsControl />
         <Canvas />
         <Mask />
