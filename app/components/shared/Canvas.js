@@ -1,15 +1,22 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
-import { fetchRawDetections } from '../../statemanagement/app/RawDetectionsStateManagement';
-import { fetchObjectTracker } from '../../statemanagement/app/ObjectTrackerStateManagement';
+import { scaleDetection } from '../../utils/resolution';
+
+const canvasResolution = {
+  w: 1280,
+  h: 720
+}
+
+const originalResolution = {
+  w: 1920,
+  h: 1080
+}
 
 class Canvas extends Component {
 
   constructor(props) {
     super(props);
-    props.dispatch(fetchObjectTracker());
-    props.dispatch(fetchRawDetections());
     this.lastFrameDrawn = -1;
     this.loopUpdateCanvas = this.loopUpdateCanvas.bind(this);
     this.isUpdatingCanvas = false;
@@ -37,10 +44,11 @@ class Canvas extends Component {
     context.font = "15px Arial";
     context.fillStyle = "#f00";
     detections.map((detection) => {
-      let x = detection.x - detection.w / 2;
-      let y = detection.y - detection.h / 2;
-      context.strokeRect(x, y, detection.w, detection.h);
-      context.fillText(detection.name, x, y-10);
+      let scaledDetection = scaleDetection(detection, canvasResolution, originalResolution);
+      let x = scaledDetection.x - scaledDetection.w / 2;
+      let y = scaledDetection.y - scaledDetection.h / 2;
+      context.strokeRect(x, y, scaledDetection.w, scaledDetection.h);
+      context.fillText(scaledDetection.name, x, y-10);
     });
   }
 
@@ -50,18 +58,19 @@ class Canvas extends Component {
     context.lineWidth = 5;
     context.font = "30px Arial";
     context.fillStyle = "blue";
-    objectTrackerData.map((objectTracked) => {      
-      if(objectTracked.isZombie) {
-        context.fillStyle = `rgba(255, 153, 0, ${objectTracked.zombieOpacity})`;
-        context.strokeStyle = `rgba(255, 153, 0, ${objectTracked.zombieOpacity})`;
+    objectTrackerData.map((objectTracked) => { 
+      let objectTrackedScaled = scaleDetection(objectTracked, canvasResolution, originalResolution);     
+      if(objectTrackedScaled.isZombie) {
+        context.fillStyle = `rgba(255, 153, 0, ${objectTrackedScaled.zombieOpacity})`;
+        context.strokeStyle = `rgba(255, 153, 0, ${objectTrackedScaled.zombieOpacity})`;
       } else {
         context.fillStyle = "blue";
         context.strokeStyle = "blue";
       }
-      let x = objectTracked.x - objectTracked.w / 2;
-      let y = objectTracked.y - objectTracked.h / 2;
-      context.strokeRect(x+5, y+5, objectTracked.w-10, objectTracked.h-10);
-      context.fillText(objectTracked.idDisplay,x + objectTracked.w / 2 - 20,y + objectTracked.h / 2);
+      let x = objectTrackedScaled.x - objectTrackedScaled.w / 2;
+      let y = objectTrackedScaled.y - objectTrackedScaled.h / 2;
+      context.strokeRect(x+5, y+5, objectTrackedScaled.w-10, objectTrackedScaled.h-10);
+      context.fillText(objectTrackedScaled.idDisplay,x + objectTrackedScaled.w / 2 - 20,y + objectTrackedScaled.h / 2);
     });
   }
 
@@ -90,7 +99,9 @@ class Canvas extends Component {
 
   render() { 
     return (
-      <div>
+      <div
+        className={`canvas-container ${!this.props.isVideoReadyToPlay ? 'hidden' : 'visible'}`}
+      >
         {/* Canvas width and height must 
         be set the the yolo detections resolution
         Then it is scaled down to viewport */}
@@ -105,17 +116,25 @@ class Canvas extends Component {
          height="720"
          className="canvas" />
         <style jsx>{`
+          .canvas-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top:0;
+            left:0;
+          }
           .canvas {
             display: block;
             will-change: transform;
             position: absolute;
             top:0;
             left:0;
+            z-index: 2;
           }
 
           @media (min-aspect-ratio: 16/9) {
             .canvas {
-              width: 100vw;
+              width: 100%;
               height: auto;
             }
           }
@@ -123,8 +142,12 @@ class Canvas extends Component {
           @media (max-aspect-ratio: 16/9) {
             .canvas {
               width: auto;
-              height: 100vh;
+              height: 100%;
             }
+          }
+
+          .hidden {
+            display: none;
           }
         `}</style>
       </div>
@@ -139,6 +162,7 @@ export default connect((state) => {
     objectTrackerData: state.objectTracker.get('data'),
     isObjectTrackerDataFetched: state.objectTracker.get('fetched'),
     isPlaying: state.video.get('isPlaying'),
-    showDebugUI: state.settings.get('showDebugUI')
+    showDebugUI: state.settings.get('showDebugUI'),
+    isVideoReadyToPlay: state.video.get('isReadyToPlay')
   }
 })(Canvas);

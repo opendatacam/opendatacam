@@ -1,10 +1,14 @@
 import React from 'react';
+import { connect } from 'react-redux';
 import Video from '../shared/Video'; 
 import Canvas from '../shared/Canvas'; 
 import SettingsControl from '../shared/SettingsControl';
 
 import Title from '../shared/Title';
 import LinkItem from '../shared/LinkItem';
+import VideoSelector from '../shared/VideoSelector';
+
+import { selectDefaultVideo } from '../../statemanagement/app/AppStateManagement';
 
 class Landing extends React.Component {
 
@@ -12,11 +16,14 @@ class Landing extends React.Component {
     super(props);
   }
 
+  componentDidMount() {
+    this.props.dispatch(selectDefaultVideo());
+  }
+
   render () {
     return (
       <div className="landing-page">
-        <LinkItem link="/game" label="Go to game" />
-        <Title label="Traffic Cam Landing" />
+        <VideoSelector />
         <SettingsControl />
         <Video />
         <Canvas />
@@ -25,4 +32,4 @@ class Landing extends React.Component {
   }
 }
 
-export default Landing
+export default connect()(Landing)

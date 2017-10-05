@@ -18,7 +18,6 @@ class DebugUI extends Component {
 
     return (
       <div className="settings-control">
-        <p><strong>DEBUG</strong></p>
         <label>
         Show debug UI
         <input
@@ -29,10 +28,10 @@ class DebugUI extends Component {
         </label>
         <style jsx>{`
           .settings-control {
-            position: absolute;
-            left: 10px;
-            bottom: 10px;
-            z-index: 2;
+            position: fixed;
+            right: 10px;
+            top: 10px;
+            z-index: 10;
             transform: will-change;
             background-color: white;
             padding: 10px;

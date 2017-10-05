@@ -3,7 +3,6 @@ import axios from 'axios';
 
 // Initial state
 const initialState = fromJS({
-  src: "/static/sample/sample-tracker.json",
   data: {},
   isFetching: false,
   fetched: false,
@@ -36,13 +35,13 @@ export function fetchObjectTrackerError(error) {
   };
 }
 
-export function fetchObjectTracker() {
+export function fetchObjectTracker(src) {
   return (dispatch, getState) => {
     return new Promise((resolve, reject) => {
       // Notify UI we are fetching stuff
       dispatch(startFetchingObjectTracker());
 
-      axios.get(getState().objectTracker.get('src')).then((response) => {
+      axios.get(src).then((response) => {
         dispatch(fetchObjectTrackerSuccess(response.data));
         resolve();
       }, (error) => {

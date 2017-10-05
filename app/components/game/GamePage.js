@@ -1,13 +1,17 @@
 import React from 'react';
+import { connect } from 'react-redux';
 
 import Video from '../shared/Video'; 
 import Canvas from '../shared/Canvas'; 
+import Mask from '../shared/Mask'; 
 import SettingsControl from '../shared/SettingsControl';
 
 import Title from '../shared/Title';
-import LinkItem from '../shared/LinkItem';
+import VideoSelector from '../shared/VideoSelector';
 
 import { updateSettings } from '../../statemanagement/app/SettingsStateManagement';
+
+import { selectDefaultVideo } from '../../statemanagement/app/AppStateManagement';
 
 class GamePage extends React.Component {
 
@@ -16,19 +20,21 @@ class GamePage extends React.Component {
     props.dispatch(updateSettings({ showDebugUI: false }));
   }
 
+  componentDidMount() {
+    this.props.dispatch(selectDefaultVideo());
+  }
+
   render () {
-    // TODO ADD <Mask /> component that handles the masking
-    // TODO ADD click recorder manager
     return (
       <div className="landing-page">
-        <LinkItem link="/" label="Go to home" />
-        <Title label="Beat the traffic !" />
+        <VideoSelector />
         <SettingsControl />
-        <Video />
         <Canvas />
+        <Mask />
+        <Video />
       </div>
     )
   }
 }
 
-export default GamePage;
+export default connect()(GamePage);
