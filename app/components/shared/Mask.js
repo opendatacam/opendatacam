@@ -41,6 +41,10 @@ class Mask extends Component {
 
   componentDidMount() {
     this.initClickRecorder();
+
+    // prefetch puff image
+    let img = new Image();
+    img.src = '/static/puff-smoke.png';
   }
 
   componentWillReceiveProps(nextProps) {
