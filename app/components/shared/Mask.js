@@ -119,15 +119,20 @@ class Mask extends Component {
       return;
     }
 
+    let width, height; 
+
     // Map coordinates to canvas coordinates
     if(window.innerWidth / window.innerHeight < 16/9) {
-      const width = window.innerHeight * 1280 / 720;
-      const height = window.innerHeight;
+      width = window.innerHeight * 1280 / 720;
+      height = window.innerHeight;
+    } else {
+      width = window.innerWidth;
+      height = window.innerWidth * 720 / 1280;
+    }
 
-      coordinates = {
-        x: coordinates.x * 1280 / width,
-        y: coordinates.y * 720 / height,
-      }
+    coordinates = {
+      x: coordinates.x * 1280 / width,
+      y: coordinates.y * 720 / height,
     }
 
     this.clicksRecorded.push(coordinates);
