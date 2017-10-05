@@ -11,6 +11,7 @@ class VideoSelector extends Component {
   }
 
   onChange(event) {
+    window.scrollTo(0,0);
     this.props.dispatch(selectVideo(event.target.value));
   }
 
@@ -33,7 +34,7 @@ class VideoSelector extends Component {
         </select>
         <style jsx>{`
           .video-selector {
-            position: absolute;
+            position: fixed;
             z-index: 10;
             top: 5px;
             left: 5px;

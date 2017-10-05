@@ -56,7 +56,7 @@ class Video extends Component {
 
   cleanListeners(el) {
     console.log('Clean previous listeners');
-    el.removeEventListener('canplaythrough', this.handleCanPlayThrough);
+    el.removeEventListener('canplay', this.handleCanPlayThrough);
     el.removeEventListener('play', this.handlePlay);
     el.removeEventListener('pause', this.handlePause);
     el.removeEventListener('ended', this.handleEnded);
@@ -75,7 +75,7 @@ class Video extends Component {
       // Hack because iOS safari won't autoplay via javascript only
       // seems not needed
       // this.videoEl.pause();
-      this.videoEl.addEventListener('canplaythrough', this.handleCanPlayThrough);
+      this.videoEl.addEventListener('canplay', this.handleCanPlayThrough);
       this.videoEl.addEventListener('play', this.handlePlay);
       this.videoEl.addEventListener('pause', this.handlePause);
       this.videoEl.addEventListener('ended', this.handleEnded);
