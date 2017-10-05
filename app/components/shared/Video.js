@@ -128,15 +128,15 @@ class Video extends Component {
 
           .video-container {
             display: flex;
-            height: 100vh;
-            width: 100vw;
+            height: 100%;
+            width: 100%;
             justify-content: center;
             align-items:center;
           }
 
           @media (min-aspect-ratio: 16/9) {
             .video {
-              width: 100vw;
+              width: 100%;
               height: auto;
             }
           }
@@ -144,7 +144,7 @@ class Video extends Component {
           @media (max-aspect-ratio: 16/9) {
             .video {
               width: auto;
-              height: 100vh;
+              height: 100%;
             }
           }
         `}</style>

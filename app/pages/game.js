@@ -3,9 +3,9 @@ import { initStore } from '../statemanagement/store'
 import withRedux from 'next-redux-wrapper'
 
 import Layout from '../components/shared/Layout';
-import Game from '../components/game/GamePage'; 
+import GamePage from '../components/game/GamePage'; 
 
-class GamePage extends React.Component {
+class Game extends React.Component {
   static getInitialProps ({ store, pathname, query, asPath }) {
     // console.log('getInitialProps');
   }

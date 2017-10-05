@@ -99,7 +99,7 @@ class Canvas extends Component {
 
   render() { 
     return (
-      <div>
+      <div className="canvas-container">
         {/* Canvas width and height must 
         be set the the yolo detections resolution
         Then it is scaled down to viewport */}
@@ -114,6 +114,13 @@ class Canvas extends Component {
          height="720"
          className="canvas" />
         <style jsx>{`
+          .canvas-container {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top:0;
+            left:0;
+          }
           .canvas {
             display: block;
             will-change: transform;
@@ -125,7 +132,7 @@ class Canvas extends Component {
 
           @media (min-aspect-ratio: 16/9) {
             .canvas {
-              width: 100vw;
+              width: 100%;
               height: auto;
             }
           }
@@ -133,7 +140,7 @@ class Canvas extends Component {
           @media (max-aspect-ratio: 16/9) {
             .canvas {
               width: auto;
-              height: 100vh;
+              height: 100%;
             }
           }
         `}</style>
