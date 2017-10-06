@@ -28,7 +28,6 @@ class Canvas extends Component {
 
   componentWillReceiveProps(nextProps) {
     if(nextProps.isPlaying === true &&
-       nextProps.areRawDetectionsFetched === true &&
        nextProps.isObjectTrackerDataFetched === true) {
       if(!this.isUpdatingCanvas) {
         console.log('Start loop update canvas');
@@ -38,6 +37,11 @@ class Canvas extends Component {
     }
 
     // TODO IF VIDEO PAUSES, STOP UPDATING CANVAS
+  }
+
+  componentDidMount() {
+    // init global var
+    window.itemsMasked = [];
   }
 
   drawRawDetections(context, detections) {

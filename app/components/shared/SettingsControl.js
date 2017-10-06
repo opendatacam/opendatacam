@@ -18,6 +18,17 @@ class DebugUI extends Component {
 
     return (
       <div className="settings-control">
+        {this.props.isObjectTrackerDataFetching || !this.props.isVideoReadyToPlay &&
+          <div>
+          {this.props.isObjectTrackerDataFetching &&
+            <p>Fetching Tracker data...</p>
+          }
+          {this.props.isObjectTrackerDataFetched &&
+            <p>Tracking data fetched</p>
+          }
+          <p>Video ready: {this.props.isVideoReadyToPlay ? 'true' : 'false'}</p>
+          </div>
+        }
         <label>
         Show debug UI
         <input
@@ -45,6 +56,9 @@ class DebugUI extends Component {
 
 export default connect((state) => {
   return {
-    settings: state.settings.toJS()
+    settings: state.settings.toJS(),
+    isObjectTrackerDataFetched: state.objectTracker.get('fetched'),
+    isObjectTrackerDataFetching: state.objectTracker.get('isFetching'),
+    isVideoReadyToPlay: state.video.get('isReadyToPlay')
   }
 })(DebugUI);
