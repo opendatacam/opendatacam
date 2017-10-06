@@ -4,6 +4,7 @@ import axios from 'axios';
 import { fetchRawDetections } from './RawDetectionsStateManagement';
 import { fetchObjectTracker } from './ObjectTrackerStateManagement';
 import { setVideoSrc } from './VideoStateManagement';
+import { resetScore } from './GameStateManagement';
 
 // Initial state
 const initialState = fromJS({
@@ -113,6 +114,9 @@ export function selectVideo(name) {
       // Fetch detection and object tracking data
       dispatch(fetchRawDetections(getRawDetectionPath(videoSelected.get('name'), videoSelected.get('vimeoId'))));
       dispatch(fetchObjectTracker(getTrackerDataPath(videoSelected.get('name'), videoSelected.get('vimeoId'))));
+    
+      // Reset Score
+      dispatch(resetScore());
     });
   }
 }

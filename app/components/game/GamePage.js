@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 
 import Video from '../shared/Video'; 
 import Canvas from '../shared/Canvas'; 
-import Mask from '../shared/Mask'; 
+import Mask from './Mask'; 
 import SettingsControl from '../shared/SettingsControl';
 import TrackerUI from '../shared/TrackerUI';
 

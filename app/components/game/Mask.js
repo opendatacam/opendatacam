@@ -1,10 +1,13 @@
-import { Component } from 'react';
+import { PureComponent } from 'react';
 import { connect } from 'react-redux';
 
 import Clippath from './Clippath';
 import PuffAnimation from './PuffAnimation';
+import GameCounter from './GameCounter';
 
 import { scaleDetection } from '../../utils/resolution';
+
+import { incrementScore } from '../../statemanagement/app/GameStateManagement';
 
 import { getAverageImgPath } from '../../statemanagement/app/AppStateManagement';
 
@@ -18,7 +21,7 @@ const originalResolution = {
   h: 1080
 }
 
-class Mask extends Component {
+class Mask extends PureComponent {
 
   constructor(props) {
     super(props);
@@ -112,6 +115,7 @@ class Mask extends Component {
                           id: potentialObjectToMask.id
                         }]
                       });
+                      this.props.dispatch(incrementScore())
                     }
                 });
               }
@@ -181,6 +185,7 @@ class Mask extends Component {
 
     return (
       <div className="mask-container">
+        <GameCounter score={this.state.score} />
         <svg
           id="average-img"
           preserveAspectRatio="xMinYMax meet"

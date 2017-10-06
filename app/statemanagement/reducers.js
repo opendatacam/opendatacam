@@ -4,11 +4,13 @@ import rawDetections from './app/RawDetectionsStateManagement';
 import video from './app/VideoStateManagement';
 import settings from './app/SettingsStateManagement';
 import app from './app/AppStateManagement';
+import game from './app/GameStateManagement';
 
 export default combineReducers({
   app,
   objectTracker,
   rawDetections,
   video,
-  settings
+  settings,
+  game
 });
