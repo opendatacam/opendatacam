@@ -87,6 +87,7 @@ class Canvas extends Component {
 
     objectTrackerDataForThisFrame.filter((objectTracked) => {
       return (
+        !window.itemsMasked.find((itemMasked) => itemMasked.id === objectTracked.id) &&
         objectTracked.isZombie !== true &&
         ItemsToDisplay.indexOf(objectTracked.name) > -1
       )

@@ -45,6 +45,9 @@ class Mask extends Component {
     // prefetch puff image
     let img = new Image();
     img.src = '/static/puff-smoke.svg';
+
+    // init global var
+    window.itemsMasked = [];
   }
 
   componentWillReceiveProps(nextProps) {
@@ -116,6 +119,7 @@ class Mask extends Component {
           });
           this.clicksRecorded = [];
           this.setState({ masks: objectsMaskedUpdated });
+          window.itemsMasked = objectsMaskedUpdated;
         }
     }
     requestAnimationFrame(this.loopUpdateMasks.bind(this));
