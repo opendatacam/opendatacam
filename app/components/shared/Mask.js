@@ -99,10 +99,10 @@ class Mask extends Component {
               // Look if clicks to disappear things exists for this object
               if(this.clicksRecorded.length > 0) {
                 this.clicksRecorded.forEach((click) => {
-                  if(click.x >= potentialObjectToMask.x &&
-                    click.x <= potentialObjectToMask.x + potentialObjectToMask.w &&
-                    click.y >= potentialObjectToMask.y &&
-                    click.y <= potentialObjectToMask.y + potentialObjectToMask.h) {
+                  if(click.x >= potentialObjectToMask.x + ENLARGE_SIZE &&
+                    click.x <= potentialObjectToMask.x + potentialObjectToMask.w - ENLARGE_SIZE &&
+                    click.y >= potentialObjectToMask.y + ENLARGE_SIZE &&
+                    click.y <= potentialObjectToMask.y + potentialObjectToMask.h - ENLARGE_SIZE) {
                       console.log(`${potentialObjectToMask.idDisplay} clicked !`)
                       objectsMaskedUpdated.push(potentialObjectToMask);
                       this.setState({
