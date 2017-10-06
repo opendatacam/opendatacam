@@ -74,8 +74,6 @@ const initialState = fromJS({
 const SELECT_VIDEO = 'App/SELECT_VIDEO'
 
 let pathStatic = '/static/detections';
-// When static exporting use that path for static stuff
-// pathStatic = "https://static-dlitfwoosr.now.sh/detections"
 
 export function getRawDetectionPath(videoName) {
   return `${pathStatic}/${videoName}/rawdetections.txt`;
