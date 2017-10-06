@@ -69,6 +69,7 @@ export default function RawDetectionsReducer(state = initialState, action = {}) 
       return state.set('isFetching', true)
                   .set('fetched', false)
                   .set('error', null)
+                  .set('data', {});
     case FETCH_RAWDETECTIONS_SUCCESS:
       return state.set('isFetching', false)
                   .set('fetched', true)
