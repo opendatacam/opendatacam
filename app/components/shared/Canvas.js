@@ -138,7 +138,7 @@ class Canvas extends Component {
       // context.strokeRect(square.x, square.y, square.w, square.h);
 
       // Draw emotji
-      context.font = "25px sans-serif";
+      context.font = "18px sans-serif";
       context.textAlign="center"; 
       context.textBaseline = "middle";
       let icon = "🚗";
