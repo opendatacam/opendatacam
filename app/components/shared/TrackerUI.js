@@ -1,9 +1,16 @@
+/* 
+   THIS IMPLEMENTATION IS USING DIVS AND IS SLOWER THAN DRAWING ON THE CANVAS
+*/
+
+
 import { Component } from 'react';
 import { connect } from 'react-redux';
 
 import { scaleDetection } from '../../utils/resolution';
 
-const videoResolution = {
+import EmotjiTracker from '../shared/EmotjiTracker';
+
+const canvasResolution = {
   w: 1280,
   h: 720
 }
@@ -13,6 +20,8 @@ const originalResolution = {
   h: 1080
 }
 
+const ItemsToDisplay = ["car","bike","truck","motorbike"];
+
 class TrackerUI extends Component {
 
   constructor(props) {
@@ -20,6 +29,10 @@ class TrackerUI extends Component {
     this.lastFrameDrawn = -1;
     this.loopUpdateTrackerUI = this.loopUpdateTrackerUI.bind(this);
     this.isUpdatingTrackerUI = false;
+
+    this.state = {
+      trackedItems : []
+    }
   }
 
   // TODO IMPLEMENT COMPONENT UNMOUNT TO CLEAN UP STUFF
@@ -37,14 +50,29 @@ class TrackerUI extends Component {
     // TODO IF VIDEO PAUSES, STOP UPDATING CANVAS
   }
 
+  compute(objectTrackerDataForThisFrame) {
+    return objectTrackerDataForThisFrame
+    .filter((objectTracked) => {
+      return (
+        objectTracked.isZombie !== true &&
+        ItemsToDisplay.indexOf(objectTracked.name) > -1
+      )
+    })
+    .map((objectTracked) => scaleDetection(objectTracked, canvasResolution, originalResolution))
+  }
+
   loopUpdateTrackerUI() {
     if(window.currentFrame &&
        this.lastFrameDrawn !== window.currentFrame) {
 
       // Draw objectTracker data
       let objectTrackerDataForThisFrame = this.props.objectTrackerData[window.currentFrame];
-      if(this.props.showDebugUI && objectTrackerDataForThisFrame) {
-        this.drawObjectTrackerData(this.canvasContext, objectTrackerDataForThisFrame);
+      if(objectTrackerDataForThisFrame) {
+
+        // Update items 
+        this.setState({
+          trackedItems: this.compute(objectTrackerDataForThisFrame)
+        });
       }
 
       this.lastFrameDrawn = window.currentFrame;
@@ -57,7 +85,13 @@ class TrackerUI extends Component {
       <div
         className={`trackerui-container ${!this.props.isVideoReadyToPlay ? 'hidden' : 'visible'}`}
       >
-        
+        {this.state.trackedItems.map((trackedItem) => 
+          <EmotjiTracker
+            key={trackedItem.id}
+            x={trackedItem.x}
+            y={trackedItem.y - 10}
+            type={trackedItem.name} />
+        )}
         <style jsx>{`
           .trackerui-container {
             width: 100%;

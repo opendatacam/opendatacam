@@ -92,6 +92,11 @@ class Canvas extends Component {
         this.drawObjectTrackerData(this.canvasContext, objectTrackerDataForThisFrame);
       }
 
+      // Draw tracker ui data
+      if(objectTrackerDataForThisFrame) {
+        this.drawTrackerUIData(this.canvasContext, objectTrackerDataForThisFrame);
+      }
+
       this.lastFrameDrawn = window.currentFrame;
     }
     requestAnimationFrame(this.loopUpdateCanvas.bind(this));

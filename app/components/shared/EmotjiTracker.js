@@ -25,8 +25,11 @@ class EmotjiTracker extends Component {
           {this.props.type === 'bicycle' &&
             <span>🚴</span>
           }
-          {this.props.type === 'bicycle' &&
+          {this.props.type === 'truck' &&
             <span>🚚</span>
+          }
+          {this.props.type === 'motorbike' &&
+            <span>🏍️</span>
           }
         </div>
         <div className="emotji-tracker-foot">

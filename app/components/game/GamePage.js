@@ -5,6 +5,7 @@ import Video from '../shared/Video';
 import Canvas from '../shared/Canvas'; 
 import Mask from '../shared/Mask'; 
 import SettingsControl from '../shared/SettingsControl';
+import TrackerUI from '../shared/TrackerUI';
 
 import Title from '../shared/Title';
 import VideoSelector from '../shared/VideoSelector';
@@ -30,6 +31,7 @@ class GamePage extends React.Component {
         <VideoSelector />
         <SettingsControl />
         <Canvas />
+        {/* <TrackerUI /> */}
         <Mask />
         <Video />
       </div>
