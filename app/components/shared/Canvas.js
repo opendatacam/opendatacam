@@ -83,9 +83,9 @@ class Canvas extends Component {
   drawTrackerUIData(context, objectTrackerDataForThisFrame) {
     context.globalAlpha = 1;
 
-    const SQUARE_SIZE = 50;
+    const SQUARE_SIZE = 40;
     const SQUARE_BORDER = 2;
-    const FOOT_LENGTH = 30;
+    const FOOT_LENGTH = 25;
     const FOOT_TICKNESS = 4;
     const FOOT_CIRCLE_RADIUS = 5;
 
@@ -101,7 +101,7 @@ class Canvas extends Component {
 
       // Set params
       context.strokeStyle = "#E3E3E3";
-      context.fillStyle = "#FFFFFF";
+      context.fillStyle = "#00CCFF";
       context.lineWidth = 2;
 
       // Draw circle
@@ -117,11 +117,12 @@ class Canvas extends Component {
       // Draw foot
       let foot = {
         x: circle.x - FOOT_TICKNESS / 2,
-        y: circle.y - FOOT_LENGTH,
+        y: circle.y - FOOT_LENGTH - FOOT_CIRCLE_RADIUS,
         w: FOOT_TICKNESS,
         h: FOOT_LENGTH
       }
 
+      context.fillStyle = "#FFFFFF";
       context.fillRect(foot.x, foot.y, foot.w, foot.h);
 
       // Draw square
@@ -133,8 +134,8 @@ class Canvas extends Component {
       }
 
       
-      context.fillRect(square.x, square.y, square.w, square.h);
-      context.strokeRect(square.x, square.y, square.w, square.h);
+      // context.fillRect(square.x, square.y, square.w, square.h);
+      // context.strokeRect(square.x, square.y, square.w, square.h);
 
       // Draw emotji
       context.font = "25px sans-serif";
