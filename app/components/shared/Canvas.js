@@ -229,6 +229,8 @@ class Canvas extends Component {
             }
           }
 
+          {/* TODO CHANGE THIS VISIBILITY TRICK BY HAVING A LOADING SCREEN
+          THAT IS ON TOP OF THE VIDEO */}
           .hidden {
             display: none;
           }
