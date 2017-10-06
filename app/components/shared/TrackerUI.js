@@ -52,13 +52,13 @@ class TrackerUI extends Component {
 
   compute(objectTrackerDataForThisFrame) {
     return objectTrackerDataForThisFrame
-    .filter((objectTracked) => {
-      return (
-        objectTracked.isZombie !== true &&
-        ItemsToDisplay.indexOf(objectTracked.name) > -1
-      )
-    })
-    .map((objectTracked) => scaleDetection(objectTracked, canvasResolution, originalResolution))
+      .filter((objectTracked) => {
+        return (
+          objectTracked.isZombie !== true &&
+          ItemsToDisplay.indexOf(objectTracked.name) > -1
+        )
+      })
+      .map((objectTracked) => scaleDetection(objectTracked, canvasResolution, originalResolution))
   }
 
   loopUpdateTrackerUI() {
