@@ -44,7 +44,7 @@ class Mask extends Component {
 
     // prefetch puff image
     let img = new Image();
-    img.src = '/static/puff-smoke.png';
+    img.src = '/static/puff-smoke.svg';
   }
 
   componentWillReceiveProps(nextProps) {
