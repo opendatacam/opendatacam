@@ -115,7 +115,13 @@ class Mask extends PureComponent {
                           id: potentialObjectToMask.id
                         }]
                       });
-                      this.props.dispatch(incrementScore())
+                      this.props.dispatch(incrementScore());
+                      // Play puff sound
+                      if(this.puffSoundEl && this.props.soundEnabled) { 
+                        this.puffSoundEl.pause();
+                        this.puffSoundEl.currentTime = 0
+                        this.puffSoundEl.play();
+                      }
                     }
                 });
               }
@@ -213,6 +219,12 @@ class Mask extends PureComponent {
             removePuffAnimation={this.removePuffAnimation}
           />
         )}
+        <audio
+          preload="true"
+          ref={(el) => this.puffSoundEl = el}
+        >
+          <source src="/static/puff.mp3" type="audio/mpeg" />
+        </audio>
         <style jsx>{`
           .mask-container {
             width: 100%;
@@ -267,6 +279,7 @@ export default connect((state) => {
     isObjectTrackerDataFetched: state.objectTracker.get('fetched'),
     isPlaying: state.video.get('isPlaying'),
     averageImgSrc: getAverageImgPath(selectedVideo.get('name'), selectedVideo.get('vimeoId')),
-    isVideoReadyToPlay: state.video.get('isReadyToPlay')
+    isVideoReadyToPlay: state.video.get('isReadyToPlay'),
+    soundEnabled: state.settings.get('soundEnabled')
   }
 })(Mask);

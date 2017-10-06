@@ -1,30 +1,24 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
+import { turnSoundOn, turnSoundOff } from '../../statemanagement/app/SettingsStateManagement';
+
 class Sound extends Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      playing: false
-    }
 
     this.toggleSound = this.toggleSound.bind(this);
   }
 
   toggleSound() {
     if(this.el) {
-      if(this.state.playing) {
+      if(this.props.soundEnabled) {
         this.el.pause();
-        this.setState({
-          playing: false
-        });
+        this.props.dispatch(turnSoundOff());
       } else {
         this.el.play();
-        this.setState({
-          playing: true
-        });
+        this.props.dispatch(turnSoundOn());
       }
     }
   }
@@ -32,7 +26,7 @@ class Sound extends Component {
   render() {
     return (
       <div 
-        className={`audio-button ${this.state.playing ? 'on' : 'off'} ${!this.props.isVideoReadyToPlay ? 'hidden' : 'visible'}`}
+        className={`audio-button ${this.props.soundEnabled ? 'on' : 'off'} ${!this.props.isVideoReadyToPlay ? 'hidden' : 'visible'}`}
         onClick={this.toggleSound}
       >
         <audio
@@ -81,6 +75,7 @@ class Sound extends Component {
 
 export default connect((state) => {
   return {
-    isVideoReadyToPlay: state.video.get('isReadyToPlay')
+    isVideoReadyToPlay: state.video.get('isReadyToPlay'),
+    soundEnabled: state.settings.get('soundEnabled')
   }
 })(Sound);
