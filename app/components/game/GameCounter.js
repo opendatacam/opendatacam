@@ -8,7 +8,7 @@ class GameCounter extends Component {
       <div 
         className="game-counter"
       >
-        {this.props.score} 🚗
+        <span className="text-shadow">{this.props.score}</span> 🚗
         <style jsx>{`
           .game-counter {
             position: fixed;
@@ -20,6 +20,10 @@ class GameCounter extends Component {
             z-index: 5;
             transform: will-change;
             font-family: sans-serif;
+          }
+
+          .text-shadow {
+            text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;  
           }
         `}</style>
       </div>
