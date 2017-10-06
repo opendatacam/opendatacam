@@ -65,8 +65,8 @@ class Mask extends Component {
     if(window.currentFrame &&
       this.lastFrameDrawn !== window.currentFrame) {
 
-        // Enlarge bbox of 30px
-        const ENLARGE_SIZE = 30;
+        // Enlarge bbox of 25px
+        const ENLARGE_SIZE = 25;
 
         let objectTrackerDataForThisFrame = this.props.objectTrackerData[window.currentFrame];
         if(objectTrackerDataForThisFrame) {
