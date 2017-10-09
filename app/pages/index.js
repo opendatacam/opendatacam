@@ -3,7 +3,7 @@ import { initStore } from '../statemanagement/store'
 import withRedux from 'next-redux-wrapper'
 
 import Layout from '../components/shared/Layout';
-import Landing from '../components/main/Landing'; 
+import GamePage from '../components/game/GamePage'; 
 
 class Index extends React.Component {
   static getInitialProps ({ store, pathname, query, asPath }) {
@@ -13,7 +13,7 @@ class Index extends React.Component {
   render () {
     return (
       <Layout>
-        <Landing />
+        <GamePage />
       </Layout>
     )
   }
