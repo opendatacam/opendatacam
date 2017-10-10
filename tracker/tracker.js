@@ -2,16 +2,13 @@ var ItemTracked = require('./ItemTracked').ItemTracked;
 var kdTree = require('./lib/kdTree-min.js').kdTree;
 
 
-// A dictionary of itemTracked 
+// A dictionary of itemTracked currently
 // key: uuid
 // value: ItemTracked object
 var mapOfItemsTracked = new Map();
 
-
-//For stats only , to count need to have been matched at least MATCHED_MIN time
-var nbItemsReallyMatched = 0;
-var MATCHED_MIN = 30;
-//End stats only
+// A dictionnary keeping memory of all tracked object (even after they disappear)
+var mapOfAllItemsTracked = new Map();
 
 // This should be big
 var KTREESEARCH_LIMIT = 10000;
@@ -58,7 +55,7 @@ var computeDistance = function(item1, item2) {
 }
 
 
-exports.updateTrackedItemsWithNewFrame = function(detectionsOfThisFrame) {
+exports.updateTrackedItemsWithNewFrame = function(detectionsOfThisFrame, frameNb) {
 
   // A kd-tree containing all the itemtracked
   // Need to rebuild on each frame, because itemTracked positions have changed
@@ -74,7 +71,7 @@ exports.updateTrackedItemsWithNewFrame = function(detectionsOfThisFrame) {
   if(mapOfItemsTracked.size === 0) {
     // Just add every detected item as item Tracked
     detectionsOfThisFrame.forEach(function(itemDetected) {
-      var newItemTracked = ItemTracked(itemDetected, DEFAULT_UNMATCHEDFRAMES_TOLERANCE)
+      var newItemTracked = ItemTracked(itemDetected, frameNb, DEFAULT_UNMATCHEDFRAMES_TOLERANCE)
       // Add it to the map
       mapOfItemsTracked.set(newItemTracked.id, newItemTracked)
       // Add it to the kd tree
@@ -98,14 +95,14 @@ exports.updateTrackedItemsWithNewFrame = function(detectionsOfThisFrame) {
         // Update properties of tracked object
         var updatedTrackedItemProperties = detectionsOfThisFrame[indexClosestNewDetectedItem]
         mapOfItemsTracked.get(itemTracked.id)
-                        .update(updatedTrackedItemProperties)
+                        .update(updatedTrackedItemProperties, frameNb)
       }
     });
 
     // Add any unmatched items as new trackedItems
     matchedList.forEach(function(matched, index) {
       if(!matched) {
-        var newItemTracked = ItemTracked(detectionsOfThisFrame[index], DEFAULT_UNMATCHEDFRAMES_TOLERANCE)
+        var newItemTracked = ItemTracked(detectionsOfThisFrame[index], frameNb, DEFAULT_UNMATCHEDFRAMES_TOLERANCE)
         // Add it to the map
         mapOfItemsTracked.set(newItemTracked.id, newItemTracked)
         // Add it to the kd tree
@@ -135,7 +132,7 @@ exports.updateTrackedItemsWithNewFrame = function(detectionsOfThisFrame) {
 
         itemTrackedMatched.makeUnavailable();
         // Update properties
-        itemTrackedMatched.update(newItemDetected);
+        itemTrackedMatched.update(newItemDetected, frameNb);
       }
 
     });
@@ -144,15 +141,12 @@ exports.updateTrackedItemsWithNewFrame = function(detectionsOfThisFrame) {
     // and delete stalled itemTracked
     mapOfItemsTracked.forEach(function(itemTracked) {
       if(itemTracked.available) {
-        itemTracked.countDown();
+        itemTracked.countDown(frameNb);
         itemTracked.updateTheoricalPosition();
         if(itemTracked.isDead()) {
           mapOfItemsTracked.delete(itemTracked.id);
           treeItemsTracked.remove(itemTracked);
-          // If itemTracked was matched more than 30 times, count it
-          if(itemTracked.nbTimeMatched >= MATCHED_MIN) {
-            nbItemsReallyMatched++;
-          }
+          mapOfAllItemsTracked.set(itemTracked.id, itemTracked);
         }
       }
     });
@@ -165,15 +159,10 @@ exports.getJSONOfTrackedItems = function() {
   });
 };
 
-
-exports.printNbOfItemMatchedOverTime = function() {
-  // Add the ones still in the tree
-  Array.from(mapOfItemsTracked.values()).forEach((itemTracked) => {
-    if(itemTracked.nbTimeMatched >= MATCHED_MIN) {
-      nbItemsReallyMatched++;
-    }
-  })
-  console.log(`Nb items really  matched ${nbItemsReallyMatched}`);
-  console.log(`Nb item matched: ${Array.from(mapOfItemsTracked.values()).pop().idDisplay}`);
+exports.getJSONOfAllTrackedItems = function() {
+  return Array.from(mapOfAllItemsTracked.values()).map(function(itemTracked) {
+    return itemTracked.toJSONGenericInfo();
+  });
 };
+
 

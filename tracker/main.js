@@ -4,7 +4,7 @@ var Tracker = require('./Tracker');
 yolo = {};
 tracked = {};
 
-var file = "../app/static/detections/level_1/rawdetections";
+var path = "../app/static/detections/level_1";
 
 var IGNORED_AREAS = [{
   xMin: 0,
@@ -26,8 +26,6 @@ function ignoreAreas(detections, ignoredAreas) {
          detection.x < ignoredArea.xMax &&
         detection.y > ignoredArea.yMin &&
         detection.y < ignoredArea.yMax) {
-        console.log('ignore');
-        console.log(detection);
         insideIgnoredArea = true;
       }
     });
@@ -35,7 +33,7 @@ function ignoreAreas(detections, ignoredAreas) {
   });
 }
 
-fs.readFile(`${file}.txt`, function(err, f){
+fs.readFile(`${path}/rawdetections.txt`, function(err, f){
     var lines = f.toString().split('\n');
     lines.forEach(function(l) {
       try {
@@ -47,19 +45,23 @@ fs.readFile(`${file}.txt`, function(err, f){
       }
     });
 
-    
 
-    Object.keys(yolo).forEach(function(timecode) {
+    Object.keys(yolo).forEach(function(frameNb) {
       // Remove unwanted areas
-      let detectionsForThisFrame = ignoreAreas(yolo[timecode], IGNORED_AREAS);
+      let detectionsForThisFrame = ignoreAreas(yolo[frameNb], IGNORED_AREAS);
 
-      Tracker.updateTrackedItemsWithNewFrame(detectionsForThisFrame);
-      tracked[timecode] = Tracker.getJSONOfTrackedItems();
+      Tracker.updateTrackedItemsWithNewFrame(detectionsForThisFrame, frameNb);
+      tracked[frameNb] = Tracker.getJSONOfTrackedItems();
     });
 
-    Tracker.printNbOfItemMatchedOverTime();
+    tracked["general"] = Tracker.getJSONOfAllTrackedItems();
 
-    fs.writeFile(`${file}_tracker.json`, JSON.stringify(tracked), function() {
+    const NB_ACTIVE_FRAME = 60;
+    console.log(`Nb items that appeared then dissapeared and have been matched for more than ${NB_ACTIVE_FRAME} frames`);
+    console.log(tracked["general"].filter((item) => item.nbActiveFrame > NB_ACTIVE_FRAME).length);
+
+
+    fs.writeFile(`${path}/tracker.json`, JSON.stringify(tracked), function() {
       console.log('tracked data wrote');
     });
 });
