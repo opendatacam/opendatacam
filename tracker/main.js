@@ -50,7 +50,7 @@ fs.readFile(`${path}/rawdetections.txt`, function(err, f){
       // Remove unwanted areas
       let detectionsForThisFrame = ignoreAreas(yolo[frameNb], IGNORED_AREAS);
 
-      Tracker.updateTrackedItemsWithNewFrame(detectionsForThisFrame, frameNb);
+      Tracker.updateTrackedItemsWithNewFrame(detectionsForThisFrame, parseInt(frameNb, 10));
       tracked[frameNb] = Tracker.getJSONOfTrackedItems();
     });
 

@@ -7,7 +7,7 @@ import GameCounter from './GameCounter';
 
 import { scaleDetection } from '../../utils/resolution';
 
-import { incrementScore } from '../../statemanagement/app/GameStateManagement';
+import { incrementScore, addMissedItem } from '../../statemanagement/app/GameStateManagement';
 
 import { getAverageImgPath } from '../../statemanagement/app/AppStateManagement';
 
@@ -62,7 +62,7 @@ class Mask extends PureComponent {
   loopUpdateMasks() {
     if(window.currentFrame &&
       this.lastFrameDrawn !== window.currentFrame) {
-
+        this.lastFrameDrawn = window.currentFrame;
         // Enlarge bbox of 25px
         const ENLARGE_SIZE = 25;
 
@@ -126,6 +126,20 @@ class Mask extends PureComponent {
           this.setState({ masks: objectsMaskedUpdated });
           window.itemsMasked = objectsMaskedUpdated;
         }
+
+      // Update counter of things missed this frame
+      // get list of items that disappear this frame
+      const itemsDisappearingThisFrame = this.props.objectTrackerData["general"]
+                                            .filter((objectTracked) => 
+                                            objectTracked.disappearFrame === window.currentFrame &&
+                                            objectTracked.nbActiveFrame > 40
+                                          )
+      if(itemsDisappearingThisFrame.length > 0) {
+        console.log(`Frame ${window.currentFrame}, ${itemsDisappearingThisFrame.length} dissapearing:`);
+        itemsDisappearingThisFrame.forEach((itemDisappearing) => {
+          console.log(itemDisappearing.idDisplay);
+        });
+      }
     }
     requestAnimationFrame(this.loopUpdateMasks.bind(this));
   }
