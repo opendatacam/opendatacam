@@ -33,6 +33,7 @@ exports.ItemTracked = function(properties, frameNb, DEFAULT_UNMATCHEDFRAMES_TOLE
   itemTracked.isZombie = false;
   itemTracked.appearFrame = frameNb;
   itemTracked.disappearFrame = null;
+  itemTracked.disappearArea = {};
   // ==== Public =====
   itemTracked.x = properties.x;
   itemTracked.y = properties.y;
@@ -57,6 +58,7 @@ exports.ItemTracked = function(properties, frameNb, DEFAULT_UNMATCHEDFRAMES_TOLE
     // if it was zombie and disappear frame was set, reset it to null
     if(this.disappearFrame) {
       this.disappearFrame = null;
+      this.disappearArea = {}
     }
     this.isZombie = false;
     this.nbTimeMatched += 1;
@@ -82,6 +84,10 @@ exports.ItemTracked = function(properties, frameNb, DEFAULT_UNMATCHEDFRAMES_TOLE
     // Set frame disappear number 
     if(this.disappearFrame === null) {
       this.disappearFrame = frameNb;
+      this.disappearArea = {
+        x: this.x,
+        y: this.y
+      }
     }
     this.frameUnmatchedLeftBeforeDying--;
     this.isZombie = true;
@@ -128,6 +134,7 @@ exports.ItemTracked = function(properties, frameNb, DEFAULT_UNMATCHEDFRAMES_TOLE
       idDisplay: this.idDisplay,
       appearFrame: this.appearFrame,
       disappearFrame: this.disappearFrame,
+      disappearArea: this.disappearArea,
       nbActiveFrame: this.disappearFrame - this.appearFrame
     }
   }
