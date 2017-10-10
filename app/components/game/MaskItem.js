@@ -9,6 +9,8 @@ class MaskItem extends Component {
         y={this.props.mask.y}
         stroke="#000000"
         strokeMiterlimit="10"
+        rx="20"
+        ry="20"
         width={this.props.mask.w}
         height={this.props.mask.h}
       ></rect>
