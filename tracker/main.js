@@ -6,6 +6,35 @@ tracked = {};
 
 var file = "../app/static/detections/level_1/rawdetections";
 
+var IGNORED_AREAS = [{
+  xMin: 0,
+  yMin: 0,
+  xMax: 308,
+  yMax: 251
+},{
+  xMin: 628,
+  yMin: 0,
+  xMax: 1280,
+  yMax: 156
+}];
+
+function ignoreAreas(detections, ignoredAreas) {
+  return detections.filter((detection) => {
+    let insideIgnoredArea = false;
+    ignoredAreas.map((ignoredArea) => {
+      if(detection.x > ignoredArea.xMin &&
+         detection.x < ignoredArea.xMax &&
+        detection.y > ignoredArea.yMin &&
+        detection.y < ignoredArea.yMax) {
+        console.log('ignore');
+        console.log(detection);
+        insideIgnoredArea = true;
+      }
+    });
+    return !insideIgnoredArea;
+  });
+}
+
 fs.readFile(`${file}.txt`, function(err, f){
     var lines = f.toString().split('\n');
     lines.forEach(function(l) {
@@ -18,8 +47,13 @@ fs.readFile(`${file}.txt`, function(err, f){
       }
     });
 
+    
+
     Object.keys(yolo).forEach(function(timecode) {
-      Tracker.updateTrackedItemsWithNewFrame(yolo[timecode]);
+      // Remove unwanted areas
+      let detectionsForThisFrame = ignoreAreas(yolo[timecode], IGNORED_AREAS);
+
+      Tracker.updateTrackedItemsWithNewFrame(detectionsForThisFrame);
       tracked[timecode] = Tracker.getJSONOfTrackedItems();
     });
 
