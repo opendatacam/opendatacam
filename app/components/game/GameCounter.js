@@ -8,7 +8,8 @@ class GameCounter extends Component {
       <div 
         className="game-counter"
       >
-        <span className="text-shadow">{this.props.score}</span> 🚗
+        <div><span className="text-shadow">{this.props.score}</span> 🚗</div>
+        <div><span className="text-shadow">{this.props.nbMissed}</span> 💣</div>
         <style jsx>{`
           .game-counter {
             position: fixed;
@@ -33,6 +34,7 @@ class GameCounter extends Component {
 
 export default connect((state) => {
   return {
-    score: state.game.get('score')
+    score: state.game.get('score'),
+    nbMissed: state.game.get('missedItems').size
   }
 })(GameCounter);

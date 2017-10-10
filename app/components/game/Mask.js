@@ -7,7 +7,7 @@ import GameCounter from './GameCounter';
 
 import { scaleDetection } from '../../utils/resolution';
 
-import { incrementScore, addMissedItem } from '../../statemanagement/app/GameStateManagement';
+import { incrementScore, addMissedItem, addKilledItem } from '../../statemanagement/app/GameStateManagement';
 
 import { getAverageImgPath } from '../../statemanagement/app/AppStateManagement';
 
@@ -111,6 +111,7 @@ class Mask extends PureComponent {
                         }]
                       });
                       this.props.dispatch(incrementScore());
+                      this.props.dispatch(addKilledItem(potentialObjectToMask.id));
                       // Play puff sound
                       if(this.puffSoundEl && this.props.soundEnabled) { 
                         this.puffSoundEl.pause();
@@ -135,10 +136,15 @@ class Mask extends PureComponent {
                                             objectTracked.nbActiveFrame > 40
                                           )
       if(itemsDisappearingThisFrame.length > 0) {
-        console.log(`Frame ${window.currentFrame}, ${itemsDisappearingThisFrame.length} dissapearing:`);
+        // Add to missed list the one we haven't clicked
         itemsDisappearingThisFrame.forEach((itemDisappearing) => {
-          console.log(itemDisappearing.idDisplay);
+          if(!this.props.killedItems.includes(itemDisappearing.id)) {
+            console.log(`Frame ${window.currentFrame}, ${itemDisappearing.idDisplay} missed:`);
+            this.props.dispatch(addMissedItem(itemDisappearing.id));
+          }
         });
+        
+        
       }
     }
     requestAnimationFrame(this.loopUpdateMasks.bind(this));
@@ -290,6 +296,7 @@ export default connect((state) => {
     averageImgSrc: getAverageImgPath(selectedVideo.get('name'), selectedVideo.get('vimeoId')),
     isVideoReadyToPlay: state.video.get('isReadyToPlay'),
     soundEnabled: state.settings.get('soundEnabled'),
-    originalResolution: selectedVideo.get('originalResolution').toJS()
+    originalResolution: selectedVideo.get('originalResolution').toJS(),
+    killedItems: state.game.get('killedItems')
   }
 })(Mask);

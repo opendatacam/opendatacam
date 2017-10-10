@@ -108,7 +108,6 @@ class Video extends Component {
               this.registerListeners(el);
             }}
             className="video"
-            loop
             muted
             playsInline
             autoPlay
