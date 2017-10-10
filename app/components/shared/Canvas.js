@@ -8,11 +8,6 @@ const canvasResolution = {
   h: 720
 }
 
-const originalResolution = {
-  w: 1920,
-  h: 1080
-}
-
 const ItemsToDisplay = ["car","bike","truck","motorbike"];
 
 class Canvas extends Component {
@@ -50,7 +45,7 @@ class Canvas extends Component {
     context.font = "15px Arial";
     context.fillStyle = "#f00";
     detections.map((detection) => {
-      let scaledDetection = scaleDetection(detection, canvasResolution, originalResolution);
+      let scaledDetection = scaleDetection(detection, canvasResolution, this.props.originalResolution);
       let x = scaledDetection.x - scaledDetection.w / 2;
       let y = scaledDetection.y - scaledDetection.h / 2;
       context.strokeRect(x, y, scaledDetection.w, scaledDetection.h);
@@ -65,7 +60,7 @@ class Canvas extends Component {
     context.font = "30px Arial";
     context.fillStyle = "blue";
     objectTrackerData.map((objectTracked) => { 
-      let objectTrackedScaled = scaleDetection(objectTracked, canvasResolution, originalResolution);     
+      let objectTrackedScaled = scaleDetection(objectTracked, canvasResolution, this.props.originalResolution);     
       if(objectTrackedScaled.isZombie) {
         context.fillStyle = `rgba(255, 153, 0, ${objectTrackedScaled.zombieOpacity})`;
         context.strokeStyle = `rgba(255, 153, 0, ${objectTrackedScaled.zombieOpacity})`;
@@ -96,7 +91,7 @@ class Canvas extends Component {
         ItemsToDisplay.indexOf(objectTracked.name) > -1
       )
     }).map((objectTracked) => {
-      let objectTrackedScaled = scaleDetection(objectTracked, canvasResolution, originalResolution);
+      let objectTrackedScaled = scaleDetection(objectTracked, canvasResolution, this.props.originalResolution);
 
 
       // Set params
@@ -242,6 +237,11 @@ class Canvas extends Component {
 }
  
 export default connect((state) => {
+
+  const selectedVideo = state.app.get('availableVideos').find((video) => {
+    return video.get('name') === state.app.get('selectedVideo')
+  });
+
   return {
     rawDetections: state.rawDetections.get('data'),
     areRawDetectionsFetched: state.rawDetections.get('fetched'),
@@ -249,6 +249,7 @@ export default connect((state) => {
     isObjectTrackerDataFetched: state.objectTracker.get('fetched'),
     isPlaying: state.video.get('isPlaying'),
     showDebugUI: state.settings.get('showDebugUI'),
-    isVideoReadyToPlay: state.video.get('isReadyToPlay')
+    isVideoReadyToPlay: state.video.get('isReadyToPlay'),
+    originalResolution: selectedVideo.get('originalResolution').toJS()
   }
 })(Canvas);

@@ -4,7 +4,7 @@ var Tracker = require('./Tracker');
 yolo = {};
 tracked = {};
 
-var file = "../app/static/detections/9_prototype_video";
+var file = "../app/static/detections/level_1/rawdetections";
 
 fs.readFile(`${file}.txt`, function(err, f){
     var lines = f.toString().split('\n');

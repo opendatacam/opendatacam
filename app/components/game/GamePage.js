@@ -32,7 +32,6 @@ class GamePage extends React.Component {
         <VideoSelector />
         <SettingsControl />
         <Canvas />
-        {/* <TrackerUI /> */}
         <Sound />
         <Mask />
         <Video />

@@ -16,11 +16,6 @@ const canvasResolution = {
   h: 720
 }
 
-const originalResolution = {
-  w: 1920,
-  h: 1080
-}
-
 class Mask extends PureComponent {
 
   constructor(props) {
@@ -83,7 +78,7 @@ class Mask extends PureComponent {
           
           objectTrackerDataForThisFrame.map((objectTracked) => {
 
-            let objectTrackedScaled = scaleDetection(objectTracked, canvasResolution, originalResolution);
+            let objectTrackedScaled = scaleDetection(objectTracked, canvasResolution, this.props.originalResolution);
             let potentialObjectToMask = {
               idDisplay: objectTrackedScaled.idDisplay,
               id: objectTrackedScaled.id,
@@ -280,6 +275,7 @@ export default connect((state) => {
     isPlaying: state.video.get('isPlaying'),
     averageImgSrc: getAverageImgPath(selectedVideo.get('name'), selectedVideo.get('vimeoId')),
     isVideoReadyToPlay: state.video.get('isReadyToPlay'),
-    soundEnabled: state.settings.get('soundEnabled')
+    soundEnabled: state.settings.get('soundEnabled'),
+    originalResolution: selectedVideo.get('originalResolution').toJS()
   }
 })(Mask);
