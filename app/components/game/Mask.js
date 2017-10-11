@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import Clippath from './Clippath';
 import PuffAnimation from './PuffAnimation';
+import ScoreAnimation from './ScoreAnimation';
 
 import { scaleDetection } from '../../utils/resolution';
 
@@ -22,7 +23,8 @@ class Mask extends PureComponent {
 
     this.state = {
       masks: [],
-      puffAnimations: []
+      puffAnimations: [],
+      scoreAnimations: []
     }
 
     this.clicksRecorded = [];
@@ -34,6 +36,7 @@ class Mask extends PureComponent {
     this.initClickRecorder = this.initClickRecorder.bind(this);
     this.cleanClickRecorder = this.cleanClickRecorder.bind(this);
     this.removePuffAnimation = this.removePuffAnimation.bind(this);
+    this.removeScoreAnimation = this.removeScoreAnimation.bind(this);
   }
 
   componentDidMount() {
@@ -104,6 +107,11 @@ class Mask extends PureComponent {
                       objectsMaskedUpdated.push(potentialObjectToMask);
                       this.setState({
                         puffAnimations: [...this.state.puffAnimations, {
+                          x: click.xReal,
+                          y: click.yReal,
+                          id: potentialObjectToMask.id
+                        }],
+                        scoreAnimations: [...this.state.scoreAnimations, {
                           x: click.xReal,
                           y: click.yReal,
                           id: potentialObjectToMask.id
@@ -199,6 +207,12 @@ class Mask extends PureComponent {
     });
   }
 
+  removeScoreAnimation(id) {
+    this.setState({
+      scoreAnimations: this.state.scoreAnimations.filter((scoreAnimation) => scoreAnimation.id !== id)
+    });
+  }
+
   componentWillUnmount() {
     this.cleanClickRecorder();
   }
@@ -232,6 +246,15 @@ class Mask extends PureComponent {
             x={puffAnimation.x}
             y={puffAnimation.y}
             removePuffAnimation={this.removePuffAnimation}
+          />
+        )}
+        {this.state.scoreAnimations.map((scoreAnimation) => 
+          <ScoreAnimation
+            key={scoreAnimation.id}
+            id={scoreAnimation.id}
+            x={scoreAnimation.x}
+            y={scoreAnimation.y}
+            removeScoreAnimation={this.removeScoreAnimation}
           />
         )}
         <audio
