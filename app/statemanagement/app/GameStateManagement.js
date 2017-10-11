@@ -5,7 +5,8 @@ import axios from 'axios';
 const initialState = fromJS({
   score: 0,
   killedItems: [],
-  missedItems: [] 
+  missedItems: [],
+  maxMissed: 5
 });
 
 // Actions

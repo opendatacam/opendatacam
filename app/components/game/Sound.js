@@ -40,16 +40,16 @@ class Sound extends Component {
           .audio-button {
             position: fixed;
             background-color: white;
-            bottom: 10px;
-            right: 10px;
+            bottom: 1rem;
+            right: 1rem;
             z-index: 5;
-            width: 44px;
-            height: 44px;
+            width: 4.4rem;
+            height: 4.4rem;
             transform: will-change;
             cursor: pointer;
-            border-radius: 2px;
+            border-radius: 0.2rem;
             background-repeat: no-repeat;
-            background-size: 20px 20px;
+            background-size: 2rem 2rem;
             background-position: center;
           }
 

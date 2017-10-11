@@ -40,13 +40,13 @@ class DebugUI extends Component {
         <style jsx>{`
           .settings-control {
             position: fixed;
-            right: 10px;
-            top: 10px;
+            right: 1rem;
+            top: 1rem;
             z-index: 10;
             transform: will-change;
             background-color: white;
-            padding: 10px;
-            border-radius: 5px;
+            padding: 1rem;
+            border-radius: 0.5rem;
           }
         `}</style>
       </div>

@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 
 import Clippath from './Clippath';
 import PuffAnimation from './PuffAnimation';
-import GameCounter from './GameCounter';
 
 import { scaleDetection } from '../../utils/resolution';
 
@@ -208,7 +207,6 @@ class Mask extends PureComponent {
 
     return (
       <div className="mask-container">
-        <GameCounter score={this.state.score} />
         <svg
           id="average-img"
           preserveAspectRatio="xMinYMax meet"

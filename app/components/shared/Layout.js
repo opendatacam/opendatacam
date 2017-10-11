@@ -20,7 +20,18 @@ class Layout extends Component {
             padding: 0;
             left: 0;
             top: 0;
-            font-size: 100%;
+          }
+
+          :global(html) {
+            font-size: 62.5%; 
+          }
+
+          @media (max-width: 450px) {
+            :global(html) { font-size: 50%; }
+          }
+
+          :global(body) {
+            font-size: 1.6rem;
           }
 
           :global(body > div:first-of-type) {

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-class GameCounter extends Component {
+class Score extends Component {
 
   render() {
     return (
@@ -9,17 +9,12 @@ class GameCounter extends Component {
         className="game-counter"
       >
         <div><span className="text-shadow">{this.props.score}</span> 🚗</div>
-        <div><span className="text-shadow">{this.props.nbMissed}</span> 💣</div>
+        {/* <div><span className="text-shadow">{this.props.nbMissed}</span> 💣</div> */}
         <style jsx>{`
           .game-counter {
-            position: fixed;
             color: white;
-            top: 30px;
-            left: 10px;
-            font-size: 40px;
+            font-size: 4rem;
             font-weight: bold;
-            z-index: 5;
-            transform: will-change;
             font-family: sans-serif;
           }
 
@@ -37,4 +32,4 @@ export default connect((state) => {
     score: state.game.get('score'),
     nbMissed: state.game.get('missedItems').size
   }
-})(GameCounter);
+})(Score);

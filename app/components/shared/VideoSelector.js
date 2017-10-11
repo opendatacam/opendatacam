@@ -36,8 +36,8 @@ class VideoSelector extends Component {
           .video-selector {
             position: fixed;
             z-index: 10;
-            top: 5px;
-            left: 5px;
+            top: 0.5rem;
+            left: 0.5rem;
           }
         `}</style>
       </div>

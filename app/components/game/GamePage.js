@@ -7,6 +7,7 @@ import Mask from './Mask';
 import Sound from './Sound'; 
 import SettingsControl from '../shared/SettingsControl';
 import TrackerUI from '../shared/TrackerUI';
+import GameIndicators from './GameIndicators';
 
 import Title from '../shared/Title';
 import VideoSelector from '../shared/VideoSelector';
@@ -29,8 +30,8 @@ class GamePage extends React.Component {
   render () {
     return (
       <div className="landing-page">
-        <VideoSelector />
         <SettingsControl />
+        <GameIndicators />
         <Canvas />
         <Sound />
         <Mask />
