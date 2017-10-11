@@ -2,12 +2,14 @@ import React from 'react';
 import { connect } from 'react-redux';
 
 import Video from '../shared/Video'; 
+import Loading from '../shared/Loading'; 
 import Canvas from '../shared/Canvas'; 
 import Mask from './Mask'; 
 import Sound from './Sound'; 
 import SettingsControl from '../shared/SettingsControl';
 import TrackerUI from '../shared/TrackerUI';
 import GameIndicators from './GameIndicators';
+import GameInstructions from './GameInstructions';
 
 import Title from '../shared/Title';
 import VideoSelector from '../shared/VideoSelector';
@@ -32,6 +34,7 @@ class GamePage extends React.Component {
       <div className="landing-page">
         <SettingsControl />
         <GameIndicators />
+        <GameInstructions />
         <Canvas />
         <Sound />
         <Mask />

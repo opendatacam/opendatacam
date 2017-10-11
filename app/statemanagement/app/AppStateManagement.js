@@ -103,13 +103,14 @@ const initialState = fromJS({
       },
     },{
       name: "level_1",
-      vimeoId: "todo",
+      vimeoId: "237563941",
       originalResolution: {
         w: 1280,
         h: 720
       },
       sources: {
-        hd: "/static/detections/level_1/level_1.mp4"
+        // hd: "/static/detections/level_1/level_1.mp4",
+        hd: "https://player.vimeo.com/external/237563941.hd.mp4?s=521162fbd4ba420ea6a2d04dcdf123c0a74a23e4"
       }
     }
   ],

@@ -1,7 +1,6 @@
 import { Component } from 'react';
 import { connect } from 'react-redux';
 import NoSSR from 'react-no-ssr';
-import Loading from './Loading'; 
 
 import { 
   setVideoReady,
@@ -17,19 +16,45 @@ class Video extends Component {
     this.monitorFrames = this.monitorFrames.bind(this);
     this.registerListeners = this.registerListeners.bind(this);
     this.cleanListeners = this.cleanListeners.bind(this);
-    this.handleCanPlayThrough = this.handleCanPlayThrough.bind(this);
+    this.handleCanPlay = this.handleCanPlay.bind(this);
     this.handlePlay = this.handlePlay.bind(this);
     this.handlePause = this.handlePause.bind(this);
     this.handleEnded = this.handleEnded.bind(this);
     this.isMonitoring = false;
   }
 
-  // TODO IMPLEMENT COMPONENT UNMOUNT TO CLEAN UP STUFF
+  shouldComponentUpdate(nextProps, nextState) {
+    // We want to re-render the video item only if the src has changed
+    if(nextProps.src !== this.props.src) {
+      console.log('Update video');
+      return true;
+    } else {
+      return false;
+    }
+  }
 
-  handleCanPlayThrough() {
+  componentWillReceiveProps(newProps) {
+    if(!this.videoEl) {
+      console.log('Video element ref not defined');
+      return;
+    }
+    // Pilot videoEl from the props changes
+    if(this.props.isPlaying !== newProps.isPlaying &&
+      newProps.isPlaying === true) {
+        this.videoEl.play();
+    }
+
+    if(this.props.isPlaying !== newProps.isPlaying &&
+      newProps.isPlaying === false) {
+        this.videoEl.pause();
+    }
+  }
+
+  handleCanPlay() {
     console.log('video ready to play');
-    this.props.dispatch(setVideoReady());
-    this.videoEl.play();
+    this.props.dispatch(setVideoReady({
+      duration: this.videoEl.duration
+    }));
   }
 
   handlePlay() {
@@ -56,7 +81,7 @@ class Video extends Component {
 
   cleanListeners(el) {
     console.log('Clean previous listeners');
-    el.removeEventListener('canplay', this.handleCanPlayThrough);
+    el.removeEventListener('canplay', this.handleCanPlay);
     el.removeEventListener('play', this.handlePlay);
     el.removeEventListener('pause', this.handlePause);
     el.removeEventListener('ended', this.handleEnded);
@@ -68,14 +93,9 @@ class Video extends Component {
       this.cleanListeners(this.videoEl);
     }
     this.videoEl = el;
-    // debugger;
-    console.log('registerListeners');
     if(this.videoEl) {
-      // Cancel autoplay (playing on canplaythrough callback)
-      // Hack because iOS safari won't autoplay via javascript only
-      // seems not needed
-      // this.videoEl.pause();
-      this.videoEl.addEventListener('canplay', this.handleCanPlayThrough);
+      console.log('registerListeners');
+      this.videoEl.addEventListener('canplay', this.handleCanPlay);
       this.videoEl.addEventListener('play', this.handlePlay);
       this.videoEl.addEventListener('pause', this.handlePause);
       this.videoEl.addEventListener('ended', this.handleEnded);
@@ -91,26 +111,29 @@ class Video extends Component {
     let newCurrentFrame = Math.round(this.videoEl.currentTime * 25)
     if(window.currentFrame !== newCurrentFrame) {
       window.currentFrame = newCurrentFrame;
+      window.currentTime = this.videoEl.currentTime;
     }
     requestAnimationFrame(this.monitorFrames);
+  }
+
+  componentWillUnmount() {
+    if(this.videoEl) {
+      this.cleanListeners(this.videoEl);
+    }
   }
 
   render() { 
     return (
       <div className="video-container">
-        {!this.props.isReadyToPlay &&
-          <Loading />
-        }
         {this.props.src &&
           <video
             key={this.props.src}
             ref={(el) => { 
-              this.registerListeners(el);
+              this.registerListeners(el)
             }}
             className="video"
             muted
             playsInline
-            autoPlay
           >
             <source src={this.props.src} type="video/mp4" />
             Your browser does not support the video tag.
@@ -154,9 +177,8 @@ class Video extends Component {
  
 export default connect((state) => {
   return {
-    isReadyToPlay: state.video.get('isReadyToPlay'),
+    isPlaying: state.video.get('isPlaying'),
     isPaused: state.video.get('isPaused'),
-    currentFrame: state.video.get('currentFrame'),
     src: state.video.get('src')
   }
 })(Video);

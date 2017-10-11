@@ -6,16 +6,15 @@ const initialState = fromJS({
   src: null,
   isPlaying: false,
   isPaused: false,
-  isLoading: false,
   isReadyToPlay: false,
-  error: null
+  error: null,
+  duration: null
 });
 
 // Actions
 
 const SET_VIDEO_SRC = 'Video/SET_VIDEO_SRC';
 const SET_VIDEO_READY = 'Video/SET_VIDEO_READY';
-const SET_VIDEO_LOADING = 'Video/SET_VIDEO_LOADING';
 const SET_VIDEO_PLAYING = 'Video/SET_VIDEO_PLAYING';
 const SET_VIDEO_PAUSED = 'Video/SET_VIDEO_PAUSED';
 
@@ -26,16 +25,13 @@ export function setVideoSrc(src) {
   }
 }
 
-export function setVideoReady() {
+export function setVideoReady(metadata) {
   return {
-    type: SET_VIDEO_READY
+    type: SET_VIDEO_READY,
+    payload: metadata
   }
 }
-export function setVideoLoading() {
-  return {
-    type: SET_VIDEO_LOADING
-  }
-}
+
 export function setVideoPlaying() {
   return {
     type: SET_VIDEO_PLAYING
@@ -55,9 +51,8 @@ export default function VideoReducer(state = initialState, action = {}) {
       return state.merge(initialState)
                   .set('src', action.payload)
     case SET_VIDEO_READY:
-      return state.set('isReadyToPlay', true);
-    case SET_VIDEO_LOADING:
-      return state.set('isLoading', true);
+      return state.set('isReadyToPlay', true)
+                  .set('duration', action.payload.duration);
     case SET_VIDEO_PLAYING:
       return state.set('isPlaying', true)
                   .set('isPaused', false);
