@@ -1,12 +1,15 @@
 import { fromJS } from 'immutable';
 import axios from 'axios';
 
+import { levelFinished } from '../../statemanagement/app/GameStateManagement';
+
 // Initial state
 const initialState = fromJS({
   src: null,
   isPlaying: false,
   isPaused: false,
   isReadyToPlay: false,
+  isAtBeggining: true,
   error: null,
   duration: null
 });
@@ -15,8 +18,9 @@ const initialState = fromJS({
 
 const SET_VIDEO_SRC = 'Video/SET_VIDEO_SRC';
 const SET_VIDEO_READY = 'Video/SET_VIDEO_READY';
-const SET_VIDEO_PLAYING = 'Video/SET_VIDEO_PLAYING';
-const SET_VIDEO_PAUSED = 'Video/SET_VIDEO_PAUSED';
+const PLAY_VIDEO = 'Video/PLAY_VIDEO';
+const PAUSE_VIDEO = 'Video/PAUSE_VIDEO';
+const RESET_VIDEO = 'Video/RESET_VIDEO';
 
 export function setVideoSrc(src) {
   return {
@@ -32,15 +36,32 @@ export function setVideoReady(metadata) {
   }
 }
 
-export function setVideoPlaying() {
+export function playVideo() {
   return {
-    type: SET_VIDEO_PLAYING
+    type: PLAY_VIDEO
   }
 }
 
-export function setVideoPaused() {
+export function pauseVideo() {
   return {
-    type: SET_VIDEO_PAUSED
+    type: PAUSE_VIDEO
+  }
+}
+
+export function resetVideo() {
+  return {
+    type: RESET_VIDEO
+  }
+}
+
+export function setVideoEnded() {
+  return (dispatch, getState) => {
+    // Notify game that video has ended
+    dispatch(levelFinished());
+
+    dispatch({
+      type: PAUSE_VIDEO
+    });
   }
 }
 
@@ -53,12 +74,13 @@ export default function VideoReducer(state = initialState, action = {}) {
     case SET_VIDEO_READY:
       return state.set('isReadyToPlay', true)
                   .set('duration', action.payload.duration);
-    case SET_VIDEO_PLAYING:
+    case PLAY_VIDEO:
       return state.set('isPlaying', true)
-                  .set('isPaused', false);
-    case SET_VIDEO_PAUSED:
-      return state.set('isPaused', true)
-                  .set('isPlaying', false);
+                  .set('isAtBeggining', false);
+    case PAUSE_VIDEO:
+      return state.set('isPlaying', false);
+    case RESET_VIDEO:
+      return state.set('isAtBeggining', true);
     default:
       return state;
   }

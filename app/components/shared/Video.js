@@ -4,9 +4,7 @@ import NoSSR from 'react-no-ssr';
 
 import { 
   setVideoReady,
-  setVideoLoading,
-  setVideoPlaying,
-  setVideoPaused
+  setVideoEnded
 } from '../../statemanagement/app/VideoStateManagement';
 
 class Video extends Component {
@@ -48,6 +46,10 @@ class Video extends Component {
       newProps.isPlaying === false) {
         this.videoEl.pause();
     }
+
+    if(this.props.isAtBeggining !== newProps.isAtBeggining) {
+      this.videoEl.currentTime = 0;
+    }
   }
 
   handleCanPlay() {
@@ -59,7 +61,6 @@ class Video extends Component {
 
   handlePlay() {
     console.log('playing');
-    this.props.dispatch(setVideoPlaying());
     // If not already monitoring
     if(!this.isMonitoring) {
       console.log('Start monitoring frames');
@@ -70,13 +71,11 @@ class Video extends Component {
 
   handlePause() {
     console.log('video paused')
-    this.props.dispatch(setVideoPaused());
   }
 
   handleEnded() {
     console.log('video ended');
-    // this.props.dispatch(setVideoPlaying());
-    // TODO DISPATCH ACTION IS LOOPING TO CLEAN UP STUFF
+    this.props.dispatch(setVideoEnded());
   }
 
   cleanListeners(el) {
@@ -103,7 +102,7 @@ class Video extends Component {
   }
 
   monitorFrames() {
-    if(this.props.isPaused || this.isMonitoring === false) {
+    if(!this.props.isPlaying || this.isMonitoring === false) {
       console.log('cancel monitoring');
       this.isMonitoring = false;
       return;
@@ -178,7 +177,7 @@ class Video extends Component {
 export default connect((state) => {
   return {
     isPlaying: state.video.get('isPlaying'),
-    isPaused: state.video.get('isPaused'),
+    isAtBeggining: state.video.get('isAtBeggining'),
     src: state.video.get('src')
   }
 })(Video);

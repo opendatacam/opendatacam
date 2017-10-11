@@ -34,7 +34,9 @@ class GamePage extends React.Component {
       <div className="landing-page">
         <SettingsControl />
         <GameIndicators />
-        <GameInstructions />
+        {!this.props.isGamePlaying &&
+          <GameInstructions />
+        }
         <Canvas />
         <Sound />
         <Mask />
@@ -44,4 +46,8 @@ class GamePage extends React.Component {
   }
 }
 
-export default connect()(GamePage);
+export default connect((state) => {
+  return {
+    isGamePlaying: state.game.getIn(['status','isPlaying'])
+  }
+})(GamePage);

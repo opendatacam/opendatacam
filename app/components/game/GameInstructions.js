@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import PollutionLevel from './PollutionLevel';
 import Score from './Score';
 
+import { startLevel, retryLevel } from '../../statemanagement/app/GameStateManagement';
+
 class GameInstructions extends Component {
 
   render() {
@@ -12,9 +14,38 @@ class GameInstructions extends Component {
         className="game-instructions"
       >
         <div className="game-instructions-modal">
-        <h3>Can you beat the traffic of Stuttgart ?</h3>
-        <p><i>Survive the pollution by clicking on cars !</i></p>
-        <button>PLAY</button>
+          {!this.props.isPlaying &&
+           !this.props.failed &&
+           !this.props.finished &&
+            <div>
+              <h3>Can you beat the traffic of Stuttgart ?</h3>
+              <p><i>Survive the pollution by clicking on cars !</i></p>
+              <button onClick={() => this.props.dispatch(startLevel())}>
+                PLAY
+              </button>
+            </div>
+          }
+          {!this.props.isPlaying &&
+            this.props.failed &&
+            <div>
+              <h3>Game over !</h3>
+              <p><i>You didn't survive the pollution</i></p>
+              <button onClick={() => this.props.dispatch(retryLevel())}>
+                RETRY
+              </button>
+            </div>
+          }
+          {!this.props.isPlaying &&
+           !this.props.failed &&
+           this.props.finished &&
+            <div>
+              <h3>Congrats !</h3>
+              <p><i>You passed the first level and scored {this.props.score} points !</i></p>
+              <button>
+                GO TO NEXT LEVEL (not implem yet)
+              </button>
+            </div>
+          }
         </div>
         <style jsx>{`
           .game-instructions {
@@ -58,4 +89,11 @@ class GameInstructions extends Component {
   }
 }
 
-export default GameInstructions;
+export default connect((state) => {
+  return {
+    score: state.game.get('score'),
+    isPlaying: state.game.getIn(['status', 'isPlaying']),
+    failed: state.game.getIn(['status', 'failed']),
+    finished: state.game.getIn(['status', 'finished'])
+  }
+})(GameInstructions);
