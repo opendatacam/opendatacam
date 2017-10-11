@@ -5,19 +5,19 @@ class Loading extends Component {
   render() {
 
     return (
-        <div className="loader">
+      <div className="loader">
         <div className="spinner"/>
         <style jsx>{`
             .loader {
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              flex-direction: column;
-              margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            margin-bottom: 2rem;
             }
             .message {
-              margin-top: 1rem;
-              font-style: italic;
+            margin-top: 1rem;
+            font-style: italic;
             }
             .spinner {
                 width: 6rem;

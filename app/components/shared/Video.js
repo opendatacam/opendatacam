@@ -4,7 +4,8 @@ import NoSSR from 'react-no-ssr';
 
 import { 
   setVideoReady,
-  setVideoEnded
+  setVideoEnded,
+  updateCurrentTime
 } from '../../statemanagement/app/VideoStateManagement';
 
 class Video extends Component {
@@ -19,6 +20,7 @@ class Video extends Component {
     this.handlePause = this.handlePause.bind(this);
     this.handleEnded = this.handleEnded.bind(this);
     this.isMonitoring = false;
+    this.lastCurrentTime = 0;
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -110,7 +112,12 @@ class Video extends Component {
     let newCurrentFrame = Math.round(this.videoEl.currentTime * 25)
     if(window.currentFrame !== newCurrentFrame) {
       window.currentFrame = newCurrentFrame;
-      window.currentTime = this.videoEl.currentTime;
+
+      // Dispatch current time each second
+      let newCurrentTime = Math.trunc(this.videoEl.currentTime);
+      if(this.props.currentTime !== newCurrentTime) {
+        this.props.dispatch(updateCurrentTime(newCurrentTime));
+      }
     }
     requestAnimationFrame(this.monitorFrames);
   }
@@ -178,6 +185,7 @@ export default connect((state) => {
   return {
     isPlaying: state.video.get('isPlaying'),
     isAtBeggining: state.video.get('isAtBeggining'),
-    src: state.video.get('src')
+    src: state.video.get('src'),
+    currentTime: state.video.get('currentTime')
   }
 })(Video);

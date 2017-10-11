@@ -11,7 +11,13 @@ class GameIndicators extends Component {
       <div 
         className="game-indicators"
       >
-        <div className="level">Level 1</div>
+        <div className="level">Level 1: 
+          {this.props.totalDuration > 0 &&
+            <span>
+              {this.props.totalDuration - this.props.currentTime}s remaining
+            </span>
+          }
+        </div>
         <PollutionLevel />
         <Score />
         <style jsx>{`
@@ -32,4 +38,9 @@ class GameIndicators extends Component {
   }
 }
 
-export default GameIndicators;
+export default connect((state) => {
+  return {
+    totalDuration: Math.trunc(state.video.get('duration')),
+    currentTime: state.video.get('currentTime')
+  }
+})(GameIndicators);

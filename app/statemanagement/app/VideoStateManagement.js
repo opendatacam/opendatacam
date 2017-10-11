@@ -11,7 +11,8 @@ const initialState = fromJS({
   isReadyToPlay: false,
   isAtBeggining: true,
   error: null,
-  duration: null
+  duration: null,
+  currentTime: 0
 });
 
 // Actions
@@ -21,6 +22,7 @@ const SET_VIDEO_READY = 'Video/SET_VIDEO_READY';
 const PLAY_VIDEO = 'Video/PLAY_VIDEO';
 const PAUSE_VIDEO = 'Video/PAUSE_VIDEO';
 const RESET_VIDEO = 'Video/RESET_VIDEO';
+const UPDATE_CURRENTTIME = 'Video/UPDATE_CURRENTTIME';
 
 export function setVideoSrc(src) {
   return {
@@ -65,6 +67,13 @@ export function setVideoEnded() {
   }
 }
 
+export function updateCurrentTime(time) {
+  return {
+    type: UPDATE_CURRENTTIME,
+    payload: time
+  }
+}
+
 // Reducer
 export default function VideoReducer(state = initialState, action = {}) {
   switch (action.type) {
@@ -81,6 +90,8 @@ export default function VideoReducer(state = initialState, action = {}) {
       return state.set('isPlaying', false);
     case RESET_VIDEO:
       return state.set('isAtBeggining', true);
+    case UPDATE_CURRENTTIME:
+      return state.set('currentTime', action.payload)
     default:
       return state;
   }

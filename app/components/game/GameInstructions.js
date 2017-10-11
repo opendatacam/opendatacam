@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import PollutionLevel from './PollutionLevel';
 import Score from './Score';
+import Loading from '../shared/Loading';
 
 import { startLevel, retryLevel } from '../../statemanagement/app/GameStateManagement';
 
@@ -18,11 +19,16 @@ class GameInstructions extends Component {
            !this.props.failed &&
            !this.props.finished &&
             <div>
-              <h3>Can you beat the traffic of Stuttgart ?</h3>
+              <h3>Beat the traffic Stuttgar</h3>
               <p><i>Survive the pollution by clicking on cars !</i></p>
-              <button onClick={() => this.props.dispatch(startLevel())}>
-                PLAY
-              </button>
+              {this.props.gameReadyToPlay &&
+                <button onClick={() => this.props.dispatch(startLevel())}>
+                  PLAY
+                </button>
+              }
+              {!this.props.gameReadyToPlay &&
+                <Loading />
+              }
             </div>
           }
           {!this.props.isPlaying &&
@@ -90,10 +96,14 @@ class GameInstructions extends Component {
 }
 
 export default connect((state) => {
+
+  const gameReadyToPlay = state.objectTracker.get('fetched') && state.video.get('isReadyToPlay');
+
   return {
     score: state.game.get('score'),
     isPlaying: state.game.getIn(['status', 'isPlaying']),
     failed: state.game.getIn(['status', 'failed']),
-    finished: state.game.getIn(['status', 'finished'])
+    finished: state.game.getIn(['status', 'finished']),
+    gameReadyToPlay
   }
 })(GameInstructions);
