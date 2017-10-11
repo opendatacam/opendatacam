@@ -27,6 +27,8 @@ class Video extends Component {
     // We want to re-render the video item only if the src has changed
     if(nextProps.src !== this.props.src) {
       console.log('Update video');
+      // TODO ADD DYNAMIC SCROLL OFFSET FOR MOBILE HERE
+      window.scroll(212,0);
       return true;
     } else {
       return false;

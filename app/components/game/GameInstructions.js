@@ -19,7 +19,7 @@ class GameInstructions extends Component {
            !this.props.failed &&
            !this.props.finished &&
             <div>
-              <h3>Beat the traffic Stuttgar</h3>
+              <h3>Beat the traffic Stuttgart</h3>
               <p><i>Survive the pollution by clicking on cars !</i></p>
               {this.props.gameReadyToPlay &&
                 <button onClick={() => this.props.dispatch(startLevel())}>
