@@ -28,7 +28,9 @@ class Video extends Component {
     if(nextProps.src !== this.props.src) {
       console.log('Update video');
       // TODO ADD DYNAMIC SCROLL OFFSET FOR MOBILE HERE
-      window.scroll(212,0);
+      setTimeout(() => {
+        window.scroll(212,0);
+      }, 1000);
       return true;
     } else {
       return false;
