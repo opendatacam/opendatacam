@@ -21,7 +21,12 @@ class GameInstructions extends Component {
            !this.props.finished &&
             <div>
               <h3>Beat the traffic Stuttgart</h3>
-              <p><i>Survive the pollution by clicking on cars !</i></p>
+              {this.props.currentLevel === 1 &&
+                <p><i>Survive the pollution by clicking on cars !</i></p>
+              }
+              {this.props.currentLevel === 2 &&
+                <p><i>Ready for level 2 ?</i></p>
+              }
               {this.props.gameReadyToPlay &&
                 <a onClick={() => this.props.dispatch(startLevel())}>
                   PLAY
