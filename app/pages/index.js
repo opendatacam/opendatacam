@@ -5,9 +5,13 @@ import withRedux from 'next-redux-wrapper'
 import Layout from '../components/shared/Layout';
 import GamePage from '../components/game/GamePage'; 
 
+import { loadLevel } from '../statemanagement/app/GameStateManagement';
+
 class Index extends React.Component {
-  static getInitialProps ({ store, pathname, query, asPath }) {
-    // console.log('getInitialProps');
+  static getInitialProps ({ store, query, isServer }) {
+    const level = query.level || 1;
+    console.log(`Setting level ${level}`);
+    store.dispatch(loadLevel(parseInt(level)));
   }
 
   render () {

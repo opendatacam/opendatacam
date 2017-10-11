@@ -11,7 +11,7 @@ class GameIndicators extends Component {
       <div 
         className="game-indicators"
       >
-        <div className="level">Level 1: 
+        <div className="level">Level {this.props.currentLevel}: 
           {this.props.totalDuration > 0 &&
             <span>
               {this.props.totalDuration - this.props.currentTime}s remaining
@@ -41,6 +41,7 @@ class GameIndicators extends Component {
 export default connect((state) => {
   return {
     totalDuration: Math.trunc(state.video.get('duration')),
-    currentTime: state.video.get('currentTime')
+    currentTime: state.video.get('currentTime'),
+    currentLevel: state.game.get('currentLevel')
   }
 })(GameIndicators);

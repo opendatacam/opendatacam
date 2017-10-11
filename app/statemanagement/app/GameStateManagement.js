@@ -2,6 +2,7 @@ import { fromJS } from 'immutable';
 import axios from 'axios';
 
 import { playVideo, pauseVideo, resetVideo } from './VideoStateManagement';
+import { selectVideo } from './AppStateManagement';
 
 // Initial state
 const initialState = fromJS({
@@ -9,12 +10,10 @@ const initialState = fromJS({
   killedItems: [],
   missedItems: [],
   maxMissed: 5,
-  status: {
-    currentLevel: 1,
-    isPlaying: false,
-    finished: false,
-    failed: false
-  }
+  currentLevel: 1,
+  isPlaying: false,
+  finished: false,
+  failed: false
 });
 
 // Actions
@@ -26,8 +25,9 @@ const ADD_KILLED_ITEM = 'Game/ADD_KILLED_ITEM'
 
 const START_LEVEL = 'Game/START_LEVEL'
 const FAILED_LEVEL = 'Game/FAILED_LEVEL'
-const RETRY_LEVEL = 'Game/RETRY_LEVEL'
+const RETRY = 'Game/RETRY'
 const FINISHED_LEVEL = 'Game/FINISHED_LEVEL'
+const SET_CURRENT_LEVEL = 'Game/SET_CURRENT_LEVEL'
 
 export function incrementScore() {
   return {
@@ -88,22 +88,47 @@ export function failedLevel() {
   }
 }
 
-export function retryLevel() {
+export function retry() {
   return (dispatch, getState) => {
 
-    // Notify UI we are starting the level
+    // Notify UI we are re-starting the game
     dispatch({
-      type: RETRY_LEVEL
+      type: RETRY
     });
 
-    // Reset the video
-    dispatch(resetVideo())
+    if(getState().game.get('currentLevel') === 1) {
+      // Reset the video
+      dispatch(resetVideo());
+    } else {
+      dispatch(loadLevel(1));
+    }
   }
 }
 
 export function levelFinished() {
   return {
     type: FINISHED_LEVEL
+  }
+}
+
+export function setCurrentLevel(level) {
+  return {
+    type: SET_CURRENT_LEVEL,
+    payload: level
+  }
+}
+
+export function loadLevel(level) {
+  return (dispatch, getState) => {
+
+    const video = getState().app.get('availableVideos').find((video) => 
+                    video.get('level') === level
+                  );
+
+    // Select video for that level
+    dispatch(selectVideo(video.get('name')));
+
+    dispatch(setCurrentLevel(level));
   }
 }
 
@@ -119,16 +144,21 @@ export default function GameReducer(state = initialState, action = {}) {
     case ADD_KILLED_ITEM:
       return state.update('killedItems', (killedItems) => killedItems.push(action.payload));
     case START_LEVEL:
-      return state.setIn(['status','isPlaying'], true)
-                  .setIn(['status','failed'], false)
-                  .setIn(['status','finished'], false)
+      return state.set('isPlaying', true)
+                  .set('failed', false)
+                  .set('finished', false)
     case FAILED_LEVEL:
-      return state.setIn(['status','failed'], true)
-                  .setIn(['status','isPlaying'], false)
+      return state.set('failed', true)
+                  .set('isPlaying', false)
     case FINISHED_LEVEL:
-      return state.setIn(['status','finished'], true)
-                  .setIn(['status','isPlaying'], false)
-    case RETRY_LEVEL:
+      return state.set('finished', true)
+                  .set('isPlaying', false)
+    case SET_CURRENT_LEVEL:
+      return state.set('currentLevel', action.payload)
+                  .set('isPlaying', false)
+                  .set('finished', false)
+                  .set('failed', false)
+    case RETRY:
       return state.merge(initialState)
     default:
       return state;

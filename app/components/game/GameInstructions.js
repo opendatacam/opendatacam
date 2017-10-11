@@ -1,11 +1,12 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import Link from 'next/link';
 
 import PollutionLevel from './PollutionLevel';
 import Score from './Score';
 import Loading from '../shared/Loading';
 
-import { startLevel, retryLevel } from '../../statemanagement/app/GameStateManagement';
+import { startLevel, retry } from '../../statemanagement/app/GameStateManagement';
 
 class GameInstructions extends Component {
 
@@ -22,9 +23,9 @@ class GameInstructions extends Component {
               <h3>Beat the traffic Stuttgart</h3>
               <p><i>Survive the pollution by clicking on cars !</i></p>
               {this.props.gameReadyToPlay &&
-                <button onClick={() => this.props.dispatch(startLevel())}>
+                <a onClick={() => this.props.dispatch(startLevel())}>
                   PLAY
-                </button>
+                </a>
               }
               {!this.props.gameReadyToPlay &&
                 <Loading />
@@ -36,9 +37,9 @@ class GameInstructions extends Component {
             <div>
               <h3>Game over !</h3>
               <p><i>You didn't survive the pollution</i></p>
-              <button onClick={() => this.props.dispatch(retryLevel())}>
+              <a onClick={() => this.props.dispatch(retry())}>
                 RETRY
-              </button>
+              </a>
             </div>
           }
           {!this.props.isPlaying &&
@@ -46,10 +47,28 @@ class GameInstructions extends Component {
            this.props.finished &&
             <div>
               <h3>Congrats !</h3>
-              <p><i>You passed the first level and scored {this.props.score} points !</i></p>
-              <button>
-                GO TO NEXT LEVEL (not implem yet)
-              </button>
+              {this.props.currentLevel === 1 &&
+                <div>
+                  <p><i>You passed the first level and scored {this.props.score} points !</i></p>
+                  <Link href={{ 
+                    pathname: '/', 
+                    query: { level: 2 } 
+                    }} 
+                    as="/level/2">
+                    <a>
+                      GO TO LEVEL 2
+                    </a>
+                  </Link>
+                </div>
+              }
+              {this.props.currentLevel === 2 &&
+                <div>
+                  <p><i>You passed the second level and scored {this.props.score} points !</i></p>
+                  <a>
+                    TODO NEXT LVL
+                  </a>
+                </div>
+              }
             </div>
           }
         </div>
@@ -76,16 +95,19 @@ class GameInstructions extends Component {
             text-align: center;
           }
 
-          button {
+          a {
             background-color: transparent;
             border: 1px solid white;
             color: white;
             cursor: pointer;
             font-size: 2rem;
             padding: 1rem;
+            text-decoration: none;
+            margin-bottom: 1rem;
+            display: inline-block;
           }
 
-          button:hover,button:focus {
+          a:hover,a:focus {
             background-color: white;
             color: black;
           }
@@ -101,9 +123,10 @@ export default connect((state) => {
 
   return {
     score: state.game.get('score'),
-    isPlaying: state.game.getIn(['status', 'isPlaying']),
-    failed: state.game.getIn(['status', 'failed']),
-    finished: state.game.getIn(['status', 'finished']),
+    isPlaying: state.game.get('isPlaying'),
+    failed: state.game.get('failed'),
+    finished: state.game.get('finished'),
+    currentLevel: state.game.get('currentLevel'),
     gameReadyToPlay
   }
 })(GameInstructions);

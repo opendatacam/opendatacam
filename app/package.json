@@ -2,15 +2,16 @@
   "name": "traffic-cam",
   "version": "1.0.0",
   "scripts": {
-    "dev": "next",
+    "dev": "node server/server.js",
     "build": "next build",
-    "start": "next start",
-    "export": "next build && next export",
+    "start": "NODE_ENV=production node server/server.js",
+    "export": "next build && NODE_ENV=production next export",
     "static": "serve out",
     "deploy": "now -n traffic-cam out"
   },
   "dependencies": {
     "axios": "^0.16.2",
+    "express": "^4.16.2",
     "gsap": "^1.20.3",
     "immutable": "^3.8.1",
     "next": "^4.0.0-beta.2",
@@ -20,7 +21,6 @@
     "react-no-ssr": "^1.1.0",
     "react-redux": "^5.0.6",
     "redux": "^3.7.2",
-    "redux-devtools-extension": "^2.13.2",
     "redux-thunk": "^2.2.0",
     "serve": "^6.1.0"
   },

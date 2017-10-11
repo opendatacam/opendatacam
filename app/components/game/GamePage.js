@@ -50,6 +50,6 @@ class GamePage extends React.Component {
 
 export default connect((state) => {
   return {
-    isGamePlaying: state.game.getIn(['status','isPlaying'])
+    isGamePlaying: state.game.get('isPlaying')
   }
 })(GamePage);
