@@ -13,7 +13,7 @@ class Score extends Component {
         <style jsx>{`
           .game-counter {
             color: white;
-            font-size: 4rem;
+            font-size: 3rem;
             font-weight: bold;
             font-family: sans-serif;
           }

@@ -12,8 +12,8 @@ class PollutionLevel extends Component {
         <div className="icon">🏭</div>
         <style jsx>{`
           .pollution-level {
-            width: 20rem;
-            height: 6rem;
+            width: 16rem;
+            height: 5rem;
             display: flex;
             align-items: center;
           }
@@ -21,8 +21,8 @@ class PollutionLevel extends Component {
           .progress-bar {
             position: relative;
             flex: 1;
-            height: 3rem;
-            background-color: green;
+            height: 2.5rem;
+            background-color: rgba(0, 128, 0, 0.5);
             border-radius: 0.3rem;
             border: 0.1rem solid black;
           }
@@ -43,7 +43,7 @@ class PollutionLevel extends Component {
           } 
           
           .icon {
-            font-size: 3rem;
+            font-size: 2rem;
             justify-content: center;
             align-items: center;
             margin-left: 2rem;
