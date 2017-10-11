@@ -41,6 +41,7 @@ class Video extends Component {
     // Pilot videoEl from the props changes
     if(this.props.isPlaying !== newProps.isPlaying &&
       newProps.isPlaying === true) {
+        console.log('play item');
         this.videoEl.play();
     }
 
@@ -55,10 +56,16 @@ class Video extends Component {
   }
 
   handleCanPlay() {
-    console.log('video ready to play');
+    console.log('video can play');
     this.props.dispatch(setVideoReady({
       duration: this.videoEl.duration
     }));
+    // Cancel autoplay 
+    // we set autoplay as a hack because safari mobile doesn't allow
+    // to play without user even if not (so we autoplay-pause, then play)
+    if(!this.props.isPlaying) {
+      this.videoEl.pause();
+    }
   }
 
   handlePlay() {
@@ -140,6 +147,7 @@ class Video extends Component {
             className="video"
             muted
             playsInline
+            autoPlay
           >
             <source src={this.props.src} type="video/mp4" />
             Your browser does not support the video tag.
