@@ -11,6 +11,7 @@ class GameIndicators extends Component {
       <div 
         className="game-indicators"
       >
+        <div className="level">Level 1</div>
         <PollutionLevel />
         <Score />
         <style jsx>{`
