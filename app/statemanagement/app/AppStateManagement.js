@@ -11,6 +11,7 @@ const initialState = fromJS({
   availableVideos: [{
       name: "1_prototype_video",
       level: 2,
+      disappearAreas: [],
       vimeoId: "235911346",
       originalResolution: {
         w: 1920,
@@ -22,6 +23,7 @@ const initialState = fromJS({
     },{
       name: "level_1",
       level: 1,
+      disappearAreas: [],
       vimeoId: "237563941",
       originalResolution: {
         w: 1280,

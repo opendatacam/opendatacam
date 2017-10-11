@@ -4,19 +4,22 @@ var Tracker = require('./Tracker');
 yolo = {};
 tracked = {};
 
-var path = "../app/static/detections/level_1";
+var path = "../app/static/detections/1_prototype_video";
 
-var IGNORED_AREAS = [{
-  xMin: 0,
-  yMin: 0,
-  xMax: 308,
-  yMax: 251
-},{
-  xMin: 628,
-  yMin: 0,
-  xMax: 1280,
-  yMax: 156
-}];
+
+var IGNORED_AREAS = [];
+
+// var IGNORED_AREAS = [{
+//   xMin: 0,
+//   yMin: 0,
+//   xMax: 308,
+//   yMax: 251
+// },{
+//   xMin: 628,
+//   yMin: 0,
+//   xMax: 1280,
+//   yMax: 156
+// }];
 
 function ignoreAreas(detections, ignoredAreas) {
   return detections.filter((detection) => {

@@ -137,12 +137,13 @@ class Mask extends PureComponent {
 
       // Update counter of things missed this frame
       // get list of items that disappear this frame
+      // TODO IMPLEMENT DISAPPEAR AREAS
       const itemsDisappearingThisFrame = this.props.objectTrackerData["general"]
                                             .filter((objectTracked) => 
                                             objectTracked.disappearFrame === window.currentFrame &&
-                                            objectTracked.nbActiveFrame > 30 &&
-                                            objectTracked.disappearArea.x < 640 &&
-                                            objectTracked.disappearArea.y > 420 
+                                            objectTracked.nbActiveFrame > 60
+                                            // objectTracked.disappearArea.x < 640 &&
+                                            // objectTracked.disappearArea.y > 420 
                                           )
       if(itemsDisappearingThisFrame.length > 0) {
         // Add to missed list the one we haven't clicked

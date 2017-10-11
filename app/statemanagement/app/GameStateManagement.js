@@ -9,7 +9,7 @@ const initialState = fromJS({
   score: 0,
   killedItems: [],
   missedItems: [],
-  maxMissed: 5,
+  maxMissed: 10,
   currentLevel: 1,
   isPlaying: false,
   finished: false,
@@ -91,17 +91,17 @@ export function failedLevel() {
 export function retry() {
   return (dispatch, getState) => {
 
-    // Notify UI we are re-starting the game
-    dispatch({
-      type: RETRY
-    });
-
     if(getState().game.get('currentLevel') === 1) {
       // Reset the video
       dispatch(resetVideo());
     } else {
       dispatch(loadLevel(1));
     }
+
+    // Notify UI we are re-starting the game
+    dispatch({
+      type: RETRY
+    });
   }
 }
 
