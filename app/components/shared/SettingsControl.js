@@ -3,6 +3,8 @@ import { connect } from 'react-redux';
 
 import { updateSettings } from '../../statemanagement/app/SettingsStateManagement';
 
+import { playVideo, pauseVideo, resetVideo } from '../../statemanagement/app/VideoStateManagement';
+
 class DebugUI extends Component {
 
   constructor(props) {
@@ -37,6 +39,15 @@ class DebugUI extends Component {
           onChange={(e) => this.updateSettings({ showDebugUI: e.target.checked })}
         />
         </label>
+        <div>
+          {!this.props.isPlaying &&
+            <button onClick={() => this.props.dispatch(playVideo())}>Play</button>
+          } 
+          {this.props.isPlaying &&
+            <button onClick={() => this.props.dispatch(pauseVideo())}>Pause</button>
+          }
+          <button onClick={() => this.props.dispatch(resetVideo())}>Reset</button>
+        </div>
         <style jsx>{`
           .settings-control {
             position: fixed;
@@ -59,6 +70,7 @@ export default connect((state) => {
     settings: state.settings.toJS(),
     isObjectTrackerDataFetched: state.objectTracker.get('fetched'),
     isObjectTrackerDataFetching: state.objectTracker.get('isFetching'),
-    isVideoReadyToPlay: state.video.get('isReadyToPlay')
+    isVideoReadyToPlay: state.video.get('isReadyToPlay'),
+    isPlaying: state.video.get('isPlaying')
   }
 })(DebugUI);
