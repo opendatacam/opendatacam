@@ -21,12 +21,17 @@ class Video extends Component {
     this.handleEnded = this.handleEnded.bind(this);
     this.isMonitoring = false;
     this.lastCurrentTime = 0;
+
+    this.state = {
+      canRenderVideo: false
+    }
   }
 
   shouldComponentUpdate(nextProps, nextState) {
     // We want to re-render the video item only if the src has changed
-    if(nextProps.src !== this.props.src) {
-      console.log('Update video');
+    if(nextProps.src !== this.props.src ||
+      nextState.canRenderVideo !== this.state.canRenderVideo) {
+      console.log('Render video');
       // TODO ADD DYNAMIC SCROLL OFFSET FOR MOBILE HERE
       setTimeout(() => {
         window.scroll(212,0);
@@ -139,10 +144,16 @@ class Video extends Component {
     }
   }
 
+  componentDidMount() {
+    this.setState({
+      canRenderVideo: true
+    });
+  }
+
   render() { 
     return (
       <div className="video-container">
-        {this.props.src &&
+        {this.props.src && this.state.canRenderVideo &&
           <video
             key={this.props.src}
             ref={(el) => { 
