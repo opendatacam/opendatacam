@@ -5,7 +5,7 @@ import screenfull from 'screenfull';
 // Initial state
 const initialState = fromJS({
   listenersInitialized: false,
-  orientation: 'none',
+  deviceOrientation: 'none',
   isFullscreen: false,
   isFullscreenAvailable: false
 });
@@ -19,12 +19,13 @@ const SET_FULLSCREEN_AVAILABLE = 'Viewport/SET_FULLSCREEN_AVAILABLE';
 
 
 export function handleOrientationChange(dispatch) {
+  console.log(window.orientation);
   if(window.orientation === -90 || window.orientation === 90) {
     console.log('landscape');
     dispatch(setLandscape());
     // Scroll to bottom ?
     window.scrollTo(0, document.body.scrollHeight);
-  } else if(window.orientation) {
+  } else if(window.orientation !== undefined) {
     console.log('portrait');
     dispatch(setPortrait());
   }
@@ -89,9 +90,9 @@ export function setFullScreenStatus(status) {
 export default function ViewportStateManagement(state = initialState, action = {}) {
   switch (action.type) {
     case SET_LANDSCAPE:
-      return state.set('orientation', 'landscape')
+      return state.set('deviceOrientation', 'landscape')
     case SET_PORTRAIT:
-      return state.set('orientation', 'portrait')
+      return state.set('deviceOrientation', 'portrait')
     case INIT_LISTENERS:
       return state.set('listenersInitialized', true)
     case SET_FULLSCREEN_STATUS:

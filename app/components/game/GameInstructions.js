@@ -152,7 +152,7 @@ export default connect((state) => {
     finished: state.game.get('finished'),
     currentLevel: state.game.get('currentLevel'),
     gameReadyToPlay,
-    deviceOrientation: state.viewport.get('orientation'),
+    deviceOrientation: state.viewport.get('deviceOrientation'),
     isFullscreenAvailable: state.viewport.get('isFullscreenAvailable'),
     isFullscreen: state.viewport.get('isFullscreen')
   }
