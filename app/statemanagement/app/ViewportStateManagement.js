@@ -24,7 +24,7 @@ export function handleOrientationChange(dispatch) {
     dispatch(setLandscape());
     // Scroll to bottom ?
     window.scrollTo(0, document.body.scrollHeight);
-  } else {
+  } else if(window.orientation) {
     console.log('portrait');
     dispatch(setPortrait());
   }

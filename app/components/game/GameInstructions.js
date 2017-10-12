@@ -32,7 +32,7 @@ class GameInstructions extends Component {
                   {this.props.deviceOrientation === 'portrait' &&
                     <AskLandscape />
                   }
-                  {this.props.deviceOrientation === 'landscape' &&
+                  {this.props.deviceOrientation !== 'portrait'  &&
                    this.props.isFullscreenAvailable &&
                    !this.props.isFullscreen &&
                     <div>
