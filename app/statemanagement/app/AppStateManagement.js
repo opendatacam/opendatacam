@@ -11,7 +11,7 @@ const initialState = fromJS({
   availableVideos: [{
       name: "1_prototype_video",
       level: 2,
-      disappearAreas: [],
+      disappearAreas: [{"x":285,"y":338,"w":188,"h":138},{"x":156,"y":970,"w":476,"h":113.99999999999999},{"x":960,"y":965,"w":548,"h":118},{"x":1580.14,"y":311.86,"w":84,"h":94},{"x":362,"y":425,"w":196,"h":106}],
       vimeoId: "235911346",
       originalResolution: {
         w: 1920,
@@ -23,7 +23,7 @@ const initialState = fromJS({
     },{
       name: "level_1",
       level: 1,
-      disappearAreas: [],
+      disappearAreas: [{"x":0,"y":420,"w":640,"h":300}],
       vimeoId: "237563941",
       originalResolution: {
         w: 1280,
@@ -80,9 +80,6 @@ export function selectVideo(name) {
       // Fetch detection and object tracking data
       dispatch(fetchRawDetections(getRawDetectionPath(videoSelected.get('name'), videoSelected.get('vimeoId'))));
       dispatch(fetchObjectTracker(getTrackerDataPath(videoSelected.get('name'), videoSelected.get('vimeoId'))));
-    
-      // Reset Score
-      dispatch(resetScore());
     });
   }
 }

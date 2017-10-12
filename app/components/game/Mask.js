@@ -5,7 +5,7 @@ import Clippath from './Clippath';
 import PuffAnimation from './PuffAnimation';
 import ScoreAnimation from './ScoreAnimation';
 
-import { scaleDetection } from '../../utils/resolution';
+import { scaleDetection, isInsideSomeAreas } from '../../utils/resolution';
 
 import { incrementScore, addMissedItem, addKilledItem } from '../../statemanagement/app/GameStateManagement';
 
@@ -135,16 +135,13 @@ class Mask extends PureComponent {
           window.itemsMasked = objectsMaskedUpdated;
         }
 
-      // Update counter of things missed this frame
-      // get list of items that disappear this frame
-      // TODO IMPLEMENT DISAPPEAR AREAS
+      // TODO RENAME DISSAPEAR AREA INTO DISAPPEAR POINT
       const itemsDisappearingThisFrame = this.props.objectTrackerData["general"]
                                             .filter((objectTracked) => 
-                                            objectTracked.disappearFrame === window.currentFrame &&
-                                            objectTracked.nbActiveFrame > 60
-                                            // objectTracked.disappearArea.x < 640 &&
-                                            // objectTracked.disappearArea.y > 420 
-                                          )
+                                              objectTracked.disappearFrame === window.currentFrame &&
+                                              objectTracked.nbActiveFrame > 60 &&
+                                              isInsideSomeAreas(this.props.disappearAreas , objectTracked.disappearArea, objectTracked.idDisplay)
+                                            )
       if(itemsDisappearingThisFrame.length > 0) {
         // Add to missed list the one we haven't clicked
         itemsDisappearingThisFrame.forEach((itemDisappearing) => {
@@ -321,6 +318,7 @@ export default connect((state) => {
     isVideoReadyToPlay: state.video.get('isReadyToPlay'),
     soundEnabled: state.settings.get('soundEnabled'),
     originalResolution: selectedVideo.get('originalResolution').toJS(),
-    killedItems: state.game.get('killedItems')
+    killedItems: state.game.get('killedItems'),
+    disappearAreas: selectedVideo.get('disappearAreas').toJS()
   }
 })(Mask);
