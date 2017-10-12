@@ -4,7 +4,7 @@ import axios from 'axios';
 // Initial state
 const initialState = fromJS({
   orientationListenerInit: false,
-  orientation: null
+  orientation: 'none'
 });
 
 // Actions
@@ -17,6 +17,8 @@ export function handleOrientationChange(dispatch) {
   if(window.orientation === -90 || window.orientation === 90) {
     console.log('landscape');
     dispatch(setLandscape());
+    // Scroll to bottom ?
+    window.scrollTo(0, document.body.scrollHeight);
   } else {
     console.log('portrait');
     dispatch(setPortrait());

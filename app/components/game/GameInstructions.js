@@ -5,6 +5,7 @@ import Link from 'next/link';
 import PollutionLevel from './PollutionLevel';
 import Score from './Score';
 import Loading from '../shared/Loading';
+import AskLandscape from '../shared/AskLandscape';
 
 import { startLevel, retry } from '../../statemanagement/app/GameStateManagement';
 
@@ -25,7 +26,12 @@ class GameInstructions extends Component {
                 <p><i>Survive the pollution by clicking on cars !</i></p>
               }
               {this.props.currentLevel === 2 &&
-                <p><i>Ready for level 2 ?</i></p>
+                <div>
+                  <p><i>Ready for level 2 ?</i></p>
+                  {this.props.deviceOrientation === 'portrait' &&
+                    <AskLandscape />
+                  }
+                </div>
               }
               {this.props.gameReadyToPlay &&
                 <a onClick={() => this.props.dispatch(startLevel())}>
@@ -132,6 +138,7 @@ export default connect((state) => {
     failed: state.game.get('failed'),
     finished: state.game.get('finished'),
     currentLevel: state.game.get('currentLevel'),
-    gameReadyToPlay
+    gameReadyToPlay,
+    deviceOrientation: state.viewport.get('orientation')
   }
 })(GameInstructions);
