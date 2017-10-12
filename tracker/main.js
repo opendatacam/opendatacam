@@ -6,6 +6,7 @@ tracked = {};
 
 var path = "../app/static/detections/1_prototype_video";
 
+var DETECT_LIST = ["car", "bicycle", "truck", "motorbike"];
 
 var IGNORED_AREAS = [];
 
@@ -36,6 +37,10 @@ function ignoreAreas(detections, ignoredAreas) {
   });
 }
 
+function ignoreObjectsNotToDetect(detections, objectsToDetect) {
+  return detections.filter((detection) => objectsToDetect.indexOf(detection.name) > -1)
+}
+
 fs.readFile(`${path}/rawdetections.txt`, function(err, f){
     var lines = f.toString().split('\n');
     lines.forEach(function(l) {
@@ -52,7 +57,9 @@ fs.readFile(`${path}/rawdetections.txt`, function(err, f){
     Object.keys(yolo).forEach(function(frameNb) {
       // Remove unwanted areas
       let detectionsForThisFrame = ignoreAreas(yolo[frameNb], IGNORED_AREAS);
-
+      // Remove unwanted items
+      detectionsForThisFrame = ignoreObjectsNotToDetect(detectionsForThisFrame, DETECT_LIST);
+      
       Tracker.updateTrackedItemsWithNewFrame(detectionsForThisFrame, parseInt(frameNb, 10));
       tracked[frameNb] = Tracker.getJSONOfTrackedItems();
     });
@@ -67,6 +74,10 @@ fs.readFile(`${path}/rawdetections.txt`, function(err, f){
     fs.writeFile(`${path}/tracker.json`, JSON.stringify(tracked), function() {
       console.log('tracked data wrote');
     });
+
+    // fs.writeFile(`${path}/tracker-general.json`, JSON.stringify(tracked["general"]), function() {
+    //   console.log('tracked general data wrote');
+    // });
 });
 
 
