@@ -1,16 +1,21 @@
 import { fromJS } from 'immutable';
 import axios from 'axios';
+import screenfull from 'screenfull';
 
 // Initial state
 const initialState = fromJS({
-  orientationListenerInit: false,
-  orientation: 'none'
+  listenersInitialized: false,
+  orientation: 'none',
+  isFullscreen: false,
+  isFullscreenAvailable: false
 });
 
 // Actions
 const SET_PORTRAIT = 'Viewport/SET_PORTRAIT';
 const SET_LANDSCAPE = 'Viewport/SET_LANDSCAPE';
-const INIT_ORIENTATION_LISTENER = 'Viewport/INIT_ORIENTATION_LISTENER';
+const INIT_LISTENERS = 'Viewport/INIT_LISTENERS';
+const SET_FULLSCREEN_STATUS = 'Viewport/SET_FULLSCREEN_STATUS';
+const SET_FULLSCREEN_AVAILABLE = 'Viewport/SET_FULLSCREEN_AVAILABLE';
 
 
 export function handleOrientationChange(dispatch) {
@@ -25,17 +30,32 @@ export function handleOrientationChange(dispatch) {
   }
 }
 
-export function initOrientationListener() {
+export function handleFullScreenChange(dispatch) {
+  if(screenfull.isFullscreen) {
+    console.log('entering fullscreen');
+    dispatch(setFullScreenStatus(true));
+  } else {
+    console.log('leaving fullscreen');
+    dispatch(setFullScreenStatus(false));
+  }
+}
+
+export function initViewportListeners() {
   return (dispatch, getState) => {
     
     //Only if not initialized
-    if(!getState().viewport.get('orientationListenerInit')) {
+    if(!getState().viewport.get('listenersInitialized')) {
       dispatch({
-        type: INIT_ORIENTATION_LISTENER
+        type: INIT_LISTENERS
       });
       console.log('init orientation change listener');
       window.addEventListener('orientationchange', handleOrientationChange.bind(this, dispatch));
       handleOrientationChange(dispatch);
+      if(screenfull.enabled) {
+        console.log('init fullscreen listener');
+        screenfull.on('change', handleFullScreenChange.bind(this, dispatch));
+        dispatch(setFullscreenAvailable());
+      }
     }
   }
 }
@@ -52,6 +72,19 @@ export function setPortrait() {
   }
 }
 
+export function setFullscreenAvailable() {
+  return {
+    type: SET_FULLSCREEN_AVAILABLE
+  }
+}
+
+export function setFullScreenStatus(status) {
+  return {
+    type: SET_FULLSCREEN_STATUS,
+    payload: status
+  }
+}
+
 // Reducer
 export default function ViewportStateManagement(state = initialState, action = {}) {
   switch (action.type) {
@@ -59,8 +92,12 @@ export default function ViewportStateManagement(state = initialState, action = {
       return state.set('orientation', 'landscape')
     case SET_PORTRAIT:
       return state.set('orientation', 'portrait')
-    case INIT_ORIENTATION_LISTENER:
-      return state.set('orientationListenerInit', true)
+    case INIT_LISTENERS:
+      return state.set('listenersInitialized', true)
+    case SET_FULLSCREEN_STATUS:
+      return state.set('isFullscreen', action.payload)
+    case SET_FULLSCREEN_AVAILABLE:
+      return state.set('isFullscreenAvailable', true)
     default:
       return state;
   }

@@ -18,7 +18,7 @@ import { updateSettings } from '../../statemanagement/app/SettingsStateManagemen
 
 import { selectDefaultVideo } from '../../statemanagement/app/AppStateManagement';
 
-import { initOrientationListener } from '../../statemanagement/app/ViewportStateManagement';
+import { initViewportListeners } from '../../statemanagement/app/ViewportStateManagement';
 
 class GamePage extends React.Component {
 
@@ -29,7 +29,7 @@ class GamePage extends React.Component {
 
   componentDidMount() {
     this.props.dispatch(selectDefaultVideo());
-    this.props.dispatch(initOrientationListener());
+    this.props.dispatch(initViewportListeners());
   }
 
   render () {

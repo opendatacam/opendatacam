@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Link from 'next/link';
+import screenfull from 'screenfull';
 
 import PollutionLevel from './PollutionLevel';
 import Score from './Score';
@@ -30,6 +31,18 @@ class GameInstructions extends Component {
                   <p><i>Ready for level 2 ?</i></p>
                   {this.props.deviceOrientation === 'portrait' &&
                     <AskLandscape />
+                  }
+                  {this.props.deviceOrientation === 'landscape' &&
+                   this.props.isFullscreenAvailable &&
+                   !this.props.isFullscreen &&
+                    <div>
+                      <p>TIP: Level 2 is easier in fullscreen</p>
+                      <button
+                        onClick={() => screenfull.request()}
+                      >
+                        GO FULLSCREEN
+                      </button>
+                    </div>
                   }
                 </div>
               }
@@ -106,7 +119,7 @@ class GameInstructions extends Component {
             text-align: center;
           }
 
-          a {
+          a,button {
             background-color: transparent;
             border: 1px solid white;
             color: white;
@@ -118,7 +131,7 @@ class GameInstructions extends Component {
             display: inline-block;
           }
 
-          a:hover,a:focus {
+          a:hover,a:focus,button:hover,button:focus {
             background-color: white;
             color: black;
           }
@@ -139,6 +152,8 @@ export default connect((state) => {
     finished: state.game.get('finished'),
     currentLevel: state.game.get('currentLevel'),
     gameReadyToPlay,
-    deviceOrientation: state.viewport.get('orientation')
+    deviceOrientation: state.viewport.get('orientation'),
+    isFullscreenAvailable: state.viewport.get('isFullscreenAvailable'),
+    isFullscreen: state.viewport.get('isFullscreen')
   }
 })(GameInstructions);
