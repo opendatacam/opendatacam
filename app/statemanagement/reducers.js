@@ -5,6 +5,7 @@ import video from './app/VideoStateManagement';
 import settings from './app/SettingsStateManagement';
 import app from './app/AppStateManagement';
 import game from './app/GameStateManagement';
+import viewport from './app/ViewportStateManagement';
 
 export default combineReducers({
   app,
@@ -12,5 +13,6 @@ export default combineReducers({
   rawDetections,
   video,
   settings,
-  game
+  game,
+  viewport
 });

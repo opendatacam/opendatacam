@@ -32,6 +32,10 @@ class Layout extends Component {
             :global(html) { font-size: 50%; }
           }
 
+          @media (max-height: 400px) {
+            :global(html) { font-size: 50%; }
+          }
+
           :global(body) {
             font-size: 1.6rem;
           }
