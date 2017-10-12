@@ -70,6 +70,16 @@
                             }
                           });
               console.log(JSON.stringify(trackerData));
+              var trackerOtherFormatData = canvas.toJSON().objects.filter((object) => object.type === "rect")
+                          .map((object) => {
+                            return {
+                              xMin: object.left,
+                              yMin: object.top,
+                              xMax: object.left + object.width * object.scaleX,
+                              yMax: object.top + object.height * object.scaleY
+                            }
+                          });
+              console.log(JSON.stringify(trackerOtherFormatData));
             }
 
             loadFromJSON.onclick = function() {

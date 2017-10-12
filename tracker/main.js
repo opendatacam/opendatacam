@@ -8,33 +8,28 @@ var path = "../app/static/detections/1_prototype_video";
 
 var DETECT_LIST = ["car", "bicycle", "truck", "motorbike"];
 
-var IGNORED_AREAS = [];
+var IGNORED_AREAS = [{"x":634,"y":1022,"w":192,"h":60},{"x":1240,"y":355,"w":68,"h":68},{"x":1295,"y":335,"w":56.00000000000001,"h":56.00000000000001},{"x":1337,"y":300,"w":57.99999999999999,"h":57.99999999999999},{"x":1378,"y":265,"w":57.99999999999999,"h":57.99999999999999},{"x":1461,"y":-2.25,"w":378,"h":282},{"x":1770,"y":825,"w":180,"h":200}];
 
-// var IGNORED_AREAS = [{
-//   xMin: 0,
-//   yMin: 0,
-//   xMax: 308,
-//   yMax: 251
-// },{
-//   xMin: 628,
-//   yMin: 0,
-//   xMax: 1280,
-//   yMax: 156
-// }];
 
-function ignoreAreas(detections, ignoredAreas) {
-  return detections.filter((detection) => {
-    let insideIgnoredArea = false;
-    ignoredAreas.map((ignoredArea) => {
-      if(detection.x > ignoredArea.xMin &&
-         detection.x < ignoredArea.xMax &&
-        detection.y > ignoredArea.yMin &&
-        detection.y < ignoredArea.yMax) {
-        insideIgnoredArea = true;
-      }
-    });
-    return !insideIgnoredArea;
-  });
+function isInsideArea(area, point) {
+  const xMin = area.x
+  const xMax = area.x + area.w;
+  const yMin = area.y
+  const yMax = area.y + area.h;
+  
+  if(point.x >= xMin &&
+     point.x <= xMax &&
+     point.y >= yMin &&
+     point.y <= yMax) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function isInsideSomeAreas(areas, point) {
+  const isInside = areas.some((area) => isInsideArea(area, point));
+  return isInside;
 }
 
 function ignoreObjectsNotToDetect(detections, objectsToDetect) {
@@ -56,7 +51,7 @@ fs.readFile(`${path}/rawdetections.txt`, function(err, f){
 
     Object.keys(yolo).forEach(function(frameNb) {
       // Remove unwanted areas
-      let detectionsForThisFrame = ignoreAreas(yolo[frameNb], IGNORED_AREAS);
+      let detectionsForThisFrame = yolo[frameNb].filter((detection) => !isInsideSomeAreas(IGNORED_AREAS, detection));
       // Remove unwanted items
       detectionsForThisFrame = ignoreObjectsNotToDetect(detectionsForThisFrame, DETECT_LIST);
       
