@@ -13,7 +13,8 @@ module.exports = {
         query: {
           level: 2
         }  
-      }
+      },
+      '/benchmarkiou': { page: '/benchmark' },
     }
   }
 }
