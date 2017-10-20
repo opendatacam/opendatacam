@@ -163,15 +163,15 @@ class Canvas extends Component {
       }
 
       // Draw debug objectTracker data
-      // let objectTrackerDataForThisFrame = this.props.objectTrackerData[currentDetectionOrTrackingFrame];
-      // if(this.props.showDebugUI && objectTrackerDataForThisFrame) {
-      //   this.drawObjectTrackerData(this.canvasContext, objectTrackerDataForThisFrame);
-      // }
+      let objectTrackerDataForThisFrame = this.props.objectTrackerData[currentDetectionOrTrackingFrame];
+      if(this.props.showDebugUI && objectTrackerDataForThisFrame) {
+        this.drawObjectTrackerData(this.canvasContext, objectTrackerDataForThisFrame);
+      }
 
       // Draw tracker ui data
-      // if(objectTrackerDataForThisFrame) {
-      //   this.drawTrackerUIData(this.canvasContext, objectTrackerDataForThisFrame);
-      // }
+      if(objectTrackerDataForThisFrame) {
+        this.drawTrackerUIData(this.canvasContext, objectTrackerDataForThisFrame);
+      }
 
       this.lastFrameDrawn = window.currentFrame;
     }
