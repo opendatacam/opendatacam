@@ -11,6 +11,8 @@ const initialState = fromJS({
   availableVideos: [{
       name: "1_prototype_video",
       level: 2,
+      videoFPS: 25,
+      trackerAndDetectionsFPS: 25,
       disappearAreas: [{"x":285,"y":338,"w":188,"h":138},{"x":156,"y":970,"w":476,"h":113.99999999999999},{"x":960,"y":965,"w":548,"h":118},{"x":1580.14,"y":311.86,"w":84,"h":94},{"x":362,"y":425,"w":196,"h":106}],
       vimeoId: "235911346",
       originalResolution: {
@@ -23,6 +25,8 @@ const initialState = fromJS({
     },{
       name: "level_1",
       level: 1,
+      videoFPS: 25,
+      trackerAndDetectionsFPS: 25,
       disappearAreas: [{"x":0,"y":420,"w":640,"h":300}],
       vimeoId: "237563941",
       originalResolution: {
@@ -32,6 +36,62 @@ const initialState = fromJS({
       sources: {
         // hd: "/static/detections/level_1/level_1.mp4",
         hd: "https://player.vimeo.com/external/237563941.hd.mp4?s=521162fbd4ba420ea6a2d04dcdf123c0a74a23e4"
+      }
+    },{
+      name: "proto_1_4k30FPS",
+      level: 100,
+      disappearAreas: [],
+      videoFPS: 29.97,
+      trackerAndDetectionsFPS: 29.97,
+      originalResolution: {
+        w: 3840,
+        h: 2160
+      },
+      vimeoId: "238905577",
+      sources: {
+        hd: "https://player.vimeo.com/external/238905577.hd.mp4?s=e89408bce32f1b4b3f395f2fd047cb047247449c&profile_id=174"
+      }
+    },{
+      name: "proto_1_HD30FPS",
+      level: 101,
+      videoFPS: 29.97,
+      trackerAndDetectionsFPS: 29.97,
+      disappearAreas: [],
+      originalResolution: {
+        w: 1920,
+        h: 1080
+      },
+      vimeoId: "238905758",
+      sources: {
+        hd: "https://player.vimeo.com/external/238905758.hd.mp4?s=631c74c879b9684e8761256e19310d877ef0a5fa&profile_id=174"
+      }
+    },{
+      name: "proto_2_HD30FPS",
+      level: 102,
+      disappearAreas: [],
+      videoFPS: 29.97,
+      trackerAndDetectionsFPS: 29.97,
+      originalResolution: {
+        w: 1920,
+        h: 1080
+      },
+      vimeoId: "238905843",
+      sources: {
+        hd: "https://player.vimeo.com/external/238905843.hd.mp4?s=ef2e9c5c6cf726dd870e92bc4f065e5cb65af844&profile_id=174"
+      }
+    },{
+      name: "proto_2_HD60FPS",
+      level: 103,
+      videoFPS: 29.97,
+      trackerAndDetectionsFPS: 59.94,
+      disappearAreas: [],
+      originalResolution: {
+        w: 1920,
+        h: 1080
+      },
+      vimeoId: "238905908",
+      sources: {
+        hd: "https://player.vimeo.com/external/238905908.hd.mp4?s=ca778d566b109d295cb28e3e6042115cc2f10493&profile_id=174"
       }
     }
   ],

@@ -154,22 +154,24 @@ class Canvas extends Component {
 
       this.canvasContext.clearRect(0, 0, 1280, 720);
 
+      const currentDetectionOrTrackingFrame = window.currentFrame * this.props.ratioVideoTrackerFPS;
+
       // Draw debug raw detections data
-      let rawDetectionsForThisFrame = this.props.rawDetections[window.currentFrame];
+      let rawDetectionsForThisFrame = this.props.rawDetections[currentDetectionOrTrackingFrame];
       if(this.props.showDebugUI && rawDetectionsForThisFrame) {
         this.drawRawDetections(this.canvasContext, rawDetectionsForThisFrame);
       }
 
       // Draw debug objectTracker data
-      let objectTrackerDataForThisFrame = this.props.objectTrackerData[window.currentFrame];
-      if(this.props.showDebugUI && objectTrackerDataForThisFrame) {
-        this.drawObjectTrackerData(this.canvasContext, objectTrackerDataForThisFrame);
-      }
+      // let objectTrackerDataForThisFrame = this.props.objectTrackerData[currentDetectionOrTrackingFrame];
+      // if(this.props.showDebugUI && objectTrackerDataForThisFrame) {
+      //   this.drawObjectTrackerData(this.canvasContext, objectTrackerDataForThisFrame);
+      // }
 
       // Draw tracker ui data
-      if(objectTrackerDataForThisFrame) {
-        this.drawTrackerUIData(this.canvasContext, objectTrackerDataForThisFrame);
-      }
+      // if(objectTrackerDataForThisFrame) {
+      //   this.drawTrackerUIData(this.canvasContext, objectTrackerDataForThisFrame);
+      // }
 
       this.lastFrameDrawn = window.currentFrame;
     }
@@ -242,6 +244,8 @@ export default connect((state) => {
     return video.get('name') === state.app.get('selectedVideo')
   });
 
+  const ratioVideoTrackerFPS = selectedVideo.get('trackerAndDetectionsFPS') / selectedVideo.get('videoFPS');
+
   return {
     rawDetections: state.rawDetections.get('data'),
     areRawDetectionsFetched: state.rawDetections.get('fetched'),
@@ -250,6 +254,7 @@ export default connect((state) => {
     isPlaying: state.video.get('isPlaying'),
     showDebugUI: state.settings.get('showDebugUI'),
     isVideoReadyToPlay: state.video.get('isReadyToPlay'),
-    originalResolution: selectedVideo.get('originalResolution').toJS()
+    originalResolution: selectedVideo.get('originalResolution').toJS(),
+    ratioVideoTrackerFPS
   }
 })(Canvas);

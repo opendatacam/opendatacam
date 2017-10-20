@@ -125,7 +125,7 @@ class Video extends Component {
       this.isMonitoring = false;
       return;
     }
-    let newCurrentFrame = Math.round(this.videoEl.currentTime * 25)
+    let newCurrentFrame = Math.round(this.videoEl.currentTime * this.props.videoFPS)
     if(window.currentFrame !== newCurrentFrame) {
       window.currentFrame = newCurrentFrame;
 
@@ -205,10 +205,16 @@ class Video extends Component {
 }
  
 export default connect((state) => {
+
+  const selectedVideo = state.app.get('availableVideos').find((video) => {
+    return video.get('name') === state.app.get('selectedVideo')
+  });
+
   return {
     isPlaying: state.video.get('isPlaying'),
     isAtBeggining: state.video.get('isAtBeggining'),
     src: state.video.get('src'),
-    currentTime: state.video.get('currentTime')
+    currentTime: state.video.get('currentTime'),
+    videoFPS: selectedVideo.get('videoFPS')
   }
 })(Video);
