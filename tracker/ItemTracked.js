@@ -125,7 +125,8 @@ exports.ItemTracked = function(properties, frameNb, DEFAULT_UNMATCHEDFRAMES_TOLE
       isZombie: this.isZombie,
       zombieOpacity: this.frameUnmatchedLeftBeforeDying / DEFAULT_UNMATCHEDFRAMES_TOLERANCE,
       appearFrame: this.appearFrame,
-      disappearFrame: this.disappearFrame
+      disappearFrame: this.disappearFrame,
+      isDead: this.isDead() // usefull for realtime counting
     }
   }
   itemTracked.toJSONGenericInfo = function() {
