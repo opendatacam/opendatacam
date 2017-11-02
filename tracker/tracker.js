@@ -20,7 +20,9 @@ var SIZE_VARIATION_LIMIT = 100;
 // DEFAULT_UNMATCHEDFRAMES_TOLERANCE 
 // is the number of frame we wait when an object isn't matched before 
 // considering it gone
-var DEFAULT_UNMATCHEDFRAMES_TOLERANCE = 30;
+// TODO configure when instantiating tracker.. IDEA: Instantiate tracker with FPS estimated
+// in order to have the best config
+var DEFAULT_UNMATCHEDFRAMES_TOLERANCE = 5;
 
 // Simple euclidian distance function between two points
 var computeEuclidianDistance = function(item1, item2) {

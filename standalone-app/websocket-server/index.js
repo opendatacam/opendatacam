@@ -47,25 +47,34 @@ wsServer.on('request', function(request) {
             var detectionsOfThisFrame = JSON.parse(message.utf8Data);
             detectionsOfThisFrame = detectionsOfThisFrame.map((detection) => {
                 var detectionScaled = detection;
+                detectionScaled.name = detection.class;
                 detectionScaled.x = detection.x * imageWidth;
                 detectionScaled.y = detection.y * imageHeight;
                 detectionScaled.w = detection.w * imageWidth;
                 detectionScaled.h = detection.h * imageHeight;
                 return detectionScaled;
             })
-            console.log(`Received Detection:`);
-            console.log('=========');
-            console.log(JSON.stringify(detectionsOfThisFrame));
-            console.log('=========');
-            console.log('Update tracker with this frame')
-            console.log(`Frame id: ${frameNb}`);
-            console.log('=========')
+            // console.log(`Received Detection:`);
+            // console.log('=========');
+            // console.log(JSON.stringify(detectionsOfThisFrame));
+            // console.log('=========');
+            // console.log('Update tracker with this frame')
+            // console.log(`Frame id: ${frameNb}`);
+            // console.log('=========')
             Tracker.updateTrackedItemsWithNewFrame(detectionsOfThisFrame, frameNb);
             console.log('Tracker data');
-            console.log('=========')
-            console.log(JSON.stringify(Tracker.getJSONOfTrackedItems()));
-            console.log('=========')
+            // console.log('=========')
+            // console.log(JSON.stringify(Tracker.getJSONOfTrackedItems()));
+            // console.log('=========')
+            // TODO use that to count
+            console.log(JSON.stringify(Tracker.getJSONOfAllTrackedItems()));
+            // console.log('=========')
             frameNb++;
+
+
+            // var itemsToCountOnThatFrame = Tracker.getJSONOfTrackedItems().filter((trackedItem) => trackedItem.isDead === true);
+            // console.log(`Count items ${itemsToCountOnThatFrame.length}`);
+            // console.log(itemsToCountOnThatFrame);
             // connection.sendUTF(message.utf8Data);
         }
         else if (message.type === 'binary') {
