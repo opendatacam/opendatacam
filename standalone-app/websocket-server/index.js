@@ -10,8 +10,39 @@ var counter = {
     car: 0
 }
 
+var countingAreas = [
+    {"x":190,"y":225.33333333333334,"w":125.33333333333333,"h":92},
+    {"x":104,"y":646.6666666666666,"w":317.3333333333333,"h":75.99999999999999},
+    {"x":640,"y":643.3333333333334,"w":365.3333333333333,"h":78.66666666666667},
+    {"x":1053.4266666666667,"y":207.90666666666667,"w":56,"h":62.666666666666664},
+    {"x":241.33333333333334,"y":283.3333333333333,"w":130.66666666666666,"h":70.66666666666667}
+]
+
+
 var imageWidth = 1280;
 var imageHeight = 720;
+
+function isInsideArea(area, point) {
+    const xMin = area.x
+    const xMax = area.x + area.w;
+    const yMin = area.y
+    const yMax = area.y + area.h;
+    
+    if(point.x >= xMin &&
+       point.x <= xMax &&
+       point.y >= yMin &&
+       point.y <= yMax) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  
+function isInsideSomeAreas(areas, point, idDisplay) {
+    const isInside = areas.some((area) => isInsideArea(area, point));
+    // console.log(`Run isInsideSomeAreas for ${idDisplay}, returned: ${isInside}`);
+    return isInside;
+  }
 
 var server = http.createServer(function(request, response) {
     console.log((new Date()) + ' Received request for ' + request.url);
@@ -73,7 +104,13 @@ wsServer.on('request', function(request) {
             // console.log(JSON.stringify(Tracker.getJSONOfTrackedItems()));
             // console.log('=========')
             // TODO use that to count
-            var newItemsToCount = Tracker.getJSONOfAllTrackedItems().filter((item) => countedItems.indexOf(item.id) === -1);
+            var newItemsToCount = Tracker.getJSONOfAllTrackedItems()
+                .filter((item) => 
+                    countedItems.indexOf(item.id) === -1 && // not already counted 
+                    item.nbActiveFrame > 3
+                ).filter((item) =>
+                    isInsideSomeAreas(countingAreas , item.disappearArea, item.idDisplay)
+                );
             newItemsToCount.forEach((itemToCount) => {
                 countedItems.push(itemToCount.id);
                 counter.car++;
