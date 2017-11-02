@@ -4,6 +4,12 @@ var Tracker = require('../../tracker/tracker');
 
 var frameNb = 0;
 
+var countedItems = [];
+
+var counter = {
+    car: 0
+}
+
 var imageWidth = 1280;
 var imageHeight = 720;
 
@@ -62,12 +68,19 @@ wsServer.on('request', function(request) {
             // console.log(`Frame id: ${frameNb}`);
             // console.log('=========')
             Tracker.updateTrackedItemsWithNewFrame(detectionsOfThisFrame, frameNb);
-            console.log('Tracker data');
+            // console.log('Tracker data');
             // console.log('=========')
             // console.log(JSON.stringify(Tracker.getJSONOfTrackedItems()));
             // console.log('=========')
             // TODO use that to count
-            console.log(JSON.stringify(Tracker.getJSONOfAllTrackedItems()));
+            var newItemsToCount = Tracker.getJSONOfAllTrackedItems().filter((item) => countedItems.indexOf(item.id) === -1);
+            newItemsToCount.forEach((itemToCount) => {
+                countedItems.push(itemToCount.id);
+                counter.car++;
+            });
+
+            console.log(`Counter: ${counter.car} 🚗`);
+
             // console.log('=========')
             frameNb++;
 
