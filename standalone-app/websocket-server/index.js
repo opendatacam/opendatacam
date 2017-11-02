@@ -1,5 +1,11 @@
 var WebSocketServer = require('websocket').server;
 var http = require('http');
+var Tracker = require('../../tracker/tracker');
+
+var frameNb = 0;
+
+var imageWidth = 1280;
+var imageHeight = 720;
 
 var server = http.createServer(function(request, response) {
     console.log((new Date()) + ' Received request for ' + request.url);
@@ -37,19 +43,29 @@ wsServer.on('request', function(request) {
     console.log((new Date()) + ' Connection accepted.');
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
-            console.log('Received Message: ' + message.utf8Data);
+            
+            var detectionsOfThisFrame = JSON.parse(message.utf8Data);
+            detectionsOfThisFrame = detectionsOfThisFrame.map((detection) => {
+                var detectionScaled = detection;
+                detectionScaled.x = detection.x * imageWidth;
+                detectionScaled.y = detection.y * imageHeight;
+                detectionScaled.w = detection.w * imageWidth;
+                detectionScaled.h = detection.h * imageHeight;
+                return detectionScaled;
+            })
+            console.log(`Received Detection:`);
+            console.log('=========');
+            console.log(JSON.stringify(detectionsOfThisFrame));
+            console.log('=========');
+            console.log('Update tracker with this frame')
+            console.log(`Frame id: ${frameNb}`);
             console.log('=========')
+            Tracker.updateTrackedItemsWithNewFrame(detectionsOfThisFrame, frameNb);
+            console.log('Tracker data');
             console.log('=========')
+            console.log(JSON.stringify(Tracker.getJSONOfTrackedItems()));
             console.log('=========')
-            console.log('=========')
-            console.log('=========')
-            console.log('=========')
-            console.log('=========')
-            console.log('=========')
-            console.log('=========')
-            console.log('=========')
-            console.log('=========')
-            console.log('=========')
+            frameNb++;
             // connection.sendUTF(message.utf8Data);
         }
         else if (message.type === 'binary') {
