@@ -12,6 +12,8 @@
   "dependencies": {
     "axios": "^0.17.0",
     "express": "^4.16.2",
+    "gl-react": "3.13.0",
+    "gl-react-dom": "3.13.0",
     "gsap": "^1.20.3",
     "immutable": "^3.8.2",
     "next": "^4.1.4",
