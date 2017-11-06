@@ -2,11 +2,12 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { Surface } from "gl-react-dom";
 
-import Video from '../shared/Video'; 
+
 import Loading from '../shared/Loading'; 
 import Canvas from '../shared/Canvas'; 
 import SettingsControl from '../shared/SettingsControl';
-import HelloBlue from './HelloBlue';
+import SplitColor from './SplitColor';
+import Video from './Video'; 
 
 import VideoSelector from '../shared/VideoSelector';
 
@@ -37,7 +38,13 @@ class WebGLPage extends React.Component {
             height={720}
             className="canvas"
           >
-            <HelloBlue blue={0.1} />
+            <SplitColor>
+              {redraw => (
+                <Video onFrame={redraw} autoPlay loop muted>
+                  <source type="video/mp4" src="/static/video.mp4" />
+                </Video>
+              )}
+            </SplitColor>
           </Surface>
         </div>
         <style jsx global>{`
