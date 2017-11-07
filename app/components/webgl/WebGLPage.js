@@ -9,12 +9,14 @@ import Canvas from './Canvas';
 import SettingsControl from '../shared/SettingsControl';
 import BackgroundSubtraction from './BackgroundSubtraction';
 import Video from './Video'; 
+import GameIndicators from '../game/GameIndicators';
+import GameInstructions from '../game/GameInstructions';
 
 import VideoSelector from '../shared/VideoSelector';
 
 import { updateSettings } from '../../statemanagement/app/SettingsStateManagement';
 
-import { selectVideo } from '../../statemanagement/app/AppStateManagement';
+import { selectVideo, selectDefaultVideo, getAverageImgPath } from '../../statemanagement/app/AppStateManagement';
 
 import { initViewportListeners } from '../../statemanagement/app/ViewportStateManagement';
 
@@ -34,7 +36,6 @@ class WebGLPage extends React.Component {
     return (
       <div className="landing-page">
         <SettingsControl />
-        
         <div className="canvas-container">
           <Surface 
             width={1280}
@@ -45,7 +46,7 @@ class WebGLPage extends React.Component {
               <Canvas />
             </Bus>
             <BackgroundSubtraction
-              average="/static/detections/1_prototype_video/average-1280.jpg"
+              average={this.props.averageImgSrc}
               canvas2d={() => this.refs.detectionsCanvas}
             >
               {redraw => (
@@ -90,4 +91,14 @@ class WebGLPage extends React.Component {
   }
 }
 
-export default connect()(WebGLPage);
+export default connect((state) => {
+
+  const selectedVideo = state.app.get('availableVideos').find((video) => {
+    return video.get('name') === state.app.get('selectedVideo')
+  });
+
+  return {
+    isGamePlaying: state.game.get('isPlaying'),
+    averageImgSrc: getAverageImgPath(selectedVideo.get('name'), selectedVideo.get('vimeoId')),
+  }
+})(WebGLPage);

@@ -41,7 +41,7 @@ class Canvas extends Component {
 
   drawRawDetections(context, detections) {
     context.strokeStyle = "red";
-    context.lineWidth = 20; // draw the rectangle bigger than the bounding box
+    context.lineWidth = 40; // draw the rectangle bigger than the bounding box
     context.fillStyle = "red";
     detections.map((detection) => {
       let scaledDetection = scaleDetection(detection, canvasResolution, this.props.originalResolution);
