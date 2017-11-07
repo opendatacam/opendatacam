@@ -32,6 +32,7 @@ class WebGLPage extends React.Component {
   render () {
     return (
       <div className="landing-page">
+        <SettingsControl />
         <div className="canvas-container">
           <Surface 
             width={1280}
@@ -42,9 +43,7 @@ class WebGLPage extends React.Component {
               average="/static/detections/1_prototype_video/average-1280.jpg"
             >
               {redraw => (
-                <Video onFrame={redraw} autoPlay loop muted>
-                  <source type="video/mp4" src="/static/video.mp4" />
-                </Video>
+                <Video onFrame={redraw} />
               )}
             </BackgroundSubtraction>
           </Surface>
