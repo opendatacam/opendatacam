@@ -6,7 +6,7 @@ import { Surface } from "gl-react-dom";
 import Loading from '../shared/Loading'; 
 import Canvas from '../shared/Canvas'; 
 import SettingsControl from '../shared/SettingsControl';
-import SplitColor from './SplitColor';
+import BackgroundSubtraction from './BackgroundSubtraction';
 import Video from './Video'; 
 
 import VideoSelector from '../shared/VideoSelector';
@@ -38,13 +38,15 @@ class WebGLPage extends React.Component {
             height={720}
             className="canvas"
           >
-            <SplitColor>
+            <BackgroundSubtraction
+              average="/static/detections/1_prototype_video/average-1280.jpg"
+            >
               {redraw => (
                 <Video onFrame={redraw} autoPlay loop muted>
                   <source type="video/mp4" src="/static/video.mp4" />
                 </Video>
               )}
-            </SplitColor>
+            </BackgroundSubtraction>
           </Surface>
         </div>
         <style jsx global>{`
