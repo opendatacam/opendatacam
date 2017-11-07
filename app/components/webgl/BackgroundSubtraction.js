@@ -24,7 +24,6 @@ void main () {
   } else {
     gl_FragColor = vec4(frameColor, 1.0);
   }
-  
 }
 `
   }

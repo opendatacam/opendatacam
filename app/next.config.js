@@ -15,6 +15,7 @@ module.exports = {
         }  
       },
       '/benchmarkiou': { page: '/benchmark' },
+      '/webgl': { page: '/webgl' },
     }
   }
 }

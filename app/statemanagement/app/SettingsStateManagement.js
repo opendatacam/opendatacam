@@ -4,6 +4,7 @@ import axios from 'axios';
 // Initial state
 const initialState = fromJS({
   showDebugUI: true,
+  darkMode: false,
   soundEnabled: false
 });
 

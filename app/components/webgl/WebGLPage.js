@@ -8,6 +8,7 @@ import Loading from '../shared/Loading';
 import Canvas from './Canvas'; 
 import SettingsControl from '../shared/SettingsControl';
 import BackgroundSubtraction from './BackgroundSubtraction';
+import Darkmode from './Darkmode';
 import Video from './Video'; 
 import GameIndicators from '../game/GameIndicators';
 import GameInstructions from '../game/GameInstructions';
@@ -36,6 +37,7 @@ class WebGLPage extends React.Component {
     return (
       <div className="landing-page">
         <SettingsControl />
+        <VideoSelector />
         <div className="canvas-container">
           <Surface 
             width={1280}
@@ -45,14 +47,23 @@ class WebGLPage extends React.Component {
             <Bus ref="detectionsCanvas">
               <Canvas />
             </Bus>
-            <BackgroundSubtraction
-              average={this.props.averageImgSrc}
-              canvas2d={() => this.refs.detectionsCanvas}
-            >
-              {redraw => (
-                <Video onFrame={redraw} />
-              )}
-            </BackgroundSubtraction>
+            {!this.props.darkMode &&
+              <BackgroundSubtraction
+                average={this.props.averageImgSrc}
+                canvas2d={() => this.refs.detectionsCanvas}
+              >
+                {redraw => (
+                  <Video onFrame={redraw} />
+                )}
+              </BackgroundSubtraction>
+            }
+            {this.props.darkMode &&
+              <Darkmode average={this.props.averageImgSrc}>
+                {redraw => (
+                  <Video onFrame={redraw} />
+                )}
+              </Darkmode>
+            }
           </Surface>
         </div>
         <style jsx global>{`
@@ -100,5 +111,6 @@ export default connect((state) => {
   return {
     isGamePlaying: state.game.get('isPlaying'),
     averageImgSrc: getAverageImgPath(selectedVideo.get('name'), selectedVideo.get('vimeoId')),
+    darkMode: state.settings.get('darkMode')
   }
 })(WebGLPage);
