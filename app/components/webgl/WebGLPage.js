@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { Surface } from "gl-react-dom";
+import { Bus } from "gl-react";
 
 
 import Loading from '../shared/Loading'; 
@@ -40,9 +41,12 @@ class WebGLPage extends React.Component {
             height={720}
             className="canvas"
           >
+            <Bus ref="detectionsCanvas">
+              <Canvas />
+            </Bus>
             <BackgroundSubtraction
               average="/static/detections/1_prototype_video/average-1280.jpg"
-              canvas2d={<Canvas />}
+              canvas2d={() => this.refs.detectionsCanvas}
             >
               {redraw => (
                 <Video onFrame={redraw} />

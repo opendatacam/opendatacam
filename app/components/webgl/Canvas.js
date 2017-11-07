@@ -179,6 +179,7 @@ class Canvas extends Component {
   }
 
   render() { 
+    console.log('render');
     return (
       <canvas 
         ref={(el) => { 
