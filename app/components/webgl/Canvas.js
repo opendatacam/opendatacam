@@ -54,24 +54,17 @@ class Canvas extends Component {
   }
 
   drawObjectTrackerData(context, objectTrackerData) {
-    context.globalAlpha = 1;
-    context.strokeStyle = "blue";
-    context.lineWidth = 5;
-    context.font = "30px Arial";
-    context.fillStyle = "blue";
-    objectTrackerData.map((objectTracked) => { 
+    context.strokeStyle = "red";
+    context.lineWidth = 40; // draw the rectangle bigger than the bounding box
+    context.fillStyle = "red";
+    objectTrackerData.map((objectTracked) => {
       let objectTrackedScaled = scaleDetection(objectTracked, canvasResolution, this.props.originalResolution);     
-      if(objectTrackedScaled.isZombie) {
-        context.fillStyle = `rgba(255, 153, 0, ${objectTrackedScaled.zombieOpacity})`;
-        context.strokeStyle = `rgba(255, 153, 0, ${objectTrackedScaled.zombieOpacity})`;
-      } else {
-        context.fillStyle = "blue";
-        context.strokeStyle = "blue";
-      }
       let x = objectTrackedScaled.x - objectTrackedScaled.w / 2;
       let y = objectTrackedScaled.y - objectTrackedScaled.h / 2;
-      context.strokeRect(x+5, y+5, objectTrackedScaled.w-10, objectTrackedScaled.h-10);
-      context.fillText(objectTrackedScaled.idDisplay,x + objectTrackedScaled.w / 2 - 20,y + objectTrackedScaled.h / 2);
+      // context.strokeRect(x+5, y+5, objectTrackedScaled.w-10, objectTrackedScaled.h-10);
+      // context.fillText(objectTrackedScaled.idDisplay,x + objectTrackedScaled.w / 2 - 20,y + objectTrackedScaled.h / 2);
+      context.fillRect(x, y, objectTrackedScaled.w, objectTrackedScaled.h);
+      context.strokeRect(x, y, objectTrackedScaled.w, objectTrackedScaled.h);
     });
   }
 
@@ -157,16 +150,16 @@ class Canvas extends Component {
       const currentDetectionOrTrackingFrame = window.currentFrame * this.props.ratioVideoTrackerFPS;
 
       // Draw debug raw detections data
-      let rawDetectionsForThisFrame = this.props.rawDetections[currentDetectionOrTrackingFrame];
+      // let rawDetectionsForThisFrame = this.props.rawDetections[currentDetectionOrTrackingFrame];
       // if(this.props.showDebugUI && rawDetectionsForThisFrame) {
-      this.drawRawDetections(this.canvasContext, rawDetectionsForThisFrame);
+      // this.drawRawDetections(this.canvasContext, rawDetectionsForThisFrame);
       // }
 
       // Draw debug objectTracker data
-      // let objectTrackerDataForThisFrame = this.props.objectTrackerData[currentDetectionOrTrackingFrame];
-      // if(this.props.showDebugUI && objectTrackerDataForThisFrame) {
-      //   this.drawObjectTrackerData(this.canvasContext, objectTrackerDataForThisFrame);
-      // }
+      let objectTrackerDataForThisFrame = this.props.objectTrackerData[currentDetectionOrTrackingFrame];
+      if(objectTrackerDataForThisFrame) {
+        this.drawObjectTrackerData(this.canvasContext, objectTrackerDataForThisFrame);
+      }
 
       // Draw tracker ui data
       // if(objectTrackerDataForThisFrame) {
