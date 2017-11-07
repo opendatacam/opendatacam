@@ -21,6 +21,7 @@ class Video extends Component {
     this.handleEnded = this.handleEnded.bind(this);
     this.isMonitoring = false;
     this.lastCurrentTime = 0;
+    this.currentTime = 0;
 
     this.state = {
       canRenderVideo: false
@@ -125,19 +126,31 @@ class Video extends Component {
       this.isMonitoring = false;
       return;
     }
+
+    // Trigger onframe for webgl
+    if(this.props.onFrame) {
+      // Avoid calling too much onFrame for webgl (but do it more than just on the new Frames)
+      if(this.videoEl.currentTime !== this.currentTime) {
+        this.currentTime = this.videoEl.currentTime;
+        this.props.onFrame(this.videoEl.currentTime);
+      }
+    }
+
+
     let newCurrentFrame = Math.round(this.videoEl.currentTime * this.props.videoFPS)
     if(window.currentFrame !== newCurrentFrame) {
       window.currentFrame = newCurrentFrame;
+
+      // Trigger onframe for webgl
+      // Or maybe have it triggered only on new frame to do less rendering
+      // if(this.props.onFrame) {
+      //   this.props.onFrame(newCurrentTime);
+      // }
 
       // Dispatch current time each second
       let newCurrentTime = Math.trunc(this.videoEl.currentTime);
       if(this.props.currentTime !== newCurrentTime) {
         this.props.dispatch(updateCurrentTime(newCurrentTime));
-      }
-
-      // Trigger onframe for webgl
-      if(this.props.onFrame) {
-        this.props.onFrame(newCurrentTime);
       }
     }
     requestAnimationFrame(this.monitorFrames);
