@@ -9,17 +9,24 @@ precision highp float;
 varying vec2 uv;
 uniform sampler2D children;
 uniform sampler2D average;
+uniform sampler2D canvas2d;
 void main () {
   float y = uv.y * 3.0;
   vec3 averageColor = texture2D(average, uv).rgb;
   vec3 frameColor = texture2D(children, uv).rgb;
-  gl_FragColor = vec4(frameColor - averageColor, 1.0);
+  vec3 canvas2DColor = texture2D(canvas2d, uv).rgb;
+  if(canvas2DColor.r == 1.0) {
+    gl_FragColor = vec4(frameColor - averageColor, 1.0);
+  } else {
+    gl_FragColor = vec4(frameColor, 1.0);
+  }
+  
 }
 `
   }
 });
-const BackgroundSubtraction = ({ children, average }) => (
-  <Node shader={shaders.BackgroundSubtraction} uniforms={{ children, average }} />
+const BackgroundSubtraction = ({ children, average, canvas2d }) => (
+  <Node shader={shaders.BackgroundSubtraction} uniforms={{ children, average, canvas2d }} />
 );
 
 export default BackgroundSubtraction;

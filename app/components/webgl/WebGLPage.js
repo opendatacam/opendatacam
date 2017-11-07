@@ -4,7 +4,7 @@ import { Surface } from "gl-react-dom";
 
 
 import Loading from '../shared/Loading'; 
-import Canvas from '../shared/Canvas'; 
+import Canvas from './Canvas'; 
 import SettingsControl from '../shared/SettingsControl';
 import BackgroundSubtraction from './BackgroundSubtraction';
 import Video from './Video'; 
@@ -33,6 +33,7 @@ class WebGLPage extends React.Component {
     return (
       <div className="landing-page">
         <SettingsControl />
+        
         <div className="canvas-container">
           <Surface 
             width={1280}
@@ -41,6 +42,7 @@ class WebGLPage extends React.Component {
           >
             <BackgroundSubtraction
               average="/static/detections/1_prototype_video/average-1280.jpg"
+              canvas2d={<Canvas />}
             >
               {redraw => (
                 <Video onFrame={redraw} />
