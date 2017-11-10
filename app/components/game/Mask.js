@@ -215,6 +215,11 @@ class Mask extends PureComponent {
     this.cleanClickRecorder();
   }
 
+  getUnicornSize(mask) {
+    const maskArea = mask.w * mask.h;
+    return Math.sqrt(maskArea / 30);
+  }
+
   render() {
 
     return (
@@ -233,6 +238,16 @@ class Mask extends PureComponent {
             height="720px"
             clipPath="url(#svgPath)"
           />
+          {this.state.masks.map((mask) =>
+            <image
+              key={mask.id} 
+              x={mask.x + mask.w / 2 - this.getUnicornSize(mask) / 2}
+              y={mask.y + mask.h / 2 - this.getUnicornSize(mask) / 2}
+              width={this.getUnicornSize(mask)}
+              height={this.getUnicornSize(mask)}
+              xlinkHref="/static/assets/icons/icon-unicorn.svg"
+            />
+          )}
           <defs>
             <Clippath masks={this.state.masks} />
           </defs>
