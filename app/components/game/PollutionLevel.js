@@ -25,7 +25,7 @@ class PollutionLevel extends PureComponent {
         xmlns="http://www.w3.org/2000/svg"
         className="pollution-bar"
       >
-        <g id="Page-1" fill="none" fill-rule="evenodd">
+        <g id="Page-1" fill="none" fillRule="evenodd">
           <path 
             d="M62 0v8.6L72 0v25H31V9.2l10.3-9V9l10.3-9-.3 9L62 0zM20.6 9L31 0v25H0V9.2l10.3-9V9l10.3-9v9z" 
             id="bg" 
@@ -35,7 +35,7 @@ class PollutionLevel extends PureComponent {
             d="M62 0v8.6L72 0v25H31V9.2l10.3-9V9l10.3-9-.3 9L62 0zM20.6 9L31 0v25H0V9.2l10.3-9V9l10.3-9v9z"
             id="progress"
             fill={this.getFillColor()}
-            clip-path="url(#progressClip)"
+            clipPath="url(#progressClip)"
           />
           <defs>
             <clipPath id="progressClip">
