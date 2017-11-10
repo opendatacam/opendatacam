@@ -36,9 +36,9 @@ class GamePage extends React.Component {
   render () {
     return (
       <div className="landing-page">
-        {process.env.NODE_ENV !== 'production' &&
+        {/* {process.env.NODE_ENV !== 'production' &&
           <SettingsControl />
-        }
+        } */}
         <GameIndicators />
         {!this.props.isGamePlaying &&
           <GameInstructions />

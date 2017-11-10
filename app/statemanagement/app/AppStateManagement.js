@@ -15,6 +15,7 @@ const initialState = fromJS({
       trackerAndDetectionsFPS: 25,
       disappearAreas: [{"x":285,"y":338,"w":188,"h":138},{"x":156,"y":970,"w":476,"h":113.99999999999999},{"x":960,"y":965,"w":548,"h":118},{"x":1580.14,"y":311.86,"w":84,"h":94},{"x":362,"y":425,"w":196,"h":106}],
       vimeoId: "235911346",
+      sound: "sound2",
       originalResolution: {
         w: 1920,
         h: 1080
@@ -29,6 +30,7 @@ const initialState = fromJS({
       trackerAndDetectionsFPS: 25,
       disappearAreas: [{"x":0,"y":420,"w":640,"h":300}],
       vimeoId: "237563941",
+      sound: "sound1",
       originalResolution: {
         w: 1280,
         h: 720
@@ -43,6 +45,7 @@ const initialState = fromJS({
       disappearAreas: [],
       videoFPS: 29.97,
       trackerAndDetectionsFPS: 29.97,
+      sound: "sound2",
       originalResolution: {
         w: 3840,
         h: 2160
@@ -56,6 +59,7 @@ const initialState = fromJS({
       level: 101,
       videoFPS: 29.97,
       trackerAndDetectionsFPS: 29.97,
+      sound: "sound2",
       disappearAreas: [],
       originalResolution: {
         w: 1920,
@@ -71,6 +75,7 @@ const initialState = fromJS({
       disappearAreas: [],
       videoFPS: 29.97,
       trackerAndDetectionsFPS: 29.97,
+      sound: "sound2",
       originalResolution: {
         w: 1920,
         h: 1080
@@ -84,6 +89,7 @@ const initialState = fromJS({
       level: 103,
       videoFPS: 29.97,
       trackerAndDetectionsFPS: 59.94,
+      sound: "sound2",
       disappearAreas: [],
       originalResolution: {
         w: 1920,

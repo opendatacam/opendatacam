@@ -23,6 +23,12 @@ class Sound extends Component {
     }
   }
 
+  componentDidMount() {
+    // Prefetch sound on / off image depending on enabled / disabled
+    const soundOn = new Image();
+    soundOn.src = `/static/assets/icons/icon-sound-${this.props.soundEnabled ? 'off' : 'on'}.svg`;
+  }
+
   render() {
     return (
       <div 
@@ -34,13 +40,12 @@ class Sound extends Component {
           preload="true"
           ref={(el) => this.el = el}
         >
-          <source src="/static/sound.mp3" type="audio/mpeg" />
+          <source src={`/static/assets/sounds/${this.props.soundName}.mp3`} type="audio/mpeg" />
         </audio>
         <style jsx>{`
           .audio-button {
             position: fixed;
-            background-color: white;
-            bottom: 1rem;
+            bottom: 1.5rem;
             right: 1rem;
             z-index: 5;
             width: 4.4rem;
@@ -49,17 +54,17 @@ class Sound extends Component {
             cursor: pointer;
             border-radius: 0.2rem;
             background-repeat: no-repeat;
-            background-size: 2rem 2rem;
+            background-size: 3rem 3rem;
             background-position: center;
           }
 
           .audio-button.on {
-            background-image: url(/static/sound-on.svg);
+            background-image: url(/static/assets/icons/icon-sound-on.svg);
             
           }
 
           .audio-button.off {
-            background-image: url(/static/sound-off.svg);
+            background-image: url(/static/assets/icons/icon-sound-off.svg);
           }
 
           {/* TODO CHANGE THIS VISIBILITY TRICK BY HAVING A LOADING SCREEN
@@ -74,8 +79,14 @@ class Sound extends Component {
 }
 
 export default connect((state) => {
+
+  const selectedVideo = state.app.get('availableVideos').find((video) => {
+    return video.get('name') === state.app.get('selectedVideo')
+  });
+
   return {
     isVideoReadyToPlay: state.video.get('isReadyToPlay'),
-    soundEnabled: state.settings.get('soundEnabled')
+    soundEnabled: state.settings.get('soundEnabled'),
+    soundName: selectedVideo.get('sound')
   }
 })(Sound);

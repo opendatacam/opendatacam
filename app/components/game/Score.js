@@ -9,7 +9,7 @@ class Score extends Component {
         className="score-container"
       >
         <span className="score">{this.props.score}</span>
-        <img className="icon-star" src="/static/assets/icon-star.svg" />
+        <img className="icon-star" src="/static/assets/icons/icon-star.svg" />
         <style jsx>{`
           .score-container {
             display: flex;
