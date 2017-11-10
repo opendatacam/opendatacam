@@ -60,7 +60,7 @@ class DebugUI extends Component {
           .settings-control {
             position: fixed;
             right: 1rem;
-            top: 1rem;
+            top: 10rem;
             z-index: 10;
             transform: will-change;
             background-color: white;
