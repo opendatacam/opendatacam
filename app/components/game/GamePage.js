@@ -11,6 +11,7 @@ import TrackerUI from '../shared/TrackerUI';
 import GameIndicators from './GameIndicators';
 import GameInstructions from './GameInstructions';
 import LevelProgressBar from './LevelProgressBar';
+import LevelName from './LevelName';
 
 import Title from '../shared/Title';
 import VideoSelector from '../shared/VideoSelector';
@@ -47,6 +48,7 @@ class GamePage extends React.Component {
         <Sound />
         <Mask />
         <Video />
+        <LevelName />
         <LevelProgressBar />
       </div>
     )
