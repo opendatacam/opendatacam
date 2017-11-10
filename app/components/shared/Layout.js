@@ -10,7 +10,7 @@ class Layout extends Component {
           <title>Traffic Cam</title>
           <meta charSet='utf-8' />
           <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1,user-scalable=0,initial-scale=1" />
-          <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" />
+          <link href="https://fonts.googleapis.com/css?family=Geo|Quantico:700" rel="stylesheet" />
         </Head>
         {this.props.children}
         <style jsx>{`
@@ -21,7 +21,7 @@ class Layout extends Component {
             padding: 0;
             left: 0;
             top: 0;
-            font-family: 'Roboto', sans-serif;            
+            font-family: 'Quantico', sans-serif;            
           }
 
           :global(html) {

@@ -6,20 +6,27 @@ class Score extends Component {
   render() {
     return (
       <div 
-        className="game-counter"
+        className="score-container"
       >
-        <div><span className="text-shadow">{this.props.score}</span> 🚗</div>
-        {/* <div><span className="text-shadow">{this.props.nbMissed}</span> 💣</div> */}
+        <span className="score">{this.props.score}</span>
+        <img className="icon-star" src="/static/assets/icon-star.svg" />
         <style jsx>{`
-          .game-counter {
+          .score-container {
+            display: flex;
+            flex: 1;
+            justify-content: space-between;
+            align-items: center;
+            margin-left: -0.3rem;
+          }
+          .score {
             color: white;
-            font-size: 3rem;
+            font-size: 4rem;
             font-weight: bold;
-            font-family: sans-serif;
           }
 
-          .text-shadow {
-            text-shadow:-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000,1px 1px 0 #000;  
+          .icon-star {
+            width: 3rem;
+            height: 3rem;
           }
         `}</style>
       </div>
@@ -29,7 +36,6 @@ class Score extends Component {
 
 export default connect((state) => {
   return {
-    score: state.game.get('score'),
-    nbMissed: state.game.get('missedItems').size
+    score: state.game.get('score')
   }
 })(Score);

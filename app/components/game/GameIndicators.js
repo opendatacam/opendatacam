@@ -11,26 +11,15 @@ class GameIndicators extends Component {
       <div 
         className="game-indicators"
       >
-        <div className="level">Level {this.props.currentLevel}: 
-          {this.props.totalDuration > 0 &&
-            <span>
-              {this.props.totalDuration - this.props.currentTime}s remaining
-            </span>
-          }
-        </div>
-        <PollutionLevel />
         <Score />
+        <PollutionLevel />
         <style jsx>{`
           .game-indicators {
             position: fixed;
-            color: white;
-            top: 1rem;
-            left: 1rem;
+            top: 3rem;
+            left: 3rem;
             z-index: 5;
             transform: will-change;
-            background-color: rgba(0,0,0,0.5);
-            border-radius: 0.3rem;
-            padding: 1rem;
           }
         `}</style>
       </div>
@@ -38,10 +27,4 @@ class GameIndicators extends Component {
   }
 }
 
-export default connect((state) => {
-  return {
-    totalDuration: Math.trunc(state.video.get('duration')),
-    currentTime: state.video.get('currentTime'),
-    currentLevel: state.game.get('currentLevel')
-  }
-})(GameIndicators);
+export default GameIndicators;

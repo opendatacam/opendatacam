@@ -51,7 +51,8 @@ class PollutionLevel extends PureComponent {
         </g>
         <style jsx>{`
         .pollution-bar {
-          width: 8rem;
+          margin-top: 0.5rem;
+          width: 8.5rem;
           height: auto;
         }
         `}</style>
