@@ -9,23 +9,9 @@ import { resetScore } from './GameStateManagement';
 // Initial state
 const initialState = fromJS({
   availableVideos: [{
-      name: "1_prototype_video",
-      level: 2,
-      videoFPS: 25,
-      trackerAndDetectionsFPS: 25,
-      disappearAreas: [{"x":285,"y":338,"w":188,"h":138},{"x":156,"y":970,"w":476,"h":113.99999999999999},{"x":960,"y":965,"w":548,"h":118},{"x":1580.14,"y":311.86,"w":84,"h":94},{"x":362,"y":425,"w":196,"h":106}],
-      vimeoId: "235911346",
-      sound: "sound2",
-      originalResolution: {
-        w: 1920,
-        h: 1080
-      },
-      sources: {
-        hd: "https://player.vimeo.com/external/235911346.hd.mp4?s=079f01de35d181dbef705e7ec51da623b2f78de3"
-      }
-    },{
       name: "level_1",
       level: 1,
+      levelName: "HAUPTSTÄTTER STR.",
       videoFPS: 25,
       trackerAndDetectionsFPS: 25,
       disappearAreas: [{"x":0,"y":420,"w":640,"h":300}],
@@ -40,8 +26,25 @@ const initialState = fromJS({
         hd: "https://player.vimeo.com/external/237563941.hd.mp4?s=521162fbd4ba420ea6a2d04dcdf123c0a74a23e4"
       }
     },{
+      name: "1_prototype_video",
+      level: 2,
+      levelName: "MOOVEL STR.",
+      videoFPS: 25,
+      trackerAndDetectionsFPS: 25,
+      disappearAreas: [{"x":285,"y":338,"w":188,"h":138},{"x":156,"y":970,"w":476,"h":113.99999999999999},{"x":960,"y":965,"w":548,"h":118},{"x":1580.14,"y":311.86,"w":84,"h":94},{"x":362,"y":425,"w":196,"h":106}],
+      vimeoId: "235911346",
+      sound: "sound2",
+      originalResolution: {
+        w: 1920,
+        h: 1080
+      },
+      sources: {
+        hd: "https://player.vimeo.com/external/235911346.hd.mp4?s=079f01de35d181dbef705e7ec51da623b2f78de3"
+      }
+    },{
       name: "proto_1_4k30FPS",
       level: 100,
+      levelName: "MOOVEL STR.",
       disappearAreas: [],
       videoFPS: 29.97,
       trackerAndDetectionsFPS: 29.97,
@@ -57,6 +60,7 @@ const initialState = fromJS({
     },{
       name: "proto_1_HD30FPS",
       level: 101,
+      levelName: "MOOVEL STR.",
       videoFPS: 29.97,
       trackerAndDetectionsFPS: 29.97,
       sound: "sound2",
@@ -72,6 +76,7 @@ const initialState = fromJS({
     },{
       name: "proto_2_HD30FPS",
       level: 102,
+      levelName: "MOOVEL STR.",
       disappearAreas: [],
       videoFPS: 29.97,
       trackerAndDetectionsFPS: 29.97,
@@ -87,6 +92,7 @@ const initialState = fromJS({
     },{
       name: "proto_2_HD60FPS",
       level: 103,
+      levelName: "MOOVEL STR.",
       videoFPS: 29.97,
       trackerAndDetectionsFPS: 59.94,
       sound: "sound2",

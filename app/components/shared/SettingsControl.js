@@ -31,22 +31,22 @@ class DebugUI extends Component {
           <p>Video ready: {this.props.isVideoReadyToPlay ? 'true' : 'false'}</p>
           </div>
         }
-        {/* <label>
+        <label>
         Show debug UI
         <input
           type="checkbox"
           defaultChecked={this.props.settings.showDebugUI}
           onChange={(e) => this.updateSettings({ showDebugUI: e.target.checked })}
         />
-        </label> */}
-        <label>
+        </label>
+        {/* <label>
         Dark mode
         <input
           type="checkbox"
           defaultChecked={this.props.settings.darkMode}
           onChange={(e) => this.updateSettings({ darkMode: e.target.checked })}
         />
-        </label>
+        </label> */}
         <div>
           {!this.props.isPlaying &&
             <button onClick={() => this.props.dispatch(playVideo())}>Play</button>

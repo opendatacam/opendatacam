@@ -75,14 +75,15 @@ class Canvas extends Component {
     });
   }
 
-  drawTrackerUIData(context, objectTrackerDataForThisFrame) {
-    context.globalAlpha = 1;
+  computeCircleRadius(bboxArea) {
+    return Math.sqrt(bboxArea / 100);
+  }
 
-    const SQUARE_SIZE = 40;
-    const SQUARE_BORDER = 2;
-    const FOOT_LENGTH = 25;
-    const FOOT_TICKNESS = 4;
-    const FOOT_CIRCLE_RADIUS = 5;
+  computeCornerLength(bboxArea) {
+    return Math.sqrt(bboxArea / 50);
+  }
+
+  drawTrackerUIData(context, objectTrackerDataForThisFrame) {
 
     objectTrackerDataForThisFrame.filter((objectTracked) => {
       return (
@@ -95,56 +96,96 @@ class Canvas extends Component {
 
 
       // Set params
-      context.strokeStyle = "#E3E3E3";
-      context.fillStyle = "#00CCFF";
+      context.strokeStyle = "#4EFFFF";
+      context.fillStyle = "#4EFFFF";
       context.lineWidth = 2;
+      context.globalAlpha = 1;
 
-      // Draw circle
-      let circle = {
+      const bboxArea = objectTrackedScaled.w * objectTrackedScaled.h;
+      const canvasArea = canvasResolution.w * canvasResolution.h;
+      const bboxAreaPercentageOfCanvas = bboxArea * 100 / canvasArea;
+
+      // Draw circle with dynamic radius depending on Bbox size
+      let bboxCenter = {
         x: objectTrackedScaled.x,
-        y: objectTrackedScaled.y - 20
+        y: objectTrackedScaled.y
       }
 
       context.beginPath();
-      context.arc(circle.x,circle.y, FOOT_CIRCLE_RADIUS, 0, 2 * Math.PI, false);
+      context.arc(
+        bboxCenter.x,
+        bboxCenter.y, 
+        this.computeCircleRadius(bboxArea),
+        0,
+        2 * Math.PI,
+        false
+      );
       context.fill();
 
-      // Draw foot
-      let foot = {
-        x: circle.x - FOOT_TICKNESS / 2,
-        y: circle.y - FOOT_LENGTH - FOOT_CIRCLE_RADIUS,
-        w: FOOT_TICKNESS,
-        h: FOOT_LENGTH
+      // If bbox area is more than 0.8% of canvas area, display the target
+      if(bboxAreaPercentageOfCanvas > 0.8) {
+        // Shortcut to objectTrackedScaled to avoid writing 1000 lines of code
+        const obj = objectTrackedScaled;
+
+        // Compute target corner relative size
+        const cornerLength = this.computeCornerLength(bboxArea);
+        const cornerTickness = cornerLength / 3;
+
+        // Draw target
+        // Top right
+        context.fillRect(
+          obj.x + obj.w / 2,
+          obj.y - obj.h / 2,
+          cornerTickness,
+          cornerLength
+        );
+        context.fillRect(
+          obj.x + obj.w / 2 - cornerLength + cornerTickness,
+          obj.y - obj.h / 2,
+          cornerLength,
+          cornerTickness
+        );
+        // Top left
+        context.fillRect(
+          obj.x - obj.w / 2,
+          obj.y - obj.h / 2,
+          cornerTickness,
+          cornerLength
+        );
+        context.fillRect(
+          obj.x - obj.w / 2,
+          obj.y - obj.h / 2,
+          cornerLength,
+          cornerTickness
+        );
+        // Bottom left
+        context.fillRect(
+          obj.x - obj.w / 2,
+          obj.y + obj.h / 2 - cornerLength + cornerTickness,
+          cornerTickness,
+          cornerLength
+        );
+        context.fillRect(
+          obj.x - obj.w / 2,
+          obj.y + obj.h / 2,
+          cornerLength,
+          cornerTickness
+        );
+        // Bottom right
+        context.fillRect(
+          obj.x + obj.w / 2,
+          obj.y + obj.h / 2 - cornerLength + cornerTickness,
+          cornerTickness,
+          cornerLength
+          
+        );
+        context.fillRect(
+          obj.x + obj.w / 2 - cornerLength + cornerTickness,
+          obj.y + obj.h / 2,
+          cornerLength,
+          cornerTickness
+        );
       }
-
-      context.fillStyle = "#FFFFFF";
-      context.fillRect(foot.x, foot.y, foot.w, foot.h);
-
-      // Draw square
-      let square = {
-        x: circle.x - SQUARE_SIZE / 2,
-        y: circle.y - SQUARE_SIZE - FOOT_LENGTH,
-        w: SQUARE_SIZE,
-        h: SQUARE_SIZE
-      }
-
-      
-      // context.fillRect(square.x, square.y, square.w, square.h);
-      // context.strokeRect(square.x, square.y, square.w, square.h);
-
-      // Draw emotji
-      context.font = "18px sans-serif";
-      context.textAlign="center"; 
-      context.textBaseline = "middle";
-      let icon = "🚗";
-      if(objectTrackedScaled.name === "truck") {
-        icon = "🚚️️️";
-      } else if(objectTrackedScaled.name === "bicycle") {
-        icon = "🚴";
-      } else if(objectTrackedScaled.name === "motorbike") {
-        icon = "️️🏍️";
-      }
-      context.fillText(icon, square.x + square.w / 2, square.y + square.h/2);
     });
   }
 
