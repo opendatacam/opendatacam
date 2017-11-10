@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="30px" height="26px" viewBox="0 0 30 26" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>icon-menu</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Game" transform="translate(-5276.000000, -2486.000000)" stroke="#FFFE4A" stroke-width="6">
+            <g id="icon-menu" transform="translate(5276.000000, 2488.000000)">
+                <path d="M0,1 L30,1" id="Path-15-Copy-2"></path>
+                <path d="M0,11 L30,11" id="Path-15-Copy-3"></path>
+                <path d="M0,21 L30,21" id="Path-15-Copy-4"></path>
+            </g>
+        </g>
+    </g>
+</svg>

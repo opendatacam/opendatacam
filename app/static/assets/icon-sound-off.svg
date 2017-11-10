@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="31px" height="23px" viewBox="0 0 31 23" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 47.1 (45422) - http://www.bohemiancoding.com/sketch -->
+    <title>soundoff</title>
+    <desc>Created with Sketch.</desc>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Game" transform="translate(-5128.000000, -2532.000000)" stroke="#FFFB5C" stroke-width="4">
+            <g id="soundoff" transform="translate(5130.000000, 2534.000000)">
+                <g id="Group-5" transform="translate(18.000000, 5.000000)">
+                    <path d="M0.750461538,9.70138462 L9.25507692,0.449076923" id="Stroke-1" stroke-linejoin="bevel"></path>
+                    <path d="M9.11730769,9.70138462 L0.750384615,0.597538462" id="Stroke-3"></path>
+                </g>
+                <polygon id="Stroke-6" fill="#FFFE4A" stroke-linejoin="bevel" points="0 5.26650134 6.13894986 5.26650134 12.9875626 0 13 19 5.81338286 13.6595574 0 13.6849294"></polygon>
+            </g>
+        </g>
+    </g>
+</svg>
