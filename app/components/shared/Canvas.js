@@ -31,7 +31,10 @@ class Canvas extends Component {
       }
     }
 
-    // TODO IF VIDEO PAUSES, STOP UPDATING CANVAS
+    if(nextProps.isAtBeggining !== this.props.isAtBeggining) {
+      console.log("Level reset, need to clear up canvas");
+      this.clearCanvas();
+    }
   }
 
   componentDidMount() {
@@ -189,6 +192,10 @@ class Canvas extends Component {
     });
   }
 
+  clearCanvas() {
+    this.canvasContext.clearRect(0, 0, 1280, 720);
+  }
+
   loopUpdateCanvas() {
     if(window.currentFrame &&
        this.lastFrameDrawn !== window.currentFrame) {
@@ -287,6 +294,7 @@ export default connect((state) => {
     objectTrackerData: state.objectTracker.get('data'),
     isObjectTrackerDataFetched: state.objectTracker.get('fetched'),
     isPlaying: state.video.get('isPlaying'),
+    isAtBeggining: state.video.get('isAtBeggining'),
     showDebugUI: state.settings.get('showDebugUI'),
     originalResolution: selectedVideo.get('originalResolution').toJS(),
     ratioVideoTrackerFPS

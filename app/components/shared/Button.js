@@ -36,8 +36,7 @@ class Button extends Component {
           }
 
           .btn:hover,.btn:focus {
-            background-color: white;
-            color: white;
+            background-color: #e6e6e6;
           }
 
           .btn-transparent {

@@ -45,8 +45,12 @@ class Mask extends PureComponent {
     this.initClickRecorder();
 
     // prefetch puff image
-    let img = new Image();
-    img.src = '/static/puff-smoke.svg';
+    let puffImage = new Image();
+    puffImage.src = '/static/puff-smoke.svg';
+
+    // prefetch unicor image
+    let unicornImage = new Image();
+    unicornImage.src = '/static/assets/icons/icon-unicorn.svg';
 
     // init global var
     window.itemsMasked = [];
@@ -63,7 +67,12 @@ class Mask extends PureComponent {
     }
 
     if(nextProps.selectedVideoName !== this.props.selectedVideoName) {
-      console.log("Changed level, need to clear up canvas");
+      console.log("Changed level, need to clear up masking canvas");
+      this.setState(initialState);
+    }
+
+    if(nextProps.isAtBeggining !== this.props.isAtBeggining) {
+      console.log("Level reset, need to clear up masking canvas");
       this.setState(initialState);
     }
   }
@@ -330,6 +339,7 @@ export default connect((state) => {
     objectTrackerData: state.objectTracker.get('data'),
     isObjectTrackerDataFetched: state.objectTracker.get('fetched'),
     isPlaying: state.video.get('isPlaying'),
+    isAtBeggining: state.video.get('isAtBeggining'),
     averageImgSrc: getAverageImgPath(selectedVideo.get('name'), selectedVideo.get('vimeoId')),
     soundEnabled: state.settings.get('soundEnabled'),
     originalResolution: selectedVideo.get('originalResolution').toJS(),

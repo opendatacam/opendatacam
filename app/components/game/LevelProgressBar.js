@@ -5,7 +5,7 @@ class LevelProgressBar extends Component {
 
   render() {
 
-    const progress = Math.round((this.props.currentTime / this.props.totalDuration) * 10) / 10 || 0;
+    const progress = this.props.currentTime / this.props.totalDuration || 0;
 
     return (
       <div className="progress-bar">

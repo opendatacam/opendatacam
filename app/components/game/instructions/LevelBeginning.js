@@ -8,7 +8,7 @@ import AskLandscapeAnimation from '../../shared/AskLandscapeAnimation';
 
 import { startLevel } from '../../../statemanagement/app/GameStateManagement';
 
-class InstructionsLevelBeginning extends Component {
+class LevelBeginning extends Component {
 
   render() {
     return (
@@ -84,4 +84,4 @@ export default connect((state) => {
     isFullscreen: state.viewport.get('isFullscreen'),
     currentLevel: state.game.get('currentLevel')
   }
-})(InstructionsLevelBeginning);
+})(LevelBeginning);
