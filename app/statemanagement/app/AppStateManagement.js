@@ -14,7 +14,7 @@ const initialState = fromJS({
       levelName: "HAUPTSTÄTTER STR.",
       videoFPS: 25,
       videoMobileOffset: {
-        x: 250,
+        x: 230,
         y: 0
       },
       trackerAndDetectionsFPS: 25,
@@ -35,7 +35,7 @@ const initialState = fromJS({
       levelName: "MOOVEL STR.",
       videoFPS: 25,
       videoMobileOffset: {
-        x: 0,
+        x: 400,
         y: 0
       },
       trackerAndDetectionsFPS: 25,

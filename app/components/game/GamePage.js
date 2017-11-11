@@ -99,21 +99,13 @@ class GamePage extends React.Component {
             {!this.props.isGamePlaying &&
               <GameInstructions />
             }
-            {this.props.isGamePlaying &&
-              <GameIndicators />
-            }
+            <GameIndicators />
             <Canvas />
-            {this.props.isGamePlaying &&
-              <Sound />
-            }
+            <Sound />
             <Mask />
             <Video />
-            {this.props.isGamePlaying &&
-              <LevelName />
-            }
-            {this.props.isGamePlaying &&
-              <LevelProgressBar />
-            }
+            <LevelName />
+            <LevelProgressBar />
           </div>
         }
       </div>

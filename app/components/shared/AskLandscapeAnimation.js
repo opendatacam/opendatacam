@@ -1,14 +1,11 @@
 import React, { Component } from 'react';
 
-class AskLandscape extends Component {
+class AskLandscapeAnimation extends Component {
 
   render() {
     return (
-      <div 
-        className="ask-landscape"
-      >
-        <div className="icon">📱</div>
-        <div className="text"><i>TIP: Level 2 is easier in Landscape</i></div>
+      <div className="icon">
+        📱
         <style jsx>{`
           .icon {
             font-size: 5rem;
@@ -16,10 +13,6 @@ class AskLandscape extends Component {
             animation-duration: 2s;
             animation-iteration-count: infinite;
             animation-timing-function: linear;
-          }
-
-          .text {
-            margin-bottom: 5px;
           }
 
           @keyframes spin {
@@ -39,4 +32,4 @@ class AskLandscape extends Component {
   }
 }
 
-export default AskLandscape;
+export default AskLandscapeAnimation;

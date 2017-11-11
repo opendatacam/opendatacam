@@ -1,12 +1,11 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import Link from 'next/link';
-import screenfull from 'screenfull';
 
 import PollutionLevel from './PollutionLevel';
 import Score from './Score';
 import Loading from '../shared/Loading';
-import AskLandscape from '../shared/AskLandscape';
+import InstructionsLevelBeginning from './instructions/InstructionsLevelBeginning';
 
 import { startLevel, retry } from '../../statemanagement/app/GameStateManagement';
 
@@ -17,8 +16,13 @@ class GameInstructions extends Component {
       <div 
         className="game-instructions"
       >
+        {!this.props.isPlaying &&
+         !this.props.failed &&
+         !this.props.finished &&
+          <InstructionsLevelBeginning />
+        }
         <div className="game-instructions-modal">
-          {!this.props.isPlaying &&
+          {/* {!this.props.isPlaying &&
            !this.props.failed &&
            !this.props.finished &&
             <div>
@@ -55,7 +59,7 @@ class GameInstructions extends Component {
                 <Loading />
               }
             </div>
-          }
+          } */}
           {!this.props.isPlaying &&
             this.props.failed &&
             <div>
@@ -99,40 +103,12 @@ class GameInstructions extends Component {
         <style jsx>{`
           .game-instructions {
             position: fixed;
-            color: white;
+            display: flex;
             top: 0;
             left: 0;
             bottom: 0;
             right: 0;
             z-index: 5;
-            transform: will-change;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-          }
-
-          .game-instructions-modal {
-            background-color: rgba(0,0,0,0.5);
-            border-radius: 1rem;
-            padding: 1rem;
-            text-align: center;
-          }
-
-          a,button {
-            background-color: transparent;
-            border: 1px solid white;
-            color: white;
-            cursor: pointer;
-            font-size: 2rem;
-            padding: 1rem;
-            text-decoration: none;
-            margin-bottom: 1rem;
-            display: inline-block;
-          }
-
-          a:hover,a:focus,button:hover,button:focus {
-            background-color: white;
-            color: black;
           }
         `}</style>
       </div>
@@ -142,7 +118,7 @@ class GameInstructions extends Component {
 
 export default connect((state) => {
 
-  const gameReadyToPlay = state.objectTracker.get('fetched') && state.video.get('isReadyToPlay');
+  const isGameReadyToPlay = state.objectTracker.get('fetched') && state.video.get('isReadyToPlay');
 
   return {
     score: state.game.get('score'),
@@ -150,7 +126,7 @@ export default connect((state) => {
     failed: state.game.get('failed'),
     finished: state.game.get('finished'),
     currentLevel: state.game.get('currentLevel'),
-    gameReadyToPlay,
+    isGameReadyToPlay,
     deviceOrientation: state.viewport.get('deviceOrientation'),
     isFullscreenAvailable: state.viewport.get('isFullscreenAvailable'),
     isFullscreen: state.viewport.get('isFullscreen')

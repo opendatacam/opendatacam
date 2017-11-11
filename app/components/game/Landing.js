@@ -14,8 +14,8 @@ class Landing extends Component {
         <div className="title title-4">STUTTGART</div>
         <svg
           className="logo-moovel" 
-          width="166"
-          height="100"
+          width="16.6rem"
+          height="10rem"
           viewBox="0 0 166 100" 
           xmlns="http://www.w3.org/2000/svg"
         >
