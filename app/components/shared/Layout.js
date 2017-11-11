@@ -21,7 +21,8 @@ class Layout extends Component {
             padding: 0;
             left: 0;
             top: 0;
-            font-family: 'Quantico', sans-serif;            
+            font-family: 'Quantico', sans-serif;
+            background-color: #262626;          
           }
 
           :global(html) {

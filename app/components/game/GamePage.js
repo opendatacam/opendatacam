@@ -12,6 +12,7 @@ import GameIndicators from './GameIndicators';
 import GameInstructions from './GameInstructions';
 import LevelProgressBar from './LevelProgressBar';
 import LevelName from './LevelName';
+import Landing from './Landing';
 
 import Title from '../shared/Title';
 import VideoSelector from '../shared/VideoSelector';
@@ -26,12 +27,18 @@ class GamePage extends React.Component {
 
   constructor(props) {
     super(props);
+
+    this.state = {
+      clientSide: false
+    };
+
     props.dispatch(updateSettings({ showDebugUI: false }));
   }
 
   componentDidMount() {
     this.props.dispatch(selectDefaultVideo());
     this.props.dispatch(initViewportListeners());
+    this.setState({ clientSide : true});
   }
 
   render () {
@@ -40,16 +47,32 @@ class GamePage extends React.Component {
         {process.env.NODE_ENV !== 'production' &&
           <SettingsControl />
         }
-        <GameIndicators />
-        {!this.props.isGamePlaying &&
-          <GameInstructions />
+        <Landing />
+        {/* What about having SSR for other pages like about, level2... ?  
+          Do that to priorize image loading from landing
+        */}
+        {this.state.clientSide && 
+          <div>
+            {!this.props.isGamePlaying &&
+              <GameInstructions />
+            }
+            {this.props.isGamePlaying &&
+              <GameIndicators />
+            }
+            <Canvas />
+            {this.props.isGamePlaying &&
+              <Sound />
+            }
+            <Mask />
+            <Video />
+            {this.props.isGamePlaying &&
+              <LevelName />
+            }
+            {this.props.isGamePlaying &&
+              <LevelProgressBar />
+            }
+          </div>
         }
-        <Canvas />
-        <Sound />
-        <Mask />
-        <Video />
-        <LevelName />
-        <LevelProgressBar />
       </div>
     )
   }
