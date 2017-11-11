@@ -26,25 +26,25 @@ class Landing extends Component {
           .title-1 {
             animation-delay: 0.5s;
             animation-name: appear;
-            animation-duration: 0.45s;
+            animation-duration: 0.95s;
           }
 
           .title-2 {
-            animation-delay: 1s;
-            animation-name: appear;
-            animation-duration: 0.45s;
-          }
-
-          .title-3 {
             animation-delay: 1.5s;
             animation-name: appear;
             animation-duration: 0.45s;
           }
 
-          .title-4 {
+          .title-3 {
             animation-delay: 2s;
             animation-name: appear;
             animation-duration: 0.45s;
+          }
+
+          .title-4 {
+            animation-delay: 2.5s;
+            animation-name: appear;
+            animation-duration: 0.9s;
           }
 
           // As it is the landing, we can't use any javascript, won't be loaded / parsed
