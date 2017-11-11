@@ -21,13 +21,13 @@ class GameInstructions extends PureComponent {
         {!this.props.isPlaying &&
          !this.props.failed &&
          this.props.finished &&
-         this.props.nbTotalLevel < this.props.currentLevel &&
+         this.props.currentLevel < this.props.nbTotalLevel  &&
           <LevelFinished />
         }
         {!this.props.isPlaying &&
          !this.props.failed &&
          this.props.finished &&
-         this.props.nbTotalLevel === this.props.currentLevel &&
+         this.props.currentLevel === this.props.nbTotalLevel &&
           <Win />
         }
         {!this.props.isPlaying &&
