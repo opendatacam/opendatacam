@@ -106,7 +106,6 @@ class GameInstructions extends Component {
             right: 0;
             z-index: 5;
             transform: will-change;
-            background-color: rgba(0,0,0,0.2);
             display: flex;
             align-items: center;
             justify-content: center;

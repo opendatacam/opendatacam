@@ -29,16 +29,38 @@ class GamePage extends React.Component {
     super(props);
 
     this.state = {
-      clientSide: false
+      clientSide: false,
+      landingAnimFinished: false
     };
 
     props.dispatch(updateSettings({ showDebugUI: false }));
+    props.dispatch(selectDefaultVideo());
   }
 
   componentDidMount() {
-    this.props.dispatch(selectDefaultVideo());
     this.props.dispatch(initViewportListeners());
     this.setState({ clientSide : true});
+
+    if(this.props.levelNb === 1) {
+      // Trick because the landing animation run without javascript so we have
+      // no hook to know when it finishes
+      const timeSinceFirstPaint = (new Date().getTime() - window.firstPaint) / 1000;
+      console.log(`timeSinceFirstPaint ${timeSinceFirstPaint}s`);
+      const timeRemainingOnLandingAnimation = 4 - timeSinceFirstPaint;
+      if(timeRemainingOnLandingAnimation > 0) {
+        // set timeout
+        setTimeout(() => {
+          this.setState({
+            landingAnimFinished: true
+          });
+        }, timeRemainingOnLandingAnimation * 1000)
+      } else {
+        // directly hide it
+        this.setState({
+          landingAnimFinished: true
+        });
+      }
+    }
   }
 
   render () {
@@ -47,7 +69,11 @@ class GamePage extends React.Component {
         {process.env.NODE_ENV !== 'production' &&
           <SettingsControl />
         }
-        <Landing />
+        {/* TODO MAYBE ADD SOME COOKIE TO AVOID PLAYING ANIM EACH TIME */}
+        {this.props.levelNb === 1 &&
+        !this.state.landingAnimFinished &&
+          <Landing />
+        }
         {/* What about having SSR for other pages like about, level2... ?  
           Do that to priorize image loading from landing
         */}
@@ -79,7 +105,13 @@ class GamePage extends React.Component {
 }
 
 export default connect((state) => {
+
+  const selectedVideo = state.app.get('availableVideos').find((video) => {
+    return video.get('name') === state.app.get('selectedVideo')
+  });
+
   return {
-    isGamePlaying: state.game.get('isPlaying')
+    isGamePlaying: state.game.get('isPlaying'),
+    levelNb: selectedVideo.get('level')
   }
 })(GamePage);

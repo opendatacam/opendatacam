@@ -1,5 +1,4 @@
 import React, { Component } from 'react';
-import { connect } from 'react-redux';
 
 class Landing extends Component {
 
@@ -10,7 +9,36 @@ class Landing extends Component {
         <div className="title title-2">THE</div>
         <div className="title title-3">TRAFFIC</div>
         <div className="title title-4">STUTTGART</div>
+        <svg
+          className="logo-moovel" 
+          width="166"
+          height="100"
+          viewBox="0 0 166 100" 
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <path
+            d="M35.5 42.5h81.2l-11-11.5c-3-3-3-8 0-10.8 2.8-3 7.5-3 10.4 0L140 43.7c3 3 3 7.7 0 10.6L116 77.8c-2.8 3-7.5 3-10.4 0-3-3-3-7.6 0-10.5l10.6-10.7H35.5c-4.2 0-7.5-3-7.5-7 0-4.2 3.3-7 7.5-7zM49.8 100c12.8 0 24.4-4.8 33.2-12.7 8.8 8 20.4 12.7 33.2 12.7 27.5 0 49.8-22.4 49.8-50S143.7 0 116.2 0C103.4 0 91.8 4.8 83 12.7 74.2 4.7 62.6 0 49.8 0 22.3 0 0 22.4 0 50s22.3 50 49.8 50z"
+            fill="#0FF"
+            fillRule="evenodd"
+          />
+        </svg>
         <style jsx>{`
+          .game-landing {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            z-index: 10;
+            background-image: url('/static/detections/level_1/firstframe.jpg');
+            background-size: cover;
+            background-color: #262626;
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+          }
+
           .title {
             position: absolute;
             font-size: 9rem;
@@ -43,9 +71,18 @@ class Landing extends Component {
 
           .title-4 {
             animation-delay: 2.5s;
-            animation-name: appear;
-            animation-duration: 0.9s;
+            animation-name: appearAndStay;
+            animation-duration: 0.8s;
           }
+
+          .logo-moovel {
+            opacity: 0;
+            will-change: transform;
+            animation-delay: 3.3s;
+            animation-name: logoAnim;
+            animation-duration: 8s;
+          }
+          
 
           // As it is the landing, we can't use any javascript, won't be loaded / parsed
           @keyframes appear {
@@ -64,19 +101,28 @@ class Landing extends Component {
             }
           }
 
-          .game-landing {
-            position: fixed;
-            top: 0;
-            right: 0;
-            left: 0;
-            bottom: 0;
-            z-index: 10;
-            background-image: url('/static/detections/level_1/firstframe.jpg');
-            background-size: cover;
-            
-            display: flex;
-            justify-content: center;
-            align-items: center;
+          @keyframes appearAndStay {
+            0% {
+              opacity: 1;
+              transform: scale(1.5);
+            }
+          
+            100% {
+              opacity: 1;
+              transform: scale(0.9);
+            }
+          }
+
+          @keyframes logoAnim {
+            0% {
+              opacity: 1;
+              transform: scale(1);
+            }
+          
+            100% {
+              opacity: 1;
+              transform: scale(1);
+            }
           }
         `}</style>
       </div>
@@ -84,13 +130,4 @@ class Landing extends Component {
   }
 }
 
-export default connect((state) => {
-
-  const selectedVideo = state.app.get('availableVideos').find((video) => {
-    return video.get('name') === state.app.get('selectedVideo')
-  });
-
-  return {
-    levelNb: selectedVideo.get('level')
-  }
-})(Landing);
+export default Landing;

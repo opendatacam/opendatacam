@@ -2,6 +2,10 @@ import { Component } from 'react';
 import Head from 'next/head'
 
 class Layout extends Component {
+  
+  recordFirstPaint() {
+    return {__html: '<script>window.firstPaint = new Date().getTime()</script>'};
+  }
 
   render() { 
     return (
@@ -13,6 +17,7 @@ class Layout extends Component {
           <link href="https://fonts.googleapis.com/css?family=Geo|Quantico:700" rel="stylesheet" />
         </Head>
         {this.props.children}
+        <div dangerouslySetInnerHTML={this.recordFirstPaint()} />
         <style jsx>{`
           :global(html,body) {
             height: 100%;
