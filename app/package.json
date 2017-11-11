@@ -26,7 +26,8 @@
     "redux": "^3.7.2",
     "redux-thunk": "^2.2.0",
     "screenfull": "^3.3.2",
-    "serve": "^6.4.1"
+    "serve": "^6.4.1",
+    "smoothscroll-polyfill": "^0.4.0"
   },
   "license": "MIT"
 }

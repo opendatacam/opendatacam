@@ -38,6 +38,7 @@ class GamePage extends React.Component {
   }
 
   componentDidMount() {
+    require('smoothscroll-polyfill').polyfill();
     this.props.dispatch(initViewportListeners());
     this.setState({ clientSide : true});
 
