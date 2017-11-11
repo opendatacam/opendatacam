@@ -16,16 +16,18 @@ const canvasResolution = {
   h: 720
 }
 
+const initialState = {
+  masks: [],
+  puffAnimations: [],
+  scoreAnimations: []
+}
+
 class Mask extends PureComponent {
 
   constructor(props) {
     super(props);
 
-    this.state = {
-      masks: [],
-      puffAnimations: [],
-      scoreAnimations: []
-    }
+    this.state = initialState;
 
     this.clicksRecorded = [];
 
@@ -58,6 +60,11 @@ class Mask extends PureComponent {
         this.isUpdatingMasks = true;
         this.loopUpdateMasks();
       }
+    }
+
+    if(nextProps.selectedVideoName !== this.props.selectedVideoName) {
+      console.log("Changed level, need to clear up canvas");
+      this.setState(initialState);
     }
   }
 
@@ -228,7 +235,7 @@ class Mask extends PureComponent {
           id="average-img"
           preserveAspectRatio="xMinYMax meet"
           viewBox="0 0 1280 720"
-          className={`average-img ${!this.props.isVideoReadyToPlay ? 'hidden' : 'visible'}`}
+          className={`average-img`}
         >
           <image
             xlinkHref={this.props.averageImgSrc}
@@ -307,12 +314,6 @@ class Mask extends PureComponent {
               height: 100%;
             }
           }
-
-          {/* TODO CHANGE THIS VISIBILITY TRICK BY HAVING A LOADING SCREEN
-          THAT IS ON TOP OF THE VIDEO */}
-          .hidden {
-            display: none;
-          }
         `}</style>
       </div>
     );
@@ -330,10 +331,10 @@ export default connect((state) => {
     isObjectTrackerDataFetched: state.objectTracker.get('fetched'),
     isPlaying: state.video.get('isPlaying'),
     averageImgSrc: getAverageImgPath(selectedVideo.get('name'), selectedVideo.get('vimeoId')),
-    isVideoReadyToPlay: state.video.get('isReadyToPlay'),
     soundEnabled: state.settings.get('soundEnabled'),
     originalResolution: selectedVideo.get('originalResolution').toJS(),
     killedItems: state.game.get('killedItems'),
-    disappearAreas: selectedVideo.get('disappearAreas').toJS()
+    disappearAreas: selectedVideo.get('disappearAreas').toJS(),
+    selectedVideoName: state.app.get('selectedVideo')
   }
 })(Mask);

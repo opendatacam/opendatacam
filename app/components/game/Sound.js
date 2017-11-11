@@ -32,7 +32,7 @@ class Sound extends Component {
   render() {
     return (
       <div 
-        className={`audio-button ${this.props.soundEnabled ? 'on' : 'off'} ${!this.props.isVideoReadyToPlay ? 'hidden' : 'visible'}`}
+        className={`audio-button ${this.props.soundEnabled ? 'on' : 'off'}`}
         onClick={this.toggleSound}
       >
         <audio
@@ -66,12 +66,6 @@ class Sound extends Component {
           .audio-button.off {
             background-image: url(/static/assets/icons/icon-sound-off.svg);
           }
-
-          {/* TODO CHANGE THIS VISIBILITY TRICK BY HAVING A LOADING SCREEN
-          THAT IS ON TOP OF THE VIDEO */}
-          .hidden {
-            visibility: hidden;
-          }
         `}</style>
       </div>
     );
@@ -85,7 +79,6 @@ export default connect((state) => {
   });
 
   return {
-    isVideoReadyToPlay: state.video.get('isReadyToPlay'),
     soundEnabled: state.settings.get('soundEnabled'),
     soundName: selectedVideo.get('sound')
   }

@@ -83,7 +83,7 @@ class TrackerUI extends Component {
   render() { 
     return (
       <div
-        className={`trackerui-container ${!this.props.isVideoReadyToPlay ? 'hidden' : 'visible'}`}
+        className={`trackerui-container`}
       >
         {this.state.trackedItems.map((trackedItem) => 
           <EmotjiTracker
@@ -114,7 +114,6 @@ export default connect((state) => {
   return {
     objectTrackerData: state.objectTracker.get('data'),
     isObjectTrackerDataFetched: state.objectTracker.get('fetched'),
-    isPlaying: state.video.get('isPlaying'),
-    isVideoReadyToPlay: state.video.get('isReadyToPlay')
+    isPlaying: state.video.get('isPlaying')
   }
 })(TrackerUI);

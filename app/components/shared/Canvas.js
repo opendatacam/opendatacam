@@ -222,7 +222,7 @@ class Canvas extends Component {
   render() { 
     return (
       <div
-        className={`canvas-container ${!this.props.isVideoReadyToPlay ? 'hidden' : 'visible'}`}
+        className={`canvas-container`}
       >
         {/* Canvas width and height must 
         be set the the yolo detections resolution
@@ -267,12 +267,6 @@ class Canvas extends Component {
               height: 100%;
             }
           }
-
-          {/* TODO CHANGE THIS VISIBILITY TRICK BY HAVING A LOADING SCREEN
-          THAT IS ON TOP OF THE VIDEO */}
-          .hidden {
-            display: none;
-          }
         `}</style>
       </div>
     );
@@ -294,7 +288,6 @@ export default connect((state) => {
     isObjectTrackerDataFetched: state.objectTracker.get('fetched'),
     isPlaying: state.video.get('isPlaying'),
     showDebugUI: state.settings.get('showDebugUI'),
-    isVideoReadyToPlay: state.video.get('isReadyToPlay'),
     originalResolution: selectedVideo.get('originalResolution').toJS(),
     ratioVideoTrackerFPS
   }

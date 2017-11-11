@@ -4,6 +4,9 @@ import { connect } from 'react-redux';
 class LevelProgressBar extends Component {
 
   render() {
+
+    const progress = Math.round((this.props.currentTime / this.props.totalDuration) * 10) / 10 || 0;
+
     return (
       <div className="progress-bar">
         <style jsx>{`
@@ -37,7 +40,7 @@ class LevelProgressBar extends Component {
         <style jsx>{`
           // Dynamic style are separated for better runtime perf
           .progress-bar:after {
-            transform: scaleX(${Math.min(1, this.props.currentTime / this.props.totalDuration)});
+            transform: scaleX(${progress});
           }
         `}
         </style>
