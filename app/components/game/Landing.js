@@ -16,45 +16,51 @@ class Landing extends Component {
             font-size: 9rem;
             line-height: 8rem;
             color: yellow;
-            will-change: transform;
             max-width: 95%;
             word-wrap: break-word;
             text-align: center;
-            transform: translateY(-10000px); //put them offscreen
+            opacity: 0;
+            will-change: transform;
           }
 
           .title-1 {
-            animation-delay: 2s;
+            animation-delay: 0.5s;
             animation-name: appear;
             animation-duration: 0.45s;
           }
 
           .title-2 {
-            animation-delay: 2.5s;
+            animation-delay: 1s;
             animation-name: appear;
             animation-duration: 0.45s;
           }
 
           .title-3 {
-            animation-delay: 3s;
+            animation-delay: 1.5s;
             animation-name: appear;
             animation-duration: 0.45s;
           }
 
           .title-4 {
-            animation-delay: 3.5s;
+            animation-delay: 2s;
             animation-name: appear;
             animation-duration: 0.45s;
           }
 
           // As it is the landing, we can't use any javascript, won't be loaded / parsed
           @keyframes appear {
-            from {
+            0% {
+              opacity: 1;
               transform: scale(1.5);
             }
           
-            to {
+            90% {
+              opacity: 1;
               transform: scale(0.9);
+            }
+
+            100% {
+              opacity: 0;
             }
           }
 
