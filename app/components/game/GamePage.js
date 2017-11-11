@@ -44,23 +44,37 @@ class GamePage extends React.Component {
     if(this.props.levelNb === 1) {
       // Trick because the landing animation run without javascript so we have
       // no hook to know when it finishes
+      
       const timeSinceFirstPaint = (new Date().getTime() - window.firstPaint) / 1000;
       console.log(`timeSinceFirstPaint ${timeSinceFirstPaint}s`);
       const timeRemainingOnLandingAnimation = 4 - timeSinceFirstPaint;
+      // TODO HIDE ONLY IS VIDEO FIRST FRAME IS LOADED
       if(timeRemainingOnLandingAnimation > 0) {
-        // set timeout
         setTimeout(() => {
-          this.setState({
-            landingAnimFinished: true
-          });
+          this.hideLanding();
         }, timeRemainingOnLandingAnimation * 1000)
       } else {
         // directly hide it
-        this.setState({
-          landingAnimFinished: true
-        });
+        this.hideLanding();
       }
     }
+  }
+
+  hideLanding() {
+    // reset scroll
+    window.scroll(0,0);
+    // hide landing
+    this.setState({
+      landingAnimFinished: true
+    });
+    // scroll animation 
+    setTimeout(() => {
+      window.scroll({
+        top: this.props.videoMobileOffset.y, 
+        left: this.props.videoMobileOffset.x, 
+        behavior: 'smooth' 
+      });
+    }, 500);
   }
 
   render () {
@@ -69,13 +83,15 @@ class GamePage extends React.Component {
         {process.env.NODE_ENV !== 'production' &&
           <SettingsControl />
         }
-        {/* TODO MAYBE ADD SOME COOKIE TO AVOID PLAYING ANIM EACH TIME */}
         {this.props.levelNb === 1 &&
         !this.state.landingAnimFinished &&
           <Landing />
         }
-        {/* What about having SSR for other pages like about, level2... ?  
-          Do that to priorize image loading from landing
+        {/* 
+          we Do that to priorize image loading from landing
+          but what about having SSR for other pages like about, level2... ? 
+          -> level 2 no need because never loaded directly
+          -> about will have its top level page.. 
         */}
         {this.state.clientSide && 
           <div>
@@ -112,6 +128,7 @@ export default connect((state) => {
 
   return {
     isGamePlaying: state.game.get('isPlaying'),
-    levelNb: selectedVideo.get('level')
+    levelNb: selectedVideo.get('level'),
+    videoMobileOffset: selectedVideo.get('videoMobileOffset').toJS()
   }
 })(GamePage);

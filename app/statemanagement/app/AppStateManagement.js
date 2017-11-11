@@ -13,6 +13,10 @@ const initialState = fromJS({
       level: 1,
       levelName: "HAUPTSTÄTTER STR.",
       videoFPS: 25,
+      videoMobileOffset: {
+        x: 270,
+        y: 0
+      },
       trackerAndDetectionsFPS: 25,
       disappearAreas: [{"x":0,"y":420,"w":640,"h":300}],
       vimeoId: "237563941",
@@ -30,6 +34,10 @@ const initialState = fromJS({
       level: 2,
       levelName: "MOOVEL STR.",
       videoFPS: 25,
+      videoMobileOffset: {
+        x: 0,
+        y: 0
+      },
       trackerAndDetectionsFPS: 25,
       disappearAreas: [{"x":285,"y":338,"w":188,"h":138},{"x":156,"y":970,"w":476,"h":113.99999999999999},{"x":960,"y":965,"w":548,"h":118},{"x":1580.14,"y":311.86,"w":84,"h":94},{"x":362,"y":425,"w":196,"h":106}],
       vimeoId: "235911346",
@@ -47,6 +55,10 @@ const initialState = fromJS({
       levelName: "MOOVEL STR.",
       disappearAreas: [],
       videoFPS: 29.97,
+      videoMobileOffset: {
+        x: 0,
+        y: 0
+      },
       trackerAndDetectionsFPS: 29.97,
       sound: "sound2",
       originalResolution: {
@@ -62,6 +74,10 @@ const initialState = fromJS({
       level: 101,
       levelName: "MOOVEL STR.",
       videoFPS: 29.97,
+      videoMobileOffset: {
+        x: 0,
+        y: 0
+      },
       trackerAndDetectionsFPS: 29.97,
       sound: "sound2",
       disappearAreas: [],
@@ -79,6 +95,10 @@ const initialState = fromJS({
       levelName: "MOOVEL STR.",
       disappearAreas: [],
       videoFPS: 29.97,
+      videoMobileOffset: {
+        x: 0,
+        y: 0
+      },
       trackerAndDetectionsFPS: 29.97,
       sound: "sound2",
       originalResolution: {
@@ -94,6 +114,10 @@ const initialState = fromJS({
       level: 103,
       levelName: "MOOVEL STR.",
       videoFPS: 29.97,
+      videoMobileOffset: {
+        x: 0,
+        y: 0
+      },
       trackerAndDetectionsFPS: 59.94,
       sound: "sound2",
       disappearAreas: [],

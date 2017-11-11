@@ -33,10 +33,9 @@ class Video extends Component {
     if(nextProps.src !== this.props.src ||
       nextState.canRenderVideo !== this.state.canRenderVideo) {
       console.log('Render video');
-      // TODO ADD DYNAMIC SCROLL OFFSET FOR MOBILE HERE
       setTimeout(() => {
-        window.scroll(212,0);
-      }, 1000);
+        window.scroll(this.props.videoMobileOffset.x, this.props.videoMobileOffset.y);
+      }, 500);
       return true;
     } else {
       return false;
@@ -199,6 +198,7 @@ export default connect((state) => {
     isAtBeggining: state.video.get('isAtBeggining'),
     src: state.video.get('src'),
     currentTime: state.video.get('currentTime'),
-    videoFPS: selectedVideo.get('videoFPS')
+    videoFPS: selectedVideo.get('videoFPS'),
+    videoMobileOffset: selectedVideo.get('videoMobileOffset').toJS()
   }
 })(Video);

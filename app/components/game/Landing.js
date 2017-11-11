@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
+
+// NO javascript in that file, we render it while loading the javascript
 
 class Landing extends Component {
 
@@ -33,7 +36,6 @@ class Landing extends Component {
             background-image: url('/static/detections/level_1/firstframe.jpg');
             background-size: cover;
             background-color: #262626;
-            
             display: flex;
             justify-content: center;
             align-items: center;
