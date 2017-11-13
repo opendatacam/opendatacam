@@ -19,11 +19,14 @@ class PollutionLevel extends PureComponent {
   }
 
   render() {
+
+    const pollutionPercentage = this.props.nbMissed * 100 / this.props.maxMissed;
+
     return (
       <svg
         viewBox="0 0 72 25"
         xmlns="http://www.w3.org/2000/svg"
-        className="pollution-bar"
+        className={`pollution-bar ${pollutionPercentage >= 80 ? 'pollution-bar-alarm-anim' : ''}`}
       >
         <g id="Page-1" fill="none" fillRule="evenodd">
           <path 
@@ -55,6 +58,31 @@ class PollutionLevel extends PureComponent {
           width: 8.5rem;
           height: auto;
         }
+
+        .pollution-bar-alarm-anim {
+          animation-name: bounce;
+          animation-duration: 0.5s;
+          animation-iteration-count: infinite;
+        }
+
+        @keyframes bounce {
+          0% {
+            transform: scale(1);
+          }
+        
+          20% {
+            transform: scale(0.9);
+          }
+
+          80% {
+            transform: scale(1.1);
+          }
+
+          100% {
+            transform: scale(1);
+          }
+        }
+
         `}</style>
       </svg>
     );

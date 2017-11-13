@@ -236,7 +236,28 @@ class Mask extends PureComponent {
     return Math.sqrt(maskArea / 30);
   }
 
+  getPollutionOverlayStyle() {
+    const pollutionPercentage = this.props.nbMissed * 100 / this.props.maxMissed
+    let pollutionFillColor;
+    let pollutionOpacity = 0;
+
+    if(pollutionPercentage < 80) {
+      pollutionFillColor = "#262626";
+      pollutionOpacity = pollutionPercentage / 100;
+    } else {
+      pollutionFillColor = "#FF0000";
+      pollutionOpacity = 0.4;
+    }
+    
+    return {
+      pollutionFillColor,
+      pollutionOpacity
+    }
+  }
+
   render() {
+
+    const pollutionOverlayStyle = this.getPollutionOverlayStyle();
 
     return (
       <div className="mask-container">
@@ -254,6 +275,14 @@ class Mask extends PureComponent {
             height="720px"
             clipPath="url(#svgPath)"
           />
+          <rect
+            x="0"
+            y="0"
+            fill={pollutionOverlayStyle.pollutionFillColor}
+            fillOpacity={pollutionOverlayStyle.pollutionOpacity}
+            width="1280"
+            height="720"
+          ></rect>
           {this.state.masks.map((mask) =>
             <image
               key={mask.id} 
@@ -345,6 +374,8 @@ export default connect((state) => {
     originalResolution: selectedVideo.get('originalResolution').toJS(),
     killedItems: state.game.get('killedItems'),
     disappearAreas: selectedVideo.get('disappearAreas').toJS(),
-    selectedVideoName: state.app.get('selectedVideo')
+    selectedVideoName: state.app.get('selectedVideo'),
+    nbMissed: state.game.get('missedItems').size,
+    maxMissed: state.game.get('maxMissed')
   }
 })(Mask);
