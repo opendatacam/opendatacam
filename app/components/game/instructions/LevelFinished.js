@@ -3,8 +3,13 @@ import { connect } from 'react-redux';
 import Link from 'next/link';
 
 import Button from '../../shared/Button';
+import SoundsManager from '../../../statemanagement/app/SoundsManager';
 
 class LevelFinished extends Component {
+
+  componentDidMount() {
+    SoundsManager.playSound('nextlevel');
+  }
 
   render() {
     return (

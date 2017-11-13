@@ -1,7 +1,29 @@
 import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 
+import SoundsManager from '../../statemanagement/app/SoundsManager';
+
 class PollutionLevel extends PureComponent {
+
+  componentWillReceiveProps(nextProps) {
+    
+    const nextPollutionPercentage = nextProps.nbMissed * 100 / nextProps.maxMissed;
+    const currentPollutionPercentage = this.props.nbMissed * 100 / this.props.maxMissed;
+
+    if(nextPollutionPercentage >= 50 &&
+      currentPollutionPercentage < 50) {
+     // Speed up sound when pollution is superior to 50% for the first time
+     console.log('Speed up sound')
+     SoundsManager.changePlaybackRate('main', 1.2);
+   }
+
+    if(nextPollutionPercentage >= 80 &&
+       currentPollutionPercentage < 80) {
+      // Trigger alert playing when pollution is superior to 80% for the first time
+      console.log('Play alert sound')
+      SoundsManager.playSound('alert');
+    }
+  }
 
   getFillColor() {
     const pollutionPercentage = this.props.nbMissed * 100 / this.props.maxMissed

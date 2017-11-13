@@ -6,7 +6,13 @@ import Button from '../../shared/Button';
 
 import { retry } from '../../../statemanagement/app/GameStateManagement';
 
+import SoundsManager from '../../../statemanagement/app/SoundsManager';
+
 class Win extends Component {
+
+  componentDidMount() {
+    SoundsManager.playSound('youwin');
+  }
 
   render() {
     return (

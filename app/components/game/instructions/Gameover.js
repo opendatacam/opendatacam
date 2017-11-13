@@ -5,8 +5,13 @@ import Link from 'next/link';
 import Button from '../../shared/Button';
 
 import { retry } from '../../../statemanagement/app/GameStateManagement';
+import SoundsManager from '../../../statemanagement/app/SoundsManager';
 
 class Gameover extends Component {
+
+  componentDidMount() {
+    SoundsManager.playSound('youlose');
+  }
 
   render() {
     return (

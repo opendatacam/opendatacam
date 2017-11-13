@@ -4,6 +4,8 @@ import axios from 'axios';
 import { playVideo, pauseVideo, resetVideo } from './VideoStateManagement';
 import { selectVideo } from './AppStateManagement';
 
+import SoundsManager from './SoundsManager';
+
 // Initial state
 const initialState = fromJS({
   score: 0,
@@ -65,6 +67,10 @@ export function addKilledItem(id) {
 
 export function startLevel() {
   return (dispatch, getState) => {
+
+    // TODO Maybe move to the dispatch of the UI, so we keep consistent 
+    // that all sound triggering are done from the views
+    SoundsManager.playSound('main');
 
     // Notify UI we are starting the level
     dispatch({
