@@ -44,7 +44,7 @@ class GamePage extends React.Component {
 
     if(this.props.levelNb === 1) {
       // Trick because the landing animation run without javascript so we have
-      // no hook to know when it finishes
+      // no event to know when it finishes
       
       const timeSinceFirstPaint = (new Date().getTime() - window.firstPaint) / 1000;
       console.log(`timeSinceFirstPaint ${timeSinceFirstPaint}s`);

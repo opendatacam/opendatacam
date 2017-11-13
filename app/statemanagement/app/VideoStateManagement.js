@@ -10,6 +10,7 @@ const initialState = fromJS({
   isPaused: false,
   isReadyToPlay: false,
   isAtBeggining: true,
+  firstFrameLoaded: false,
   error: null,
   duration: null,
   currentTime: 0
@@ -19,6 +20,7 @@ const initialState = fromJS({
 
 const SET_VIDEO_SRC = 'Video/SET_VIDEO_SRC';
 const SET_VIDEO_READY = 'Video/SET_VIDEO_READY';
+const SET_FIRSTFRAME_LOADED = 'Video/SET_FIRSTFRAME_LOADED';
 const PLAY_VIDEO = 'Video/PLAY_VIDEO';
 const PAUSE_VIDEO = 'Video/PAUSE_VIDEO';
 const RESET_VIDEO = 'Video/RESET_VIDEO';
@@ -35,6 +37,12 @@ export function setVideoReady(metadata) {
   return {
     type: SET_VIDEO_READY,
     payload: metadata
+  }
+}
+
+export function firstFrameLoaded() {
+  return {
+    type: SET_FIRSTFRAME_LOADED
   }
 }
 
@@ -83,6 +91,8 @@ export default function VideoReducer(state = initialState, action = {}) {
     case SET_VIDEO_READY:
       return state.set('isReadyToPlay', true)
                   .set('duration', action.payload.duration);
+    case SET_FIRSTFRAME_LOADED:
+      return state.set('firstFrameLoaded', true);
     case PLAY_VIDEO:
       return state.set('isPlaying', true)
                   .set('isAtBeggining', false);

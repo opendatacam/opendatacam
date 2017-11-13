@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
-// NO javascript in that file, we render it while loading the javascript
+import { getFirstFrameImgPath } from '../../statemanagement/app/AppStateManagement';
+
+// NO javascript in that file at runtime, we render it while loading the javascript
 
 class Landing extends Component {
 
@@ -33,7 +35,7 @@ class Landing extends Component {
             left: 0;
             bottom: 0;
             z-index: 10;
-            background-image: url('/static/detections/level_1/firstframe.jpg');
+            background-image: url('${this.props.srcFirstFrame}');
             background-size: cover;
             background-color: #262626;
             display: flex;
@@ -132,4 +134,13 @@ class Landing extends Component {
   }
 }
 
-export default Landing;
+export default connect((state) => {
+
+  const selectedVideo = state.app.get('availableVideos').find((video) => {
+    return video.get('name') === state.app.get('selectedVideo')
+  });
+
+  return {
+    srcFirstFrame: getFirstFrameImgPath(selectedVideo.get('name'))
+  }
+})(Landing);

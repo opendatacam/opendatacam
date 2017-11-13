@@ -151,6 +151,10 @@ export function getAverageImgPath(videoName) {
   return `${pathStatic}/${videoName}/average-1280.jpg`;
 }
 
+export function getFirstFrameImgPath(videoName) {
+  return `${pathStatic}/${videoName}/firstframe.jpg`;
+}
+
 export function selectDefaultVideo() {
   return (dispatch, getState) => {
     dispatch(selectVideo(getState().app.get('selectedVideo')));

@@ -24,7 +24,7 @@ class Loading extends Component {
           height: 7rem;
           border-style: solid;
           border-color: rgba(0,0,0,0);
-          border-top-color: #4EFFFF;
+          border-top-color: #FFFE4A;
           border-width: 0.3rem 0rem 0rem 0rem;
           transform: will-change;
           

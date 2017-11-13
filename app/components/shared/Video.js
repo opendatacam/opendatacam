@@ -5,8 +5,11 @@ import NoSSR from 'react-no-ssr';
 import { 
   setVideoReady,
   setVideoEnded,
+  firstFrameLoaded,
   updateCurrentTime
 } from '../../statemanagement/app/VideoStateManagement';
+
+import { getFirstFrameImgPath } from '../../statemanagement/app/AppStateManagement';
 
 class Video extends Component {
 
@@ -19,6 +22,7 @@ class Video extends Component {
     this.handlePlay = this.handlePlay.bind(this);
     this.handlePause = this.handlePause.bind(this);
     this.handleEnded = this.handleEnded.bind(this);
+    this.handleFirstFrameLoaded = this.handleFirstFrameLoaded.bind(this);
     this.isMonitoring = false;
     this.lastCurrentTime = 0;
 
@@ -28,14 +32,23 @@ class Video extends Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    // We want to re-render the video item only if the src has changed
-    if(nextProps.src !== this.props.src ||
+    // We want to re-render the video item if the firstFrameLoaded has loaded
+    // to mask the first frame image trick
+    if(nextProps.firstFrameLoaded !== this.props.firstFrameLoaded) {
+      console.log('firstFrameLoaded, re-render');
+      return true;
+    }
+    // We want to re-render the video item if the src has changed
+    else if(nextProps.src !== this.props.src ||
       nextState.canRenderVideo !== this.state.canRenderVideo) {
       console.log('Render video');
-      // TODO ADD DYNAMIC SCROLL OFFSET FOR MOBILE HERE
       setTimeout(() => {
-        window.scroll(212,0);
-      }, 1000);
+        window.scroll({
+          top: this.props.videoMobileOffset.y, 
+          left: this.props.videoMobileOffset.x,
+          behavior: 'smooth'
+        });
+      }, 500);
       return true;
     } else {
       return false;
@@ -96,12 +109,18 @@ class Video extends Component {
     this.props.dispatch(setVideoEnded());
   }
 
+  handleFirstFrameLoaded() {
+    console.log('fist frame loaded');
+    this.props.dispatch(firstFrameLoaded());
+  }
+
   cleanListeners(el) {
     console.log('Clean previous listeners');
     el.removeEventListener('canplay', this.handleCanPlay);
     el.removeEventListener('play', this.handlePlay);
     el.removeEventListener('pause', this.handlePause);
     el.removeEventListener('ended', this.handleEnded);
+    el.removeEventListener('loadeddata', this.handleFirstFrameLoaded);
   }
 
   registerListeners(el) {
@@ -116,6 +135,7 @@ class Video extends Component {
       this.videoEl.addEventListener('play', this.handlePlay);
       this.videoEl.addEventListener('pause', this.handlePause);
       this.videoEl.addEventListener('ended', this.handleEnded);
+      this.videoEl.addEventListener('loadeddata', this.handleFirstFrameLoaded);
     }
   }
 
@@ -153,6 +173,12 @@ class Video extends Component {
   render() { 
     return (
       <div className="video-container">
+        {!this.props.firstFrameLoaded &&
+          <img 
+            className="img-firstframe" 
+            src={this.props.srcFirstFrame}
+          />
+        }
         {this.props.src && this.state.canRenderVideo &&
           <video
             key={this.props.src}
@@ -169,6 +195,13 @@ class Video extends Component {
           </video>
         }
         <style jsx>{`
+          .img-firstframe {
+            position: absolute;
+            top:0;
+            left:0;
+            z-index: 2;
+          }
+
           .video {
             display: block;
             will-change: transform;
@@ -186,14 +219,14 @@ class Video extends Component {
           }
 
           @media (min-aspect-ratio: 16/9) {
-            .video {
+            .video,.img-firstframe {
               width: 100%;
               height: auto;
             }
           }
 
           @media (max-aspect-ratio: 16/9) {
-            .video {
+            .video,.img-firstframe {
               width: auto;
               height: 100%;
             }
@@ -215,6 +248,9 @@ export default connect((state) => {
     isAtBeggining: state.video.get('isAtBeggining'),
     src: state.video.get('src'),
     currentTime: state.video.get('currentTime'),
-    videoFPS: selectedVideo.get('videoFPS')
+    videoFPS: selectedVideo.get('videoFPS'),
+    firstFrameLoaded: state.video.get('firstFrameLoaded'),
+    srcFirstFrame: getFirstFrameImgPath(selectedVideo.get('name')),
+    videoMobileOffset: selectedVideo.get('videoMobileOffset').toJS()
   }
 })(Video);
