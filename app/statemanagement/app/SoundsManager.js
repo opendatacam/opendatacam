@@ -6,6 +6,8 @@ class SoundsManager {
     this.sounds = {};
     this.currentAmbientSound = null;
 
+    console.log('Instantiate SoundsManager');
+
     // Add sounds used everywhere, TODO optimize loading by adding when when needed
     // load intro first
     // add events of sounds loaded ... 
@@ -37,7 +39,7 @@ class SoundsManager {
     }
   }
 
-  playSound(soundName) {
+  playSound(soundName, playbackRate = 1) {
     const soundToPlay = this.sounds[soundName];
     if(this.sounds[soundName]) {
       if(soundToPlay.type === 'ambient') {
@@ -45,11 +47,15 @@ class SoundsManager {
         // stop crossfade them
         if(this.currentAmbientSound) {
           // Fade off
-          this.currentAmbientSound.sound.fade(1, 0, 1000);
+          // this.currentAmbientSound.sound.fade(1, 0, 1000);
+          // TODO IF WE FADE LIKE THAT, we need to make sure to stop the sound
+          // on the end of the fade, if not there is a bug if you load another level and
+          // game over and retry, simply stop for now
+          this.currentAmbientSound.sound.stop();
         }
         // Fade entry
         soundToPlay.sound.seek(0); // if previously not stopped
-        soundToPlay.sound.rate(1); // if sound previously sped up
+        soundToPlay.sound.rate(playbackRate);
         soundToPlay.sound.fade(0, 1, 500);
         soundToPlay.sound.play();
         this.currentAmbientSound = soundToPlay;

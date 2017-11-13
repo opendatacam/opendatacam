@@ -68,9 +68,20 @@ export function addKilledItem(id) {
 export function startLevel() {
   return (dispatch, getState) => {
 
+    
     // TODO Maybe move to the dispatch of the UI, so we keep consistent 
     // that all sound triggering are done from the views
-    SoundsManager.playSound('main');
+    const currentPollutionPercentage = 
+      getState().game.get('missedItems').size * 100 / getState().game.get('maxMissed');
+    if(currentPollutionPercentage < 50) {
+      SoundsManager.playSound('main');
+    }
+    else if(currentPollutionPercentage >= 50 &&
+       currentPollutionPercentage < 80) {
+      SoundsManager.playSound('main', 1.2);
+    } else {
+      SoundsManager.playSound('alert');
+    }
 
     // Notify UI we are starting the level
     dispatch({
