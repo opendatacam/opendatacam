@@ -12,14 +12,10 @@ class Sound extends Component {
   }
 
   toggleSound() {
-    if(this.el) {
-      if(this.props.soundEnabled) {
-        this.el.pause();
-        this.props.dispatch(turnSoundOff());
-      } else {
-        this.el.play();
-        this.props.dispatch(turnSoundOn());
-      }
+    if(this.props.soundEnabled) {
+      this.props.dispatch(turnSoundOff());
+    } else {
+      this.props.dispatch(turnSoundOn());
     }
   }
 
@@ -35,19 +31,12 @@ class Sound extends Component {
         className={`audio-button ${this.props.soundEnabled ? 'on' : 'off'}`}
         onClick={this.toggleSound}
       >
-        <audio
-          loop
-          preload="true"
-          ref={(el) => this.el = el}
-        >
-          <source src={`/static/assets/sounds/${this.props.soundName}.mp3`} type="audio/mpeg" />
-        </audio>
         <style jsx>{`
           .audio-button {
             position: fixed;
             bottom: 1.5rem;
             right: 1rem;
-            z-index: 7;
+            z-index: 10;
             width: 4.4rem;
             height: 4.4rem;
             transform: will-change;
@@ -73,13 +62,7 @@ class Sound extends Component {
 }
 
 export default connect((state) => {
-
-  const selectedVideo = state.app.get('availableVideos').find((video) => {
-    return video.get('name') === state.app.get('selectedVideo')
-  });
-
   return {
-    soundEnabled: state.settings.get('soundEnabled'),
-    soundName: selectedVideo.get('sound')
+    soundEnabled: state.settings.get('soundEnabled')
   }
 })(Sound);

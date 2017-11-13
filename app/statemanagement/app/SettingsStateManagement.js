@@ -1,11 +1,12 @@
 import { fromJS } from 'immutable';
-import axios from 'axios';
+import axis from 'axios';
+import SoundsManager from './SoundsManager';
 
 // Initial state
 const initialState = fromJS({
   showDebugUI: true,
   darkMode: false,
-  soundEnabled: false
+  soundEnabled: true
 });
 
 // Actions
@@ -22,14 +23,24 @@ export function updateSettings(newSettings) {
 }
 
 export function turnSoundOn() {
-  return {
-    type: SOUND_ON
+  return (dispatch, getState) => {
+    
+    SoundsManager.unMuteAll();
+
+    dispatch({
+      type: SOUND_ON
+    });
   }
 }
 
 export function turnSoundOff() {
-  return {
-    type: SOUND_OFF
+  return (dispatch, getState) => {
+    
+    SoundsManager.muteAll();
+
+    dispatch({
+      type: SOUND_OFF
+    });
   }
 }
 

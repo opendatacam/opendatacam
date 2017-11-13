@@ -11,6 +11,8 @@ import { incrementScore, addMissedItem, addKilledItem } from '../../statemanagem
 
 import { getAverageImgPath } from '../../statemanagement/app/AppStateManagement';
 
+import SoundsManager from '../../statemanagement/app/SoundsManager';
+
 const canvasResolution = {
   w: 1280,
   h: 720
@@ -136,11 +138,7 @@ class Mask extends PureComponent {
                       this.props.dispatch(incrementScore());
                       this.props.dispatch(addKilledItem(potentialObjectToMask.id));
                       // Play puff sound
-                      if(this.puffSoundEl && this.props.soundEnabled) { 
-                        this.puffSoundEl.pause();
-                        this.puffSoundEl.currentTime = 0
-                        this.puffSoundEl.play();
-                      }
+                      SoundsManager.playSound("puffA");
                     }
                 });
               }
@@ -315,12 +313,6 @@ class Mask extends PureComponent {
             removeScoreAnimation={this.removeScoreAnimation}
           />
         )}
-        <audio
-          preload="true"
-          ref={(el) => this.puffSoundEl = el}
-        >
-          <source src="/static/puff.mp3" type="audio/mpeg" />
-        </audio>
         <style jsx>{`
           .mask-container {
             width: 100%;

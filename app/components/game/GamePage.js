@@ -23,6 +23,8 @@ import { selectDefaultVideo } from '../../statemanagement/app/AppStateManagement
 
 import { initViewportListeners } from '../../statemanagement/app/ViewportStateManagement';
 
+import SoundsManager from '../../statemanagement/app/SoundsManager';
+
 class GamePage extends React.Component {
 
   constructor(props) {
@@ -58,6 +60,8 @@ class GamePage extends React.Component {
         // directly hide it
         this.hideLanding();
       }
+
+      
     }
   }
 
@@ -76,6 +80,8 @@ class GamePage extends React.Component {
         behavior: 'smooth' 
       });
     }, 500);
+    // Play intro sound
+    SoundsManager.playSound('intro');
   }
 
   render () {
