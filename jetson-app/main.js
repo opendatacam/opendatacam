@@ -20,15 +20,15 @@ yolo.on('start', function(process, data) {
 });
 
 yolo.on('watch:restart', function(info) {
-  console.error('Restaring script because ' + info.file + ' changed');
+  console.log('Restaring script because ' + info.file + ' changed');
 });
 
 yolo.on('restart', function() {
-  console.error('Forever restarting script for ' + child.times + ' time');
+  console.log('Forever restarting script for ' + child.times + ' time');
 });
 
 yolo.on('exit:code', function(code) {
-  console.error('Forever detected script exited with code ' + code);
+  console.log('Forever detected script exited with code ' + code);
 });
 
 app.prepare()
@@ -42,8 +42,15 @@ app.prepare()
 
   express.get('/start-yolo', (req, res) => {
     console.log('start yolo process');
+    // TODO FIND A WAY to check is running and not start again in that case;
     yolo.start();
     res.send('yolo.start() launched');
+  });
+
+  express.get('/stop-yolo', (req, res) => {
+    console.log('stop yolo process');
+    yolo.stop();
+    res.send('yolo.stop() triggered');
   });
 
   server.listen(port, (err) => {
