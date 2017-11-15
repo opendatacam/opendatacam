@@ -10,8 +10,9 @@ const app = next({ dev })
 const handle = app.getRequestHandler()
 
 // states
-var yolo = new (forever.Monitor)(['cd ../../darknet-net;./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-filename', '../prototype_level_1_5x.mp4', '-address','ws://localhost','-port','8080'],{
-  max: 1
+var yolo = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-filename', '../prototype_level_1_5x.mp4', '-address','ws://localhost','-port','8080'],{
+  max: 1,
+  cwd: "../../darknet-net"
 });
 
 yolo.on('start', function(process, data) {
