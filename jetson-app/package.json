@@ -1,0 +1,15 @@
+{
+  "name": "jetson-app",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "node main.js",
+    "build": "next build",
+    "start": "NODE_ENV=production node main.js"
+  },
+  "dependencies": {
+    "express": "^4.16.2",
+    "next": "4.1.4",
+    "react": "^16.1.1",
+    "react-dom": "^16.1.1"
+  }
+}
