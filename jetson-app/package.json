@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "express": "^4.16.2",
+    "forever-monitor": "^1.7.1",
     "next": "4.1.4",
     "react": "^16.1.1",
     "react-dom": "^16.1.1",
