@@ -1,5 +1,6 @@
-const express = require('express')
-const next = require('next')
+const express = require('express')();
+const http = require('http');
+const next = require('next');
 const WebSocketServer = require('websocket').server;
 
 const port = parseInt(process.env.PORT, 10) || 8080
@@ -9,10 +10,10 @@ const handle = app.getRequestHandler()
 
 app.prepare()
 .then(() => {
-  const server = express()
+  const server = http.createServer(express);
 
   // Bootstrap HTTP server
-  server.get('/', (req, res) => {
+  express.get('/', (req, res) => {
     return app.render(req, res, '/', req.query)
   })
 
