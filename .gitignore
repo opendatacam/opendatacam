@@ -1,6 +1,0 @@
-.DS_Store
-node_modules/
-*.weights
-*/out/
-*/long-video
-*/static/detections/*/*.mp4
