@@ -9,10 +9,26 @@ const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
-// states
+// YOLO
+// todo set path to darknet-net in a config file
 var yolo = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-filename', '../prototype_level_1_5x.mp4', '-address','ws://localhost','-port','8080'],{
   max: 1,
   cwd: "../../darknet-net"
+});
+
+// FFMPEG Server
+var ffmpegServer = new (forever.Monitor)(['ffserver','-f','ffserver.conf'],{
+  max: 1,
+  cwd: "./ffserver"
+});
+
+// Stream Webcam To FFServer
+// Pipe webcam feed to ffmpeg server: ffmpeg -f video4linux2 -i /dev/video1 http://localhost:8090/feed1.ffm
+// TODO be able to set the webcam in the config file
+// 
+var streamWebcamToFFServer = new (forever.Monitor)(['ffmpeg','-f','video4linux2','-i','/dev/video1','http://localhost:8090/feed1.ffm'],{
+  max: 1,
+  cwd: "./ffserver"
 });
 
 yolo.on('start', function(process, data) {
