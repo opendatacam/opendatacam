@@ -42,7 +42,7 @@ var ffmpegServer = new (forever.Monitor)(['ffserver','-f','ffserver.conf'],{
 // Pipe webcam feed to ffmpeg server: ffmpeg -f video4linux2 -i /dev/video1 http://localhost:8090/feed1.ffm
 // TODO be able to set the webcam in the config file
 // 
-var streamWebcamToFFServer = new (forever.Monitor)(['ffmpeg','-f','video4linux2','-i','/dev/video1','http://localhost:8090/feed1.ffm'],{
+var streamWebcamToFFServer = new (forever.Monitor)(['ffmpeg','-f','video4linux2','-input_format','mjpeg','-video_size','1280x720','-i','/dev/video1','http://localhost:8090/feed1.ffm'],{
   max: 1,
   cwd: "./ffserver"
 });
