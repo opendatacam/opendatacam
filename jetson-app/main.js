@@ -16,21 +16,6 @@ var yolo = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','
   cwd: "../../darknet-net"
 });
 
-// FFMPEG Server
-var ffmpegServer = new (forever.Monitor)(['ffserver','-f','ffserver.conf'],{
-  max: 1,
-  cwd: "./ffserver"
-});
-
-// Stream Webcam To FFServer
-// Pipe webcam feed to ffmpeg server: ffmpeg -f video4linux2 -i /dev/video1 http://localhost:8090/feed1.ffm
-// TODO be able to set the webcam in the config file
-// 
-var streamWebcamToFFServer = new (forever.Monitor)(['ffmpeg','-f','video4linux2','-i','/dev/video1','http://localhost:8090/feed1.ffm'],{
-  max: 1,
-  cwd: "./ffserver"
-});
-
 yolo.on('start', function(process, data) {
   console.log('Forever : start yolo process');
 });
@@ -45,6 +30,21 @@ yolo.on('restart', function() {
 
 yolo.on('exit:code', function(code) {
   console.log('Forever detected script exited with code ' + code);
+});
+
+// FFMPEG Server
+var ffmpegServer = new (forever.Monitor)(['ffserver','-f','ffserver.conf'],{
+  max: 1,
+  cwd: "./ffserver"
+});
+
+// Stream Webcam To FFServer
+// Pipe webcam feed to ffmpeg server: ffmpeg -f video4linux2 -i /dev/video1 http://localhost:8090/feed1.ffm
+// TODO be able to set the webcam in the config file
+// 
+var streamWebcamToFFServer = new (forever.Monitor)(['ffmpeg','-f','video4linux2','-i','/dev/video1','http://localhost:8090/feed1.ffm'],{
+  max: 1,
+  cwd: "./ffserver"
 });
 
 app.prepare()
@@ -67,6 +67,34 @@ app.prepare()
     console.log('stop yolo process');
     yolo.stop();
     res.send('yolo.stop() triggered');
+  });
+
+  express.get('/start-ffserver', (req, res) => {
+    console.log('start ffserver process');
+    // TODO FIND A WAY to check is running and not start again in that case;
+    ffmpegServer.start()
+    res.send('ffmpegServer.start() launched');
+  });
+
+  express.get('/stop-ffserver', (req, res) => {
+    console.log('stop ffserver process');
+    // TODO FIND A WAY to check is running and not start again in that case;
+    ffmpegServer.stop()
+    res.send('ffmpegServer.stop()');
+  });
+
+  express.get('/start-streamwebcam', (req, res) => {
+    console.log('start streamWebcam process');
+    // TODO FIND A WAY to check is running and not start again in that case;
+    streamWebcamToFFServer.start();
+    res.send('streamWebcamToFFServer.start()');
+  });
+
+  express.get('/stop-streamwebcam', (req, res) => {
+    console.log('stop streamWebcam process');
+    // TODO FIND A WAY to check is running and not start again in that case;
+    streamWebcamToFFServer.stop();
+    res.send('streamWebcamToFFServer.stop()');
   });
 
   server.listen(port, (err) => {
