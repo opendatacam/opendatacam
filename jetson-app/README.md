@@ -1,8 +1,17 @@
 # Jetson App
 
-Install it and run:
+### Mount jetson filesystem as local filesystem on mac for dev
+
+`sshfs -o allow_other,defer_permissions nvidia@192.168.1.222:/home/nvidia/Desktop/lab-traffic-cam /Users/tdurand/Documents/ProjetFreelance/Moovel/remote-lab-traffic-cam/`
+
+### SSH jetson
+
+`ssh nvidia@192.168.1.222`
+
+
+### Install it and run:
 
 ```bash
-npm install
-npm run dev
+yarn install
+yarn run dev
 ```
