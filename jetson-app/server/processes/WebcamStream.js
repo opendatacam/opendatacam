@@ -70,20 +70,20 @@ module.exports = {
   },
 
   start: function() {
-    if(!WebcamStream.ffServer.isRunning) {
-      WebcamStream.ffServer.process.start();
-    }
     if(!WebcamStream.streamWebcam.isRunning) {
       WebcamStream.streamWebcam.process.start();
+    }
+    if(!WebcamStream.ffServer.isRunning) {
+      WebcamStream.ffServer.process.start();
     }
   },
 
   stop: function() {
-    if(WebcamStream.ffServer.isRunning) {
-      WebcamStream.ffServer.process.stop();
-    }
     if(WebcamStream.streamWebcam.isRunning) {
       WebcamStream.streamWebcam.process.stop();
+    }
+    if(WebcamStream.ffServer.isRunning) {
+      WebcamStream.ffServer.process.stop();
     }
   }
 }

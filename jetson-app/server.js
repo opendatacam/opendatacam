@@ -40,6 +40,7 @@ app.prepare()
   express.get('/counter/stop', (req, res) => {
     YOLO.stop();
     // Leave time to YOLO to free the webcam
+    // TODO Need to put a clearSetTimeout somewhere
     setTimeout(() => {
       WebcamStream.start();
     }, 2000);

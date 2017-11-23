@@ -4,6 +4,7 @@ const cloneDeep = require('lodash.clonedeep');
 
 
 const initialState = {
+  timeLastFrame: new Date(),
   currentFrame: 0,
   countedItems: [],
   counterData: {
@@ -13,7 +14,7 @@ const initialState = {
     w: 1280,
     h: 720
   },
-  countingAreas: [{"x":0,"y":280,"w":426.66,"h":200}]
+  countingAreas: [{"x":0,"y":0,"w":1280,"h":720}]
 }
 
 let Counter = cloneDeep(initialState);
@@ -29,15 +30,21 @@ module.exports = {
 
   updateWithNewFrame: function(detectionsOfThisFrame) {
 
+    // Compute FPS
+    const now = new Date();
+    const timeDiff = Math.abs(now.getTime() - Counter.timeLastFrame.getTime());
+    Counter.timeLastFrame = now;
+    console.log(`YOLO detections FPS: ${1000 / timeDiff}`);
+
     // Scale detection
     const detectionScaledOfThisFrame = detectionsOfThisFrame.map((detection) => {
-        let detectionScaled = detection;
-        detectionScaled.name = detection.class;
-        detectionScaled.x = detection.x * Counter.image.w;
-        detectionScaled.y = detection.y * Counter.image.h;
-        detectionScaled.w = detection.w * Counter.image.w;
-        detectionScaled.h = detection.h * Counter.image.h;
-        return detectionScaled;
+      return {
+        name: detection.class,
+        x: detection.x * Counter.image.w,
+        y: detection.y * Counter.image.h,
+        w: detection.w * Counter.image.w,
+        h: detection.h * Counter.image.h
+      };
     });
 
 
@@ -51,16 +58,16 @@ module.exports = {
 
     Tracker.updateTrackedItemsWithNewFrame(detectionScaledOfThisFrame, Counter.currentFrame);
 
-    // console.log('Tracker data');
-    // console.log('=========')
-    // console.log(JSON.stringify(Tracker.getJSONOfTrackedItems()));
-    // console.log('=========')
+    console.log('Tracker data');
+    console.log('=========')
+    console.log(JSON.stringify(Tracker.getJSONOfTrackedItems()));
+    console.log('=========')
 
     // Count items that have entered a counting area and haven't been already counted
     const newItemsToCount = Tracker.getJSONOfAllTrackedItems()
       .filter((item) => 
           Counter.countedItems.indexOf(item.id) === -1 && // not already counted 
-          item.nbActiveFrame > 3
+          Counter.currentFrame - item.appearFrame > 3 // matched for more than 3 frames
       ).filter((item) =>
           isInsideSomeAreas(Counter.countingAreas , item.disappearArea, item.idDisplay)
       );
