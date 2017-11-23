@@ -21,6 +21,8 @@ app.prepare()
   const server = http.createServer(express);
   
   express.get('/', (req, res) => {
+    // Start webcam stream by default
+    WebcamStream.start();
     return app.render(req, res, '/', req.query)
   })
 
@@ -43,6 +45,11 @@ app.prepare()
     WebcamStream.stop();
     res.send('WebcamStream.stop() triggered');
   });
+
+  // Global next handler
+  express.get('*', (req, res) => {
+    return handle(req, res)
+  })
 
   server.listen(port, (err) => {
     if (err) throw err
