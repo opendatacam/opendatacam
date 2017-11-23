@@ -39,7 +39,10 @@ app.prepare()
 
   express.get('/counter/stop', (req, res) => {
     YOLO.stop();
-    WebcamStream.start();
+    // Leave time to YOLO to free the webcam
+    setTimeout(() => {
+      WebcamStream.start();
+    }, 2000);
     res.send('Stop counting')
   });
 
