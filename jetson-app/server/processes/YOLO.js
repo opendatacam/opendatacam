@@ -9,14 +9,17 @@ let YOLO = {
 module.exports = {
   init: function() {
 
-    // TODO Path to darknet-net in config file
+    // TODO be able to config Path to darknet-net in config file
     // cwd is relative to the main.js where things are called
     // On file
+    // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -filename ../prototype_level_1_5x.mp4 -address "ws://localhost" -port 8080
     // YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-filename', '../prototype_level_1_5x.mp4', '-address','ws://localhost','-port','8080'],{
     //   max: 1,
     //   cwd: "../../darknet-net"
     // });
 
+    // On webcam
+    // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 1 -address "ws://localhost" -port 8080
     YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-c','1', '-address','ws://localhost','-port','8080'],{
       max: 1,
       cwd: "../../darknet-net"
