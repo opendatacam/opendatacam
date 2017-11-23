@@ -3,49 +3,17 @@ const http = require('http');
 const next = require('next');
 const WebSocketServer = require('websocket').server;
 const forever = require('forever-monitor');
+const YOLO = require('./processes/YOLO');
+const WebcamStream = require('./processes/WebcamStream');
 
 const port = parseInt(process.env.PORT, 10) || 8080
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
-// YOLO
-// todo set path to darknet-net in a config file
-var yolo = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-filename', '../prototype_level_1_5x.mp4', '-address','ws://localhost','-port','8080'],{
-  max: 1,
-  cwd: "../../darknet-net"
-});
-
-yolo.on('start', function(process, data) {
-  console.log('Forever : start yolo process');
-});
-
-yolo.on('watch:restart', function(info) {
-  console.log('Restaring script because ' + info.file + ' changed');
-});
-
-yolo.on('restart', function() {
-  console.log('Forever restarting script for ' + child.times + ' time');
-});
-
-yolo.on('exit:code', function(code) {
-  console.log('Forever detected script exited with code ' + code);
-});
-
-// FFMPEG Server
-var ffmpegServer = new (forever.Monitor)(['ffserver','-f','ffserver.conf'],{
-  max: 1,
-  cwd: "./ffserver"
-});
-
-// Stream Webcam To FFServer
-// Pipe webcam feed to ffmpeg server: ffmpeg -f video4linux2 -i /dev/video1 http://localhost:8090/feed1.ffm
-// TODO be able to set the webcam in the config file
-// 
-var streamWebcamToFFServer = new (forever.Monitor)(['ffmpeg','-f','video4linux2','-input_format','mjpeg','-video_size','1280x720','-i','/dev/video1','http://localhost:8090/feed1.ffm'],{
-  max: 1,
-  cwd: "./ffserver"
-});
+// Init processes
+YOLO.init();
+WebcamStream.init();
 
 app.prepare()
 .then(() => {
@@ -56,45 +24,24 @@ app.prepare()
     return app.render(req, res, '/', req.query)
   })
 
-  express.get('/start-yolo', (req, res) => {
-    console.log('start yolo process');
-    // TODO FIND A WAY to check is running and not start again in that case;
-    yolo.start();
-    res.send('yolo.start() launched');
+  express.get('/process/yolo/start', (req, res) => {
+    YOLO.start();
+    res.send('YOLO.start() triggered');
   });
 
-  express.get('/stop-yolo', (req, res) => {
-    console.log('stop yolo process');
-    yolo.stop();
-    res.send('yolo.stop() triggered');
+  express.get('/process/yolo/stop', (req, res) => {
+    YOLO.stop();
+    res.send('YOLO.stop() triggered');
   });
 
-  express.get('/start-ffserver', (req, res) => {
-    console.log('start ffserver process');
-    // TODO FIND A WAY to check is running and not start again in that case;
-    ffmpegServer.start()
-    res.send('ffmpegServer.start() launched');
+  express.get('/process/webcamstream/start', (req, res) => {
+    WebcamStream.start();
+    res.send('WebcamStream.start() triggered');
   });
 
-  express.get('/stop-ffserver', (req, res) => {
-    console.log('stop ffserver process');
-    // TODO FIND A WAY to check is running and not start again in that case;
-    ffmpegServer.stop()
-    res.send('ffmpegServer.stop()');
-  });
-
-  express.get('/start-streamwebcam', (req, res) => {
-    console.log('start streamWebcam process');
-    // TODO FIND A WAY to check is running and not start again in that case;
-    streamWebcamToFFServer.start();
-    res.send('streamWebcamToFFServer.start()');
-  });
-
-  express.get('/stop-streamwebcam', (req, res) => {
-    console.log('stop streamWebcam process');
-    // TODO FIND A WAY to check is running and not start again in that case;
-    streamWebcamToFFServer.stop();
-    res.send('streamWebcamToFFServer.stop()');
+  express.get('/process/webcamstream/stop', (req, res) => {
+    WebcamStream.stop();
+    res.send('WebcamStream.stop() triggered');
   });
 
   server.listen(port, (err) => {
