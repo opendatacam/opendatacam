@@ -32,31 +32,33 @@ class WebcamView extends React.Component {
   render () {
     return (
       <div className="webcam-view">
-        <img src={`http://192.168.1.222:8090/webcam.jpg?${this.state.dateRefresh}`} />
+        <img 
+          width="1280"
+          height="720"
+          src={`http://192.168.1.222:8090/webcam.jpg?${this.state.dateRefresh}`} 
+        />
         <style jsx>{`
+          .webcam-view {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+          }
+
           @media (min-aspect-ratio: 16/9) {
-            .webcam-view {
+            img {
               width: 100%;
               height: auto;
             }
           }
 
           @media (max-aspect-ratio: 16/9) {
-            .webcam-view {
+            img {
               width: auto;
               height: 100%;
             }
-          }
-          
-          img {
-            width: 1280px;
-            height: 720px;
-          }
-
-          .btn-refresh {
-            position: absolute;
-            top: 5px;
-            left: 5px;
           }
         `}</style>
       </div>
