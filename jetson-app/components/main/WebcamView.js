@@ -1,7 +1,7 @@
 import React from 'react'
 import { connect } from 'react-redux'; 
-import { setInterval } from 'core-js/library/web/timers';
-import { clearInterval } from 'timers';
+
+import { startCounting } from '../../statemanagement/app/AppStateManagement';
 
 class WebcamView extends React.Component {
 
@@ -13,6 +13,7 @@ class WebcamView extends React.Component {
     };
 
     this.refresh = this.refresh.bind(this);
+    this.handleStartCounting = this.handleStartCounting.bind(this);
   }
 
   componentDidMount() {
@@ -29,9 +30,19 @@ class WebcamView extends React.Component {
     this.setState({ dateRefresh: new Date().getTime() });
   }
 
+  handleStartCounting() {
+    this.props.dispatch(startCounting());
+  }
+
   render () {
     return (
       <div className="webcam-view">
+        <button
+          onClick={this.handleStartCounting}
+          className="btn-count"
+        >
+          Start Counting
+        </button>
         <img 
           width="1280"
           height="720"
@@ -44,7 +55,13 @@ class WebcamView extends React.Component {
             position: absolute;
             top: 0;
             left: 0;
-            pointer-events: none;
+          }
+
+          .btn-count {
+            position: fixed;
+            top: 40%;
+            left: 40%;
+            font-size: 20px;
           }
 
           @media (min-aspect-ratio: 16/9) {
@@ -66,4 +83,4 @@ class WebcamView extends React.Component {
   }
 }
 
-export default WebcamView;
+export default connect()(WebcamView);

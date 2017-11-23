@@ -23,6 +23,8 @@ app.prepare()
   express.get('/', (req, res) => {
     // Start webcam stream by default
     WebcamStream.start();
+    // Make sur yolo is stopped
+    YOLO.stop();
     return app.render(req, res, '/', req.query)
   })
 

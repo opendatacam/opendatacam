@@ -9,9 +9,16 @@ const initialState = fromJS({
 const START_COUNTING = 'App/START_COUNTING'
 const STOP_COUNTING = 'App/STOP_COUNTING'
 
-export function startCounting() {
-  return {
-    type: START_COUNTING
+export function startCounting () {
+  return (dispatch, getState) => {
+
+    // Ping webservice to start yolo and shutdown webcam stream
+    // TODO
+
+    // Notify UI we start counting
+    dispatch({
+      type: START_COUNTING
+    })
   }
 }
 
@@ -21,13 +28,7 @@ export function stopCounting() {
   }
 }
 
-// export function startCounting () {
-//   return (dispatch, getState) => {
-//     dispatch({
-//       type: START_COUNTING
-//     })
-//   }
-// }
+
 
 // Reducer
 export default function AppReducer (state = initialState, action = {}) {

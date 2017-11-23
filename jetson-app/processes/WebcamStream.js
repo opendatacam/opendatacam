@@ -47,6 +47,10 @@ module.exports = {
       max: 1,
       cwd: "./processes/ffserver"
     });
+    // WebcamStream.streamWebcam.process = new (forever.Monitor)(['ffmpeg','-i','/home/nvidia/Desktop/prototype1_720p.mp4','http://localhost:8090/feed1.ffm'],{
+    //   max: 1,
+    //   cwd: "./processes/ffserver"
+    // });
 
     WebcamStream.streamWebcam.process.on("start", () => {
       console.log('WebcamStream: Sub-Process Stream webcam started');

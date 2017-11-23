@@ -2,14 +2,19 @@ import React from 'react'
 import { connect } from 'react-redux'; 
 
 import WebcamView from './WebcamView';
+import CountingView from './CountingView';
 
 class MainPage extends React.Component {
+
+  constructor(props) {
+    super(props);
+  }
 
   render () {
     return (
       <div className="main-page">
         {this.props.isCounting &&
-          <div>Render counting UI</div>
+          <CountingView />
         }
         {!this.props.isCounting &&
           <WebcamView />
