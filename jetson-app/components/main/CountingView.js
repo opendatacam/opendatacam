@@ -1,6 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux';
 
+import { fetchCountingData } from '../../statemanagement/app/CounterStateManagement';
+import { stopCounting } from '../../statemanagement/app/AppStateManagement';
+
 class CountingView extends React.Component {
 
   constructor(props) {
@@ -8,12 +11,24 @@ class CountingView extends React.Component {
   }
 
   componentDidMount() {
+    // Long poll
+    this.fetchData = setInterval(() => {
+      this.props.dispatch(fetchCountingData());
+    }, 1000);
+  }
+
+  componentWillUnmount() {
+    clearInterval(this.fetchData);
   }
 
   render () {
     return (
       <div className="counting-view">
         <div>Counting UI</div>
+        <button onClick={() => this.props.dispatch(stopCounting())}>
+          Stop counting
+        </button>
+        <div>{JSON.stringify(this.props.countingData.toJS())}</div>
         <style jsx>{`
           .counting-view {
             width: 100%;
@@ -29,4 +44,8 @@ class CountingView extends React.Component {
   }
 }
 
-export default CountingView;
+export default connect((state) => {
+  return {
+    countingData: state.counter.get('countingData')
+  }
+})(CountingView);

@@ -17,6 +17,7 @@ export function startCounting () {
   return (dispatch, getState) => {
 
     // Ping webservice to start yolo and shutdown webcam stream
+    axios.get('/counter/start');
 
     // Notify UI we start counting
     dispatch({
@@ -26,8 +27,14 @@ export function startCounting () {
 }
 
 export function stopCounting() {
-  return {
-    type: STOP_COUNTING
+  return (dispatch, getState) => {
+    // Ping webservice to start yolo and shutdown webcam stream
+    axios.get('/counter/stop');
+
+    // Notify UI we start counting
+    dispatch({
+      type: STOP_COUNTING
+    })
   }
 }
 

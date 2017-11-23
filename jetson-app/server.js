@@ -30,24 +30,16 @@ app.prepare()
     return app.render(req, res, '/', req.query)
   })
 
-  express.get('/process/yolo/start', (req, res) => {
-    YOLO.start();
-    res.send('YOLO.start() triggered');
-  });
-
-  express.get('/process/yolo/stop', (req, res) => {
-    YOLO.stop();
-    res.send('YOLO.stop() triggered');
-  });
-
-  express.get('/process/webcamstream/start', (req, res) => {
-    WebcamStream.start();
-    res.send('WebcamStream.start() triggered');
-  });
-
-  express.get('/process/webcamstream/stop', (req, res) => {
+  express.get('/counter/start', (req, res) => {
     WebcamStream.stop();
-    res.send('WebcamStream.stop() triggered');
+    YOLO.start();
+    res.send('Start counting')
+  });
+
+  express.get('/counter/stop', (req, res) => {
+    YOLO.stop();
+    WebcamStream.start();
+    res.send('Stop counting')
   });
 
   express.get('/counter/data', (req, res) => {

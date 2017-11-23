@@ -1,4 +1,4 @@
-module.exports = {
+const self = module.exports = {
   isInsideArea: function(area, point) {
     const xMin = area.x
     const xMax = area.x + area.w;
@@ -16,7 +16,7 @@ module.exports = {
   },
 
   isInsideSomeAreas: function(areas, point, idDisplay) {
-    const isInside = areas.some((area) => isInsideArea(area, point));
+    const isInside = areas.some((area) => self.isInsideArea(area, point));
     return isInside;
   }
 }

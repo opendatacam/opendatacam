@@ -33,10 +33,10 @@ module.exports = {
     const detectionScaledOfThisFrame = detectionsOfThisFrame.map((detection) => {
         let detectionScaled = detection;
         detectionScaled.name = detection.class;
-        detectionScaled.x = detection.x * imageWidth;
-        detectionScaled.y = detection.y * imageHeight;
-        detectionScaled.w = detection.w * imageWidth;
-        detectionScaled.h = detection.h * imageHeight;
+        detectionScaled.x = detection.x * Counter.image.w;
+        detectionScaled.y = detection.y * Counter.image.h;
+        detectionScaled.w = detection.w * Counter.image.w;
+        detectionScaled.h = detection.h * Counter.image.h;
         return detectionScaled;
     });
 
