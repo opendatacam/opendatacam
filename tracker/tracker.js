@@ -56,6 +56,10 @@ var computeDistance = function(item1, item2) {
   return euclidianDistance + sizeVariation;
 }
 
+exports.reset = function() {
+  mapOfItemsTracked = new Map();
+  mapOfAllItemsTracked = new Map();
+}
 
 exports.updateTrackedItemsWithNewFrame = function(detectionsOfThisFrame, frameNb) {
 

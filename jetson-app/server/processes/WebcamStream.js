@@ -26,7 +26,7 @@ module.exports = {
     // cwd is relative to the main.js where things are called
     WebcamStream.ffServer.process = new (forever.Monitor)(['ffserver','-f','ffserver.conf'],{
       max: 1,
-      cwd: "./processes/ffserver"
+      cwd: "./server/processes/ffserver"
     });
 
     WebcamStream.ffServer.process.on("start", () => {
@@ -45,7 +45,7 @@ module.exports = {
     // cwd is relative to the main.js where things are called
     WebcamStream.streamWebcam.process = new (forever.Monitor)(['ffmpeg','-f','video4linux2','-input_format','mjpeg','-video_size','1280x720','-i','/dev/video1','http://localhost:8090/feed1.ffm'],{
       max: 1,
-      cwd: "./processes/ffserver"
+      cwd: "./server/processes/ffserver"
     });
     // WebcamStream.streamWebcam.process = new (forever.Monitor)(['ffmpeg','-i','/home/nvidia/Desktop/prototype1_720p.mp4','http://localhost:8090/feed1.ffm'],{
     //   max: 1,

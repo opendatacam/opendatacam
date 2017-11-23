@@ -46,7 +46,7 @@ class WebcamView extends React.Component {
         <img 
           width="1280"
           height="720"
-          src={`http://192.168.1.222:8090/webcam.jpg?${this.state.dateRefresh}`} 
+          src={`${this.props.urlData.protocol}://${this.props.urlData.address}:8090/webcam.jpg?${this.state.dateRefresh}`} 
         />
         <style jsx>{`
           .webcam-view {
@@ -83,4 +83,8 @@ class WebcamView extends React.Component {
   }
 }
 
-export default connect()(WebcamView);
+export default connect((state) => {
+  return {
+    urlData: state.app.get('urlData').toJS()
+  }
+})(WebcamView);
