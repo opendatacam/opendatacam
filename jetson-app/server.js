@@ -31,6 +31,7 @@ app.prepare()
   })
 
   express.get('/counter/start', (req, res) => {
+    Counter.reset();
     WebcamStream.stop();
     YOLO.start();
     res.send('Start counting')
