@@ -7,9 +7,7 @@ const initialState = {
   timeLastFrame: new Date(),
   currentFrame: 0,
   countedItems: [],
-  counterData: {
-    car: 0
-  },
+  counterData: {},
   image: {
     w: 1280,
     h: 720
@@ -58,26 +56,33 @@ module.exports = {
 
     Tracker.updateTrackedItemsWithNewFrame(detectionScaledOfThisFrame, Counter.currentFrame);
 
+
+    const trackerDataForThisFrame = Tracker.getJSONOfTrackedItems();
+
     console.log('Tracker data');
     console.log('=========')
-    console.log(JSON.stringify(Tracker.getJSONOfTrackedItems()));
+    console.log(JSON.stringify(trackerDataForThisFrame));
     console.log('=========')
 
     // Count items that have entered a counting area and haven't been already counted
-    const newItemsToCount = Tracker.getJSONOfAllTrackedItems()
-      .filter((item) => 
-          Counter.countedItems.indexOf(item.id) === -1 && // not already counted 
-          Counter.currentFrame - item.appearFrame > 3 // matched for more than 3 frames
-      ).filter((item) =>
-          isInsideSomeAreas(Counter.countingAreas , item.disappearArea, item.idDisplay)
-      );
+    const newItemsToCount = trackerDataForThisFrame.filter((item) => 
+      Counter.countedItems.indexOf(item.id) === -1 && // not already counted 
+      (Counter.currentFrame - item.appearFrame) > 3 // matched for more than 3 frames
+    )
+    // Do not filter on disappear Area as we are prototyping with a static scene
+    // .filter((item) =>
+      // isInsideSomeAreas(Counter.countingAreas , item.disappearArea, item.idDisplay)
+    // );
 
     newItemsToCount.forEach((itemToCount) => {
       Counter.countedItems.push(itemToCount.id);
-      Counter.counterData.car++;
+      if(Counter.counterData[itemToCount.name]) {
+        Counter.counterData[itemToCount.name]++;
+      } else {
+        Counter.counterData[itemToCount.name] = 1;
+      }
+      
     });
-
-    console.log(`Counter: ${Counter.counterData.car} 🚗`);
 
     // Increment frame number
     Counter.currentFrame++;
