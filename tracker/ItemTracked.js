@@ -86,7 +86,9 @@ exports.ItemTracked = function(properties, frameNb, DEFAULT_UNMATCHEDFRAMES_TOLE
       this.disappearFrame = frameNb;
       this.disappearArea = {
         x: this.x,
-        y: this.y
+        y: this.y,
+        w: this.w,
+        h: this.h
       }
     }
     this.frameUnmatchedLeftBeforeDying--;
