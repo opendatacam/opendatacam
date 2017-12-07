@@ -16,6 +16,8 @@ It is very alpha and we do not provide any guarantee that this will work for you
 
 ![open traffic cam architecture](https://user-images.githubusercontent.com/533590/33710070-b1d2462c-db3f-11e7-96f8-7c3f914f38d8.jpg)
 
+[Edit schema](https://docs.google.com/drawings/d/1Pw3rsHGyj_owZUScRwBnZKb1IltA3f0R8yCmcdEbnr8/edit?usp=sharing)
+
 ## 🛠 Step by Step install guide
 
 > NOTE @tdurand : lots of those steps needs to be automated by integrating them in a docker image or something similar, for now need to follow the full procedure
@@ -135,19 +137,23 @@ You should be able to monitor the jetson from the UI we've build and count 🚗 
 
 ## 🛠 Development notes
 
-### General architecture
+### Technical architecture
 
-TODO 
+![architecture open traffic cam](https://user-images.githubusercontent.com/533590/33722687-f5dc9914-db6a-11e7-91de-8c0593873340.jpg)
 
-### Mount jetson filesystem as local filesystem on mac for dev
+[Edit schema](https://docs.google.com/drawings/d/1GCYcnQeGTiifmr3Hc77x6RjCs5RZhMvgIQZZP_Yzbs0/edit?usp=sharing)
+
+### Miscellaneous dev tips
+
+#### Mount jetson filesystem as local filesystem on mac for dev
 
 `sshfs -o allow_other,defer_permissions nvidia@192.168.1.222:/home/nvidia/Desktop/lab-traffic-cam /Users/tdurand/Documents/ProjetFreelance/Moovel/remote-lab-traffic-cam/`
 
-### SSH jetson
+#### SSH jetson
 
 `ssh nvidia@192.168.1.222`
 
-### Install it and run:
+#### Install it and run:
 
 ```bash
 yarn install
