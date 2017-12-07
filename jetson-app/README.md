@@ -95,6 +95,7 @@ darknet-net
   |-python
   |-scripts
   |-src
+  |# ... other files
   |yolo-voc.weights # Weight file should be in the root directory
 ```
 
@@ -111,7 +112,7 @@ _NOTE @tdurand : the tracker will be an external npm package at the end_
 
 -> config.json add path to darknet-net
 
-## 🛠 Run and use the project:
+## 🏁 Run and use the project:
 
 ### 1. Start the "open-traffic-cam" node app
 
@@ -132,7 +133,11 @@ When the jetson is started you should have a wifi "YOUR-HOTSPOT-NAME" available.
 You should be able to monitor the jetson from the UI we've build and count 🚗 🏍 🚚 !  
 
 
-## Dev tips
+## 🛠 Development notes
+
+### General architecture
+
+TODO 
 
 ### Mount jetson filesystem as local filesystem on mac for dev
 
