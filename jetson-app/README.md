@@ -14,7 +14,9 @@ It is very alpha and we do not provide any guarantee that this will work for you
 
 ## ⚙ System overview
 
-![open traffic cam architecture](https://user-images.githubusercontent.com/533590/33710070-b1d2462c-db3f-11e7-96f8-7c3f914f38d8.jpg)
+See [technical architecture](#technical-architecture) for a more detailed overview
+
+![open traffic cam architecture](https://user-images.githubusercontent.com/533590/33723140-1bccd228-db6c-11e7-84c2-7f9cf63287e1.png)
 
 [Edit schema](https://docs.google.com/drawings/d/1Pw3rsHGyj_owZUScRwBnZKb1IltA3f0R8yCmcdEbnr8/edit?usp=sharing)
 
@@ -139,7 +141,7 @@ You should be able to monitor the jetson from the UI we've build and count 🚗 
 
 ### Technical architecture
 
-![architecture open traffic cam](https://user-images.githubusercontent.com/533590/33722687-f5dc9914-db6a-11e7-91de-8c0593873340.jpg)
+![technical architecture open traffic cam](https://user-images.githubusercontent.com/533590/33723806-ed836ace-db6d-11e7-9d7b-12b79e3bcbed.jpg)
 
 [Edit schema](https://docs.google.com/drawings/d/1GCYcnQeGTiifmr3Hc77x6RjCs5RZhMvgIQZZP_Yzbs0/edit?usp=sharing)
 
