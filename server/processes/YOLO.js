@@ -1,4 +1,5 @@
 const forever = require('forever-monitor');
+const config = require('../../config.json');
 
 let YOLO = {
   isRunning: false,
@@ -9,8 +10,6 @@ let YOLO = {
 module.exports = {
   init: function() {
 
-    // TODO be able to config Path to darknet-net in config file
-    // cwd is relative to the main.js where things are called
     // On file
     // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -filename ../prototype_level_1_5x.mp4 -address "ws://localhost" -port 8080
     // YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-filename', '../prototype_level_1_5x.mp4', '-address','ws://localhost','-port','8080'],{
@@ -22,7 +21,7 @@ module.exports = {
     // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 1 -address "ws://localhost" -port 8080
     YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-c','1', '-address','ws://localhost','-port','8080'],{
       max: 1,
-      cwd: "../../darknet-net"
+      cwd: config.PATH_TO_YOLO_DARKNET
     });
 
     YOLO.process.on("start", () => {

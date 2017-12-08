@@ -1,6 +1,7 @@
 const express = require('express')();
 const http = require('http');
 const next = require('next');
+const ip = require('ip');
 const WebSocketServer = require('websocket').server;
 const forever = require('forever-monitor');
 const YOLO = require('./server/processes/YOLO');
@@ -58,7 +59,14 @@ app.prepare()
 
   server.listen(port, (err) => {
     if (err) throw err
-    console.log(`> Ready on http://localhost:${port}`)
+    if (port === 80) {
+      console.log(`> Ready on http://localhost`)
+      console.log(`> Ready on http://${ip.address()}`)
+    } else {
+      console.log(`> Ready on http://localhost:${port}`)
+      console.log(`> Ready on http://${ip.address()}:${port}`)
+    }
+    
   })
 
   // Start Websocket server

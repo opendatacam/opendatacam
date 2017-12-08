@@ -16,7 +16,7 @@ It is very alpha and we do not provide any guarantee that this will work for you
 
 See [technical architecture](#technical-architecture) for a more detailed overview
 
-![open traffic cam architecture](https://user-images.githubusercontent.com/533590/33723140-1bccd228-db6c-11e7-84c2-7f9cf63287e1.png)
+![open traffic cam architecture](https://user-images.githubusercontent.com/533590/33759265-044eb90e-dc02-11e7-9533-9588f7f5c4a2.png)
 
 [Edit schema](https://docs.google.com/drawings/d/1Pw3rsHGyj_owZUScRwBnZKb1IltA3f0R8yCmcdEbnr8/edit?usp=sharing)
 
@@ -28,8 +28,8 @@ See [technical architecture](#technical-architecture) for a more detailed overvi
 
 The jetson comes out of the box with Ubuntu 16.04 installed, but we need some external dependencies:
 
-- ffmpeg
-- node
+- `ffmpeg 2.8.11` or more recent
+- `node 8.x` or more recent 
 
 ### 2. Configure Ubuntu to turn the jetson into a wifi access point
 
@@ -107,14 +107,11 @@ You can test if it is well installed by running this command, it should start th
 
 `./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 1 -address "ws://echo.websocket.org" -coord lrtb`
 
-### 5. Download the open-traffic-cam node app:
+### 5. Download and install the open-traffic-cam node app on the jetson:
 
-_NOTE @tdurand : the tracker will be an external npm package at the end_
-
-- Download zip
-- npm install
-
--> config.json add path to darknet-net
+- Clone or download this repository on the jetson
+- Open the config.json file and specify the PATH_TO_YOLO_DARKNET, it should be the absolute path
+- Run `npm install` 
 
 ## 🏁 Run and use the project:
 
@@ -122,8 +119,10 @@ _NOTE @tdurand : the tracker will be an external npm package at the end_
 
 > NOTE @tdurand , this should be started at the startup of the jetson
 
-- cd PATH_TO_OPEN_TRAFFIC_CAM
-- sudo npm run start  (need sudo to run the project on port 80)
+```bash
+cd PATH_TO_OPEN_TRAFFIC_CAM repository
+sudo npm run start  #(need sudo to run the project on port 80)
+```
 
 ### 2. Connect you device to the jetson
 
