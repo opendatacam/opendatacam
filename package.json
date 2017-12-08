@@ -1,6 +1,6 @@
 {
-  "name": "jetson-app",
-  "version": "1.0.0",
+  "name": "open-traffic-cam",
+  "version": "0.1.0",
   "scripts": {
     "dev": "node server.js",
     "build": "next build",

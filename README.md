@@ -115,8 +115,6 @@ You can test if it is well installed by running this command, it should start th
 
 ## 🏁 Run and use the project:
 
-> 🚨 This alpha version of december is really alpha and you might need to restart ubuntu a lot as it doesn't clean up process well when you switch between the counting and the webcam view 🚨
-
 ### 1. Start the "open-traffic-cam" node app
 
 > NOTE @tdurand , this should be started at the startup of the jetson or configured on one of the parametrable buttons of the board
@@ -128,14 +126,16 @@ sudo npm run start  #(need sudo to run the project on port 80)
 
 ### 2. Connect you device to the jetson
 
-> 💡 We should maybe set up a "captive portal" to avoid people going to localhost, didn't try yet 💡 
+> 💡 We should maybe set up a "captive portal" to avoid people needing to enter the ip of the jetson, didn't try yet 💡 
 
 When the jetson is started you should have a wifi "YOUR-HOTSPOT-NAME" available.
 
 - Connect you device to the jetson wifi
-- Open you browser and open http://localhost
+- Open you browser and open http://IPOFTHEJETSON
 
 ### 3. You are done 👌
+
+> 🚨 This alpha version of december is really alpha and you might need to restart ubuntu a lot as it doesn't clean up process well when you switch between the counting and the webcam view 🚨
 
 You should be able to monitor the jetson from the UI we've build and count 🚗 🏍 🚚 !  
 
