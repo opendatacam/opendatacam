@@ -1,4 +1,4 @@
-const Tracker = require('../../../tracker/tracker');
+const Tracker = require('node-tracker-by-detections').Tracker;
 const isInsideSomeAreas = require('./utils').isInsideSomeAreas;
 const cloneDeep = require('lodash.clonedeep');
 

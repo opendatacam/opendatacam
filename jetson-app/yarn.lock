@@ -3308,6 +3308,12 @@ node-pre-gyp@^0.6.39:
     tar "^2.2.1"
     tar-pack "^3.4.0"
 
+node-tracker-by-detections@^0.1.0:
+  version "0.1.1"
+  resolved "https://registry.yarnpkg.com/node-tracker-by-detections/-/node-tracker-by-detections-0.1.1.tgz#7a1ab80e40f307d08b23ca1a4072d0cb37e0b1bb"
+  dependencies:
+    uuid "^3.1.0"
+
 node-uuid@~1.4.7:
   version "1.4.8"
   resolved "https://registry.yarnpkg.com/node-uuid/-/node-uuid-1.4.8.tgz#b040eb0923968afabf8d32fb1f17f1167fdab907"
