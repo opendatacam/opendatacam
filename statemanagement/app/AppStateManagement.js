@@ -70,6 +70,12 @@ export function setURLData(req) {
   }
 }
 
+export function drawInstructionsShown() {
+  return {
+    type: DRAW_INSTRUCTIONS_SHOWN
+  }
+}
+
 // Reducer
 export default function AppReducer (state = initialState, action = {}) {
   switch (action.type) {
