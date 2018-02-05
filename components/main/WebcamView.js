@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import { startCounting, drawInstructionsShown } from '../../statemanagement/app/AppStateManagement';
 import DrawInstructions from '../shared/DrawInstructions';
+import CountingAreasEditor from '../shared/CountingAreasEditor';
 
 class WebcamView extends React.Component {
 
@@ -42,6 +43,9 @@ class WebcamView extends React.Component {
         !this.props.drawInstructionsShown &&
           <DrawInstructions onConfirm={() => this.props.dispatch(drawInstructionsShown())} />
         }
+        {this.props.drawInstructionsShown &&
+          <CountingAreasEditor />
+        }
         {/* <button
           onClick={this.handleStartCounting}
           className="btn-count"
@@ -51,7 +55,8 @@ class WebcamView extends React.Component {
         <img 
           width="1280"
           height="720"
-          src={`${this.props.urlData.protocol}://${this.props.urlData.address}:8090/webcam.jpg?${this.state.dateRefresh}`} 
+          // src={`${this.props.urlData.protocol}://${this.props.urlData.address}:8090/webcam.jpg?${this.state.dateRefresh}`} 
+          src="/static/placeholder/webcam.jpg" 
         />
         <style jsx>{`
           .webcam-view {
@@ -61,13 +66,6 @@ class WebcamView extends React.Component {
             top: 0;
             left: 0;
             z-index: 1;
-          }
-
-          .btn-count {
-            position: fixed;
-            top: 40%;
-            left: 40%;
-            font-size: 20px;
           }
 
           @media (min-aspect-ratio: 16/9) {

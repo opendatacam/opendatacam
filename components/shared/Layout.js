@@ -12,6 +12,7 @@ class Layout extends Component {
             name='viewport'
             content='width=device-width,initial-scale=1.0,maximum-scale=1.0,minimum-scale=1,user-scalable=0,initial-scale=1'
           />
+          <script type="text/javascript" src="/static/js/fabric.min.js" />
         </Head>
         {this.props.children}
         <style jsx>{`

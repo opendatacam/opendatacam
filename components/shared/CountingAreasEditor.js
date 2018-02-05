@@ -1,47 +1,91 @@
 import React, { Component } from 'react'
 
-class DrawInstructions extends Component {
+import MenuCountingAreasEditor from './MenuCountingAreasEditor'
+
+class CountingAreasEditor extends Component {
+
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      editorInitialized: false
+    }
+  }
+
+  initListeners() {
+
+    let isDown,line;
+
+    this.editorCanvas.on('mouse:down', (o) => {
+      if(this.line) {
+        this.editorCanvas.remove(this.line)
+      }
+      isDown = true;
+      var pointer = this.editorCanvas.getPointer(o.e);
+      var points = [ pointer.x, pointer.y, pointer.x, pointer.y ];
+      this.line = new fabric.Line(points, {
+        strokeWidth: 5,
+        fill: 'red',
+        stroke: 'red',
+        originX: 'center',
+        originY: 'center'
+      });
+      this.editorCanvas.add(this.line);
+    });
+    
+    this.editorCanvas.on('mouse:move', (o) => {
+      if (!isDown) return;
+      var pointer = this.editorCanvas.getPointer(o.e);
+      this.line.set({ x2: pointer.x, y2: pointer.y });
+      // TODO STORE LINE DATA POINTS
+      this.editorCanvas.renderAll();
+    });
+    
+    this.editorCanvas.on('mouse:up', (o) => {
+      isDown = false;
+    });
+  }
+
+  componentDidMount() {
+    if(this.elCanvas) {
+      const { width, height } = this.elCanvas.getBoundingClientRect();
+      this.editorCanvas = new fabric.Canvas(this.elCanvas, { selection: false, width: width, height: height });
+      // this.initListeners();
+    }
+  }
 
   render () {
     return (
-      <div className="instructions">
-        <h1>Draw to define Active Areas</h1>
-        <div
-          onClick={() => this.props.onConfirm()}
-          className="button ok"
-        >
-          <h2>
-            OK
-          </h2>
-        </div>
+      <div
+        className="counting-areas-editor"
+      >
+        <MenuCountingAreasEditor />
+        <canvas
+          ref={(el) => this.elCanvas = el}
+          width={1280}
+          height={720}
+          className="editor-canvas" />
         <style jsx>{`
-          .instructions{
-            text-align: center;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 5;
+          .counting-areas-editor,.editor-canvas  {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
           }
 
-          .instructions .button {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-
-            background-color: white;
-            color: black;
-            width: 3rem;
-            height: 2.5rem;
-            border: 5px solid transparent;
-            position: relative;
-            left: 50%;
-            margin-top: 1rem;
-            transform: translateX(-50%);
+          @media (min-aspect-ratio: 16/9) {
+            .editor-canvas {
+              width: 100%;
+              height: auto;
+            }
           }
-      
-          .instructions .button:hover{
-            border: 5px solid #D6D6D6;
+
+          @media (max-aspect-ratio: 16/9) {
+            .editor-canvas {
+              width: auto;
+              height: 100%;
+            }
           }
         `}</style>
       </div>
@@ -49,4 +93,4 @@ class DrawInstructions extends Component {
   }
 }
 
-export default DrawInstructions
+export default CountingAreasEditor
