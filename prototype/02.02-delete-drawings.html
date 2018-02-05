@@ -1,0 +1,61 @@
+<link rel="stylesheet" type="text/css" href="css/global-style.css">
+
+
+<!--Component: Menu active areas-------------------------------------------->
+  <div class="menu-active-areas">
+    <a href="02-main.html">
+      <div class="delete button">
+        <img class="icon" src="icons/icon-delete.svg" />
+      </div>
+    </a>
+  </div>
+  <style>
+    .menu-active-areas{
+      height: 3rem;
+      display: flex;
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+    }
+
+    .menu-active-areas .button{
+      width: 2.5rem;
+      height: 2.5rem;
+      margin-right: 1.5rem;
+      border: 5px solid #D6D6D6;
+      transition: 100ms;
+    }
+
+    .menu-active-areas .delete{
+      background-color: white;
+    }
+    .menu-active-areas .delete:hover{
+      border: 5px solid #D6D6D6;
+    }
+  </style>
+
+
+<!--Video stream -> for prototype-------------------------------->
+  <div class="video-stream">
+    <video autoplay>
+      <source src="video/prototype-video.mp4" type="video/mp4">
+    </video>
+  </div>
+  <style>
+    video{
+      opacity: 0.2;
+    }
+  </style>
+
+
+<!--Component: Instruction--------------------------------------->
+  <h2 class="instruction">Click the drawn areas to delete them</h2>
+  <style>
+    .instruction{
+      position: fixed;
+      top: 2.35rem;
+      left: 50%;
+      transform: translateX(-50%);
+      white-space: nowrap;
+    }
+  </style>

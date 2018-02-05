@@ -1,0 +1,117 @@
+<link rel="stylesheet" type="text/css" href="css/global-style.css">
+
+
+<!--Component: Menu active areas-------------------------------------------->
+  <div class="menu-active-areas">
+    <a href="02.02-delete-drawings.html">
+      <div class="delete button">
+        <img class="icon" src="icons/icon-delete.svg" />
+      </div>
+    </a>
+    <div class="new-color yellow button">
+
+    </div>
+    <div class="new-color turquoise button">
+
+    </div>
+    <div class="plus button">
+      <img class="icon" src="icons/icon-plus.svg" />
+    </div>
+  </div>
+  <style>
+    .menu-active-areas{
+      height: 3rem;
+      display: flex;
+      position: fixed;
+      top: 1.5rem;
+      left: 1.5rem;
+    }
+
+    .menu-active-areas .button{
+      width: 2.5rem;
+      height: 2.5rem;
+      margin-right: 1.5rem;
+      border: 5px solid transparent;
+      transition: 100ms;
+    }
+
+    .menu-active-areas .delete{
+      background-color: white;
+    }
+    .menu-active-areas .delete:hover{
+      border: 5px solid #D6D6D6;
+    }
+    .menu-active-areas .yellow {
+      background-color: #FFE700;
+    }
+    .menu-active-areas .yellow:hover {
+      border: 5px solid #C7B400;
+    }
+    .menu-active-areas .turquoise {
+      background-color: #A3FFF4;
+    }
+    .menu-active-areas .turquoise:hover {
+      border: 5px solid #01EACE;
+    }
+  </style>
+
+
+<!--Component: Add name-------------------------------------------->
+  <a href="02.01-add-name.html">
+    <div class="add-name">
+      <div class="button">
+        <h2>Add name</h2>
+      </div>
+    </div>
+  </a>
+  <style>
+    .add-name{
+      position: fixed;
+      top: 1.5rem;
+      right: 1.5rem;
+      opacity: 0;/*only shows after drawing sth*/
+    }
+
+    .add-name .button{
+      background-color: white;
+      height: 2.5rem;
+      width: 7.5rem;
+      border: 5px solid transparent;
+      transition: 100ms;
+      color: black;
+    }
+    .add-name .button:hover{
+      border: 5px solid #D6D6D6;
+    }
+  </style>
+
+
+<!--Component: Start recording ------------------------------------>
+  <a href="02-main.html">
+    <div class="record">
+      <img src="icons/icon-start-recording.svg" />
+      <h2>Start counting</h2>
+    </div>
+  </a>
+  <style>
+    .record{
+      position: fixed;
+      bottom: 1.5rem;
+      left: 50%;
+      transform: translateX(-50%);
+      text-align: center;
+      opacity: 0; /*show after drawing the first line*/
+    }
+
+    .record h2{
+      margin-top: 0.5rem;
+    }
+  </style>
+
+
+<!--Video stream -> for prototype-------------------------------->
+  <div class="video-stream">
+    <video autoplay>
+      <source src="video/prototype-video.mp4" type="video/mp4">
+    </video>
+  </div>
