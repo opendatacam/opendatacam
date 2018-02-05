@@ -8,6 +8,8 @@ const YOLO = require('./server/processes/YOLO');
 const WebcamStream = require('./server/processes/WebcamStream');
 const Counter = require('./server/counter/Counter');
 
+const devMode = true; // When not running on the Jetson
+
 const port = parseInt(process.env.PORT, 10) || 8080
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
@@ -24,27 +26,33 @@ app.prepare()
   
   // This render pages/index.js for a request to /
   express.get('/', (req, res) => {
-    // Start webcam stream by default
-    WebcamStream.start();
-    // Make sur yolo is stopped
-    YOLO.stop();
+    if(!devMode) {
+      // Start webcam stream by default
+      WebcamStream.start();
+      // Make sur yolo is stopped
+      YOLO.stop();
+    }
     return app.render(req, res, '/', req.query)
   })
 
   express.get('/counter/start', (req, res) => {
-    Counter.reset();
-    WebcamStream.stop();
-    YOLO.start();
+    if(!devMode) {
+      Counter.reset();
+      WebcamStream.stop();
+      YOLO.start();
+    }
     res.send('Start counting')
   });
 
   express.get('/counter/stop', (req, res) => {
-    YOLO.stop();
-    // Leave time to YOLO to free the webcam
-    // TODO Need to put a clearSetTimeout somewhere
-    setTimeout(() => {
-      WebcamStream.start();
-    }, 2000);
+    if(!devMode) {
+      YOLO.stop();
+      // Leave time to YOLO to free the webcam
+      // TODO Need to put a clearSetTimeout somewhere
+      setTimeout(() => {
+        WebcamStream.start();
+      }, 2000);
+    }
     res.send('Stop counting')
   });
 
