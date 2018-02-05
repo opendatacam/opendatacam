@@ -4,12 +4,15 @@ import axios from 'axios';
 // Initial state
 const initialState = fromJS({
   urlData: {},
-  isCounting: false
+  isCounting: false,
+  drawInstructionsShown: false
 })
 
 // Actions
 const START_COUNTING = 'App/START_COUNTING'
 const STOP_COUNTING = 'App/STOP_COUNTING'
+
+const DRAW_INSTRUCTIONS_SHOWN = 'App/DRAW_INSTRUCTIONS_SHOWN'
 
 const SET_URLDATA = 'App/SET_URLDATA'
 
@@ -76,6 +79,8 @@ export default function AppReducer (state = initialState, action = {}) {
       return state.set('isCounting', false)
     case SET_URLDATA:
       return state.set('urlData', fromJS(action.payload))
+    case DRAW_INSTRUCTIONS_SHOWN:
+      return state.set('drawInstructionsShown', true)
     default:
       return state
   }

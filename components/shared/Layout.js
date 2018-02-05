@@ -15,6 +15,13 @@ class Layout extends Component {
         </Head>
         {this.props.children}
         <style jsx>{`
+
+          @font-face{ 
+            font-family: 'Roboto';
+            src: url('/static/font/Roboto-Regular.woff') format('woff');
+          }
+
+
           :global(html, body) {
             height: 100%;
             width: 100%;
@@ -22,25 +29,48 @@ class Layout extends Component {
             padding: 0;
             left: 0;
             top: 0;
-            font-family: sans-serif;
-            color: white;
             background-color: #262626;
+            background-color: black;
+            color: white;
+            cursor: default;
+            font-family: 'Roboto', sans-serif;
+            font-size: 16px;
+          }
+
+          @media (max-width: 700px) {
+            :global(body,
+            html) {
+              font-size: 13px;
+            }
           }
 
           :global(html) {
-            font-size: 62.5%;
+            box-sizing: border-box;
           }
 
-          @media (max-width: 450px) {
-            :global(html) {
-              font-size: 50%;
-            }
+          :global(*, *:before, *:after) {
+            box-sizing: inherit;
           }
+          
 
-          @media (max-height: 400px) {
-            :global(html) {
-              font-size: 50%;
-            }
+          :global(h1) {
+            font-size: 1.8rem;
+            font-weight: bold;
+          }
+          
+          :global(h2) {
+            font-size: 1.1rem;
+            font-weight: bold;
+          }
+          
+          :global(h3) {
+            font-size: 2.5rem;
+            font-weight: bolder;
+          }
+          
+          :global(a) {
+            color: white;
+            text-decoration: none;
           }
 
           :global(body) {

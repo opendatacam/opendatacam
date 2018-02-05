@@ -3,7 +3,8 @@ import axios from 'axios';
 
 // Initial state
 const initialState = fromJS({
-  countingData: {}
+  countingData: {},
+  countingAreas: []
 })
 
 // Actions
