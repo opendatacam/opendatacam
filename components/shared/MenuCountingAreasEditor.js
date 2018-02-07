@@ -1,4 +1,7 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+
+import { selectCountingArea } from '../../statemanagement/app/CounterStateManagement'
 
 class MenuCountingAreasEditor extends Component {
 
@@ -10,12 +13,17 @@ class MenuCountingAreasEditor extends Component {
             <img className="icon" src="/static/icons/icon-delete.svg" />
           </div>
         </a>
-        <div className="new-color yellow button">
-
-        </div>
-        <div className="new-color turquoise button">
-
-        </div>
+        {Object.keys(this.props.countingAreas.toJS()).map((color) =>
+          <div 
+            key={color}
+            className={`new-color
+              ${color} 
+              button 
+              ${color === this.props.selectedCountingArea ? 'selected' : ''}
+            `}
+            onClick={() => this.props.dispatch(selectCountingArea(color))}
+          />
+        )}
         <div className="plus button">
           <img className="icon" src="/static/icons/icon-plus.svg" />
         </div>
@@ -26,6 +34,7 @@ class MenuCountingAreasEditor extends Component {
             position: fixed;
             top: 1.5rem;
             left: 1.5rem;
+            z-index: 5;
           }
       
           .menu-active-areas .button{
@@ -42,19 +51,22 @@ class MenuCountingAreasEditor extends Component {
           .menu-active-areas .delete{
             background-color: white;
           }
-          .menu-active-areas .delete:hover{
+          .menu-active-areas .delete:hover,
+          .menu-active-areas .delete.selected {
             border: 5px solid #D6D6D6;
           }
           .menu-active-areas .yellow {
             background-color: #FFE700;
           }
-          .menu-active-areas .yellow:hover {
+          .menu-active-areas .yellow:hover,
+          .menu-active-areas .yellow.selected {
             border: 5px solid #C7B400;
           }
           .menu-active-areas .turquoise {
             background-color: #A3FFF4;
           }
-          .menu-active-areas .turquoise:hover {
+          .menu-active-areas .turquoise:hover,
+          .menu-active-areas .turquoise.selected {
             border: 5px solid #01EACE;
           }
         `}</style>
@@ -63,4 +75,9 @@ class MenuCountingAreasEditor extends Component {
   }
 }
 
-export default MenuCountingAreasEditor
+export default connect((state) => {
+  return {
+    countingAreas: state.counter.get('countingAreas'),
+    selectedCountingArea: state.counter.get('selectedCountingArea')
+  }
+})(MenuCountingAreasEditor)

@@ -39,8 +39,7 @@ class WebcamView extends React.Component {
   render () {
     return (
       <div className="webcam-view">
-        {this.props.countingAreas.size === 0 &&
-        !this.props.drawInstructionsShown &&
+        {!this.props.drawInstructionsShown &&
           <DrawInstructions onConfirm={() => this.props.dispatch(drawInstructionsShown())} />
         }
         {this.props.drawInstructionsShown &&
