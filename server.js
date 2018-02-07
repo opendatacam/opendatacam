@@ -62,8 +62,8 @@ app.prepare()
     res.send('Stop counting')
   });
 
-  express.get('/counter/data', (req, res) => {
-    res.json(Counter.getCountingData());
+  express.get('/counter/dashboard', (req, res) => {
+    res.json(Counter.getCountingDashboard());
   });
 
   // Global next.js handler

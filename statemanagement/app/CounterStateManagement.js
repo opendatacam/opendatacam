@@ -3,7 +3,14 @@ import axios from 'axios';
 
 // Initial state
 const initialState = fromJS({
-  countingData: {},
+  countingData: {
+    car: 0,
+    truck: 0,
+    person: 0,
+    bicycle: 0,
+    motorbike: 0,
+    bus: 0
+  },
   countingAreas: {
     yellow: null,
     turquoise: null
@@ -19,7 +26,7 @@ const SAVE_COUNTING_AREA = 'Counter/SAVE_COUNTING_AREA'
 
 export function fetchCountingData() {
   return (dispatch, getState) => {
-    axios.get('/counter/data').then((response) => {
+    axios.get('/counter/dashboard').then((response) => {
       dispatch({
         type: FETCH_COUNTINGDATA_SUCCESS,
         payload: response.data

@@ -7,7 +7,14 @@ const initialState = {
   timeLastFrame: new Date(),
   currentFrame: 0,
   countedItemsHistory: [],
-  counterDashboard: {},
+  counterDashboard: {
+    car: 0,
+    truck: 0,
+    person: 0,
+    bicycle: 0,
+    motorbike: 0,
+    bus: 0
+  },
   image: {
     w: 1280,
     h: 720
@@ -189,7 +196,7 @@ module.exports = {
     this.trackerDataForLastFrame = trackerDataForThisFrame;
   },
 
-  getCountingData: function() {
+  getCountingDashboard: function() {
     return Counter.counterDashboard;
   }
 }
