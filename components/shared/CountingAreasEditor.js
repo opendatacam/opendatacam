@@ -52,10 +52,12 @@ class CountingAreasEditor extends Component {
     });
     
     this.editorCanvas.on('mouse:up', (o) => {
-      let { x1, y1, x2, y2 } = this.lines[this.props.selectedCountingArea]
+      let { x1, y1, x2, y2 } = this.lines[this.props.selectedCountingArea] 
       this.props.dispatch(saveCountingArea(this.props.selectedCountingArea, {
         point1: { x1, y1},
-        point2: { x2, y2}
+        point2: { x2, y2},
+        refWidth: this.editorCanvas.width, 
+        refHeight: this.editorCanvas.height
       }))
       this.mouseDown = false;
     });

@@ -6,13 +6,13 @@ const cloneDeep = require('lodash.clonedeep');
 const initialState = {
   timeLastFrame: new Date(),
   currentFrame: 0,
-  countedItems: [],
-  counterData: {},
+  countedItemsHistory: [],
+  counterDashboard: {},
   image: {
     w: 1280,
     h: 720
   },
-  countingAreas: [{"x":0,"y":0,"w":1280,"h":720}]
+  countingAreas: {}
 }
 
 let Counter = cloneDeep(initialState);
@@ -43,10 +43,62 @@ module.exports = {
   },
 
   registerSingleCountingArea(key, data) {
-    console.log(key);
-    console.log(data);
 
-    data.point1
+    // Remap coordinates to image reference size
+    // The editor canvas can be smaller / bigger
+    let resizedData = {
+      point1: {
+        x1: data.point1.x1 * Counter.image.w / data.refWidth,
+        y1: data.point1.y1 * Counter.image.h / data.refHeight,
+      },
+      point2: {
+        x2: data.point2.x2 * Counter.image.w / data.refWidth,
+        y2: data.point2.y2 * Counter.image.h / data.refHeight,
+      }
+    }
+
+    // Determine the linear function for this counting area
+    // Y = aX + b
+    // -> a = dY / dX
+    // -> b = Y1 - aX1
+    // NOTE: We need to invert the Y coordinates to be in a classic Cartesian coordinate system
+    // The coordinates in inputs are from the canvas coordinates system 
+
+    let { point1, point2 } = resizedData;
+
+    let a = (- point2.y2 + point1.y1) / (point2.x2 - point1.x1);
+    let b = - point1.y1 - a * point1.x1;
+    // Store xBounds to determine if the point is "intersecting" the line on the drawn part
+    let xBounds = {
+      xMin: Math.min(point1.x1, point2.x2),
+      xMax: Math.max(point1.x1, point2.x2)
+    }
+
+    Counter.countingAreas[key] = {
+      a: a,
+      b: b,
+      xBounds: xBounds
+    }
+
+    console.log(Counter.countingAreas);
+
+  },
+
+  countItem: function(trackedItem, countingAreaKey) {
+    // Add it to the history (for export feature)
+    Counter.countedItemsHistory.push({
+      date: new Date().toLocaleDateString(),
+      area: countingAreaKey,
+      type: trackedItem.name,
+      id: trackedItem.idDisplay
+    })
+
+    // Increment the counterDashboard 
+    if(Counter.counterDashboard[trackedItem.name]) {
+      Counter.counterDashboard[trackedItem.name]++;
+    } else {
+      Counter.counterDashboard[trackedItem.name] = 1;
+    }
   },
 
   updateWithNewFrame: function(detectionsOfThisFrame) {
@@ -79,39 +131,65 @@ module.exports = {
 
     Tracker.updateTrackedItemsWithNewFrame(detectionScaledOfThisFrame, Counter.currentFrame);
 
+    let trackerDataForThisFrame = Tracker.getJSONOfTrackedItems();
 
-    const trackerDataForThisFrame = Tracker.getJSONOfTrackedItems();
+    // Compute deltaYs for all tracked items (between the counting lines and the tracked items position)
+    // And check if trackedItem are going through some counting areas 
+    // For each new tracked item
+    trackerDataForThisFrame = trackerDataForThisFrame.map((trackedItem) => {
+      // For each counting areas
+      var countingDeltas = Object.keys(Counter.countingAreas).map((countingAreaKey) => {
+        let countingAreaProps = Counter.countingAreas[countingAreaKey] 
+        // NB: negating Y detection to get it in "normal" coordinates space
+        // deltaY = - Y(detection) - a X(detection) + b
+        let deltaY = - trackedItem.y - countingAreaProps.a * trackedItem.x + countingAreaProps.b;
+
+        // If trackerDataForLastFrame exists, we can if we items are passing through the counting line
+        if(this.trackerDataForLastFrame) {
+          // Find trackerItem data of last frame
+          let trackerItemLastFrame = this.trackerDataForLastFrame.find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
+          let lastDeltaY = trackerItemLastFrame.countingDeltas[countingAreaKey]
+
+          if(Math.sign(lastDeltaY) !== Math.sign(deltaY)) {
+            // Tracked item has cross the {countingAreaKey} counting line
+            // Count it
+            this.countItem(trackedItem, countingAreaKey);
+          }
+        }
+
+        return {
+          countingAreaKey: countingAreaKey,
+          deltaY: deltaY
+        }
+
+      });
+
+      // Convert counting delta to a map
+      var countingDeltaMap = {}
+      
+      countingDeltas.map((countingDelta) => {
+        countingDeltaMap[countingDelta.countingAreaKey] = countingDelta.deltaY
+      })
+
+      return {
+        ...trackedItem,
+        countingDeltas: countingDeltaMap
+      }
+    })
 
     console.log('Tracker data');
     console.log('=========')
     console.log(JSON.stringify(trackerDataForThisFrame));
     console.log('=========')
 
-    // Count items that have entered a counting area and haven't been already counted
-    const newItemsToCount = trackerDataForThisFrame.filter((item) => 
-      Counter.countedItems.indexOf(item.id) === -1 && // not already counted 
-      (Counter.currentFrame - item.appearFrame) > 3 // matched for more than 3 frames
-    )
-    // Do not filter on disappear Area as we are prototyping with a static scene
-    // .filter((item) =>
-      // isInsideSomeAreas(Counter.countingAreas , item.disappearArea, item.idDisplay)
-    // );
-
-    newItemsToCount.forEach((itemToCount) => {
-      Counter.countedItems.push(itemToCount.id);
-      if(Counter.counterData[itemToCount.name]) {
-        Counter.counterData[itemToCount.name]++;
-      } else {
-        Counter.counterData[itemToCount.name] = 1;
-      }
-      
-    });
-
     // Increment frame number
     Counter.currentFrame++;
+
+    // Remember trackerData for last frame
+    this.trackerDataForLastFrame = trackerDataForThisFrame;
   },
 
   getCountingData: function() {
-    return Counter.counterData;
+    return Counter.counterDashboard;
   }
 }
