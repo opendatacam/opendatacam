@@ -47,14 +47,8 @@ class WebcamView extends React.Component {
           <CountingAreasEditor />
         }
         {this.props.isOneCountingAreaDefined &&
-          <BtnStartCounting />
+          <BtnStartCounting onClick={() => this.handleStartCounting()} />
         }
-        {/* <button
-          onClick={this.handleStartCounting}
-          className="btn-count"
-        >
-          Start Counting
-        </button> */}
         <img 
           width="1280"
           height="720"

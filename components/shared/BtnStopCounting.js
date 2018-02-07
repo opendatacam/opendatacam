@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-class BtnStartCounting extends Component {
+class BtnStopCounting extends Component {
 
   render () {
     return (
@@ -9,7 +9,7 @@ class BtnStartCounting extends Component {
         onClick={() => this.props.onClick()}
       >
         <img src="/static/icons/icon-start-recording.svg" />
-        <h2>Start counting</h2>
+        <h2>Stop counting</h2>
         <style jsx>{`
           .record{
             position: fixed;
@@ -28,4 +28,4 @@ class BtnStartCounting extends Component {
   }
 }
 
-export default BtnStartCounting
+export default BtnStopCounting

@@ -1,4 +1,5 @@
 const express = require('express')();
+const bodyParser = require('body-parser')
 const http = require('http');
 const next = require('next');
 const ip = require('ip');
@@ -23,6 +24,7 @@ app.prepare()
 .then(() => {
   // Start HTTP server
   const server = http.createServer(express);
+  express.use(bodyParser.json());
   
   // This render pages/index.js for a request to /
   express.get('/', (req, res) => {
@@ -35,7 +37,10 @@ app.prepare()
     return app.render(req, res, '/', req.query)
   })
 
-  express.get('/counter/start', (req, res) => {
+  express.post('/counter/start', (req, res) => {
+
+    console.log(req.body.countingAreas)
+
     if(!devMode) {
       Counter.reset();
       WebcamStream.stop();

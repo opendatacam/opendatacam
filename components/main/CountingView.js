@@ -3,6 +3,13 @@ import { connect } from 'react-redux';
 
 import { fetchCountingData } from '../../statemanagement/app/CounterStateManagement';
 import { stopCounting } from '../../statemanagement/app/AppStateManagement';
+import SlideIndicators from '../shared/SlideIndicators';
+import CounterData from '../shared/CounterData';
+import SlideArrows from '../shared/SlideArrows';
+import EndCountingCTA from '../shared/EndCountingCTA';
+import ActiveAreaIndicator from '../shared/ActiveAreaIndicator';
+import Title from '../shared/Title';
+import RecordTime from '../shared/RecordTime';
 
 class CountingView extends React.Component {
 
@@ -24,11 +31,18 @@ class CountingView extends React.Component {
   render () {
     return (
       <div className="counting-view">
-        <div>Counting UI</div>
+        {/* <div>Counting UI</div>
         <button onClick={() => this.props.dispatch(stopCounting())}>
           Stop counting
         </button>
-        <div>{JSON.stringify(this.props.countingData.toJS())}</div>
+        <div>{JSON.stringify(this.props.countingData.toJS())}</div> */}
+        <ActiveAreaIndicator />
+        <Title />
+        <RecordTime />
+        <SlideIndicators />
+        <CounterData />
+        <SlideArrows />
+        <EndCountingCTA />
         <style jsx>{`
           .counting-view {
             width: 100%;

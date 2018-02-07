@@ -20,7 +20,9 @@ export function startCounting () {
   return (dispatch, getState) => {
 
     // Ping webservice to start yolo and shutdown webcam stream
-    axios.get('/counter/start');
+    axios.post('/counter/start',{
+      countingAreas: getState().counter.get('countingAreas').toJS()
+    });
 
     // Notify UI we start counting
     dispatch({
