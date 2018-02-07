@@ -19,7 +19,8 @@ const initialState = {
     w: 1280,
     h: 720
   },
-  countingAreas: {}
+  countingAreas: {},
+  trackerDataForLastFrame: null
 }
 
 let Counter = cloneDeep(initialState);
@@ -128,13 +129,13 @@ module.exports = {
     });
 
 
-    console.log(`Received Detection:`);
-    console.log('=========');
-    console.log(JSON.stringify(detectionScaledOfThisFrame));
-    console.log('=========');
-    console.log('Update tracker with this frame')
-    console.log(`Frame id: ${Counter.currentFrame}`);
-    console.log('=========')
+    // console.log(`Received Detection:`);
+    // console.log('=========');
+    // console.log(JSON.stringify(detectionScaledOfThisFrame));
+    // console.log('=========');
+    // console.log('Update tracker with this frame')
+    // console.log(`Frame id: ${Counter.currentFrame}`);
+    // console.log('=========')
 
     Tracker.updateTrackedItemsWithNewFrame(detectionScaledOfThisFrame, Counter.currentFrame);
 
@@ -152,15 +153,22 @@ module.exports = {
         let deltaY = - trackedItem.y - countingAreaProps.a * trackedItem.x + countingAreaProps.b;
 
         // If trackerDataForLastFrame exists, we can if we items are passing through the counting line
-        if(this.trackerDataForLastFrame) {
-          // Find trackerItem data of last frame
-          let trackerItemLastFrame = this.trackerDataForLastFrame.find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
-          let lastDeltaY = trackerItemLastFrame.countingDeltas[countingAreaKey]
+        if(Counter.trackerDataForLastFrame) {
 
-          if(Math.sign(lastDeltaY) !== Math.sign(deltaY)) {
-            // Tracked item has cross the {countingAreaKey} counting line
-            // Count it
-            this.countItem(trackedItem, countingAreaKey);
+          // Find trackerItem data of last frame
+          let trackerItemLastFrame = Counter.trackerDataForLastFrame.find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
+          if(trackerItemLastFrame) {
+            let lastDeltaY = trackerItemLastFrame.countingDeltas[countingAreaKey]
+
+            if(Math.sign(lastDeltaY) !== Math.sign(deltaY)) {
+              console.log("*****************************")
+              console.log("COUNTING SOMETHING")
+              console.log("*****************************")
+
+              // Tracked item has cross the {countingAreaKey} counting line
+              // Count it
+              this.countItem(trackedItem, countingAreaKey);
+            }
           }
         }
 
@@ -184,16 +192,16 @@ module.exports = {
       }
     })
 
-    console.log('Tracker data');
-    console.log('=========')
-    console.log(JSON.stringify(trackerDataForThisFrame));
-    console.log('=========')
+    // console.log('Tracker data');
+    // console.log('=========')
+    // console.log(JSON.stringify(trackerDataForThisFrame));
+    // console.log('=========')
 
     // Increment frame number
     Counter.currentFrame++;
 
     // Remember trackerData for last frame
-    this.trackerDataForLastFrame = trackerDataForThisFrame;
+    Counter.trackerDataForLastFrame = trackerDataForThisFrame;
   },
 
   getCountingDashboard: function() {

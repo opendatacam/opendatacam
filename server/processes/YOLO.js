@@ -1,13 +1,16 @@
 const forever = require('forever-monitor');
 const config = require('../../config.json');
-var WebSocketClient = require('websocket').client;
+const WebSocketClient = require('websocket').client;
+const fs = require('fs');
 
 let YOLO = {
   isRunning: false,
   isInitialized: false,
   process: null,
-  simulationMode: false
+  simulationMode: false,
+  simulationInterval: null
 };
+
 
 module.exports = {
   init: function(simulationMode) {
@@ -46,7 +49,7 @@ module.exports = {
   },
 
   startYOLOSimulation: function() {
-    var client = new WebSocketClient();
+    let client = new WebSocketClient();
 
     client.on('connectFailed', function(error) {
         console.log('Connect Error: ' + error.toString());
@@ -60,20 +63,50 @@ module.exports = {
         connection.on('close', function() {
             console.log('echo-protocol Connection Closed');
         });
-        connection.on('message', function(message) {
-            if (message.type === 'utf8') {
-                console.log("Received: '" + message.utf8Data + "'");
+
+        let detections = {};
+        let frameNb = 0;
+
+        // Get some simulation data
+        fs.readFile('static/placeholder/rawdetections.txt', function(err, f){
+          if(err) {
+            console.log(err);
+            return;
+          }
+          var lines = f.toString().split('\n');
+          lines.forEach(function(l) {
+            try {
+              var detection = JSON.parse(l);
+              detections[detection.frame] = detection.detections;
+            } catch (e) {
+              console.log('Error parsing line');
             }
+          });
+
+          YOLO.simulationInterval = setInterval(sendDetection, 100)
         });
         
-        function sendNumber() {
+        function sendDetection() {
             if (connection.connected) {
-                var number = Math.round(Math.random() * 0xFFFFFF);
-                connection.sendUTF(number.toString());
-                setTimeout(sendNumber, 1000);
+                // Convert detection coordinates to float
+                // 1920 => 1
+                // detection.x, detection.w => ?
+                // 1080 => 1
+                // detection.y, detection.h => ?
+                let detection = detections[frameNb].map((detection) => {
+                  return {
+                    ...detection,
+                    x: detection.x / 1920,
+                    y: detection.y / 1080,
+                    w: detection.w / 1920,
+                    h: detection.h / 1080
+                  }
+                })
+                connection.sendUTF(JSON.stringify(detection));
+                frameNb++;
             }
         }
-        sendNumber();
+        
     });
 
     client.connect('ws://localhost:8080/');
@@ -90,8 +123,8 @@ module.exports = {
   },
 
   stop: function() {
-    if(YOLO.simulationMode) {
-      
+    if(YOLO.simulationMode && YOLO.simulationInterval) {
+      clearInterval(YOLO.simulationInterval)
     } else {
       if(YOLO.isRunning) {
         YOLO.process.stop();
