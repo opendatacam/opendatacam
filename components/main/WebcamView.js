@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import { startCounting, drawInstructionsShown } from '../../statemanagement/app/AppStateManagement';
 import DrawInstructions from '../shared/DrawInstructions';
 import CountingAreasEditor from '../shared/CountingAreasEditor';
+import BtnStartCounting from '../shared/BtnStartCounting';
 
 class WebcamView extends React.Component {
 
@@ -44,6 +45,9 @@ class WebcamView extends React.Component {
         }
         {this.props.drawInstructionsShown &&
           <CountingAreasEditor />
+        }
+        {this.props.isOneCountingAreaDefined &&
+          <BtnStartCounting />
         }
         {/* <button
           onClick={this.handleStartCounting}
@@ -87,9 +91,12 @@ class WebcamView extends React.Component {
 }
 
 export default connect((state) => {
+
+  let isOneCountingAreaDefined = Object.values(state.counter.get('countingAreas').toJS()).filter((value) => value !== null).length > 0
+
   return {
     urlData: state.app.get('urlData').toJS(),
-    countingAreas: state.counter.get('countingAreas'),
+    isOneCountingAreaDefined,
     drawInstructionsShown: state.app.get('drawInstructionsShown')
   }
 })(WebcamView);

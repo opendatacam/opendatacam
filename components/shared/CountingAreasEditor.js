@@ -61,10 +61,6 @@ class CountingAreasEditor extends Component {
     });
   }
 
-  drawLines(countingAreas) {
-
-  }
-
   componentWillReceiveProps(newProps) {
     // We may have to delete some lines
     if(newProps.countingAreas !== this.props.countingAreas) {
