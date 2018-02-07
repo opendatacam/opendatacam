@@ -5,8 +5,8 @@ import axios from 'axios';
 const initialState = fromJS({
   countingData: {},
   countingAreas: {
-    'yellow': null,
-    'turquoise': null
+    yellow: null,
+    turquoise: null
   },
   selectedCountingArea: 'yellow'
 })
@@ -60,9 +60,9 @@ export default function CounterReducer (state = initialState, action = {}) {
     case SELECT_COUNTING_AREA:
       return state.set('selectedCountingArea', action.payload)
     case CLEAR_COUNTING_AREA:
-      return state.get('countingAreas').setIn(action.payload.color, null)
+      return state.setIn(['countingAreas', action.payload], null)
     case SAVE_COUNTING_AREA:
-      return state.get('countingAreas').setIn(action.payload.color, action.payload.data)
+      return state.setIn(['countingAreas', action.payload.color], fromJS(action.payload.data))
     default:
       return state
   }

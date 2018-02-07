@@ -1,6 +1,12 @@
 import React, { Component } from 'react'
 
+import { connect } from 'react-redux';
+
 import MenuCountingAreasEditor from './MenuCountingAreasEditor'
+
+import { COLORS } from '../../utils/colors';
+
+import { clearCountingArea, saveCountingArea } from '../../statemanagement/app/CounterStateManagement'
 
 class CountingAreasEditor extends Component {
 
@@ -10,47 +16,62 @@ class CountingAreasEditor extends Component {
     this.state = {
       editorInitialized: false
     }
+
+    // Fabric.js state
+    this.lines = {}
+    this.mouseDown = false;
   }
 
   initListeners() {
 
-    let isDown,line;
-
     this.editorCanvas.on('mouse:down', (o) => {
-      if(this.line) {
-        this.editorCanvas.remove(this.line)
+      if(this.lines[this.props.selectedCountingArea]) {
+        this.editorCanvas.remove(this.lines[this.props.selectedCountingArea])
+        this.props.dispatch(clearCountingArea(this.props.selectedCountingArea))
       }
-      isDown = true;
-      var pointer = this.editorCanvas.getPointer(o.e);
-      var points = [ pointer.x, pointer.y, pointer.x, pointer.y ];
-      this.line = new fabric.Line(points, {
+      this.mouseDown = true;
+      let pointer = this.editorCanvas.getPointer(o.e);
+      let points = [ pointer.x, pointer.y, pointer.x, pointer.y ];
+      this.lines[this.props.selectedCountingArea] = new fabric.Line(points, {
         strokeWidth: 5,
-        fill: 'red',
-        stroke: 'red',
+        fill: COLORS[this.props.selectedCountingArea],
+        stroke: COLORS[this.props.selectedCountingArea],
         originX: 'center',
         originY: 'center'
       });
-      this.editorCanvas.add(this.line);
+      this.editorCanvas.add(this.lines[this.props.selectedCountingArea]);
     });
     
     this.editorCanvas.on('mouse:move', (o) => {
-      if (!isDown) return;
-      var pointer = this.editorCanvas.getPointer(o.e);
-      this.line.set({ x2: pointer.x, y2: pointer.y });
+      if (!this.mouseDown) return;
+      let pointer = this.editorCanvas.getPointer(o.e);
+      this.lines[this.props.selectedCountingArea].set({ x2: pointer.x, y2: pointer.y });
+      
       // TODO STORE LINE DATA POINTS
       this.editorCanvas.renderAll();
     });
     
     this.editorCanvas.on('mouse:up', (o) => {
-      isDown = false;
+      let { x1, y1, x2, y2 } = this.lines[this.props.selectedCountingArea]
+      this.props.dispatch(saveCountingArea(this.props.selectedCountingArea, {
+        point1: { x1, y1},
+        point2: { x2, y2}
+      }))
+      this.mouseDown = false;
     });
+  }
+
+  componentWillReceiveProps(newProps) {
+
   }
 
   componentDidMount() {
     if(this.elCanvas) {
       const { width, height } = this.elCanvas.getBoundingClientRect();
       this.editorCanvas = new fabric.Canvas(this.elCanvas, { selection: false, width: width, height: height });
-      // this.initListeners();
+      if(this.props.selectedCountingArea) {
+        this.initListeners();
+      }
     }
   }
 
@@ -93,4 +114,9 @@ class CountingAreasEditor extends Component {
   }
 }
 
-export default CountingAreasEditor
+export default connect((state) => {
+  return {
+    countingAreas: state.counter.get('countingAreas'),
+    selectedCountingArea: state.counter.get('selectedCountingArea')
+  }
+})(CountingAreasEditor)

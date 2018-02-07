@@ -3,6 +3,8 @@ import { connect } from 'react-redux'
 
 import { selectCountingArea } from '../../statemanagement/app/CounterStateManagement'
 
+import { COLORS } from '../../utils/colors';
+
 class MenuCountingAreasEditor extends Component {
 
   render () {
@@ -56,18 +58,18 @@ class MenuCountingAreasEditor extends Component {
             border: 5px solid #D6D6D6;
           }
           .menu-active-areas .yellow {
-            background-color: #FFE700;
+            background-color: ${COLORS.yellow};
           }
           .menu-active-areas .yellow:hover,
           .menu-active-areas .yellow.selected {
-            border: 5px solid #C7B400;
+            border: 5px solid ${COLORS.yellowBorder};
           }
           .menu-active-areas .turquoise {
-            background-color: #A3FFF4;
+            background-color: ${COLORS.turquoise};
           }
           .menu-active-areas .turquoise:hover,
           .menu-active-areas .turquoise.selected {
-            border: 5px solid #01EACE;
+            border: 5px solid ${COLORS.turquoiseBorder};
           }
         `}</style>
       </div>
