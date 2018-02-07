@@ -61,9 +61,21 @@ class CountingAreasEditor extends Component {
     });
   }
 
-  componentWillReceiveProps(newProps) {
+  drawLines(countingAreas) {
 
   }
+
+  componentWillReceiveProps(newProps) {
+    // We may have to delete some lines
+    if(newProps.countingAreas !== this.props.countingAreas) {
+      newProps.countingAreas.map((area, color) => {
+        if(area === null) {
+          this.editorCanvas.remove(this.lines[color]);
+          this.lines[color] = null;
+        }
+      })
+    }
+  } 
 
   componentDidMount() {
     if(this.elCanvas) {
