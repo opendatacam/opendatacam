@@ -16,11 +16,14 @@ let WebcamStream = {
   streamWebcam: {
     process: null,
     isRunning: false
-  }
+  },
+  simulationMode: false
 };
 
 module.exports = {
-  init: function() {
+  init: function(simulationMode) {
+
+    WebcamStream.simulationMode = simulationMode;
 
     // FFMPEG Server process
     // cwd is relative to the main.js where things are called
@@ -70,6 +73,9 @@ module.exports = {
   },
 
   start: function() {
+    if(WebcamStream.simulationMode) {
+      return;
+    }
     if(!WebcamStream.streamWebcam.isRunning) {
       WebcamStream.streamWebcam.process.start();
     }
@@ -79,6 +85,9 @@ module.exports = {
   },
 
   stop: function() {
+    if(WebcamStream.simulationMode) {
+      return;
+    }
     if(WebcamStream.streamWebcam.isRunning) {
       WebcamStream.streamWebcam.process.stop();
     }

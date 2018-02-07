@@ -9,7 +9,7 @@ const YOLO = require('./server/processes/YOLO');
 const WebcamStream = require('./server/processes/WebcamStream');
 const Counter = require('./server/counter/Counter');
 
-const devMode = true; // When not running on the Jetson
+const SIMULATION_MODE = true; // When not running on the Jetson
 
 const port = parseInt(process.env.PORT, 10) || 8080
 const dev = process.env.NODE_ENV !== 'production'
@@ -17,8 +17,8 @@ const app = next({ dev })
 const handle = app.getRequestHandler()
 
 // Init processes
-YOLO.init();
-WebcamStream.init();
+YOLO.init(SIMULATION_MODE);
+WebcamStream.init(SIMULATION_MODE);
 
 app.prepare()
 .then(() => {
@@ -28,12 +28,13 @@ app.prepare()
   
   // This render pages/index.js for a request to /
   express.get('/', (req, res) => {
-    if(!devMode) {
-      // Start webcam stream by default
-      WebcamStream.start();
-      // Make sur yolo is stopped
-      YOLO.stop();
-    }
+
+    // Start webcam stream by default
+    WebcamStream.start();
+
+    // Make sur yolo is stopped
+    YOLO.stop();
+
     return app.render(req, res, '/', req.query)
   })
 
@@ -42,23 +43,24 @@ app.prepare()
     Counter.reset();
     Counter.registerCountingAreas(req.body.countingAreas)
 
-    if(!devMode) {
-      
-      WebcamStream.stop();
-      YOLO.start();
-    }
+    // Simulate YOLO detection
+    WebcamStream.stop();
+
+    YOLO.start();
+
     res.send('Start counting')
   });
 
   express.get('/counter/stop', (req, res) => {
-    if(!devMode) {
-      YOLO.stop();
-      // Leave time to YOLO to free the webcam
-      // TODO Need to put a clearSetTimeout somewhere
-      setTimeout(() => {
-        WebcamStream.start();
-      }, 2000);
-    }
+
+    YOLO.stop();
+
+    // Leave time to YOLO to free the webcam
+    // TODO Need to put a clearSetTimeout somewhere
+    setTimeout(() => {
+      WebcamStream.start();
+    }, 2000);
+
     res.send('Stop counting')
   });
 
@@ -91,19 +93,18 @@ app.prepare()
   });
 
   wsServer.on('request', function(request) {      
-      var connection = request.accept('', request.origin);
-      console.log((new Date()) + ' Connection accepted.');
-      connection.on('message', function(message) {
-          if (message.type === 'utf8') {
-              console.log('detections from YOLO');
-              var detectionsOfThisFrame = JSON.parse(message.utf8Data);
-              Counter.updateWithNewFrame(detectionsOfThisFrame);
-          }
-      });
-      connection.on('close', function(reasonCode, description) {
-          console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
-      });
+    var connection = request.accept('', request.origin);
+    console.log((new Date()) + ' Connection accepted.');
+    connection.on('message', function(message) {
+        if (message.type === 'utf8') {
+            console.log('detections from YOLO');
+            var detectionsOfThisFrame = JSON.parse(message.utf8Data);
+            Counter.updateWithNewFrame(detectionsOfThisFrame);
+        }
+    });
+    connection.on('close', function(reasonCode, description) {
+        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+    });
   });
-
 
 })
