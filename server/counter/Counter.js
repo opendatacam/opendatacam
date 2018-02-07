@@ -26,6 +26,29 @@ module.exports = {
     Tracker.reset();
   },
 
+  /*
+    Example countingAreas
+
+    { 
+      yellow: { point1: { x1: 35.05624790519486, y1: 69.33333587646484 }, point2: { x2: 111.38124638170021, y2: 27.11111068725586 } },
+      turquoise: null 
+    }
+  */
+  registerCountingAreas : function(countingAreas) {
+    Object.keys(countingAreas).map((countingAreaKey) => {
+      if(countingAreas[countingAreaKey]) {
+        this.registerSingleCountingArea(countingAreaKey, countingAreas[countingAreaKey]);
+      }
+    })
+  },
+
+  registerSingleCountingArea(key, data) {
+    console.log(key);
+    console.log(data);
+
+    data.point1
+  },
+
   updateWithNewFrame: function(detectionsOfThisFrame) {
 
     // Compute FPS

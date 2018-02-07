@@ -42,7 +42,9 @@ class CountingView extends React.Component {
         <SlideIndicators />
         <CounterData />
         <SlideArrows />
-        <EndCountingCTA />
+        <EndCountingCTA
+          onCountAgain={() => this.props.dispatch(stopCounting())}
+        />
         <style jsx>{`
           .counting-view {
             width: 100%;

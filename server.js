@@ -39,10 +39,11 @@ app.prepare()
 
   express.post('/counter/start', (req, res) => {
 
-    console.log(req.body.countingAreas)
+    Counter.reset();
+    Counter.registerCountingAreas(req.body.countingAreas)
 
     if(!devMode) {
-      Counter.reset();
+      
       WebcamStream.stop();
       YOLO.start();
     }

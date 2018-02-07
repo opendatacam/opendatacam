@@ -8,7 +8,10 @@ class EndCountingCTA extends Component {
         <div className="button export">
           <h2>Export data</h2>
         </div>
-        <div className="button count">
+        <div
+          className="button count"
+          onClick={() => this.props.onCountAgain()}
+        >
           <h2>Count again</h2>
         </div>
         <style jsx>{`
