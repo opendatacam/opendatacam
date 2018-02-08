@@ -28,7 +28,8 @@ module.exports = {
     // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 1 -address "ws://localhost" -port 8080
     YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-c','1', '-address','ws://localhost','-port','8080'],{
       max: 1,
-      cwd: config.PATH_TO_YOLO_DARKNET
+      cwd: config.PATH_TO_YOLO_DARKNET,
+      killTree: true
     });
 
     YOLO.process.on("start", () => {
