@@ -9,6 +9,7 @@
   "dependencies": {
     "axios": "^0.17.1",
     "body-parser": "^1.18.2",
+    "csv-express": "^1.2.2",
     "express": "^4.16.2",
     "forever-monitor": "^1.7.1",
     "immutable": "^3.8.2",

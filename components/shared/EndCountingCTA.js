@@ -1,11 +1,16 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux'
+import { exportCountingData } from '../../statemanagement/app/CounterStateManagement';
 
 class EndCountingCTA extends Component {
 
   render () {
     return (
       <div className="exportCountContainer">
-        <div className="button export">
+        <div 
+          className="button export"
+          onClick={() => this.props.dispatch(exportCountingData())}
+        >
           <h2>Export data</h2>
         </div>
         <div
@@ -54,4 +59,4 @@ class EndCountingCTA extends Component {
   }
 }
 
-export default EndCountingCTA
+export default connect()(EndCountingCTA)

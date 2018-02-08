@@ -1,5 +1,6 @@
 const express = require('express')();
-const bodyParser = require('body-parser')
+const csv = require('csv-express');
+const bodyParser = require('body-parser');
 const http = require('http');
 const next = require('next');
 const ip = require('ip');
@@ -66,6 +67,10 @@ app.prepare()
 
   express.get('/counter/dashboard', (req, res) => {
     res.json(Counter.getCountingDashboard());
+  });
+
+  express.get('/counter/export', function(req, res) {
+    res.csv(Counter.getCounterHistory(), false ,{'Content-disposition': 'attachment; filename=export.csv'});
   });
 
   // Global next.js handler

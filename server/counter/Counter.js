@@ -87,10 +87,9 @@ module.exports = {
   countItem: function(trackedItem, countingAreaKey) {
     // Add it to the history (for export feature)
     Counter.countedItemsHistory.push({
-      date: new Date().toLocaleDateString(),
+      date: new Date().toISOString(),
       area: countingAreaKey,
-      name: trackedItem.name,
-      id: trackedItem.idDisplay
+      name: trackedItem.name
     })
   },
 
@@ -243,5 +242,9 @@ module.exports = {
     })
 
     return counterDashboard;
+  },
+
+  getCounterHistory: function() {
+    return Counter.countedItemsHistory;
   }
 }

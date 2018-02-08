@@ -28,6 +28,14 @@ export function fetchCountingData() {
   }
 }
 
+export function exportCountingData() {
+  return (dispatch, getState) => {
+    let link = document.createElement("a");
+    link.href = '/counter/export';
+    link.click();
+  }
+}
+
 export function selectCountingArea(color) {
   return {
     type: SELECT_COUNTING_AREA,
