@@ -9,7 +9,7 @@ class ActiveAreaIndicator extends Component {
           .activeAreaIndicator{
             width: 100%;
             height: 0.5rem;
-            background-color: #FFE700;
+            background-color: ${this.props.color};
           }
         `}</style>
       </div>

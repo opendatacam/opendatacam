@@ -5,8 +5,16 @@ class SlideArrows extends Component {
   render () {
     return (
       <React.Fragment>
-        <img className="arrowLeft" src="/static/icons/icon-arrow-left.svg" />
-        <img className="arrowRight" src="/static/icons/icon-arrow-right.svg" />
+        <img
+          onClick={() => this.props.goToPrevious()}
+          className="arrowLeft" 
+          src="/static/icons/icon-arrow-left.svg"
+        />
+        <img
+          onClick={() => this.props.goToNext()}
+          className="arrowRight"
+          src="/static/icons/icon-arrow-right.svg"
+        />
         <style jsx>{`
           .arrowRight{
             position: fixed;
@@ -19,7 +27,6 @@ class SlideArrows extends Component {
             left: 1.5rem;
             top: 50%;
             transform: translateY(-50%);
-            opacity: 0.1;
           }
         `}</style>
       </React.Fragment>

@@ -1,6 +1,8 @@
 import React from 'react'
 import { connect } from 'react-redux';
 
+import { COLORS } from '../../utils/colors';
+
 import { fetchCountingData } from '../../statemanagement/app/CounterStateManagement';
 import { stopCounting } from '../../statemanagement/app/AppStateManagement';
 import SlideIndicators from '../shared/SlideIndicators';
@@ -11,6 +13,8 @@ import ActiveAreaIndicator from '../shared/ActiveAreaIndicator';
 import Title from '../shared/Title';
 import RecordTime from '../shared/RecordTime';
 
+import { selectNextCountingArea, selectPreviousCountingArea } from  '../../statemanagement/app/CounterStateManagement'
+
 class CountingView extends React.Component {
 
   constructor(props) {
@@ -19,9 +23,9 @@ class CountingView extends React.Component {
 
   componentDidMount() {
     // Long poll
-    this.fetchData = setInterval(() => {
-      this.props.dispatch(fetchCountingData());
-    }, 1000);
+    // this.fetchData = setInterval(() => {
+    //   this.props.dispatch(fetchCountingData());
+    // }, 1000);
   }
 
   componentWillUnmount() {
@@ -36,12 +40,17 @@ class CountingView extends React.Component {
           Stop counting
         </button>
         <div>{JSON.stringify(this.props.countingData.toJS())}</div> */}
-        <ActiveAreaIndicator />
+        <ActiveAreaIndicator
+          color={COLORS[this.props.selectedCountingArea]}
+        />
         <Title />
         <RecordTime />
         <SlideIndicators />
         <CounterData />
-        <SlideArrows />
+        <SlideArrows 
+          goToNext={() => this.props.dispatch(selectNextCountingArea())}
+          goToPrevious={() => this.props.dispatch(selectPreviousCountingArea())}
+        />
         <EndCountingCTA
           onCountAgain={() => this.props.dispatch(stopCounting())}
         />
@@ -62,6 +71,7 @@ class CountingView extends React.Component {
 
 export default connect((state) => {
   return {
-    countingData: state.counter.get('countingData')
+    countingData: state.counter.get('countingData'),
+    selectedCountingArea: state.counter.get('selectedCountingArea')
   }
 })(CountingView);
