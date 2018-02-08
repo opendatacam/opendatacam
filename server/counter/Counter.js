@@ -1,4 +1,4 @@
-const Tracker = require('node-tracker-by-detections').Tracker;
+const Tracker = require('node-moving-things-tracker').Tracker;
 const isInsideSomeAreas = require('./utils').isInsideSomeAreas;
 const cloneDeep = require('lodash.clonedeep');
 
@@ -146,12 +146,14 @@ module.exports = {
           if(trackerItemLastFrame) {
             let lastDeltaY = trackerItemLastFrame.countingDeltas[countingAreaKey]
 
-            if(Math.sign(lastDeltaY) !== Math.sign(deltaY)) {
+            if(Math.sign(lastDeltaY) !== Math.sign(deltaY) &&
+              countingAreaProps.xBounds.xMin <= trackedItem.x + trackedItem.w / 2 && 
+              countingAreaProps.xBounds.xMax >= trackedItem.x - trackedItem.w / 2) {
               console.log("*****************************")
               console.log("COUNTING SOMETHING")
               console.log("*****************************")
 
-              console.log(trackedItem);
+              // console.log(trackedItem);
 
               // Tracked item has cross the {countingAreaKey} counting line
               // Count it

@@ -83,7 +83,7 @@ module.exports = {
             }
           });
 
-          YOLO.simulationInterval = setInterval(sendDetection, 100)
+          YOLO.simulationInterval = setInterval(sendDetection, 10)
         });
         
         function sendDetection() {
@@ -104,7 +104,12 @@ module.exports = {
                   }
                 })
                 connection.sendUTF(JSON.stringify(detection));
-                frameNb++;
+
+                if(detections[frameNb + 1]) {
+                  frameNb++;
+                } else {
+                  clearInterval(YOLO.simulationInterval)
+                }
             }
         }
         
