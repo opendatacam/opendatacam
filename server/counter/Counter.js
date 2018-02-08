@@ -148,9 +148,10 @@ module.exports = {
       // For each counting areas
       var countingDeltas = Object.keys(Counter.countingAreas).map((countingAreaKey) => {
         let countingAreaProps = Counter.countingAreas[countingAreaKey] 
+        // deltaY = Y(detection) - Y(on-counting-line)
         // NB: negating Y detection to get it in "normal" coordinates space
-        // deltaY = - Y(detection) - a X(detection) + b
-        let deltaY = - trackedItem.y - countingAreaProps.a * trackedItem.x + countingAreaProps.b;
+        // deltaY = - Y(detection) - a X(detection) - b
+        let deltaY = - trackedItem.y - countingAreaProps.a * trackedItem.x - countingAreaProps.b;
 
         // If trackerDataForLastFrame exists, we can if we items are passing through the counting line
         if(Counter.trackerDataForLastFrame) {
