@@ -146,18 +146,33 @@ module.exports = {
           if(trackerItemLastFrame) {
             let lastDeltaY = trackerItemLastFrame.countingDeltas[countingAreaKey]
 
-            if(Math.sign(lastDeltaY) !== Math.sign(deltaY) &&
-              countingAreaProps.xBounds.xMin <= trackedItem.x + trackedItem.w / 2 && 
-              countingAreaProps.xBounds.xMax >= trackedItem.x - trackedItem.w / 2) {
-              console.log("*****************************")
-              console.log("COUNTING SOMETHING")
-              console.log("*****************************")
+            if(Math.sign(lastDeltaY) !== Math.sign(deltaY)) {
 
-              // console.log(trackedItem);
+              // Object trajectory must intersept the counting line between xBounds
+              // We know it intersept between those two frames, check if they are
+              // corresponding to the bounds
+              let minX = Math.min(trackerItemLastFrame.x, trackedItem.x);
+              let maxX = Math.max(trackerItemLastFrame.x, trackedItem.x);
 
-              // Tracked item has cross the {countingAreaKey} counting line
-              // Count it
-              this.countItem(trackedItem, countingAreaKey);
+              if(countingAreaProps.xBounds.xMin <= maxX && 
+                countingAreaProps.xBounds.xMax >= minX) {
+
+                // console.log("*****************************")
+                // console.log("COUNTING SOMETHING")
+                // console.log("*****************************")
+                // // console.log(trackedItem);
+  
+                // Tracked item has cross the {countingAreaKey} counting line
+                // Count it
+                this.countItem(trackedItem, countingAreaKey);
+
+              } else {
+                // console.log('NOT IN xBOUNDS');
+                // console.log(countingAreaProps.xBounds);
+                // console.log(trackedItem)
+              }
+
+              
             }
           }
         }
