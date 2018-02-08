@@ -19,6 +19,14 @@ class WebcamView extends React.Component {
     this.handleStartCounting = this.handleStartCounting.bind(this);
   }
 
+  getUrl() {
+    if(process.env.NODE_ENV !== 'production') {
+      return "/static/placeholder/webcam.jpg" 
+    } else {
+      return `${this.props.urlData.protocol}://${this.props.urlData.address}:8090/webcam.jpg?${this.state.dateRefresh}`
+    }
+  }
+
   componentDidMount() {
     this.refreshInterval = setInterval(() => {
       this.refresh();
@@ -52,8 +60,7 @@ class WebcamView extends React.Component {
         <img 
           width="1280"
           height="720"
-          // src={`${this.props.urlData.protocol}://${this.props.urlData.address}:8090/webcam.jpg?${this.state.dateRefresh}`} 
-          src="/static/placeholder/webcam.jpg" 
+          src={this.getUrl()}
         />
         <style jsx>{`
           .webcam-view {

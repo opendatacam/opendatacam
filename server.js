@@ -10,7 +10,7 @@ const YOLO = require('./server/processes/YOLO');
 const WebcamStream = require('./server/processes/WebcamStream');
 const Counter = require('./server/counter/Counter');
 
-const SIMULATION_MODE = true; // When not running on the Jetson
+const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not running on the Jetson
 
 const port = parseInt(process.env.PORT, 10) || 8080
 const dev = process.env.NODE_ENV !== 'production'
