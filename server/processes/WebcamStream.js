@@ -89,10 +89,20 @@ module.exports = {
       return;
     }
     if(WebcamStream.streamWebcam.isRunning) {
-      WebcamStream.streamWebcam.process.stop();
+      try {
+        WebcamStream.streamWebcam.process.stop();
+      } catch(e) {
+        console.log('Could not stop webcam stream process');
+        console.log(e)
+      }
     }
     if(WebcamStream.ffServer.isRunning) {
-      WebcamStream.ffServer.process.stop();
+      try {
+        WebcamStream.ffServer.process.stop();
+      } catch(e) {
+        console.log('Could not stop ffserver process');
+        console.log(e)
+      }
     }
   }
 }
