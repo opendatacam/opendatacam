@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux';
 
 class CounterData extends Component {
 
@@ -8,27 +9,27 @@ class CounterData extends Component {
         className="counterContainer"
       >
         <div className="counterItem">
-          <h3>45</h3>
+          <h3>{this.props.counterData.get('truck')}</h3>
           <img src="/static/icons/mobility-icons/truck.svg" />
         </div>
         <div className="counterItem">
-          <h3>12</h3>
+          <h3>{this.props.counterData.get('bus')}</h3>
           <img src="/static/icons/mobility-icons/bus.svg" />
         </div>
         <div className="counterItem">
-          <h3>8</h3>
+          <h3>{this.props.counterData.get('car')}</h3>
           <img src="/static/icons/mobility-icons/car.svg" />
         </div>
         <div className="counterItem">
-          <h3>6</h3>
+          <h3>{this.props.counterData.get('motorbike')}</h3>
           <img src="/static/icons/mobility-icons/scooter.svg" />
         </div>
         <div className="counterItem">
-          <h3>2</h3>
+          <h3>{this.props.counterData.get('bicycle')}</h3>
           <img src="/static/icons/mobility-icons/bike.svg" />
         </div>
         <div className="counterItem">
-          <h3>2</h3>
+          <h3>{this.props.counterData.get('person')}</h3>
           <img src="/static/icons/mobility-icons/human.svg" />
         </div>
         <style jsx>{`
@@ -59,4 +60,8 @@ class CounterData extends Component {
   }
 }
 
-export default CounterData
+export default connect((state) => {
+  return {
+    counterData: state.counter.get('countingData')
+  }
+})(CounterData)

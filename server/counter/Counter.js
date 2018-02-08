@@ -115,7 +115,7 @@ module.exports = {
     const now = new Date();
     const timeDiff = Math.abs(now.getTime() - Counter.timeLastFrame.getTime());
     Counter.timeLastFrame = now;
-    console.log(`YOLO detections FPS: ${1000 / timeDiff}`);
+    // console.log(`YOLO detections FPS: ${1000 / timeDiff}`);
 
     // Scale detection
     const detectionScaledOfThisFrame = detectionsOfThisFrame.map((detection) => {
@@ -165,6 +165,8 @@ module.exports = {
               console.log("*****************************")
               console.log("COUNTING SOMETHING")
               console.log("*****************************")
+
+              console.log(trackedItem);
 
               // Tracked item has cross the {countingAreaKey} counting line
               // Count it

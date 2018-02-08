@@ -97,7 +97,7 @@ app.prepare()
     console.log((new Date()) + ' Connection accepted.');
     connection.on('message', function(message) {
         if (message.type === 'utf8') {
-            console.log('detections from YOLO');
+            // console.log('detections from YOLO');
             var detectionsOfThisFrame = JSON.parse(message.utf8Data);
             Counter.updateWithNewFrame(detectionsOfThisFrame);
         }

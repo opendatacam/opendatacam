@@ -96,6 +96,7 @@ module.exports = {
                 let detection = detections[frameNb].map((detection) => {
                   return {
                     ...detection,
+                    class: detection.name,
                     x: detection.x / 1920,
                     y: detection.y / 1080,
                     w: detection.w / 1920,
