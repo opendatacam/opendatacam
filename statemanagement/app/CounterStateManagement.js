@@ -3,14 +3,7 @@ import axios from 'axios';
 
 // Initial state
 const initialState = fromJS({
-  countingData: {
-    car: 0,
-    truck: 0,
-    person: 0,
-    bicycle: 0,
-    motorbike: 0,
-    bus: 0
-  },
+  countingData: {},
   countingAreas: {
     yellow: null,
     turquoise: null

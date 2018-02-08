@@ -7,14 +7,6 @@ const initialState = {
   timeLastFrame: new Date(),
   currentFrame: 0,
   countedItemsHistory: [],
-  counterDashboard: {
-    car: 0,
-    truck: 0,
-    person: 0,
-    bicycle: 0,
-    motorbike: 0,
-    bus: 0
-  },
   image: {
     w: 1280,
     h: 720
@@ -97,16 +89,9 @@ module.exports = {
     Counter.countedItemsHistory.push({
       date: new Date().toLocaleDateString(),
       area: countingAreaKey,
-      type: trackedItem.name,
+      name: trackedItem.name,
       id: trackedItem.idDisplay
     })
-
-    // Increment the counterDashboard 
-    if(Counter.counterDashboard[trackedItem.name]) {
-      Counter.counterDashboard[trackedItem.name]++;
-    } else {
-      Counter.counterDashboard[trackedItem.name] = 1;
-    }
   },
 
   updateWithNewFrame: function(detectionsOfThisFrame) {
@@ -208,6 +193,38 @@ module.exports = {
   },
 
   getCountingDashboard: function() {
-    return Counter.counterDashboard;
+
+    // Generate dashboard from countingHistory
+    // example
+    // {
+    //   "turquoise": {
+    //     {
+    //       car: 0,
+    //       truck: 0,
+    //       person: 0,
+    //       bicycle: 0,
+    //       motorbike: 0,
+    //       bus: 0
+    //     }
+    //   }
+    //   "blablal": {
+    //   }
+    // }
+
+    var counterDashboard = {};
+
+    Counter.countedItemsHistory.forEach((countedItem) => {
+      if(!counterDashboard[countedItem.area]) {
+        counterDashboard[countedItem.area] = {}
+      }
+
+      if(!counterDashboard[countedItem.area][countedItem.name]) {
+        counterDashboard[countedItem.area][countedItem.name] = 1;
+      } else {
+        counterDashboard[countedItem.area][countedItem.name]++;
+      }
+    })
+
+    return counterDashboard;
   }
 }

@@ -3,33 +3,42 @@ import { connect } from 'react-redux';
 
 class CounterData extends Component {
 
+  getItemCounter(item) {
+    const value = this.props.counterData.getIn([this.props.selectedCountingArea, item])
+    if(value) {
+      return value;
+    } else {
+      return 0;
+    }
+  }
+
   render () {
     return (
       <div
         className="counterContainer"
       >
         <div className="counterItem">
-          <h3>{this.props.counterData.get('truck')}</h3>
+          <h3>{this.getItemCounter('truck') }</h3>
           <img src="/static/icons/mobility-icons/truck.svg" />
         </div>
         <div className="counterItem">
-          <h3>{this.props.counterData.get('bus')}</h3>
+          <h3>{this.getItemCounter('bus')}</h3>
           <img src="/static/icons/mobility-icons/bus.svg" />
         </div>
         <div className="counterItem">
-          <h3>{this.props.counterData.get('car')}</h3>
+          <h3>{this.getItemCounter('car')}</h3>
           <img src="/static/icons/mobility-icons/car.svg" />
         </div>
         <div className="counterItem">
-          <h3>{this.props.counterData.get('motorbike')}</h3>
+          <h3>{this.getItemCounter('motorbike')}</h3>
           <img src="/static/icons/mobility-icons/scooter.svg" />
         </div>
         <div className="counterItem">
-          <h3>{this.props.counterData.get('bicycle')}</h3>
+          <h3>{this.getItemCounter('bicycle')}</h3>
           <img src="/static/icons/mobility-icons/bike.svg" />
         </div>
         <div className="counterItem">
-          <h3>{this.props.counterData.get('person')}</h3>
+          <h3>{this.getItemCounter('person')}</h3>
           <img src="/static/icons/mobility-icons/human.svg" />
         </div>
         <style jsx>{`
@@ -62,6 +71,7 @@ class CounterData extends Component {
 
 export default connect((state) => {
   return {
-    counterData: state.counter.get('countingData')
+    counterData: state.counter.get('countingData'),
+    selectedCountingArea: state.counter.get('selectedCountingArea')
   }
 })(CounterData)
