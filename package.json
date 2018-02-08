@@ -4,7 +4,7 @@
   "scripts": {
     "dev": "node server.js",
     "build": "next build",
-    "start": "PORT=80 NODE_ENV=production node server.js"
+    "start": "PORT=8080 NODE_ENV=production node server.js"
   },
   "dependencies": {
     "axios": "^0.17.1",
