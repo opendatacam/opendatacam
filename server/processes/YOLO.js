@@ -83,7 +83,11 @@ module.exports = {
             }
           });
 
-          YOLO.simulationInterval = setInterval(sendDetection, 10)
+          // Simulate YOLO 15s booting time
+          setTimeout(() => {
+            YOLO.simulationInterval = setInterval(sendDetection, 10)
+          }, 15000)
+          
         });
         
         function sendDetection() {

@@ -13,18 +13,33 @@ import Title from '../shared/Title';
 import RecordTime from '../shared/RecordTime';
 
 import { selectNextCountingArea, selectPreviousCountingArea } from  '../../statemanagement/app/CounterStateManagement'
+import Loading from '../shared/Loading';
 
 class CountingView extends React.Component {
 
-  constructor(props) {
-    super(props);
+  componentWillReceiveProps(newProps) {
+    if(newProps.isCounting !== this.props.isCounting) {
+        if(newProps.isCounting === true &&
+          !this.fetchData) {
+          this.startLongPolling();
+        }
+
+        if(newProps.isCounting === false &&
+          this.fetchData) {
+          clearInterval(this.fetchData);
+        }
+    }
   }
 
-  componentDidMount() {
-    // Long poll
+  startLongPolling() {
     this.fetchData = setInterval(() => {
       this.props.dispatch(fetchCountingData());
     }, 1000);
+  }
+
+  componentDidMount() {
+    console.log('coucou');
+    this.startLongPolling();
   }
 
   componentWillUnmount() {
@@ -34,6 +49,11 @@ class CountingView extends React.Component {
   render () {
     return (
       <div className="counting-view">
+        {this.props.yoloIsStarting &&
+          <div className="loading-overlay">
+            <Loading />
+          </div>
+        }
         <ActiveAreaIndicator
           color={COLORS[this.props.selectedCountingArea]}
         />
@@ -55,6 +75,17 @@ class CountingView extends React.Component {
             left: 0;
             color: white;
           }
+
+          .loading-overlay {
+            position: fixed;
+            z-index: 5;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+            display: flex;
+            background-color: rgba(0,0,0,0.8);
+          }
         `}</style>
       </div>
     )
@@ -62,8 +93,12 @@ class CountingView extends React.Component {
 }
 
 export default connect((state) => {
+
   return {
     countingData: state.counter.get('countingData'),
-    selectedCountingArea: state.counter.get('selectedCountingArea')
+    selectedCountingArea: state.counter.get('selectedCountingArea'),
+    yoloStarted: state.counter.getIn(['countingData', 'yoloStarted']),
+    yoloIsStarting: state.counter.getIn(['countingData', 'yoloIsStarting']),
+    isCounting: state.app.get('isCounting')
   }
 })(CountingView);

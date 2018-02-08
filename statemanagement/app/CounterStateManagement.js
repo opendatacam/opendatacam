@@ -3,7 +3,12 @@ import axios from 'axios';
 
 // Initial state
 const initialState = fromJS({
-  countingData: {},
+  countingData: {
+    currentFPS: 0,
+    currentTime: 0,
+    yoloStarted: false,
+    yoloIsStarting: false
+  },
   countingAreas: {
     yellow: null,
     turquoise: null

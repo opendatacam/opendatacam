@@ -14,7 +14,9 @@ const initialState = {
   countingAreas: {},
   trackerDataForLastFrame: null,
   currentFPS: 0,
-  timeStartCounting: new Date()
+  timeStartCounting: new Date(),
+  yoloStarted: false,
+  yoloIsStarting: false
 }
 
 let Counter = cloneDeep(initialState);
@@ -29,7 +31,7 @@ module.exports = {
   },
 
   start: function() {
-    Counter.timeStartCounting = new Date();
+    Counter.yoloIsStarting = true;
   },
 
   /*
@@ -100,6 +102,13 @@ module.exports = {
   },
 
   updateWithNewFrame: function(detectionsOfThisFrame) {
+
+    // Set yolo to started if it's not the case
+    if(!Counter.yoloStarted) {
+      Counter.timeStartCounting = new Date();
+      Counter.yoloStarted = true;
+      Counter.yoloIsStarting = false;
+    }
 
     // Compute FPS
     const now = new Date();
@@ -250,6 +259,8 @@ module.exports = {
 
     counterDashboard['currentFps'] = Counter.currentFPS;
     counterDashboard['currentTime'] = (Counter.timeLastFrame.getTime() - Counter.timeStartCounting.getTime()) / 1000
+    counterDashboard['yoloStarted'] = Counter.yoloStarted;
+    counterDashboard['yoloIsStarting'] = Counter.yoloIsStarting;
 
     return counterDashboard;
   },

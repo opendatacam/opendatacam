@@ -1,6 +1,8 @@
 import { fromJS } from 'immutable'
 import axios from 'axios';
 
+import { fetchCountingData } from './CounterStateManagement';
+
 // Initial state
 const initialState = fromJS({
   urlData: {},
@@ -25,6 +27,9 @@ export function startCounting () {
     axios.post('/counter/start',{
       countingAreas: getState().counter.get('countingAreas').toJS()
     });
+
+    // Fetch counting data
+    dispatch(fetchCountingData());
 
     // Notify UI we start counting
     dispatch({

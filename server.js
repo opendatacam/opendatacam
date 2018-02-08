@@ -17,6 +17,8 @@ const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
+let delayStartWebcam = null;
+
 // Init processes
 YOLO.init(SIMULATION_MODE);
 WebcamStream.init(SIMULATION_MODE);
@@ -41,28 +43,24 @@ app.prepare()
 
   express.post('/counter/start', (req, res) => {
 
-    Counter.reset();
-    Counter.registerCountingAreas(req.body.countingAreas)
-    
-
-    // Simulate YOLO detection
     WebcamStream.stop();
     YOLO.start();  
-
-    // TODO On YOLO start success 
-    // Counter.start()
+    Counter.reset();
+    Counter.registerCountingAreas(req.body.countingAreas)
     Counter.start();
-
-    res.send('Start counting')
+    res.json(Counter.getCountingDashboard());
   });
 
   express.get('/counter/stop', (req, res) => {
 
     YOLO.stop();
 
-    // Leave time to YOLO to free the webcam
+    if(delayStartWebcam) {
+      clearTimeout(delayStartWebcam);
+    }
+    // Leave time to YOLO to free the webcam before starting it
     // TODO Need to put a clearSetTimeout somewhere
-    setTimeout(() => {
+    delayStartWebcam = setTimeout(() => {
       WebcamStream.start();
     }, 2000);
 
