@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 import { COLORS } from '../../utils/colors';
 
 import { fetchCountingData } from '../../statemanagement/app/CounterStateManagement';
-import { stopCounting } from '../../statemanagement/app/AppStateManagement';
 import SlideIndicators from '../shared/SlideIndicators';
 import CounterData from '../shared/CounterData';
 import SlideArrows from '../shared/SlideArrows';
@@ -35,15 +34,10 @@ class CountingView extends React.Component {
   render () {
     return (
       <div className="counting-view">
-        {/* <div>Counting UI</div>
-        <button onClick={() => this.props.dispatch(stopCounting())}>
-          Stop counting
-        </button>
-        <div>{JSON.stringify(this.props.countingData.toJS())}</div> */}
         <ActiveAreaIndicator
           color={COLORS[this.props.selectedCountingArea]}
         />
-        <Title />
+        {/* <Title /> */}
         <RecordTime />
         <SlideIndicators />
         <CounterData />
@@ -51,9 +45,7 @@ class CountingView extends React.Component {
           goToNext={() => this.props.dispatch(selectNextCountingArea())}
           goToPrevious={() => this.props.dispatch(selectPreviousCountingArea())}
         />
-        <EndCountingCTA
-          onCountAgain={() => this.props.dispatch(stopCounting())}
-        />
+        <EndCountingCTA />
         <style jsx>{`
           .counting-view {
             width: 100%;

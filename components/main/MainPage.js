@@ -23,10 +23,10 @@ class MainPage extends React.Component {
         {this.props.deviceOrientation === 'portrait' &&
           <AskLandscape />
         }
-        {this.props.isCounting &&
+        {this.props.showCounterData &&
           <CountingView />
         }
-        {!this.props.isCounting &&
+        {!this.props.showCounterData &&
           <WebcamView />
         }
       </div>
@@ -36,7 +36,7 @@ class MainPage extends React.Component {
 
 export default connect((state) => {
   return {
-    isCounting: state.app.get('isCounting'),
+    showCounterData: state.app.get('showCounterData'),
     deviceOrientation: state.viewport.get('deviceOrientation')
   }
 })(MainPage)

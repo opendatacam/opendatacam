@@ -1,24 +1,36 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+
 import { exportCountingData } from '../../statemanagement/app/CounterStateManagement';
+import { stopCounting, hideCountingData } from '../../statemanagement/app/AppStateManagement';
+import BtnStopCounting from './BtnStopCounting';
 
 class EndCountingCTA extends Component {
 
   render () {
     return (
-      <div className="exportCountContainer">
-        <div 
-          className="button export"
-          onClick={() => this.props.dispatch(exportCountingData())}
-        >
-          <h2>Export data</h2>
-        </div>
-        <div
-          className="button count"
-          onClick={() => this.props.onCountAgain()}
-        >
-          <h2>Count again</h2>
-        </div>
+      <React.Fragment>
+        {!this.props.isCounting &&
+          <div className="exportCountContainer">
+            <div 
+              className="button export"
+              onClick={() => this.props.dispatch(exportCountingData())}
+            >
+              <h2>Export data</h2>
+            </div>
+            <div
+              className="button count"
+              onClick={() => this.props.dispatch(hideCountingData())}
+            >
+              <h2>Count again</h2>
+            </div>
+          </div>
+        }
+        {this.props.isCounting &&
+          <BtnStopCounting 
+            onClick={() => this.props.dispatch(stopCounting())}
+          />
+        }
         <style jsx>{`
           .exportCountContainer{
             position: fixed;
@@ -54,9 +66,13 @@ class EndCountingCTA extends Component {
             border: 5px solid #464646;
           }
         `}</style>
-      </div>
+      </React.Fragment>
     )
   }
 }
 
-export default connect()(EndCountingCTA)
+export default connect((state) => {
+  return {
+    isCounting: state.app.get('isCounting')
+  }
+})(EndCountingCTA)

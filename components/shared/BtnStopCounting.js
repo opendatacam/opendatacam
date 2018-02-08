@@ -8,12 +8,12 @@ class BtnStopCounting extends Component {
         className="record"
         onClick={() => this.props.onClick()}
       >
-        <img src="/static/icons/icon-start-recording.svg" />
+        <img src="/static/icons/icon-stop-recording.svg" />
         <h2>Stop counting</h2>
         <style jsx>{`
           .record{
             position: fixed;
-            bottom: 1.5rem;
+            bottom: 0;
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
