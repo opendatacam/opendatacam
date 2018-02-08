@@ -43,11 +43,15 @@ app.prepare()
 
     Counter.reset();
     Counter.registerCountingAreas(req.body.countingAreas)
+    
 
     // Simulate YOLO detection
     WebcamStream.stop();
+    YOLO.start();  
 
-    YOLO.start();
+    // TODO On YOLO start success 
+    // Counter.start()
+    Counter.start();
 
     res.send('Start counting')
   });

@@ -12,7 +12,9 @@ const initialState = {
     h: 720
   },
   countingAreas: {},
-  trackerDataForLastFrame: null
+  trackerDataForLastFrame: null,
+  currentFPS: 0,
+  timeStartCounting: new Date()
 }
 
 let Counter = cloneDeep(initialState);
@@ -24,6 +26,10 @@ module.exports = {
     Counter = cloneDeep(initialState);
     // Reset tracker
     Tracker.reset();
+  },
+
+  start: function() {
+    Counter.timeStartCounting = new Date();
   },
 
   /*
@@ -100,6 +106,7 @@ module.exports = {
     const timeDiff = Math.abs(now.getTime() - Counter.timeLastFrame.getTime());
     Counter.timeLastFrame = now;
     // console.log(`YOLO detections FPS: ${1000 / timeDiff}`);
+    Counter.currentFPS = 1000 / timeDiff
 
     // Scale detection
     const detectionScaledOfThisFrame = detectionsOfThisFrame.map((detection) => {
@@ -240,6 +247,9 @@ module.exports = {
         counterDashboard[countedItem.area][countedItem.name]++;
       }
     })
+
+    counterDashboard['currentFps'] = Counter.currentFPS;
+    counterDashboard['currentTime'] = (Counter.timeLastFrame.getTime() - Counter.timeStartCounting.getTime()) / 1000
 
     return counterDashboard;
   },

@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux';
 
 class RecordTime extends Component {
 
   render () {
     return (
       <div className="recordTime">
-        <h2>1.22 min</h2>
+        <h2>{this.props.fps} FPS | {Math.round(this.props.time * 100) / 100} min</h2>
         <style jsx>{`
           .recordTime{
             position: fixed;
@@ -18,4 +19,12 @@ class RecordTime extends Component {
   }
 }
 
-export default RecordTime
+export default connect((state) => {
+
+  const counterData = state.counter.get('countingData');
+
+  return {
+    fps: Math.round(counterData.get('currentFps')),
+    time: counterData.get('currentTime') / 60
+  }
+})(RecordTime)
