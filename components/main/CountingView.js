@@ -23,9 +23,9 @@ class CountingView extends React.Component {
 
   componentDidMount() {
     // Long poll
-    // this.fetchData = setInterval(() => {
-    //   this.props.dispatch(fetchCountingData());
-    // }, 1000);
+    this.fetchData = setInterval(() => {
+      this.props.dispatch(fetchCountingData());
+    }, 1000);
   }
 
   componentWillUnmount() {
