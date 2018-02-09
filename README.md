@@ -22,7 +22,7 @@ See [technical architecture](#technical-architecture) for a more detailed overvi
 
 ## 🛠 Step by Step install guide
 
-> NOTE @tdurand : lots of those steps needs to be automated by integrating them in a docker image or something similar, for now need to follow the full procedure
+> NOTE: lots of those steps needs to be automated by integrating them in a docker image or something similar, for now need to follow the full procedure
 
 ### 1. Pre-requise dependencies to install on the jetson
 
@@ -33,7 +33,7 @@ The jetson comes out of the box with Ubuntu 16.04 installed, but we need some ex
 
 ### 2. Configure Ubuntu to turn the jetson into a wifi access point
 
-> NOTE @tdurand : This needs to be automated, the doc below explains how to do it with the graphical user interface of Ubuntu, need to find the equivalent in commandline and put it in a script that we run when installing the ready-to-use-image
+> NOTE: This could use to be automated, the doc below explains how to do it with the graphical user interface of Ubuntu, need to find the equivalent in commandline and put it in a script that we run when installing the ready-to-use-image
 
 1. enable SSID broadcast, the driver’s op_mode parameter has to be set to 2, to do add the following line to /etc/modprobe.d/bcmdhd.conf:
 
@@ -45,7 +45,7 @@ options bcmdhd op_mode=2
 
 2.  Configure hotspot via UI, follow this guide: https://askubuntu.com/a/762885
 
-3. Then define the adress range of the hotspot network, to be able to connect to it and know that 192.168.2.1 will be the jetson and the node app for the client
+3. Then define the adress range of the hotspot network, to be able to connect to it and know that 192.168.2.1 will be the jetson IP
 
 ```bash
 cd /etc/NetworkManager/system-connections
@@ -98,7 +98,7 @@ Restart the jetson
 
 ### 4. Download and install the YOLO darknet-net "mesos" fork:
 
-> NOTE @tdurand : This also will need to come pre-installed
+> NOTE: This also could use to come pre-installed
 
 Follow the steps of https://github.com/meso-unconstructed/darknet-net
 
@@ -162,6 +162,7 @@ When the jetson is started you should have a wifi "YOUR-HOTSPOT-NAME" available.
 
 - Connect you device to the jetson wifi
 - Open you browser and open http://IPOFTHEJETSON:8080
+- In our case, IPOFJETSON is: http://192.168.2.1:8080 
 
 ### 3. You are done 👌
 
