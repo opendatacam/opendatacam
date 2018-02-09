@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { selectCountingArea, clearCountingArea, addCountingArea } from '../../statemanagement/app/CounterStateManagement'
+import { selectCountingArea, deleteCountingArea, addCountingArea } from '../../statemanagement/app/CounterStateManagement'
 
 import { COLORS, AVAILABLE_COLORS } from '../../utils/colors';
 
@@ -10,12 +10,14 @@ class MenuCountingAreasEditor extends Component {
   render () {
     return (
       <div className="menu-active-areas">
-        <div
-          className="delete button"
-          onClick={() => this.props.dispatch(clearCountingArea(this.props.selectedCountingArea))}
-        >
-          <img className="icon" src="/static/icons/icon-delete.svg" />
-        </div>
+        {Object.keys(this.props.countingAreas.toJS()).length > 0 &&
+          <div
+            className="delete button"
+            onClick={() => this.props.dispatch(deleteCountingArea(this.props.selectedCountingArea))}
+          >
+            <img className="icon" src="/static/icons/icon-delete.svg" />
+          </div>
+        }
         {Object.keys(this.props.countingAreas.toJS()).map((color) =>
           <div 
             key={color}

@@ -11,8 +11,7 @@ const initialState = fromJS({
     yoloIsStarting: false
   },
   countingAreas: {
-    yellow: null,
-    turquoise: null
+    yellow: null
   },
   selectedCountingArea: 'yellow'
 })
@@ -20,7 +19,7 @@ const initialState = fromJS({
 // Actions
 const FETCH_COUNTINGDATA_SUCCESS = 'Counter/FETCH_COUNTINGDATA'
 const SELECT_COUNTING_AREA = 'Counter/SELECT_COUNTING_AREA'
-const CLEAR_COUNTING_AREA = 'Counter/CLEAR_COUNTING_AREA'
+const DELETE_COUNTING_AREA = 'Counter/DELETE_COUNTING_AREA'
 const SAVE_COUNTING_AREA = 'Counter/SAVE_COUNTING_AREA'
 const ADD_COUNTING_AREA = 'Counter/ADD_COUNTING_AREA'
 
@@ -78,10 +77,19 @@ export function selectPreviousCountingArea() {
   }
 }
 
-export function clearCountingArea(color) {
-  return {
-    type: CLEAR_COUNTING_AREA,
-    payload: color
+export function deleteCountingArea(color) {
+  return (dispatch, getState) => {
+
+    dispatch({
+      type: DELETE_COUNTING_AREA,
+      payload: color
+    });
+
+    // Select one remaining counting areas
+    const remainingCountingAreas = Object.keys(getState().counter.get('countingAreas').toJS());
+    if(remainingCountingAreas.length > 0) {
+      dispatch(selectCountingArea(remainingCountingAreas[remainingCountingAreas.length - 1]));
+    }
   }
 }
 
@@ -97,6 +105,8 @@ export function addCountingArea() {
         type: ADD_COUNTING_AREA,
         payload: unUsedColors[0]
       })
+
+      dispatch(selectCountingArea(unUsedColors[0]));
     }
   }
 }
@@ -118,8 +128,8 @@ export default function CounterReducer (state = initialState, action = {}) {
       return state.set('countingData', fromJS(action.payload))
     case SELECT_COUNTING_AREA:
       return state.set('selectedCountingArea', action.payload)
-    case CLEAR_COUNTING_AREA:
-      return state.setIn(['countingAreas', action.payload], null)
+    case DELETE_COUNTING_AREA:
+      return state.deleteIn(['countingAreas', action.payload])
     case SAVE_COUNTING_AREA:
       return state.setIn(['countingAreas', action.payload.color], fromJS(action.payload.data))
     case ADD_COUNTING_AREA:

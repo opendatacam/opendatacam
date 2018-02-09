@@ -27,7 +27,6 @@ class CountingAreasEditor extends Component {
     this.editorCanvas.on('mouse:down', (o) => {
       if(this.lines[this.props.selectedCountingArea]) {
         this.editorCanvas.remove(this.lines[this.props.selectedCountingArea])
-        this.props.dispatch(clearCountingArea(this.props.selectedCountingArea))
       }
       this.mouseDown = true;
       let pointer = this.editorCanvas.getPointer(o.e);
@@ -66,12 +65,7 @@ class CountingAreasEditor extends Component {
   componentWillReceiveProps(newProps) {
     // We may have to delete some lines
     if(newProps.countingAreas !== this.props.countingAreas) {
-      newProps.countingAreas.map((area, color) => {
-        if(area === null) {
-          this.editorCanvas.remove(this.lines[color]);
-          this.lines[color] = null;
-        }
-      })
+      this.reRenderCountingAreasInEditor(newProps.countingAreas)
     }
   } 
 
@@ -82,10 +76,38 @@ class CountingAreasEditor extends Component {
       if(this.props.selectedCountingArea) {
         this.initListeners();
       }
+
+      if(this.props.countingAreas) {
+        this.reRenderCountingAreasInEditor(this.props.countingAreas)
+      }
     }
   }
 
+  reRenderCountingAreasInEditor(countingAreas) {
+    // Clear canvas 
+    this.editorCanvas.clear();
+    this.lines = {}
+
+    countingAreas.map((area, color) => {
+      if(area !== null) {
+        let data = area.toJS();
+        let points = [ data.point1.x1, data.point1.y1, data.point2.x2, data.point2.y2 ];
+        this.lines[color] = new fabric.Line(points, {
+          strokeWidth: 5,
+          fill: COLORS[color],
+          stroke: COLORS[color],
+          originX: 'center',
+          originY: 'center'
+        });
+        this.editorCanvas.add(this.lines[color]);
+      }
+    })
+  }
+
   render () {
+
+    const isEditing = Object.keys(this.props.countingAreas.toJS()).length > 0
+
     return (
       <div
         className="counting-areas-editor"
