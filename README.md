@@ -161,7 +161,7 @@ pm2 save
 When the jetson is started you should have a wifi "YOUR-HOTSPOT-NAME" available.
 
 - Connect you device to the jetson wifi
-- Open you browser and open http://IPOFTHEJETSON
+- Open you browser and open http://IPOFTHEJETSON:8080
 
 ### 3. You are done 👌
 
