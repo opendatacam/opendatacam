@@ -69,14 +69,32 @@ Now when you connect to YOUR-HOTSPOT, and you open http://192.168.2.1  in some b
 
 [More info about that](https://askubuntu.com/a/910326)
 
-### 3. Put jetson in overclocking mode:
+### 3. Configure jetson to start in overclocking mode:
 
-> NOTE @tdurand : This needs to be done automaticaly at Ubuntu start-up
+The jetson has a overclocking mode that we can enable to boost performance of YOLO (from 1 FPS to 8 FPS)
 
 ```bash
-cd ~ #go to home directory
-sudo ./jetson_clocks.sh
+# Create the rc.local file
+sudo vim /etc/rc.local
 ```
+
+Copy paste this content
+
+```
+#!/bin/bash 
+#Maximize performances 
+( sleep 60 && /home/ubuntu/jetson_clocks.sh )&
+exit 0
+```
+
+Then save the file and run
+
+```
+chmod 755 /etc/init.d/rc.local
+sudo systemctl enable rc-local.service
+```
+
+Restart the jetson
 
 ### 4. Download and install the YOLO darknet-net "mesos" fork:
 
@@ -115,13 +133,25 @@ You can test if it is well installed by running this command, it should start th
 
 ## 🏁 Run and use the project:
 
-### 1. Start the "open-traffic-cam" node app
+### 1. Configure the "open-traffic-cam" node app to run at the startup of ubuntu
 
-> NOTE @tdurand , this should be started at the startup of the jetson or configured on one of the parametrable buttons of the board
+Install pm2:
+
+```npm install -g pm2```
+
+Then
 
 ```bash
+# launch pm2 at startup
+# this command gives you instructions to configure pm2 to 
+# start at ubuntu startup, follow them
+pm2 startup  
+ 
+# Once pm2 is configured to start at startup
+# Configure pm2 to start the Open Traffic Cam app
 cd PATH_TO_OPEN_TRAFFIC_CAM repository
-sudo npm run start  #(need sudo to run the project on port 80)
+pm2 start npm --name "open-traffic" -- start
+pm2 save
 ```
 
 ### 2. Connect you device to the jetson
