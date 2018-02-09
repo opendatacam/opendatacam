@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { selectCountingArea, clearCountingArea } from '../../statemanagement/app/CounterStateManagement'
+import { selectCountingArea, clearCountingArea, addCountingArea } from '../../statemanagement/app/CounterStateManagement'
 
-import { COLORS } from '../../utils/colors';
+import { COLORS, AVAILABLE_COLORS } from '../../utils/colors';
 
 class MenuCountingAreasEditor extends Component {
 
@@ -27,9 +27,14 @@ class MenuCountingAreasEditor extends Component {
             onClick={() => this.props.dispatch(selectCountingArea(color))}
           />
         )}
-        <div className="plus button">
-          <img className="icon" src="/static/icons/icon-plus.svg" />
-        </div>
+        {Object.keys(AVAILABLE_COLORS).length > Object.keys(this.props.countingAreas.toJS()).length  && 
+          <div
+            className="plus button"
+            onClick={() => this.props.dispatch(addCountingArea())}
+          >
+            <img className="icon" src="/static/icons/icon-plus.svg" />
+          </div>
+        }
         <style jsx>{`
           .menu-active-areas{
             height: 3rem;
@@ -70,6 +75,22 @@ class MenuCountingAreasEditor extends Component {
           .menu-active-areas .turquoise:hover,
           .menu-active-areas .turquoise.selected {
             border: 5px solid ${COLORS.turquoiseBorder};
+          }
+
+          .menu-active-areas .green {
+            background-color: ${COLORS.green};
+          }
+          .menu-active-areas .green:hover,
+          .menu-active-areas .green.selected {
+            border: 5px solid ${COLORS.greenBorder};
+          }
+
+          .menu-active-areas .purple {
+            background-color: ${COLORS.purple};
+          }
+          .menu-active-areas .purple:hover,
+          .menu-active-areas .purple.selected {
+            border: 5px solid ${COLORS.purpleBorder};
           }
         `}</style>
       </div>

@@ -1,5 +1,6 @@
 import { fromJS } from 'immutable'
 import axios from 'axios';
+import { AVAILABLE_COLORS } from '../../utils/colors';
 
 // Initial state
 const initialState = fromJS({
@@ -21,6 +22,7 @@ const FETCH_COUNTINGDATA_SUCCESS = 'Counter/FETCH_COUNTINGDATA'
 const SELECT_COUNTING_AREA = 'Counter/SELECT_COUNTING_AREA'
 const CLEAR_COUNTING_AREA = 'Counter/CLEAR_COUNTING_AREA'
 const SAVE_COUNTING_AREA = 'Counter/SAVE_COUNTING_AREA'
+const ADD_COUNTING_AREA = 'Counter/ADD_COUNTING_AREA'
 
 export function fetchCountingData() {
   return (dispatch, getState) => {
@@ -83,6 +85,22 @@ export function clearCountingArea(color) {
   }
 }
 
+export function addCountingArea() {
+  return (dispatch, getState) => {
+
+    const usedColors = Object.keys(getState().counter.get('countingAreas').toJS());
+
+    const unUsedColors = AVAILABLE_COLORS.filter((color) => usedColors.indexOf(color) === -1)
+
+    if(unUsedColors) {
+      dispatch({
+        type: ADD_COUNTING_AREA,
+        payload: unUsedColors[0]
+      })
+    }
+  }
+}
+
 export function saveCountingArea(color, data) {
   return {
     type: SAVE_COUNTING_AREA,
@@ -104,6 +122,8 @@ export default function CounterReducer (state = initialState, action = {}) {
       return state.setIn(['countingAreas', action.payload], null)
     case SAVE_COUNTING_AREA:
       return state.setIn(['countingAreas', action.payload.color], fromJS(action.payload.data))
+    case ADD_COUNTING_AREA:
+      return state.setIn(['countingAreas', action.payload], null)
     default:
       return state
   }

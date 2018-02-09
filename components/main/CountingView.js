@@ -38,7 +38,6 @@ class CountingView extends React.Component {
   }
 
   componentDidMount() {
-    console.log('coucou');
     this.startLongPolling();
   }
 
