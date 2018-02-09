@@ -16,7 +16,8 @@ const initialState = {
   currentFPS: 0,
   timeStartCounting: new Date(),
   yoloStarted: false,
-  yoloIsStarting: false
+  yoloIsStarting: false,
+  nbItemsTrackedThisFrame: 0
 }
 
 let Counter = cloneDeep(initialState);
@@ -141,6 +142,8 @@ module.exports = {
 
     let trackerDataForThisFrame = Tracker.getJSONOfTrackedItems();
 
+    Counter.nbItemsTrackedThisFrame = trackerDataForThisFrame.length;
+
     // Compute deltaYs for all tracked items (between the counting lines and the tracked items position)
     // And check if trackedItem are going through some counting areas 
     // For each new tracked item
@@ -261,6 +264,7 @@ module.exports = {
     counterDashboard['currentTime'] = (Counter.timeLastFrame.getTime() - Counter.timeStartCounting.getTime()) / 1000
     counterDashboard['yoloStarted'] = Counter.yoloStarted;
     counterDashboard['yoloIsStarting'] = Counter.yoloIsStarting;
+    counterDashboard['nbItemsTrackedThisFrame'] = Counter.nbItemsTrackedThisFrame;
 
     return counterDashboard;
   },

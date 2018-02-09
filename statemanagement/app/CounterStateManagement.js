@@ -8,7 +8,8 @@ const initialState = fromJS({
     currentFPS: 0,
     currentTime: 0,
     yoloStarted: false,
-    yoloIsStarting: false
+    yoloIsStarting: false,
+    nbItemsTrackedThisFrame: 0
   },
   countingAreas: {
     yellow: null
