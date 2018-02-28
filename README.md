@@ -100,7 +100,7 @@ Restart the jetson
 
 > NOTE: This also could use to come pre-installed
 
-Follow the steps of https://github.com/meso-unconstructed/darknet-net
+Follow the steps of https://github.com/meso-unimpressed/darknet-net
 
 You can install the darknet net in any folder of the jetson, but keep in mind you will need to set-up the PATH_TO_DARKNET in the config.json file of the open-traffic-cam app. (next step)
 
