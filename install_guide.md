@@ -47,7 +47,7 @@
   sudo apt-get install nano
   ```
 
-###Configure Ubuntu to turn the jetson into a wifi access point
+### Configure Ubuntu to turn the jetson into a wifi access point
 
 __very buggy way to handle it. needs an update.__
 
@@ -90,7 +90,7 @@ __very buggy way to handle it. needs an update.__
     ```
 
 
-###Configure jetson to start in overclocking mode:
+### Configure jetson to start in overclocking mode:
 
   - Add the following line to `/etc/rc.local` before `exit 0`:
 
@@ -107,7 +107,7 @@ __very buggy way to handle it. needs an update.__
      ```
 
 
-###Install Darknet-net:
+### Install Darknet-net:
 
 __IMPORTANT__ Make sure that __openCV__ (v2) and __CUDA__ will be installed via JetPack (post installation step)
 if not:  (fallback :openCV 2: [install script](https://gist.github.com/jayant-yadav/809723151f2f72a93b2ee1040c337427#file-opencv_install-sh), CUDA: no easy way yet)
@@ -173,7 +173,7 @@ if not:  (fallback :openCV 2: [install script](https://gist.github.com/jayant-ya
   make
   ```
 
-###Install the open-traffic-cam node app
+### Install the open-traffic-cam node app
 
 - Install __pm2__ and __next__ globally
 
@@ -215,7 +215,7 @@ if not:  (fallback :openCV 2: [install script](https://gist.github.com/jayant-ya
   sudo pm2 save
   ```
 
-###Restart the jetson board and open `http://IP-OF-THE-JETSON-BOARD:8080/`
+### Restart the jetson board and open `http://IP-OF-THE-JETSON-BOARD:8080/`
 
 ## Troubleshoothing
 
