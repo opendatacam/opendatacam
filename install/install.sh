@@ -10,7 +10,8 @@
 # Place this content in it and then make the file executable:
 # sudo chmod +x install.sh
 # Execute the script to install:
-# ./install.sh
+# OPTIONAL: run : tr -d "\r" < install.sh > install2.sh
+# ./install.sh or ./install2.sh
 ################################################################################
 
 echo "-----------------------------------------------------------"
@@ -20,7 +21,7 @@ echo "-----------------------------------------------------------"
 #--------------------------------------------------
 # Update ubuntu packages
 #--------------------------------------------------
-echo -e "\n---- Update Server ----"
+echo "\n---- Update Server ----"
 cd ~
 sudo apt-get update
 sudo apt-get upgrade -y
@@ -28,13 +29,15 @@ sudo apt-get upgrade -y
 #--------------------------------------------------
 # Install basic packages
 #--------------------------------------------------
-echo -e "\n---- Install cURL, git-core, nano, build-essential ----"
+echo "\n---- Install cURL, git-core, nano, build-essential, hostapd, dnsmasq ----"
 sudo apt-get install curl git-core nano build-essential -y
+#echo "\n---- Experimental packages (hostapd dnsmasq) for hotspot config  ----"
+#sudo apt-get install hostapd dnsmasq -y
 
 #--------------------------------------------------
 # Add sources for ffmpeg v3 and nodejs v8
 #--------------------------------------------------
-echo -e "\n---- Add sources for ffmpeg v3 and nodejs v8 ----"
+echo "\n---- Add sources for ffmpeg v3 and nodejs v8 ----"
 curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 sudo add-apt-repository ppa:jonathonf/ffmpeg-3
 sudo apt update && sudo apt upgrade
@@ -42,14 +45,14 @@ sudo apt update && sudo apt upgrade
 #--------------------------------------------------
 # Install nodejs v8
 #--------------------------------------------------
-echo -e "\n---- Install nodejs v8 ----"
+echo "\n---- Install nodejs v8 ----"
 sudo apt-get install -y nodejs
 
 #--------------------------------------------------
 # Install nodejs ffmpeg v3
 #--------------------------------------------------
-echo -e "\n---- Install ffmpeg v3 ----"
-sudo apt-get install -y nodejs
+echo "\n---- Install ffmpeg v3 ----"
+sudo apt-get install -y ffmpeg
 
 echo "-----------------------------------------------------------"
 echo "----           finished basic package setup            ----"
@@ -61,16 +64,26 @@ echo "-----------------------------------------------------------"
 #--------------------------------------------------
 #  add overclocking script to rc.local
 #--------------------------------------------------
-echo -e "\n---- Activate overclocking on startup ----"
-if [ "`tail -n1 /etc/rc.local`" != "exit 0" ]; then
-    sed -i -e '$i \#Maximize performances \n ( sleep 60 && /home/ubuntu/jetson_clocks.sh )&\n' /etc/rc.local
-fi
+echo "\n---- Activate overclocking on startup ----"
+sed -i -e '$i \#Maximize performances \n ( sleep 60 && /home/ubuntu/jetson_clocks.sh )&\n' /etc/rc.local
 
 #--------------------------------------------------
 #  enable rc-local.service
 #--------------------------------------------------
+echo "\n---- enable rc-local.service ----"
 chmod 755 /etc/init.d/rc.local
 sudo systemctl enable rc-local.service
+
+echo "-----------------------------------------------------------"
+echo "----         start hotspot setup                       ----"
+echo "-----------------------------------------------------------"
+
+#--------------------------------------------------
+#  Configure hotspot
+#--------------------------------------------------
+echo "\n---- enable SSID broadcast ----"
+echo "options bcmdhd op_mode=2\n" >> /etc/modprobe.d/bcmdhd.conf
+
 
 echo "-----------------------------------------------------------"
 echo "----         start darknet-net installation            ----"
@@ -79,7 +92,7 @@ echo "-----------------------------------------------------------"
 #--------------------------------------------------
 # Install libwsclient
 #--------------------------------------------------
-echo -e "\n---- Install libwsclient ----"
+echo "\n---- Install libwsclient ----"
 cd ~
 git clone https://github.com/PTS93/libwsclient
 cd libwsclient
@@ -89,7 +102,7 @@ cd libwsclient
 #--------------------------------------------------
 # Install liblo
 #--------------------------------------------------
-echo -e "\n---- Install liblo ----"
+echo "\n---- Install liblo ----"
 cd ~
 wget https://github.com/radarsat1/liblo/releases/download/0.29/liblo-0.29.tar.gz
 tar xvfz liblo-0.29.tar.gz
@@ -99,17 +112,7 @@ cd liblo-0.29
 #--------------------------------------------------
 # Install json-c
 #--------------------------------------------------
-echo -e "\n---- Install json-c ----"
-cd ~
-git clone https://github.com/json-c/json-c.git
-cd json-c
-sh autogen.sh
-./configure && make && make check && sudo make install
-
-#--------------------------------------------------
-# Install json-c
-#--------------------------------------------------
-echo -e "\n---- Install json-c ----"
+echo "\n---- Install json-c ----"
 cd ~
 git clone https://github.com/json-c/json-c.git
 cd json-c
@@ -119,11 +122,11 @@ sh autogen.sh
 #--------------------------------------------------
 # Install darknet-net
 #--------------------------------------------------
-echo -e "\n---- Install darknet-net ----"
+echo "\n---- Install darknet-net ----"
 cd ~
 git clone https://github.com/meso-unimpressed/darknet-net.git
 cd darknet-net
-echo -e "\n---- Download weight files ----"
+echo "\n---- Download weight files ----"
 wget https://pjreddie.com/media/files/yolo-voc.weights
 sudo make
 
@@ -138,19 +141,19 @@ echo "-----------------------------------------------------------"
 #--------------------------------------------------
 # Install open-data-cam
 #--------------------------------------------------
-echo -e "\n---- Install open-data-cam ----"
+echo "\n---- Install open-data-cam ----"
 cd ~
-echo -e "\n---- Install node modules: pm2, next ----"
+echo "\n---- Install node modules: pm2, next ----"
 sudo npm i -g pm2
 sudo npm i -g next
 git clone https://github.com/moovel/lab-open-data-cam.git
 cd lab-open-data-cam
-echo -e "\n---- write config.json file ----"
+echo "\n---- write config.json file ----"
 echo '{"PATH_TO_YOLO_DARKNET":"~/darknet-net"}' > config.json
-echo -e "\n---- run install and build script ----"
+echo "\n---- run install and build script ----"
 npm install
 npm run build
-echo -e "\n---- configure open-data-cam to start on boot ----"
+echo "\n---- configure open-data-cam to start on boot ----"
 sudo pm2 startup  
 sudo pm2 start npm --name "open-data-cam" -- start
 sudo pm2 save
