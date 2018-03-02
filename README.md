@@ -125,11 +125,19 @@ You can test if it is well installed by running this command, it should start th
 
 `./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 1 -address "ws://echo.websocket.org" -coord lrtb`
 
-### 5. Download and install the open-traffic-cam node app on the jetson:
+### 5. Download and install the open-data-cam node app on the jetson:
 
 - Clone or download this repository on the jetson
 - Open the config.json file and specify the PATH_TO_YOLO_DARKNET, it should be the absolute path
 - Run `npm install` 
+- Run `npm run build` to build the app
+
+### Bonus: Update the open-data-cam app (when you have already set-up everything)
+
+- Go the folder of the open-data-cam project
+- Run `npm install` 
+- Run `npm run build` to build the app
+- Restart the app : `pm2 restart open-traffic`
 
 ## 🏁 Run and use the project:
 
