@@ -217,6 +217,18 @@ if not:  (fallback :openCV 2: [install script](https://gist.github.com/jayant-ya
 
 ### Restart the jetson board and open `http://IP-OF-THE-JETSON-BOARD:8080/`
 
+### Automatic installation (alpha)
+
+- run the `install.sh` script
+
+  ```
+
+  sudo chmod +x install.sh
+  sudo ./install.sh
+  ```
+
+  ​
+
 ## Troubleshoothing
 
 - __Error__: `please specify the path to the raw detections file`
