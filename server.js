@@ -23,6 +23,12 @@ let delayStartWebcam = null;
 YOLO.init(SIMULATION_MODE);
 WebcamStream.init(SIMULATION_MODE);
 
+// First request received ?
+let firstRequestReceived = false;
+
+// Is currently counting state
+let isCounting = false;
+
 app.prepare()
 .then(() => {
   // Start HTTP server
@@ -32,13 +38,17 @@ app.prepare()
   // This render pages/index.js for a request to /
   express.get('/', (req, res) => {
 
-    // Start webcam stream by default
-    WebcamStream.start();
+    if(!firstRequestReceived) {
+      // Start webcam stream
+      WebcamStream.start();
+      firstRequestReceived = true;
+    }
 
-    // Make sur yolo is stopped
-    YOLO.stop();
-
-    return app.render(req, res, '/', req.query)
+    // Hacky way to pass params to getInitialProps on SSR
+    let query = req.query;
+    query.isCounting = isCounting;
+    
+    return app.render(req, res, '/', query)
   })
 
   express.post('/counter/start', (req, res) => {
@@ -48,6 +58,7 @@ app.prepare()
     Counter.reset();
     Counter.registerCountingAreas(req.body.countingAreas)
     Counter.start();
+    isCounting = true;
     res.json(Counter.getCountingDashboard());
   });
 
@@ -63,6 +74,8 @@ app.prepare()
     delayStartWebcam = setTimeout(() => {
       WebcamStream.start();
     }, 2000);
+
+    isCounting = false;
 
     res.send('Stop counting')
   });

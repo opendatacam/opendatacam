@@ -32,9 +32,24 @@ export function startCounting () {
     dispatch(fetchCountingData());
 
     // Notify UI we start counting
-    dispatch({
-      type: START_COUNTING
-    })
+    dispatch(setIsCounting());
+  }
+}
+
+export function setIsCounting() {
+  return {
+    type: START_COUNTING
+  }
+}
+
+export function showCountingView() {
+  return (dispatch, getState) => {
+
+    // Fetch counting data
+    dispatch(fetchCountingData());
+
+    // Notify UI we start counting
+    dispatch(setIsCounting());
   }
 }
 
