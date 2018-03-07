@@ -132,7 +132,7 @@ git clone https://github.com/meso-unimpressed/darknet-net.git
 cd darknet-net
 echo "\n---- Download weight files ----"
 wget https://pjreddie.com/media/files/yolo-voc.weights
-sudo make
+make
 
 echo "-----------------------------------------------------------"
 echo "----        finished darknet-net installation          ----"
@@ -153,7 +153,7 @@ sudo npm i -g next
 git clone https://github.com/moovel/lab-open-data-cam.git
 cd lab-open-data-cam
 echo "\n---- write config.json file ----"
-echo '{"PATH_TO_YOLO_DARKNET":"~/darknet-net"}' > config.json
+echo '{"PATH_TO_YOLO_DARKNET":"/home/nvidia/darknet-net"}' > config.json
 echo "\n---- run install and build script ----"
 npm install
 npm run build
