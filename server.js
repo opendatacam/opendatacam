@@ -47,6 +47,8 @@ app.prepare()
     // Hacky way to pass params to getInitialProps on SSR
     let query = req.query;
     query.isCounting = isCounting;
+    console.log(Counter.getOriginalCountingAreas());
+    query.countingAreas = Counter.getOriginalCountingAreas();
     
     return app.render(req, res, '/', query)
   })
