@@ -41,15 +41,13 @@
   sudo apt-get install ffmpeg
   ```
 
-- Install __nano__ because vim is the worst
+- Optional: Install __nano__
 
   ```
   sudo apt-get install nano
   ```
 
 ### Configure Ubuntu to turn the jetson into a wifi access point
-
-__very buggy way to handle it. needs an update.__
 
 - enable SSID broadcast 
 
@@ -222,14 +220,16 @@ if not:  (fallback :openCV 2: [install script](https://gist.github.com/jayant-ya
 - run the `install.sh` script
 
   ```
-
-  sudo chmod +x install.sh
-  sudo ./install.sh
+  tr -d "\r" < install.sh > install_fix.sh
+  sudo chmod +x install_fix.sh
+  ./install_fix.sh
+  sudo reboot
   ```
 
-  ​
 
 ## Troubleshoothing
+
+To debug the app log onto the jetson board and inspect the logs from pm2 or stop the pm2 service (`sudo pm2 stop <pid>`) and start the app by using `sudo npm start` to see the console output directly. 
 
 - __Error__: `please specify the path to the raw detections file`
 
@@ -238,4 +238,10 @@ if not:  (fallback :openCV 2: [install script](https://gist.github.com/jayant-ya
 - __Error__: `Could *not* find a valid build in the '.next' directory! Try building your app with '*next* build' before starting the server`
 
   Run `npm build` before starting the app
+
+- Could not find darknet. Be sure to `make` darknet without `sudo` otherwise it will abort mid installation.
+
+- __Error__: `cannot open shared object file: No such file or directory`
+
+  Try reinstalling the liblo package.
 

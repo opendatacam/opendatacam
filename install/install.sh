@@ -40,7 +40,7 @@ sudo apt-get install curl git-core nano build-essential -y
 echo "\n---- Add sources for ffmpeg v3 and nodejs v8 ----"
 curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 sudo add-apt-repository ppa:jonathonf/ffmpeg-3
-sudo apt update && sudo apt upgrade
+sudo apt update
 
 #--------------------------------------------------
 # Install nodejs v8
