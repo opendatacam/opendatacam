@@ -23,6 +23,7 @@ const SELECT_COUNTING_AREA = 'Counter/SELECT_COUNTING_AREA'
 const DELETE_COUNTING_AREA = 'Counter/DELETE_COUNTING_AREA'
 const SAVE_COUNTING_AREA = 'Counter/SAVE_COUNTING_AREA'
 const ADD_COUNTING_AREA = 'Counter/ADD_COUNTING_AREA'
+const RESTORE_COUNTING_AREAS = 'Counter/RESTORE_COUNTING_AREAS'
 
 export function fetchCountingData() {
   return (dispatch, getState) => {
@@ -122,6 +123,15 @@ export function saveCountingArea(color, data) {
   }
 }
 
+export function restoreCountingAreas(countingAreas) {
+  return {
+    type: RESTORE_COUNTING_AREAS,
+    payload: countingAreas
+  }
+}
+
+
+
 // Reducer
 export default function CounterReducer (state = initialState, action = {}) {
   switch (action.type) {
@@ -135,6 +145,8 @@ export default function CounterReducer (state = initialState, action = {}) {
       return state.setIn(['countingAreas', action.payload.color], fromJS(action.payload.data))
     case ADD_COUNTING_AREA:
       return state.setIn(['countingAreas', action.payload], null)
+    case RESTORE_COUNTING_AREAS:
+      return state.set('countingAreas', fromJS(action.payload))
     default:
       return state
   }

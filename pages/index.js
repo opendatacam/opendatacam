@@ -4,7 +4,8 @@ import withRedux from 'next-redux-wrapper'
 import Layout from '../components/shared/Layout'
 import MainPage from '../components/main/MainPage'
 
-import { setURLData, showCountingView } from '../statemanagement/app/AppStateManagement';
+import { setURLData, showCountingView, drawInstructionsShown } from '../statemanagement/app/AppStateManagement';
+import { restoreCountingAreas } from '../statemanagement/app/CounterStateManagement';
 
 class Index extends React.Component {
 
@@ -13,6 +14,9 @@ class Index extends React.Component {
     if (isServer) {
       if(query.isCounting) {
         // Jetson app is currently counting, display counting view
+        // Restore counting areas
+        await store.dispatch(restoreCountingAreas(query.countingAreas))
+        await store.dispatch(drawInstructionsShown());
         await store.dispatch(showCountingView());
       }
       await store.dispatch(setURLData(req));

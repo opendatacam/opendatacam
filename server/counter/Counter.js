@@ -12,6 +12,7 @@ const initialState = {
     h: 720
   },
   countingAreas: {},
+  originalCountingAreas: {},
   trackerDataForLastFrame: null,
   currentFPS: 0,
   timeStartCounting: new Date(),
@@ -44,6 +45,7 @@ module.exports = {
     }
   */
   registerCountingAreas : function(countingAreas) {
+    Counter.originalCountingAreas = countingAreas;
     Object.keys(countingAreas).map((countingAreaKey) => {
       if(countingAreas[countingAreaKey]) {
         this.registerSingleCountingArea(countingAreaKey, countingAreas[countingAreaKey]);
@@ -271,5 +273,9 @@ module.exports = {
 
   getCounterHistory: function() {
     return Counter.countedItemsHistory;
+  },
+
+  getOriginalCountingAreas: function() {
+    return Counter.originalCountingAreas
   }
 }
