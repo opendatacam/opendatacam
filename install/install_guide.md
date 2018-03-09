@@ -245,3 +245,14 @@ To debug the app log onto the jetson board and inspect the logs from pm2 or stop
 
   Try reinstalling the liblo package.
 
+- __Error__: `Error: Cannot stop process that is not running.` 
+
+  It is possible that a process with the port `8090` is causing the error. Try to kill the process and restart the board:
+
+  ```
+  sudo netstat -nlp | grep :8090
+  sudo kill <pid>
+  ```
+
+  ​
+
