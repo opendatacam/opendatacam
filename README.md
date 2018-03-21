@@ -24,145 +24,227 @@ See [technical architecture](#technical-architecture) for a more detailed overvi
 
 > NOTE: lots of those steps needs to be automated by integrating them in a docker image or something similar, for now need to follow the full procedure
 
-### 1. Pre-requise dependencies to install on the jetson
+### ⚡️Flash Jetson Board:
 
-The jetson comes out of the box with Ubuntu 16.04 installed, but we need some external dependencies:
+- Download [JetPack](https://developer.nvidia.com/embedded/downloads#?search=jetpack%203.1) to Flash your Jetson board with the linux base image and needed dependencies
+- Follow the [install guide](http://docs.nvidia.com/jetpack-l4t/3.1/index.html#developertools/mobile/jetpack/l4t/3.1/jetpack_l4t_install.htm) provided by NVIDIA
 
-- `ffmpeg 2.8.11` or more recent
-- `node 8.x` or more recent 
+### 🛩Prepare Jetson Board
 
-### 2. Configure Ubuntu to turn the jetson into a wifi access point
+- Update packages
 
-> NOTE: This could use to be automated, the doc below explains how to do it with the graphical user interface of Ubuntu, need to find the equivalent in commandline and put it in a script that we run when installing the ready-to-use-image
+  ```bash
+  sudo apt-get update
+  ```
 
-1. enable SSID broadcast, the driver’s op_mode parameter has to be set to 2, to do add the following line to /etc/modprobe.d/bcmdhd.conf:
+- Install __cURL__
 
-```conf
-options bcmdhd op_mode=2
-```
+  ```bash
+  sudo apt-get install curl
+  ```
 
-[details about that](https://devtalk.nvidia.com/default/topic/910608/jetson-tx1/setting-up-wifi-access-point-on-tx1/post/4786912/#4786912)
+- install __git-core__
 
-2.  Configure hotspot via UI, follow this guide: https://askubuntu.com/a/762885
+  ```bash
+  sudo apt-get install git-core
+  ```
 
-3. Then define the adress range of the hotspot network, to be able to connect to it and know that 192.168.2.1 will be the jetson IP
+- Install __nodejs__ (v8):
 
-```bash
-cd /etc/NetworkManager/system-connections
-sudo vim YOUR-HOTSPOT-NAME
-```
+  ```bash
+  curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
+  sudo apt-get install -y nodejs
+  sudo apt-get install -y build-essential
+  ```
 
-Add this line : `address1=192.168.2.1/24,192.168.2.1`
+- Install __ffmpeg__ (v3)
 
-```conf
-[ipv4]
-dns-search=
-method=shared
-address1=192.168.2.1/24,192.168.2.1
-```
+  ```bash
+  sudo add-apt-repository ppa:jonathonf/ffmpeg-3
+  # sudo add-apt-repository ppa:jonathonf/tesseract (ubuntu 14.04 only!!)
+  sudo apt update && sudo apt upgrade
+  sudo apt-get install ffmpeg
+  ```
 
-Restart the network service
+- Optional: Install __nano__
 
-`sudo service network-manager restart`
+  ```bash
+  sudo apt-get install nano
+  ```
 
-Now when you connect to YOUR-HOTSPOT, and you open http://192.168.2.1  in some browser, if you run a webserver there, it will display it 🎉
+### 📡Configure Ubuntu to turn the jetson into a wifi access point
 
-[More info about that](https://askubuntu.com/a/910326)
+- enable SSID broadcast 
 
-### 3. Configure jetson to start in overclocking mode:
+  add the following line to `/etc/modprobe.d/bcmdhd.conf`
 
-The jetson has a overclocking mode that we can enable to boost performance of YOLO (from 1 FPS to 8 FPS)
+  ```bash
+  options bcmdhd op_mode=2
+  ```
 
-```bash
-# Create the rc.local file
-sudo vim /etc/rc.local
-```
+  further infos: [here](https://devtalk.nvidia.com/default/topic/910608/jetson-tx1/setting-up-wifi-access-point-on-tx1/post/4786912/#4786912)
 
-Copy paste this content
+- Configure hotspot via UI 
 
-```
-#!/bin/bash 
-#Maximize performances 
-( sleep 60 && /home/ubuntu/jetson_clocks.sh )&
-exit 0
-```
+  __follow this guide: <https://askubuntu.com/a/762885>__
 
-Then save the file and run
+- Define Address range for the hotspot network
 
-```
-chmod 755 /etc/init.d/rc.local
-sudo systemctl enable rc-local.service
-```
+  - Go to the file named after your Hotspot SSID in `/etc/NetworkManager/system-connections`
 
-Restart the jetson
+    ```bash
+    cd /etc/NetworkManager/system-connections
+    sudo nano <YOUR-HOTSPOT-SSID-NAME>
+    ```
 
-### 4. Download and install the YOLO darknet-net "mesos" fork:
+  - Add the following line to this file:
 
-> NOTE: This also could use to come pre-installed
+    ```
+    [ipv4]
+    dns-search=
+    method=shared
+    address1=192.168.2.1/24,192.168.2.1 <--- this line
+    ```
 
-Follow the steps of https://github.com/meso-unimpressed/darknet-net
+  - Restart the network-manager
 
-You can install the darknet net in any folder of the jetson, but keep in mind you will need to set-up the PATH_TO_DARKNET in the config.json file of the open-traffic-cam app. (next step)
+    ```bash
+    sudo service network-manager restart
+    ```
 
-Don't forget to download the yolo-voc weigh file and put it on the root of the darknet net folder.
+### 🚀Configure jetson to start in overclocking mode:
 
-The file structure of the darknet-net folder should be something like:
+- Add the following line to `/etc/rc.local` before `exit 0`:
 
-```bash
-darknet-net
-  |-cfg
-  |-data
-  |-examples
-  |-include
-  |-python
-  |-scripts
-  |-src
-  |# ... other files
-  |yolo-voc.weights # Weight file should be in the root directory
-```
+  ```bash
+  #Maximize performances 
+  ( sleep 60 && /home/ubuntu/jetson_clocks.sh )&
+  ```
 
-You can test if it is well installed by running this command, it should start the YOLO detections on the webcam and ouput then in the console:
+- Enable `rc.local.service`
 
-`./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 1 -address "ws://echo.websocket.org" -coord lrtb`
+  ```bash
+  chmod 755 /etc/init.d/rc.local
+  sudo systemctl enable rc-local.service
+  ```
 
-### 5. Download and install the open-data-cam node app on the jetson:
+### 👁Install Darknet-net:
 
-- Clone or download this repository on the jetson
-- Open the config.json file and specify the PATH_TO_YOLO_DARKNET, it should be the absolute path
-- Run `npm install` 
-- Run `npm run build` to build the app
+__IMPORTANT__ Make sure that __openCV__ (v2) and __CUDA__ will be installed via JetPack (post installation step)
+if not:  (fallback :openCV 2: [install script](https://gist.github.com/jayant-yadav/809723151f2f72a93b2ee1040c337427#file-opencv_install-sh), CUDA: no easy way yet)
 
-### Bonus: Update the open-data-cam app (when you have already set-up everything)
+- Install __libwsclient__:
 
-- Go the folder of the open-data-cam project
-- Run `npm install` 
-- Run `npm run build` to build the app
-- Restart the app : `pm2 restart open-traffic`
+  ```bash
+  git clone https://github.com/PTS93/libwsclient
+  cd libwsclient
+  ./autogen.sh
+  ./configure && make && sudo make install
+  ```
 
-## 🏁 Run and use the project:
+- Install __liblo__:
 
-### 1. Configure the "open-traffic-cam" node app to run at the startup of ubuntu
+  ```bash
+  wget https://github.com/radarsat1/liblo/releases/download/0.29/liblo-0.29.tar.gz
+  tar xvfz liblo-0.29.tar.gz
+  cd liblo-0.29
+  ./configure && make && sudo make install
+  ```
 
-Install pm2:
+- Install __json-c__:
 
-```npm install -g pm2```
+  ```bash
+  git clone https://github.com/json-c/json-c.git
+  cd json-c
+  sh autogen.sh
+  ./configure && make && make check && sudo make install
+  ```
 
-Then
+- Install __darknet-net__:
 
-```bash
-# launch pm2 at startup
-# this command gives you instructions to configure pm2 to 
-# start at ubuntu startup, follow them
-pm2 startup  
- 
-# Once pm2 is configured to start at startup
-# Configure pm2 to start the Open Traffic Cam app
-cd PATH_TO_OPEN_TRAFFIC_CAM repository
-pm2 start npm --name "open-traffic" -- start
-pm2 save
-```
+  ```bash
+  git clone https://github.com/meso-unimpressed/darknet-net.git
+  ```
 
-### 2. Connect you device to the jetson
+- Download __weight files__:
+
+  link: [yolo.weight-files](https://pjreddie.com/media/files/yolo-voc.weights)
+
+  Copy `yolo-voc.weights` to `darknet-net` repository path (root level)
+
+  e.g.:
+
+  ```
+  darknet-net
+    |-cfg
+    |-data
+    |-examples
+    |-include
+    |-python
+    |-scripts
+    |-src
+    |# ... other files
+    |yolo-voc.weights <--- Weight file should be in the root directory
+  ```
+
+- Make __darknet-net__
+
+  ```bash
+  cd darknet-net
+  make
+  ```
+
+### 🎥Install the open-data-cam node app
+
+- Install __pm2__ and __next__ globally
+
+  ```bash
+  sudo npm i -g pm2
+  sudo npm i -g next
+  ```
+
+- Clone __open_data_cam__ repo:
+
+  ```bash
+  git clone https://github.com/moovel/lab-open-data-cam.git
+  ```
+
+- Specify __ABSOLUTE__  `PATH_TO_YOLO_DARKNET` path in `lab-open-data-cam/config.json` (open data cam repo)
+
+  e.g.:
+
+  ```Json
+  {
+  	"PATH_TO_YOLO_DARKNET" : "/home/nvidia/darknet-net"
+  }
+  ```
+
+- Install __open data cam__
+
+  ```bash
+  cd <path/to/open-data-cam>
+  npm install
+  npm run build
+  ```
+
+- Run __open data cam__ on boot
+
+  ```bash
+  cd <path/to/open-data-cam>
+  # launch pm2 at startup
+  # this command gives you instructions to configure pm2 to 
+  # start at ubuntu startup, follow them
+  sudo pm2 startup  
+
+  # Once pm2 is configured to start at startup
+  # Configure pm2 to start the Open Traffic Cam app
+  sudo pm2 start npm --name "open-data-cam" -- start
+  sudo pm2 save
+  ```
+
+### 🏁 Restart the jetson board and open `http://IP-OF-THE-JETSON-BOARD:8080/`
+
+### Connect you device to the jetson
 
 > 💡 We should maybe set up a "captive portal" to avoid people needing to enter the ip of the jetson, didn't try yet 💡 
 
@@ -172,11 +254,52 @@ When the jetson is started you should have a wifi "YOUR-HOTSPOT-NAME" available.
 - Open you browser and open http://IPOFTHEJETSON:8080
 - In our case, IPOFJETSON is: http://192.168.2.1:8080 
 
-### 3. You are done 👌
+### You are done 👌
 
 > 🚨 This alpha version of december is really alpha and you might need to restart ubuntu a lot as it doesn't clean up process well when you switch between the counting and the webcam view 🚨
 
 You should be able to monitor the jetson from the UI we've build and count 🚗 🏍 🚚 !  
+
+### ‼️Automatic installation (alpha)
+
+The install script for autmatic installation 
+
+> Setting up the access point is not automated yet! __follow this guide: https://askubuntu.com/a/762885 __ to set up the hotspot.
+
+- run the `install.sh` script
+
+  ```bash
+  sudo chmod +x install.sh
+  ./install.sh
+  sudo reboot
+  ```
+
+## Troubleshoothing
+
+To debug the app log onto the jetson board and inspect the logs from pm2 or stop the pm2 service (`sudo pm2 stop <pid>`) and start the app by using `sudo npm start` to see the console output directly. 
+
+- __Error__: `please specify the path to the raw detections file`
+
+  Make sure that `ffmpeg` is installed and is above version `2.8.11` 
+
+- __Error__: `Could *not* find a valid build in the '.next' directory! Try building your app with '*next* build' before starting the server`
+
+  Run `npm build` before starting the app
+
+- Could not find darknet. Be sure to `make` darknet without `sudo` otherwise it will abort mid installation.
+
+- __Error__: `cannot open shared object file: No such file or directory`
+
+  Try reinstalling the liblo package.
+
+- __Error__: `Error: Cannot stop process that is not running.` 
+
+  It is possible that a process with the port `8090` is causing the error. Try to kill the process and restart the board:
+
+  ```bash
+  sudo netstat -nlp | grep :8090
+  sudo kill <pid>
+  ```
 
 
 ## 🛠 Development notes
@@ -203,3 +326,4 @@ You should be able to monitor the jetson from the UI we've build and count 🚗 
 yarn install
 yarn run dev
 ```
+
