@@ -6,7 +6,7 @@ Behind the scenes, it feeds the webcam stream to a neural network (YOLO darknet)
 
 It is very alpha and we do not provide any guarantee that this will work for your use case, but we conceived it as a starting point from where you can build-on & improve.
 
-## 💻 Hardware pre-requise
+## 💻 Hardware pre-requisite
 
 - Nvidia Jetson TX2 
 - Webcam Logitech C222 (or any usb webcam compatible with Ubuntu 16.04)
