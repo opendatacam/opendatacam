@@ -1,5 +1,6 @@
 const forever = require('forever-monitor');
 const config = require('../../config.json');
+const simulation8FPSDetectionsData = require('../../static/placeholder/rawdetections8FPS.json');
 const WebSocketClient = require('websocket').client;
 const fs = require('fs');
 
@@ -65,31 +66,14 @@ module.exports = {
             console.log('echo-protocol Connection Closed');
         });
 
-        let detections = {};
+        let detections = simulation8FPSDetectionsData;
         let frameNb = 0;
 
-        // Get some simulation data
-        fs.readFile('static/placeholder/rawdetections.txt', function(err, f){
-          if(err) {
-            console.log(err);
-            return;
-          }
-          var lines = f.toString().split('\n');
-          lines.forEach(function(l) {
-            try {
-              var detection = JSON.parse(l);
-              detections[detection.frame] = detection.detections;
-            } catch (e) {
-              console.log('Error parsing line');
-            }
-          });
-
-          // Simulate YOLO 15s booting time
-          setTimeout(() => {
-            YOLO.simulationInterval = setInterval(sendDetection, 10)
-          }, 15000)
-          
-        });
+        // Simulate YOLO 15s booting time
+        setTimeout(() => {
+          // Simulate a 8 FPS detections
+          YOLO.simulationInterval = setInterval(sendDetection, 125)
+        }, 2000)
         
         function sendDetection() {
             if (connection.connected) {
