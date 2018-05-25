@@ -1,7 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import axios from 'axios';
-import { createGzip } from 'zlib';
 
 class PathVisualization extends Component {
 
@@ -9,15 +8,29 @@ class PathVisualization extends Component {
     super(props);
 
     this.lastFrameData = null;
-  }
 
-  drawLineOnCanvas(line) {
+    this.colors = [
+      "#1f77b4",
+      "#ff7f0e",
+      "#2ca02c",
+      "#d62728",
+      "#9467bd",
+      "#8c564b",
+      "#e377c2",
+      "#7f7f7f",
+      "#bcbd22",
+      "#17becf"
+    ]
+  }
+  
+
+  drawLineOnCanvas(line, color = 'green') {
     if(!this.canvasEl) {
       return;
     }
     
     let ctx = this.canvasEl.getContext('2d');
-    ctx.strokeStyle = 'green';
+    ctx.strokeStyle = color;
     ctx.lineWidth = 4;
     ctx.beginPath();
     ctx.moveTo(line.pointA.x, line.pointA.y);
@@ -26,13 +39,17 @@ class PathVisualization extends Component {
   }
 
   componentDidMount() {
+
     this.renderLoop = setInterval(() => {
       axios.get('/counter/current-tracked-items').then((response) => {
+        var thisFrameData = response.data;
         if(this.lastFrameData) {
-          response.data.map((trackedItem) => {
+          thisFrameData = thisFrameData.map((trackedItem) => {
             // If this tracked Item was already there in last frame
             var lastFrameTrackedItem = this.lastFrameData.find((lastFrameItemTracked) => trackedItem.id === lastFrameItemTracked.id)
             if(lastFrameTrackedItem) {
+              let color = lastFrameTrackedItem.color ? lastFrameTrackedItem.color : this.colors[Math.floor(Math.random()*this.colors.length)]
+              trackedItem.color = color;
               this.drawLineOnCanvas({
                 pointA: {
                   x: lastFrameTrackedItem.x,
@@ -42,12 +59,13 @@ class PathVisualization extends Component {
                   x: trackedItem.x,
                   y: trackedItem.y
                 }
-              })
+              }, color)
             }
+            return trackedItem;
           })
         }
 
-        this.lastFrameData = response.data;
+        this.lastFrameData = thisFrameData;
         
       })
     }, 40)
