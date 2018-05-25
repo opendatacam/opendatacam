@@ -14,6 +14,7 @@ import RecordTime from '../shared/RecordTime';
 
 import { selectNextCountingArea, selectPreviousCountingArea } from  '../../statemanagement/app/CounterStateManagement'
 import Loading from '../shared/Loading';
+import PathVisualization from '../shared/PathVisualization';
 
 class CountingView extends React.Component {
 
@@ -59,7 +60,7 @@ class CountingView extends React.Component {
         {/* <Title /> */}
         <RecordTime />
         <SlideIndicators />
-        <CounterData />
+        <PathVisualization />
         <SlideArrows 
           goToNext={() => this.props.dispatch(selectNextCountingArea())}
           goToPrevious={() => this.props.dispatch(selectPreviousCountingArea())}

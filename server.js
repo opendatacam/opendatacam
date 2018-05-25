@@ -86,6 +86,10 @@ app.prepare()
     res.json(Counter.getCountingDashboard());
   });
 
+  express.get('/counter/current-tracked-items', (req, res) => {
+    res.json(Counter.getTrackedItemsThisFrame());
+  });
+
   express.get('/counter/export', function(req, res) {
     res.csv(Counter.getCounterHistory(), false ,{'Content-disposition': 'attachment; filename=export.csv'});
   });

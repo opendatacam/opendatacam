@@ -277,5 +277,9 @@ module.exports = {
 
   getOriginalCountingAreas: function() {
     return Counter.originalCountingAreas
+  },
+
+  getTrackedItemsThisFrame: function() {
+    return Counter.trackerDataForLastFrame;
   }
 }
