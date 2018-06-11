@@ -48,6 +48,10 @@ module.exports = {
           reject();
         }
       });
+      // Create empty trackerHistory.json file
+      fs.open("./static/trackerHistory.json", "wx", function (err, fd) {
+        fs.writeFile("./static/trackerHistory.json", JSON.stringify([]), function(err) {});
+      });
     })
     
   },
