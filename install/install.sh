@@ -39,7 +39,7 @@ sudo apt-get install curl git-core nano build-essential -y
 #--------------------------------------------------
 echo "\n---- Add sources for ffmpeg v3 and nodejs v8 ----"
 curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-sudo add-apt-repository ppa:jonathonf/ffmpeg-3
+sudo add-apt-repository -y ppa:jonathonf/ffmpeg-3
 sudo apt update
 
 #--------------------------------------------------
@@ -65,9 +65,12 @@ echo "-----------------------------------------------------------"
 #  add overclocking script to rc.local
 #--------------------------------------------------
 echo "\n---- Activate overclocking on startup ----"
-echo "#!/bin/bash" > /etc/rc.local
-echo "#Maximize performances \n (sleep 60 && /home/ubuntu/jetson_clocks.sh)&\n" >> /etc/rc.local
-echo "exit 0" >> /etc/rc.local
+sudo bash -c '"#!/bin/bash" > /etc/rc.local'
+#echo "#!/bin/bash" > /etc/rc.local
+sudo bash -c '"#Maximize performances \n (sleep 60 && /home/ubuntu/jetson_clocks.sh)&\n" >> /etc/rc.local'
+#echo "#Maximize performances \n (sleep 60 && /home/ubuntu/jetson_clocks.sh)&\n" >> /etc/rc.local
+sudo bash -c '"exit 0" >> /etc/rc.local'
+#echo "exit 0" >> /etc/rc.local
 chmod 755 /etc/rc.local
 #sed -i -e '$i \#Maximize performances \n ( sleep 60 && /home/ubuntu/jetson_clocks.sh )&\n' /etc/rc.local
 
@@ -108,7 +111,7 @@ cd libwsclient
 #--------------------------------------------------
 echo "\n---- Install liblo ----"
 cd ~
-wget https://github.com/radarsat1/liblo/releases/download/0.29/liblo-0.29.tar.gz
+wget https://github.com/radarsat1/liblo/releases/download/0.29/liblo-0.29.tar.gz --no-check-certificate
 tar xvfz liblo-0.29.tar.gz
 cd liblo-0.29
 ./configure && make && sudo make install
@@ -131,7 +134,7 @@ cd ~
 git clone https://github.com/meso-unimpressed/darknet-net.git
 cd darknet-net
 echo "\n---- Download weight files ----"
-wget https://pjreddie.com/media/files/yolo-voc.weights
+wget https://pjreddie.com/media/files/yolo-voc.weights --no-check-certificate
 make
 
 echo "-----------------------------------------------------------"
