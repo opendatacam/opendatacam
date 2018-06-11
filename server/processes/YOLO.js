@@ -97,7 +97,10 @@ module.exports = {
                 if(detections[frameNb + 1]) {
                   frameNb++;
                 } else {
-                  clearInterval(YOLO.simulationInterval)
+                  console.log('Reset simulation counter')
+                  // Infinite
+                  frameNb = 0;
+                  // clearInterval(YOLO.simulationInterval)
                 }
             }
         }
