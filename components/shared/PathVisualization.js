@@ -80,14 +80,27 @@ class PathVisualization extends Component {
   render () {
     return (
       <div className="path-visualization-container">
+        <img 
+          className="webcam-frame"
+          src={localStorage.getItem("lastWebcamFrame")} 
+        />
         <canvas
           width={1280}
           height={720}
           className="canvas"
           ref={(el) => this.canvasEl = el}
-        /> 
+        />
         <style jsx>{`
           .path-visualization-container  {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+          }
+          
+          .webcam-frame {
+            opacity: 0.2;
             position: absolute;
             top: 0;
             right: 0;
