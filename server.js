@@ -22,6 +22,7 @@ let delayStartWebcam = null;
 // Init processes
 YOLO.init(SIMULATION_MODE);
 WebcamStream.init(SIMULATION_MODE);
+Counter.initHistoryDB();
 
 // First request received ?
 let firstRequestReceived = false;
@@ -47,7 +48,7 @@ app.prepare()
     // Hacky way to pass params to getInitialProps on SSR
     let query = req.query;
     query.isCounting = isCounting;
-    console.log(Counter.getOriginalCountingAreas());
+    // console.log(Counter.getOriginalCountingAreas());
     query.countingAreas = Counter.getOriginalCountingAreas();
     
     return app.render(req, res, '/', query)
@@ -58,8 +59,8 @@ app.prepare()
     WebcamStream.stop();
     YOLO.start();  
     Counter.reset();
-    Counter.registerCountingAreas(req.body.countingAreas)
     Counter.start();
+    Counter.registerCountingAreas(req.body.countingAreas)
     isCounting = true;
     res.json(Counter.getCountingDashboard());
   });
@@ -92,6 +93,15 @@ app.prepare()
 
   express.get('/counter/export', function(req, res) {
     res.csv(Counter.getCounterHistory(), false ,{'Content-disposition': 'attachment; filename=export.csv'});
+  });
+
+
+  express.get('/counter/history', function(req, res) {
+    Counter.getHistory().then(() => {
+      res.send('OK, file ready to download');
+    }, () => {
+      res.status(500).send('Something broke while generating the tracking history!');
+    })
   });
 
   // Global next.js handler

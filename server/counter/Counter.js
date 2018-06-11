@@ -1,6 +1,8 @@
 const Tracker = require('node-moving-things-tracker').Tracker;
 const isInsideSomeAreas = require('./utils').isInsideSomeAreas;
 const cloneDeep = require('lodash.clonedeep');
+const Datastore = require('nedb') 
+const fs = require('fs');
 
 
 const initialState = {
@@ -22,14 +24,32 @@ const initialState = {
 }
 
 let Counter = cloneDeep(initialState);
+let historyDB;
 
 module.exports = {
 
+  initHistoryDB: function() {
+    historyDB = new Datastore({ filename: 'history.db', autoload: true });
+  },
+
   reset: function() {
-    // Reset counter
-    Counter = cloneDeep(initialState);
-    // Reset tracker
-    Tracker.reset();
+    return new Promise((resolve, reject) => {
+      // Reset counter
+      Counter = cloneDeep(initialState);
+      // Reset tracker
+      Tracker.reset();
+      // Reset DB
+      historyDB.remove({}, { multi: true }, function (err, numRemoved) {
+        historyDB.loadDatabase(function (err) {
+          resolve();
+        });
+        if(err) {
+          console.log('Error resetting history db')
+          reject();
+        }
+      });
+    })
+    
   },
 
   start: function() {
@@ -132,6 +152,8 @@ module.exports = {
     });
 
 
+
+
     // console.log(`Received Detection:`);
     // console.log('=========');
     // console.log(JSON.stringify(detectionScaledOfThisFrame));
@@ -225,6 +247,12 @@ module.exports = {
     // Increment frame number
     Counter.currentFrame++;
 
+    // History
+    historyDB.insert({
+      date: now,
+      ...trackerDataForThisFrame
+    });
+
     // Remember trackerData for last frame
     Counter.trackerDataForLastFrame = trackerDataForThisFrame;
   },
@@ -281,5 +309,29 @@ module.exports = {
 
   getTrackedItemsThisFrame: function() {
     return Counter.trackerDataForLastFrame;
+  },
+
+  getHistory: function() {
+    return new Promise((resolve, reject) => {
+      console.log('get history');
+      historyDB.find({}).exec((err, docs) => {
+        if(err) {
+          console.log('Error while fetching history')
+          reject();
+        } else {
+          console.log('Write output to a file')
+          fs.writeFile("./static/trackerHistory.json", JSON.stringify(docs), function(err) {
+            if(err) {
+              console.log(err);
+              console.log('Error while writing the tracking history to a file')
+              reject();
+              return;
+            }
+            resolve();
+            console.log("The tracking history was saved!");
+          }); 
+        }
+      })
+    });
   }
 }

@@ -4,3 +4,6 @@
 node_modules/
 *.ffm
 prototype/video
+history.db
+static/trackerHistory.json
+yarn-error.log
