@@ -22,7 +22,6 @@ let delayStartWebcam = null;
 // Init processes
 YOLO.init(SIMULATION_MODE);
 WebcamStream.init(SIMULATION_MODE);
-Counter.initHistoryDB();
 
 // First request received ?
 let firstRequestReceived = false;

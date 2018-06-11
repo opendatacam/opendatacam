@@ -1,7 +1,6 @@
 const Tracker = require('node-moving-things-tracker').Tracker;
 const isInsideSomeAreas = require('./utils').isInsideSomeAreas;
 const cloneDeep = require('lodash.clonedeep');
-const Datastore = require('nedb') 
 const fs = require('fs');
 
 
@@ -24,18 +23,8 @@ const initialState = {
 }
 
 let Counter = cloneDeep(initialState);
-let historyDB;
 
 module.exports = {
-
-  initHistoryDB: function() {
-    // Remove any previous db
-    fs.unlink('history.db', (err) => {
-      // if (err) throw err;
-      // Init new db
-      historyDB = new Datastore({ filename: 'history.db', autoload: true });
-    });
-  },
 
   reset: function() {
     return new Promise((resolve, reject) => {
@@ -43,19 +32,10 @@ module.exports = {
       Counter = cloneDeep(initialState);
       // Reset tracker
       Tracker.reset();
-      // Reset DB
-      historyDB.remove({}, { multi: true }, function (err, numRemoved) {
-        historyDB.loadDatabase(function (err) {
-          resolve();
-        });
-        if(err) {
-          console.log('Error resetting history db')
-          reject();
-        }
-      });
       // Create empty trackerHistory.json file
       fs.open("./static/trackerHistory.json", "wx", function (err, fd) {
-        fs.writeFile("./static/trackerHistory.json", JSON.stringify([]), function(err) {});
+        // Add the array opening bracket
+        fs.writeFile("./static/trackerHistory.json", "[\n{}", function(err) {});
       });
     })
     
@@ -256,10 +236,26 @@ module.exports = {
     // Increment frame number
     Counter.currentFrame++;
 
-    // History
-    historyDB.insert({
+    // Add tracker data to history
+    // NOTE we manually populate the json file with append to avoid reading it in memory as it can be huge
+    const trackerHistoryEntry = {
       date: now,
-      ...trackerDataForThisFrame
+      ...trackerDataForThisFrame.map((trackerData) => {
+        return {
+          id: trackerData.idDisplay,
+          x: Math.round(trackerData.x),
+          y: Math.round(trackerData.y),
+          w: Math.round(trackerData.w),
+          h: Math.round(trackerData.h),
+          bearing: Math.round(trackerData.bearing),
+          name: trackerData.name
+        }
+      })
+    }
+
+
+    fs.appendFile('./static/trackerHistory.json', `,\n${JSON.stringify(trackerHistoryEntry)}`, function (err) {
+      if (err) throw err;
     });
 
     // Remember trackerData for last frame
@@ -321,26 +317,12 @@ module.exports = {
   },
 
   getTrackerData: function() {
+    // Close the json history
     return new Promise((resolve, reject) => {
-      console.log('get history');
-      historyDB.find({}).exec((err, docs) => {
-        if(err) {
-          console.log('Error while fetching history')
-          reject();
-        } else {
-          console.log('Write output to a file')
-          fs.writeFile("./static/trackerHistory.json", JSON.stringify(docs), function(err) {
-            if(err) {
-              console.log(err);
-              console.log('Error while writing the tracking history to a file')
-              reject();
-              return;
-            }
-            resolve();
-            console.log("The tracking history was saved!");
-          }); 
-        }
-      })
+      fs.appendFile('./static/trackerHistory.json', `\n]`, function (err) {
+        if (err) throw err;
+        resolve();
+      });
     });
   }
 }
