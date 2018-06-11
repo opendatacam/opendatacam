@@ -90,8 +90,8 @@ echo "-----------------------------------------------------------"
 #  Configure hotspot
 #--------------------------------------------------
 echo "\n---- enable SSID broadcast ----"
-echo "options bcmdhd op_mode=2\n" >> /etc/modprobe.d/bcmdhd.conf
-
+sudo bash -c 'echo "options bcmdhd op_mode=2" >> /etc/modprobe.d/bcmdhd.conf'
+sudo bash -c 'echo "" >> /etc/rc.local'
 
 echo "-----------------------------------------------------------"
 echo "----         start darknet-net installation            ----"
