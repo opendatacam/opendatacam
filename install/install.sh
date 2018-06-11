@@ -65,12 +65,13 @@ echo "-----------------------------------------------------------"
 #  add overclocking script to rc.local
 #--------------------------------------------------
 echo "\n---- Activate overclocking on startup ----"
-sudo bash -c '"#!/bin/bash" > /etc/rc.local'
 #echo "#!/bin/bash" > /etc/rc.local
-sudo bash -c '"#Maximize performances \n (sleep 60 && /home/ubuntu/jetson_clocks.sh)&\n" >> /etc/rc.local'
 #echo "#Maximize performances \n (sleep 60 && /home/ubuntu/jetson_clocks.sh)&\n" >> /etc/rc.local
-sudo bash -c '"exit 0" >> /etc/rc.local'
 #echo "exit 0" >> /etc/rc.local
+sudo bash -c 'echo "#!/bin/bash" > /etc/rc.local'
+sudo bash -c 'echo "#Maximize performances" >> /etc/rc.local'
+sudo bash -c 'echo "(sleep 60 && /home/ubuntu/jetson_clocks.sh)&" >> /etc/rc.local'
+sudo bash -c 'echo "exit 0" >> /etc/rc.local'
 chmod 755 /etc/rc.local
 #sed -i -e '$i \#Maximize performances \n ( sleep 60 && /home/ubuntu/jetson_clocks.sh )&\n' /etc/rc.local
 
