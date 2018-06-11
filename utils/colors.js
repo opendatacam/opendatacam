@@ -7,7 +7,8 @@ export const COLORS = {
   green: '#a0f17f',
   greenBorder: '#85d59a',
   purple: '#d070f0',
-  purpleBorder: '#9c62b0'
+  purpleBorder: '#9c62b0',
+  pathvisualization: 'blue'
 
 }
 

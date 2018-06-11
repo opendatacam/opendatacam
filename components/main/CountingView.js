@@ -18,6 +18,15 @@ import PathVisualization from '../shared/PathVisualization';
 
 class CountingView extends React.Component {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      slides: [],
+      selectedSlideIndex: 0
+    }
+  }
+
   componentWillReceiveProps(newProps) {
     if(newProps.isCounting !== this.props.isCounting) {
         if(newProps.isCounting === true &&
@@ -40,6 +49,40 @@ class CountingView extends React.Component {
 
   componentDidMount() {
     this.startLongPolling();
+
+    // Set slides, all counting colors and pathvisualization
+    this.setState({
+      slides: [
+        ...Object.keys(this.props.countingAreas.toJS()),
+        'pathvisualization'
+      ]
+    })
+  }
+
+  selectNextSlide() {
+    if((this.state.selectedSlideIndex + 1) > (this.state.slides.length - 1)) {
+      // Select first item
+      this.setState({
+        selectedSlideIndex: 0
+      })
+    } else {
+      this.setState({
+        selectedSlideIndex: this.state.selectedSlideIndex + 1
+      })
+    }
+  }
+
+  selectPreviousSlide() {
+    if((this.state.selectedSlideIndex - 1) < 0) {
+      // Select last item
+      this.setState({
+        selectedSlideIndex: this.state.slides.length - 1
+      })
+    } else {
+      this.setState({
+        selectedSlideIndex: this.state.selectedSlideIndex - 1
+      })
+    }
   }
 
   componentWillUnmount() {
@@ -47,6 +90,9 @@ class CountingView extends React.Component {
   }
 
   render () {
+
+    const selectedSlide = this.state.slides[this.state.selectedSlideIndex];
+
     return (
       <div className="counting-view">
         {this.props.yoloIsStarting &&
@@ -55,15 +101,24 @@ class CountingView extends React.Component {
           </div>
         }
         <ActiveAreaIndicator
-          color={COLORS[this.props.selectedCountingArea]}
+          color={COLORS[selectedSlide]}
         />
         {/* <Title /> */}
         <RecordTime />
-        <SlideIndicators />
-        <PathVisualization />
+        <SlideIndicators
+          slides={this.state.slides}
+          selectedSlideIndex={this.state.selectedSlideIndex}
+          activeColor={COLORS[selectedSlide]}
+        />
+        {selectedSlide === 'pathvisualization' &&
+          <PathVisualization />
+        }
+        {selectedSlide !== 'pathvisualization' &&
+          <CounterData selectedCountingArea={this.state.slides[this.state.selectedSlideIndex]} />
+        }
         <SlideArrows 
-          goToNext={() => this.props.dispatch(selectNextCountingArea())}
-          goToPrevious={() => this.props.dispatch(selectPreviousCountingArea())}
+          goToNext={() => this.selectNextSlide()}
+          goToPrevious={() => this.selectPreviousSlide()}
         />
         <EndCountingCTA />
         <style jsx>{`
@@ -95,6 +150,7 @@ class CountingView extends React.Component {
 export default connect((state) => {
 
   return {
+    countingAreas: state.counter.get('countingAreas'),
     countingData: state.counter.get('countingData'),
     selectedCountingArea: state.counter.get('selectedCountingArea'),
     yoloStarted: state.counter.getIn(['countingData', 'yoloStarted']),

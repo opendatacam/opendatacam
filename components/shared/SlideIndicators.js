@@ -1,17 +1,14 @@
 import React, { Component } from 'react'
-import { connect } from 'react-redux'
-
-import { COLORS } from '../../utils/colors';
 
 class SlideIndicators extends Component {
 
   render () {
     return (
       <div className="slideIndicators">
-        {Object.keys(this.props.countingAreas.toJS()).map((countingAreaKey) => 
+        {Object.keys(this.props.slides).map((slideKey, slideIndex) => 
           <div
-            key={countingAreaKey} 
-            className={`indicator ${countingAreaKey === this.props.selectedCountingArea ? 'active' : ''}`} 
+            key={slideKey} 
+            className={`indicator ${slideIndex === this.props.selectedSlideIndex ? 'active' : ''}`} 
           />
         )}
         <style jsx>{`
@@ -31,7 +28,7 @@ class SlideIndicators extends Component {
         `}</style>
         <style jsx>{`
           .active{
-            background-color: ${this.props.selectedCountingAreaColor};
+            background-color: ${this.props.activeColor};
           }
         `}</style>
       </div>
@@ -39,10 +36,4 @@ class SlideIndicators extends Component {
   }
 }
 
-export default connect((state) => {
-  return {
-    countingAreas: state.counter.get('countingAreas'),
-    selectedCountingArea: state.counter.get('selectedCountingArea'),
-    selectedCountingAreaColor: COLORS[state.counter.get('selectedCountingArea')]
-  }
-})(SlideIndicators)
+export default SlideIndicators

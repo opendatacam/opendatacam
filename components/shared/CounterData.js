@@ -71,7 +71,6 @@ class CounterData extends Component {
 
 export default connect((state) => {
   return {
-    counterData: state.counter.get('countingData'),
-    selectedCountingArea: state.counter.get('selectedCountingArea')
+    counterData: state.counter.get('countingData')
   }
 })(CounterData)
