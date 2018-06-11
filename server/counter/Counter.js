@@ -29,7 +29,12 @@ let historyDB;
 module.exports = {
 
   initHistoryDB: function() {
-    historyDB = new Datastore({ filename: 'history.db', autoload: true });
+    // Remove any previous db
+    fs.unlink('history.db', (err) => {
+      // if (err) throw err;
+      // Init new db
+      historyDB = new Datastore({ filename: 'history.db', autoload: true });
+    });
   },
 
   reset: function() {
