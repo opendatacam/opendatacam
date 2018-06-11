@@ -1,11 +1,18 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import axios from 'axios';
 
-import { exportCountingData } from '../../statemanagement/app/CounterStateManagement';
+import { exportCountingData, exportTrackerData } from '../../statemanagement/app/CounterStateManagement';
 import { stopCounting, hideCountingData } from '../../statemanagement/app/AppStateManagement';
 import BtnStopCounting from './BtnStopCounting';
 
 class EndCountingCTA extends Component {
+
+  getTrackerData() {
+    let link = document.createElement("a");
+    link.href = '/counter/trackerdata';
+    link.click();
+  }
 
   render () {
     return (
@@ -14,9 +21,15 @@ class EndCountingCTA extends Component {
           <div className="exportCountContainer">
             <div 
               className="button export"
+              onClick={() => this.getTrackerData()}
+            >
+              <h2>Get tracker data</h2>
+            </div>
+            <div 
+              className="button export"
               onClick={() => this.props.dispatch(exportCountingData())}
             >
-              <h2>Export data</h2>
+              <h2>Get counting data</h2>
             </div>
             <div
               className="button count"
@@ -35,7 +48,6 @@ class EndCountingCTA extends Component {
           .exportCountContainer{
             position: fixed;
             bottom: 1.5rem;
-            width: 18.5rem;
             height: 3.1rem;
             left: 50%;
             transform: translateX(-50%);
@@ -43,15 +55,15 @@ class EndCountingCTA extends Component {
           }
           .exportCountContainer .button{
             height: 2.5rem;
+            width: 10rem;
             border: 5px solid transparent;
             display: flex;
             justify-content: center;
             align-items: center;
           }
-          .exportCountContainer .export{
+          .exportCountContainer .export {
             background-color: white;
             color: black;
-            width: 8rem;
             margin-right: 1rem;
           }
           .exportCountContainer .export:hover{

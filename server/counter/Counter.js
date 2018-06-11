@@ -320,7 +320,7 @@ module.exports = {
     return Counter.trackerDataForLastFrame;
   },
 
-  getHistory: function() {
+  getTrackerData: function() {
     return new Promise((resolve, reject) => {
       console.log('get history');
       historyDB.find({}).exec((err, docs) => {

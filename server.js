@@ -96,9 +96,10 @@ app.prepare()
   });
 
 
-  express.get('/counter/history', function(req, res) {
-    Counter.getHistory().then(() => {
-      res.send('OK, file ready to download');
+  express.get('/counter/trackerdata', function(req, res) {
+    Counter.getTrackerData().then(() => {
+      // res.send('OK, file ready to download');
+      res.download('static/trackerHistory.json', 'trackerHistory.json')
     }, () => {
       res.status(500).send('Something broke while generating the tracking history!');
     })
