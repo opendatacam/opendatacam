@@ -52,6 +52,7 @@ class EndCountingCTA extends Component {
             left: 50%;
             transform: translateX(-50%);
             display: flex;
+            z-index: 2;
           }
           .exportCountContainer .button{
             height: 2.5rem;

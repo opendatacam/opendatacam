@@ -21,12 +21,14 @@ class SlideArrows extends Component {
             right: 1.5rem;
             top: 50%;
             transform: translateY(-50%);
+            z-index: 2;
           }
           .arrowLeft{
             position: fixed;
             left: 1.5rem;
             top: 50%;
             transform: translateY(-50%);
+            z-index: 2;
           }
         `}</style>
       </React.Fragment>

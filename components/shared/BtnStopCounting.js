@@ -17,6 +17,7 @@ class BtnStopCounting extends Component {
             left: 50%;
             transform: translateX(-50%);
             text-align: center;
+            z-index: 2;
           }
       
           .record h2{

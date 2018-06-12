@@ -12,6 +12,7 @@ class RecordTime extends Component {
         <style jsx>{`
           .recordTime{
             position: fixed;
+            z-index: 2;
             right: 1.5rem;
             top: 1.5rem;
           }
