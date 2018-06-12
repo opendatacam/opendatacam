@@ -110,9 +110,7 @@ class CountingView extends React.Component {
           selectedSlideIndex={this.state.selectedSlideIndex}
           activeColor={COLORS[selectedSlide]}
         />
-        {selectedSlide === 'pathvisualization' &&
-          <PathVisualization />
-        }
+        <PathVisualization visible={selectedSlide === 'pathvisualization'} />
         {selectedSlide !== 'pathvisualization' &&
           <CounterData selectedCountingArea={this.state.slides[this.state.selectedSlideIndex]} />
         }

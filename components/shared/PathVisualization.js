@@ -22,6 +22,15 @@ class PathVisualization extends Component {
       "#17becf"
     ]
   }
+
+
+  fadeOutCanvasContent() {
+    // Partially clearing canvas by drawing a black small opacity rect on top of it
+    let ctx = this.canvasEl.getContext('2d');
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+    ctx.fillRect(0, 0, 1280, 720);
+    // ctx.clearRect(0, 0, 1280, 720);
+  }
   
 
   drawLineOnCanvas(line, color = 'green') {
@@ -69,17 +78,26 @@ class PathVisualization extends Component {
         
       })
     }, 40)
+
+    // Each minute, fadeOutCanvas the canvas
+    this.clearingLoop = setInterval(() => {
+      this.fadeOutCanvasContent()
+    }, 60 * 1000);
   }
 
   componentWillUnmount() {
     if(this.renderLoop) {
       clearInterval(this.renderLoop)
     }
+
+    if(this.clearingLoop) {
+      clearInterval(this.clearingLoop)
+    }
   }
 
   render () {
     return (
-      <div className="path-visualization-container">
+      <div className="path-visualization-container" style={{ display: `${this.props.visible ? 'block' : 'none'}`}}>
         <img 
           className="webcam-frame"
           width="1280"
