@@ -7,3 +7,4 @@ prototype/video
 history.db
 static/trackerHistory.json
 yarn-error.log
+static/lastwebcamframe.jpg

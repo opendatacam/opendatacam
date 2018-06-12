@@ -9,6 +9,8 @@ const forever = require('forever-monitor');
 const YOLO = require('./server/processes/YOLO');
 const WebcamStream = require('./server/processes/WebcamStream');
 const Counter = require('./server/counter/Counter');
+const request = require('request');
+const fs = require('fs');
 
 const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not running on the Jetson
 
@@ -54,9 +56,13 @@ app.prepare()
   })
 
   express.post('/counter/start', (req, res) => {
-
-    WebcamStream.stop();
-    YOLO.start();  
+    // Save last frame of webcam before shutting down
+    const url = getWebcamURL(req);
+    request(url, {encoding: 'binary'}, function(error, response, body) {
+      fs.writeFile('static/lastwebcamframe.jpg', body, 'binary', function (err) {});
+      WebcamStream.stop();
+      YOLO.start();
+    });
     Counter.reset();
     Counter.start();
     Counter.registerCountingAreas(req.body.countingAreas)
@@ -144,3 +150,37 @@ app.prepare()
   });
 
 })
+
+
+
+// Utilities
+function getWebcamURL(req) {
+  const urlData = getURLData(req)
+  if(process.env.NODE_ENV !== 'production') {
+    return `${urlData.protocol}://${urlData.address}:${port}/static/placeholder/webcam.jpg`
+  } else {
+    return `${urlData.protocol}://${urlData.address}:8090/webcam.jpg`
+  }
+}
+
+function getURLData(req) {
+  let protocol = 'http';
+  if(req.headers['x-forwarded-proto'] === 'https') {
+    protocol = 'https';
+  }
+
+  const parsedUrl = req.get('Host').split(':');
+  if(parsedUrl.length > 1) {
+    return {
+      address: parsedUrl[0],
+      port: parsedUrl[1],
+      protocol
+    }
+  } else {
+    return {
+      address: parsedUrl[0],
+      port: 80,
+      protocol
+    }
+  }
+}
