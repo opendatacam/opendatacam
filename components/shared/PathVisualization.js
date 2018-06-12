@@ -119,6 +119,20 @@ class PathVisualization extends Component {
             bottom: 0;
             z-index: 1;
           }
+
+          @media (min-aspect-ratio: 16/9) {
+            .webcam-frame,.canvas {
+              width: 100%;
+              height: auto;
+            }
+          }
+
+          @media (max-aspect-ratio: 16/9) {
+            .webcam-frame,.canvas {
+              width: auto;
+              height: 100%;
+            }
+          }
           
           .webcam-frame {
             opacity: 0.2;
