@@ -100,6 +100,12 @@ class CountingView extends React.Component {
             <Loading />
           </div>
         }
+        <img 
+          className="webcam-frame"
+          width="1280"
+          height="720"
+          src="/static/lastwebcamframe.jpg" 
+        />
         <ActiveAreaIndicator
           color={COLORS[selectedSlide]}
         />
@@ -127,6 +133,29 @@ class CountingView extends React.Component {
             top: 0;
             left: 0;
             color: white;
+          }
+
+          @media (min-aspect-ratio: 16/9) {
+            .webcam-frame {
+              width: 100%;
+              height: auto;
+            }
+          }
+
+          @media (max-aspect-ratio: 16/9) {
+            .webcam-frame {
+              width: auto;
+              height: 100%;
+            }
+          }
+          
+          .webcam-frame {
+            opacity: 0.2;
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
           }
 
           .loading-overlay {
