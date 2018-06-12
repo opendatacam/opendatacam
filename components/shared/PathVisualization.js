@@ -82,7 +82,9 @@ class PathVisualization extends Component {
       <div className="path-visualization-container">
         <img 
           className="webcam-frame"
-          src={localStorage.getItem("lastWebcamFrame")} 
+          width="1280"
+          height="720"
+          src="/static/lastwebcamframe.jpg" 
         />
         <canvas
           width={1280}

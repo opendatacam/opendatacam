@@ -41,31 +41,7 @@ class WebcamView extends React.Component {
     this.setState({ dateRefresh: new Date().getTime() });
   }
 
-  storeLastWebcamFrameToLocalStorage(path) {
-    let image = document.createElement('img');
-    document.body.appendChild(image);
-    image.setAttribute('style','display:none');
-    image.setAttribute('alt','script div');
-    image.setAttribute("src", path);
-
-    const imgCanvas = document.createElement("canvas");
-    const imgContext = imgCanvas.getContext("2d");
-
-    // Make sure canvas is as big as the picture
-    imgCanvas.width = 1280;
-    imgCanvas.height = 720;
-
-    // Draw image into canvas element
-    imgContext.drawImage(image, 0, 0, 1280, 720);
-    // Save image as a data URL
-    const imgInfom = imgCanvas.toDataURL("image/png");
-    localStorage.clear();
-    localStorage.setItem("lastWebcamFrame",imgInfom);
-    document.body.removeChild(image);
-  }
-
   handleStartCounting() {
-    this.storeLastWebcamFrameToLocalStorage(this.getUrl());
     this.props.dispatch(startCounting());
   }
 
