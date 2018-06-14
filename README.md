@@ -260,18 +260,16 @@ When the jetson is started you should have a wifi "YOUR-HOTSPOT-NAME" available.
 
 You should be able to monitor the jetson from the UI we've build and count 🚗 🏍 🚚 !  
 
-### ‼️Automatic installation (alpha)
+### ‼️Automatic installation (experimental)
 
 The install script for autmatic installation 
 
 > Setting up the access point is not automated yet! __follow this guide: https://askubuntu.com/a/762885 __ to set up the hotspot.
 
-- run the `install.sh` script
+- run the `install.sh` script directly from GitHub 
 
   ```bash
-  sudo chmod +x install.sh
-  ./install.sh
-  sudo reboot
+  wget -O - https://raw.githubusercontent.com/moovel/lab-opendatacam/master/install/install.sh | bash
   ```
 
 ## Troubleshoothing
