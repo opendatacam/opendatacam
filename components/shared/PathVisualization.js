@@ -27,7 +27,7 @@ class PathVisualization extends Component {
   fadeOutCanvasContent() {
     // Partially clearing canvas by drawing a black small opacity rect on top of it
     let ctx = this.canvasEl.getContext('2d');
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.4)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
     ctx.fillRect(0, 0, 1280, 720);
     // ctx.clearRect(0, 0, 1280, 720);
   }
@@ -82,7 +82,7 @@ class PathVisualization extends Component {
     // Each minute, fadeOutCanvas the canvas
     this.clearingLoop = setInterval(() => {
       this.fadeOutCanvasContent()
-    }, 60 * 1000);
+    }, 1 * 1000);
   }
 
   componentWillUnmount() {
