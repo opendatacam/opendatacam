@@ -6,7 +6,7 @@ class Layout extends Component {
     return (
       <div>
         <Head>
-          <title>Traffic Cam</title>
+          <title>Open Data Cam</title>
           <meta charSet='utf-8' />
           <meta
             name='viewport'
