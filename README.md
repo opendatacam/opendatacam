@@ -145,7 +145,7 @@ if not:  (fallback :openCV 2: [install script](https://gist.github.com/jayant-ya
 - Install __liblo__:
 
   ```bash
-  wget https://github.com/radarsat1/liblo/releases/download/0.29/liblo-0.29.tar.gz
+  wget https://github.com/radarsat1/liblo/releases/download/0.29/liblo-0.29.tar.gz --no-check-certificate
   tar xvfz liblo-0.29.tar.gz
   cd liblo-0.29
   ./configure && make && sudo make install
@@ -185,6 +185,10 @@ if not:  (fallback :openCV 2: [install script](https://gist.github.com/jayant-ya
     |-src
     |# ... other files
     |yolo-voc.weights <--- Weight file should be in the root directory
+  ```
+  
+  ```bash
+  wget https://pjreddie.com/media/files/yolo-voc.weights --no-check-certificate
   ```
 
 - Make __darknet-net__
