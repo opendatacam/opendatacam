@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import SlideArrows from './SlideArrows';
 
+// Inspired by: https://medium.com/@incubation.ff/build-your-own-css-carousel-in-react-part-one-86f71f6670ca
+
 class Carousel extends Component {
 
   constructor(props){
