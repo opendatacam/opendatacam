@@ -97,7 +97,7 @@ class PathVisualization extends Component {
 
   render () {
     return (
-      <div className="path-visualization-container" style={{ display: `${this.props.visible ? 'block' : 'none'}`}}>
+      <div className="path-visualization-container">
         <canvas
           width={1280}
           height={720}

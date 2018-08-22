@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 class CounterData extends Component {
 
   getItemCounter(item) {
-    const value = this.props.counterData.getIn([this.props.selectedCountingArea, item])
+    const value = this.props.counterData.getIn([this.props.countingArea, item])
     if(value) {
       return value;
     } else {
@@ -45,7 +45,7 @@ class CounterData extends Component {
           .counterContainer{
             width: 30rem;
             height: 12rem;
-            position: fixed;
+            position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
