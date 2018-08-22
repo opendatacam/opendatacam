@@ -35,7 +35,7 @@ class EndCountingCTA extends Component {
               className="button count"
               onClick={() => this.props.dispatch(hideCountingData())}
             >
-              <h2>Count again</h2>
+              <h2>Track again</h2>
             </div>
           </div>
         }
