@@ -70,8 +70,6 @@ class CountingView extends React.Component {
 
     const selectedSlide = this.state.slides[this.state.selectedSlideIndex];
 
-    console.log(this.state);
-
     return (
       <div className="counting-view">
         {this.props.yoloIsStarting &&

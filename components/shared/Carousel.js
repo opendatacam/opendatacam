@@ -12,15 +12,10 @@ class Carousel extends Component {
   }
 
   getOrder(itemIndex) {
-    const { position } = this.state
-    const { children } = this.props
-    const numItems = children.length || 1
-  
-    if (itemIndex - position < 0) {
-      return numItems - Math.abs(itemIndex - position)
-    }
-  
-    return itemIndex - position
+    const { position } = this.state;
+    const { children } = this.props;
+    const numItems = children.length || 1;
+    return ((numItems + 1) - position + itemIndex) % numItems
   }
 
   nextSlide = () => {
@@ -42,7 +37,6 @@ class Carousel extends Component {
       })
     }, 50)
 
-    console.log(position);
     this.props.onChangeSelectedSlide(position);
   }
 
@@ -64,7 +58,6 @@ class Carousel extends Component {
         </div>
         <SlideArrows 
           goToNext={() => this.nextSlide()}
-          goToPrevious={() => this.selectPreviousSlide()}
         />
         <style jsx>{`
           .carousel {
@@ -89,7 +82,7 @@ class Carousel extends Component {
         <style jsx>{`
           .carousel-container {
             transition: ${this.state.sliding ? 'none' : 'transform 0.5s ease-in'};
-            transform: ${!this.state.sliding ? 'translateX(calc(-100%))' : 'translateX(0%)'};
+            transform: ${!this.state.sliding ? 'translateX(-100%)' : 'translateX(0%)'};
           }
         `}</style>
       </div>
