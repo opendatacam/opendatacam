@@ -318,12 +318,18 @@ module.exports = {
   },
 
   getTrackerData: function() {
-    // Close the json history
+    
     return new Promise((resolve, reject) => {
-      fs.appendFile('./static/trackerHistory.json', `\n]`, function (err) {
+      // Copy current trackerHistory but keep the current file has we keep adding line to it
+      fs.copyFile('./static/trackerHistory.json', './static/trackerHistoryExport.json', (err) => {
         if (err) throw err;
-        resolve();
+        // Make a valid json file by adding a closing bracket
+        fs.appendFile('./static/trackerHistoryExport.json', `\n]`, function (err) {
+          if (err) throw err;
+          resolve();
+        });
       });
+      
     });
   }
 }

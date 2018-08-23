@@ -1,8 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import axios from 'axios';
 
-import { exportCountingData, exportTrackerData } from '../../statemanagement/app/CounterStateManagement';
 import { stopCounting, hideCountingData } from '../../statemanagement/app/AppStateManagement';
 import BtnCounting from './BtnCounting';
 import BtnDownload from './BtnDownload';
@@ -13,6 +11,12 @@ class EndCountingCTA extends Component {
   getTrackerData() {
     let link = document.createElement("a");
     link.href = '/counter/trackerdata';
+    link.click();
+  }
+
+  getCounterData() {
+    let link = document.createElement("a");
+    link.href = '/counter/export';
     link.click();
   }
 
@@ -37,15 +41,24 @@ class EndCountingCTA extends Component {
           </div>
           <div 
             className="button export"
-            onClick={() => this.props.dispatch(exportCountingData())}
+            onClick={() => this.getCounterData()}
           >
             <h2>Get counting data</h2>
           </div> */}
+          <BtnDownload 
+            label="Tracker data"
+            onClick={() => this.getTrackerData()}
+          />
+          <div className="separator"></div>
+          <BtnDownload 
+            iconNotepad
+            label="Counting data"
+            onClick={() => this.getCounterData()}
+          />
+          <div className="separator"></div>
           {this.props.pathVisualizationSelected &&
             <BtnScreenshot onClick={() => this.exportPathVisualizationFrame()} />
           }
-          <div className="separator"></div>
-          <BtnDownload />
           <div className="separator"></div>
           {this.props.isCounting &&
             <BtnCounting 

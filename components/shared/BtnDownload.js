@@ -8,8 +8,13 @@ class BtnDownload extends Component {
         className="btn-download"
         onClick={() => this.props.onClick()}
       >
-        <img src="/static/icons/icon-download.svg" />
-        <h2>Export data</h2>
+        {this.props.iconNotepad &&
+          <img src="/static/icons/icon-notepad.svg" />
+        }
+        {!this.props.iconNotepad &&
+          <img src="/static/icons/icon-download.svg" />
+        }
+        <h2>{this.props.label}</h2>
         <style jsx>{`
           .btn-download {
             position: relative;
