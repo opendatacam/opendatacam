@@ -26,8 +26,9 @@ class CountingAreasVisualizer extends Component {
 
   componentDidMount() {
     if(this.elCanvas) {
-      const { width, height } = this.elCanvas.getBoundingClientRect();
-      this.editorCanvas = new fabric.Canvas(this.elCanvas, { selection: false, width: width, height: height });
+      // const { width, height } = this.elCanvas.getBoundingClientRect();
+      // const { refWidth, refHeight } = this.props.countingAreas.get(this.props.color)
+      this.editorCanvas = new fabric.Canvas(this.elCanvas, { selection: false });
 
       if(this.props.color) {
         this.reRenderCountingAreasInViewer(this.props.color)
@@ -57,6 +58,7 @@ class CountingAreasVisualizer extends Component {
   render () {
 
     const isEditing = Object.keys(this.props.countingAreas.toJS()).length > 0
+    const { refWidth, refHeight } = this.props.countingAreas.get(this.props.color).toJS();
 
     return (
       <div
@@ -64,8 +66,8 @@ class CountingAreasVisualizer extends Component {
       >
         <canvas
           ref={(el) => this.elCanvas = el}
-          width={1280}
-          height={720}
+          width={refWidth}
+          height={refHeight}
           className="editor-canvas" />
         <style jsx>{`
           .counting-areas-editor,.editor-canvas  {
@@ -77,16 +79,16 @@ class CountingAreasVisualizer extends Component {
           }
 
           @media (min-aspect-ratio: 16/9) {
-            .editor-canvas {
-              width: 100%;
-              height: auto;
+            :global(.canvas-container),.editor-canvas {
+              width: 100% !important;
+              height: auto !important;
             }
           }
 
           @media (max-aspect-ratio: 16/9) {
-            .editor-canvas {
-              width: auto;
-              height: 100%;
+            :global(.canvas-container),.editor-canvas {
+              width: auto !important;
+              height: 100% !important;
             }
           }
         `}</style>

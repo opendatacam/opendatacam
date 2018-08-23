@@ -128,16 +128,16 @@ class CountingAreasEditor extends Component {
           }
 
           @media (min-aspect-ratio: 16/9) {
-            .editor-canvas {
-              width: 100%;
-              height: auto;
+            :global(.canvas-container),.editor-canvas {
+              width: 100% !important;
+              height: auto !important;
             }
           }
 
           @media (max-aspect-ratio: 16/9) {
-            .editor-canvas {
-              width: auto;
-              height: 100%;
+            :global(.canvas-container),.editor-canvas {
+              width: auto !important;
+              height: 100% !important;
             }
           }
         `}</style>
