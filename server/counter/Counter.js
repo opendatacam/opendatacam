@@ -100,7 +100,7 @@ module.exports = {
       xBounds: xBounds
     }
 
-    console.log(Counter.countingAreas);
+    // console.log(Counter.countingAreas);
 
   },
 
@@ -109,7 +109,8 @@ module.exports = {
     Counter.countedItemsHistory.push({
       date: new Date().toISOString(),
       area: countingAreaKey,
-      name: trackedItem.name
+      name: trackedItem.name,
+      id: trackedItem.idDisplay
     })
   },
 
