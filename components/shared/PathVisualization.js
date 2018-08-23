@@ -2,6 +2,14 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import axios from 'axios';
 
+// Canvas resolution (will be scaled to fullscreen)
+const canvasWidth = 1920;
+const canvasHeight = 1080;
+
+// Tracker data ref width / height
+const trackerDataRefWidth = 1280;
+const trackerDataRefHeight = 720;
+
 class PathVisualization extends Component {
 
   constructor(props) {
@@ -28,7 +36,7 @@ class PathVisualization extends Component {
     // Partially clearing canvas by drawing a black small opacity rect on top of it
     let ctx = this.canvasEl.getContext('2d');
     ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
-    ctx.fillRect(0, 0, 1280, 720);
+    ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     // ctx.clearRect(0, 0, 1280, 720);
   }
   
@@ -40,7 +48,7 @@ class PathVisualization extends Component {
     
     let ctx = this.canvasEl.getContext('2d');
     ctx.strokeStyle = color;
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 5;
     ctx.beginPath();
     ctx.moveTo(line.pointA.x, line.pointA.y);
     ctx.lineTo(line.pointB.x, line.pointB.y);
@@ -61,12 +69,12 @@ class PathVisualization extends Component {
               trackedItem.color = color;
               this.drawLineOnCanvas({
                 pointA: {
-                  x: lastFrameTrackedItem.x,
-                  y: lastFrameTrackedItem.y
+                  x: lastFrameTrackedItem.x * canvasHeight / trackerDataRefHeight,
+                  y: lastFrameTrackedItem.y * canvasWidth / trackerDataRefWidth
                 },
                 pointB: {
-                  x: trackedItem.x,
-                  y: trackedItem.y
+                  x: trackedItem.x * canvasHeight / trackerDataRefHeight,
+                  y: trackedItem.y * canvasWidth / trackerDataRefWidth
                 }
               }, color)
             }
@@ -99,8 +107,8 @@ class PathVisualization extends Component {
     return (
       <div className="path-visualization-container">
         <canvas
-          width={1280}
-          height={720}
+          width={canvasWidth}
+          height={canvasHeight}
           className="canvas"
           ref={(el) => this.canvasEl = el}
         />
