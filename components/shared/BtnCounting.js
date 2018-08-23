@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 
-class BtnStopCounting extends Component {
+class BtnCounting extends Component {
 
   render () {
     return (
@@ -8,14 +8,16 @@ class BtnStopCounting extends Component {
         className="record"
         onClick={() => this.props.onClick()}
       >
-        <img src="/static/icons/icon-stop-recording.svg" />
-        <h2>Stop tracking</h2>
+        {this.props.iconStop &&
+           <img src="/static/icons/icon-stop-recording.svg" />
+        }
+        {!this.props.iconStop && 
+          <img src="/static/icons/icon-start-recording.svg" />
+        }
+        <h2>{this.props.label}</h2>
         <style jsx>{`
           .record{
-            position: fixed;
-            bottom: 0;
-            left: 50%;
-            transform: translateX(-50%);
+            position: relative;
             text-align: center;
             z-index: 2;
           }
@@ -29,4 +31,4 @@ class BtnStopCounting extends Component {
   }
 }
 
-export default BtnStopCounting
+export default BtnCounting
