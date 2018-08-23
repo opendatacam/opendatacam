@@ -19,14 +19,22 @@ module.exports = {
     YOLO.simulationMode = simulationMode;
 
     // On file
-    // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -filename ../prototype_level_1_5x.mp4 -address "ws://localhost" -port 8080
-    // YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-filename', '../prototype_level_1_5x.mp4', '-address','ws://localhost','-port','8080'],{
+    // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -filename YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4 -address "ws://localhost" -port 8080
+    // YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4 -> relative to darknet directory (set up in config.json), if outside this directory do:
+    // ../file.mp4 or ../videos/file.mp4
+    
+    
+    // Uncomment the following lines to run on a file directly
+
+    // YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-filename', 'YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4', '-address','ws://localhost','-port','8080'],{
     //   max: 1,
-    //   cwd: "../../darknet-net"
+    //   cwd: config.PATH_TO_YOLO_DARKNET,
+    //   killTree: true
     // });
 
     // On webcam
     // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 1 -address "ws://localhost" -port 8080
+    // Comment the following lines to run on a file directly
     YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-c','1', '-address','ws://localhost','-port','8080'],{
       max: 1,
       cwd: config.PATH_TO_YOLO_DARKNET,
