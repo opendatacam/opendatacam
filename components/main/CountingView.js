@@ -118,6 +118,7 @@ class CountingView extends React.Component {
             top: 0;
             left: 0;
             color: white;
+            overflow-x: hidden;
           }
 
           @media (min-aspect-ratio: 16/9) {

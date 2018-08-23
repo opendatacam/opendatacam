@@ -29,15 +29,23 @@ class Carousel extends Component {
 
   doSliding = (position) => {
     this.setState({
-      sliding: true,
+      triggerSliding: true,
+      isSliding: true,
       position
     })
   
     setTimeout(() => {
      this.setState({
-        sliding: false
+        triggerSliding: false,
+        isSliding: true
       })
     }, 50)
+
+    setTimeout(() => {
+      this.setState({
+        isSliding: false
+       })
+     }, 600)
 
     this.props.onChangeSelectedSlide(position);
   }
@@ -49,8 +57,9 @@ class Carousel extends Component {
       <div className="carousel">
         <div className="carousel-container">
           {children.map((child, index) => (
+            // Visibility hidden on "transitionning" for mobile compatibility of carousel, hacky workaround
             <div
-              className="carousel-slot"
+              className={`carousel-slot ${this.getOrder(index) !== 1 && !this.state.isSliding ? 'hidden' : 'visible' }`}
               style={{ order: this.getOrder(index) }}
               key={ index }
             >
@@ -63,7 +72,7 @@ class Carousel extends Component {
         />
         <style jsx>{`
           .carousel {
-            overflow: hidden;
+            // overflow: hidden;
             width: 100%;
             height: 100%;
           }
@@ -80,11 +89,15 @@ class Carousel extends Component {
             flex-shrink: 0;
             flex-basis: 100%;
           }
+          
+          .hidden {
+            visibility:hidden;
+          }
         `}</style>
         <style jsx>{`
           .carousel-container {
-            transition: ${this.state.sliding ? 'none' : 'transform 0.5s ease-in'};
-            transform: ${!this.state.sliding ? 'translateX(-100%)' : 'translateX(0%)'};
+            transition: ${this.state.triggerSliding ? 'none' : 'transform 0.5s ease-in'};
+            transform: ${!this.state.triggerSliding ? 'translateX(-100%)' : 'translateX(0%)'};
           }
         `}</style>
       </div>
