@@ -364,7 +364,7 @@ To debug the app log onto the jetson board and inspect the logs from pm2 or stop
 
 It is possible to run Open Data Cam on a video file instead of the webcam feed. 
 
-Before doing this you should be aware that the neural network (YOLO) will run on all the frames of the video file at ~7-8 FPS (best jetson speed) and do not play the file in real-time. If you want to simulate a real video feed you should drop the framerate of your video down to 7 FPS.
+Before doing this you should be aware that the neural network (YOLO) will run on all the frames of the video file at ~7-8 FPS (best jetson speed) and do not play the file in real-time. If you want to simulate a real video feed you should drop the framerate of your video down to 7 FPS (or whatever frame rate your jetson board can run YOLO).
 
 To switch the Open Data Cam to "video file reading" mode, you should go to the open-data-cam folder on the jetson.
 
@@ -388,7 +388,7 @@ After doing this you should re-build the Open Data Cam node app.
 npm run build
 ```
 
-You may be able to use several video format that are readable by OpenCV, we can't provide an exhaustive list but try *(the YOLO implementation use OpenCV to decode the video)*
+*You should be able to use any video file that are readable by OpenCV, which is what YOLO implementation use behind the hoods to decode the video stream*
 
 
 ## 🛠 Development notes
