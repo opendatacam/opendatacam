@@ -12,6 +12,63 @@ It is very alpha and we do not provide any guarantee that this will work for you
 - Webcam Logitech C222 (or any usb webcam compatible with Ubuntu 16.04)
 - A smartphone / tablet / laptop that you will use to operate the system
 
+## 💾 Exports documentation
+
+### Counter data export
+
+This export gives you the counters results along with the unique id of each object counted.
+
+```csv
+"Timestamp","Counter","ObjectClass","UniqueID"
+"2018-08-23T09:25:18.946Z","turquoise","car",9
+"2018-08-23T09:25:19.073Z","green","car",14
+"2018-08-23T09:25:19.584Z","yellow","car",1
+"2018-08-23T09:25:20.350Z","green","car",13
+"2018-08-23T09:25:20.600Z","turquoise","car",6
+"2018-08-23T09:25:20.734Z","yellow","car",32
+"2018-08-23T09:25:21.737Z","green","car",11
+"2018-08-23T09:25:22.890Z","turquoise","car",40
+"2018-08-23T09:25:23.145Z","green","car",7
+"2018-08-23T09:25:24.423Z","turquoise","car",4
+"2018-08-23T09:25:24.548Z","yellow","car",0
+"2018-08-23T09:25:24.548Z","turquoise","car",4
+```
+
+### Tracker data export
+
+This export gives you the raw data of all objects tracked with frame timestamps and positionning.
+
+```javascript
+[
+  // 1 Frame
+  {
+    // Objects in this frame
+    "0": {
+      "id": 13417, // unique id of this object
+      "x": 257, // position and size on a 1280x720 canvas
+      "y": 242,
+      "w": 55,
+      "h": 44,
+      "bearing": 230,
+      "name": "car"
+    },
+    "1": {
+      "id": 13418,
+      "x": 312,
+      "y": 354,
+      "w": 99,
+      "h": 101,
+      "bearing": 230,
+      "name": "car"
+    },
+    "timestamp": "2018-08-23T08:46:59.677Z" // Time of the frame
+  },
+  //...
+  // Other frames ...
+}
+```
+
+
 ## ⚙ System overview
 
 See [technical architecture](#technical-architecture) for a more detailed overview
