@@ -107,7 +107,7 @@ module.exports = {
   countItem: function(trackedItem, countingAreaKey) {
     // Add it to the history (for export feature)
     Counter.countedItemsHistory.push({
-      date: new Date().toISOString(),
+      timestamp: new Date().toISOString(),
       area: countingAreaKey,
       name: trackedItem.name,
       id: trackedItem.idDisplay
@@ -240,7 +240,7 @@ module.exports = {
     // Add tracker data to history
     // NOTE we manually populate the json file with append to avoid reading it in memory as it can be huge
     const trackerHistoryEntry = {
-      date: now,
+      timestamp: now,
       ...trackerDataForThisFrame.map((trackerData) => {
         return {
           id: trackerData.idDisplay,
