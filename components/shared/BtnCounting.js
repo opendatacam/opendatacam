@@ -16,10 +16,11 @@ class BtnCounting extends Component {
         }
         <h2>{this.props.label}</h2>
         <style jsx>{`
-          .record{
+          .record {
             position: relative;
             text-align: center;
             z-index: 2;
+            cursor: pointer;
           }
       
           .record h2{

@@ -18,6 +18,7 @@ class SlideIndicators extends Component {
             left: 50%;
             transform: translateX(-50%);
             display: flex;
+            z-index:2;
           }
           .indicator{
             background-color: white;

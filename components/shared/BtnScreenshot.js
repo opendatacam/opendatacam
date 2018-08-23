@@ -15,6 +15,7 @@ class BtnScreenshot extends Component {
             position: relative;
             text-align: center;
             z-index: 2;
+            cursor: pointer;
           }
       
           .btn-screenshot h2{

@@ -11,10 +11,11 @@ class BtnDownload extends Component {
         <img src="/static/icons/icon-download.svg" />
         <h2>Export data</h2>
         <style jsx>{`
-          .btn-download{
+          .btn-download {
             position: relative;
             text-align: center;
             z-index: 2;
+            cursor: pointer;
           }
       
           .btn-download h2{

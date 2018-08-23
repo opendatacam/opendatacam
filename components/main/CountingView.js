@@ -109,7 +109,7 @@ class CountingView extends React.Component {
             </React.Fragment>
           )}
         </Carousel>
-        <EndCountingCTA />
+        <EndCountingCTA pathVisualizationSelected={this.state.selectedSlideIndex === this.state.slides.length - 1} />
         <style jsx>{`
           .counting-view {
             width: 100%;

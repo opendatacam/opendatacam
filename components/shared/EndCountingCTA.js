@@ -16,6 +16,15 @@ class EndCountingCTA extends Component {
     link.click();
   }
 
+  exportPathVisualizationFrame() {
+    let link = document.createElement("a");
+    let frame = document.getElementById("path-visualization-canvas").toDataURL("image/png")
+                    .replace("image/png", "image/octet-stream");
+    link.href = frame;
+    link.download = 'frame.png';
+    link.click();
+  }
+
   render () {
     return (
       <React.Fragment>
@@ -32,7 +41,9 @@ class EndCountingCTA extends Component {
           >
             <h2>Get counting data</h2>
           </div> */}
-          <BtnScreenshot />
+          {this.props.pathVisualizationSelected &&
+            <BtnScreenshot onClick={() => this.exportPathVisualizationFrame()} />
+          }
           <div className="separator"></div>
           <BtnDownload />
           <div className="separator"></div>

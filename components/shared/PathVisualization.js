@@ -110,6 +110,7 @@ class PathVisualization extends Component {
           width={canvasWidth}
           height={canvasHeight}
           className="canvas"
+          id="path-visualization-canvas"
           ref={(el) => this.canvasEl = el}
         />
         <style jsx>{`
