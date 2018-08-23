@@ -6,6 +6,7 @@ import { exportCountingData, exportTrackerData } from '../../statemanagement/app
 import { stopCounting, hideCountingData } from '../../statemanagement/app/AppStateManagement';
 import BtnCounting from './BtnCounting';
 import BtnDownload from './BtnDownload';
+import BtnScreenshot from './BtnScreenshot';
 
 class EndCountingCTA extends Component {
 
@@ -31,6 +32,8 @@ class EndCountingCTA extends Component {
           >
             <h2>Get counting data</h2>
           </div> */}
+          <BtnScreenshot />
+          <div className="separator"></div>
           <BtnDownload />
           <div className="separator"></div>
           {this.props.isCounting &&
