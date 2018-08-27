@@ -42,8 +42,9 @@ This export gives you the raw data of all objects tracked with frame timestamps 
 [
   // 1 Frame
   {
+    "timestamp": "2018-08-23T08:46:59.677Z" // Time of the frame
     // Objects in this frame
-    "0": {
+    "objects": [{
       "id": 13417, // unique id of this object
       "x": 257, // position and size on a 1280x720 canvas
       "y": 242,
@@ -51,8 +52,7 @@ This export gives you the raw data of all objects tracked with frame timestamps 
       "h": 44,
       "bearing": 230,
       "name": "car"
-    },
-    "1": {
+    },{
       "id": 13418,
       "x": 312,
       "y": 354,
@@ -60,8 +60,7 @@ This export gives you the raw data of all objects tracked with frame timestamps 
       "h": 101,
       "bearing": 230,
       "name": "car"
-    },
-    "timestamp": "2018-08-23T08:46:59.677Z" // Time of the frame
+    }]
   },
   //...
   // Other frames ...

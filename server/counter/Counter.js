@@ -241,7 +241,7 @@ module.exports = {
     // NOTE we manually populate the json file with append to avoid reading it in memory as it can be huge
     const trackerHistoryEntry = {
       timestamp: now,
-      ...trackerDataForThisFrame.map((trackerData) => {
+      objects: trackerDataForThisFrame.map((trackerData) => {
         return {
           id: trackerData.idDisplay,
           x: Math.round(trackerData.x),
