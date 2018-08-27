@@ -2,6 +2,10 @@ import { fromJS } from 'immutable'
 import axios from 'axios';
 import { AVAILABLE_COLORS } from '../../utils/colors';
 
+export const defaultCountingAreaValue = fromJS({
+  yellow: null
+});
+
 // Initial state
 const initialState = fromJS({
   countingData: {
@@ -11,9 +15,7 @@ const initialState = fromJS({
     yoloIsStarting: false,
     nbItemsTrackedThisFrame: 0
   },
-  countingAreas: {
-    yellow: null
-  },
+  countingAreas: defaultCountingAreaValue,
   selectedCountingArea: 'yellow'
 })
 
@@ -33,14 +35,6 @@ export function fetchCountingData() {
         payload: response.data
       })
     });
-  }
-}
-
-export function exportCountingData() {
-  return (dispatch, getState) => {
-    let link = document.createElement("a");
-    link.href = '/counter/export';
-    link.click();
   }
 }
 

@@ -6,7 +6,7 @@ import { COLORS } from '../../utils/colors';
 import { fetchCountingData } from '../../statemanagement/app/CounterStateManagement';
 import SlideIndicators from '../shared/SlideIndicators';
 import CounterData from '../shared/CounterData';
-import SlideArrows from '../shared/SlideArrows';
+
 import EndCountingCTA from '../shared/EndCountingCTA';
 import ActiveAreaIndicator from '../shared/ActiveAreaIndicator';
 import Title from '../shared/Title';
@@ -16,6 +16,8 @@ import { selectNextCountingArea, selectPreviousCountingArea } from  '../../state
 import Loading from '../shared/Loading';
 import PathVisualization from '../shared/PathVisualization';
 import CountingAreasVisualizer from '../shared/CountingAreasVisualizer';
+
+import Carousel from '../shared/Carousel'
 
 class CountingView extends React.Component {
 
@@ -60,32 +62,6 @@ class CountingView extends React.Component {
     })
   }
 
-  selectNextSlide() {
-    if((this.state.selectedSlideIndex + 1) > (this.state.slides.length - 1)) {
-      // Select first item
-      this.setState({
-        selectedSlideIndex: 0
-      })
-    } else {
-      this.setState({
-        selectedSlideIndex: this.state.selectedSlideIndex + 1
-      })
-    }
-  }
-
-  selectPreviousSlide() {
-    if((this.state.selectedSlideIndex - 1) < 0) {
-      // Select last item
-      this.setState({
-        selectedSlideIndex: this.state.slides.length - 1
-      })
-    } else {
-      this.setState({
-        selectedSlideIndex: this.state.selectedSlideIndex - 1
-      })
-    }
-  }
-
   componentWillUnmount() {
     clearInterval(this.fetchData);
   }
@@ -110,27 +86,30 @@ class CountingView extends React.Component {
         <ActiveAreaIndicator
           color={COLORS[selectedSlide]}
         />
-        {/* <Title /> */}
-        <RecordTime />
         <SlideIndicators
           slides={this.state.slides}
           selectedSlideIndex={this.state.selectedSlideIndex}
           activeColor={COLORS[selectedSlide]}
         />
-        <PathVisualization visible={selectedSlide === 'pathvisualization'} />
-        {selectedSlide !== 'pathvisualization' &&
-          <CounterData selectedCountingArea={this.state.slides[this.state.selectedSlideIndex]} />
-        }
-        {selectedSlide !== 'pathvisualization' &&
-          <CountingAreasVisualizer
-            color={selectedSlide}
-          />
-        }
-        <SlideArrows 
-          goToNext={() => this.selectNextSlide()}
-          goToPrevious={() => this.selectPreviousSlide()}
-        />
-        <EndCountingCTA />
+        <RecordTime />
+        <Carousel onChangeSelectedSlide={(selectedIndex) => this.setState({selectedSlideIndex: selectedIndex})}>
+          {this.state.slides.map((slide) => 
+            <React.Fragment key={slide}>
+              {slide !== 'pathvisualization' &&
+                <React.Fragment>
+                  <CounterData countingArea={slide} />
+                  <CountingAreasVisualizer
+                    color={slide}
+                  />
+                </React.Fragment>
+              }
+              {slide === 'pathvisualization' &&
+                <PathVisualization />
+              }
+            </React.Fragment>
+          )}
+        </Carousel>
+        <EndCountingCTA pathVisualizationSelected={this.state.selectedSlideIndex === this.state.slides.length - 1} />
         <style jsx>{`
           .counting-view {
             width: 100%;
@@ -139,6 +118,7 @@ class CountingView extends React.Component {
             top: 0;
             left: 0;
             color: white;
+            overflow-x: hidden;
           }
 
           @media (min-aspect-ratio: 16/9) {

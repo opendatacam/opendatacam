@@ -97,14 +97,14 @@ app.prepare()
   });
 
   express.get('/counter/export', function(req, res) {
-    res.csv(Counter.getCounterHistory(), false ,{'Content-disposition': 'attachment; filename=export.csv'});
+    res.csv(Counter.getCounterHistory(), false ,{'Content-disposition': 'attachment; filename=counterData.csv'});
   });
 
 
   express.get('/counter/trackerdata', function(req, res) {
     Counter.getTrackerData().then(() => {
       // res.send('OK, file ready to download');
-      res.download('static/trackerHistory.json', 'trackerHistory.json')
+      res.download('static/trackerHistoryExport.json', 'trackerHistoryExport.json')
     }, () => {
       res.status(500).send('Something broke while generating the tracking history!');
     })

@@ -100,16 +100,17 @@ module.exports = {
       xBounds: xBounds
     }
 
-    console.log(Counter.countingAreas);
+    // console.log(Counter.countingAreas);
 
   },
 
   countItem: function(trackedItem, countingAreaKey) {
     // Add it to the history (for export feature)
     Counter.countedItemsHistory.push({
-      date: new Date().toISOString(),
+      timestamp: new Date().toISOString(),
       area: countingAreaKey,
-      name: trackedItem.name
+      name: trackedItem.name,
+      id: trackedItem.idDisplay
     })
   },
 
@@ -239,8 +240,8 @@ module.exports = {
     // Add tracker data to history
     // NOTE we manually populate the json file with append to avoid reading it in memory as it can be huge
     const trackerHistoryEntry = {
-      date: now,
-      ...trackerDataForThisFrame.map((trackerData) => {
+      timestamp: now,
+      objects: trackerDataForThisFrame.map((trackerData) => {
         return {
           id: trackerData.idDisplay,
           x: Math.round(trackerData.x),
@@ -317,12 +318,18 @@ module.exports = {
   },
 
   getTrackerData: function() {
-    // Close the json history
+    
     return new Promise((resolve, reject) => {
-      fs.appendFile('./static/trackerHistory.json', `\n]`, function (err) {
+      // Copy current trackerHistory but keep the current file has we keep adding line to it
+      fs.copyFile('./static/trackerHistory.json', './static/trackerHistoryExport.json', (err) => {
         if (err) throw err;
-        resolve();
+        // Make a valid json file by adding a closing bracket
+        fs.appendFile('./static/trackerHistoryExport.json', `\n]`, function (err) {
+          if (err) throw err;
+          resolve();
+        });
       });
+      
     });
   }
 }

@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import axios from 'axios';
 
-import { exportCountingData, exportTrackerData } from '../../statemanagement/app/CounterStateManagement';
 import { stopCounting, hideCountingData } from '../../statemanagement/app/AppStateManagement';
-import BtnStopCounting from './BtnStopCounting';
+import BtnCounting from './BtnCounting';
+import BtnDownload from './BtnDownload';
+import BtnScreenshot from './BtnScreenshot';
 
 class EndCountingCTA extends Component {
 
@@ -14,69 +14,84 @@ class EndCountingCTA extends Component {
     link.click();
   }
 
+  getCounterData() {
+    let link = document.createElement("a");
+    link.href = '/counter/export';
+    link.click();
+  }
+
+  exportPathVisualizationFrame() {
+    let link = document.createElement("a");
+    let frame = document.getElementById("path-visualization-canvas").toDataURL("image/png")
+                    .replace("image/png", "image/octet-stream");
+    link.href = frame;
+    link.download = 'frame.png';
+    link.click();
+  }
+
   render () {
     return (
       <React.Fragment>
-        {!this.props.isCounting &&
-          <div className="exportCountContainer">
-            <div 
-              className="button export"
-              onClick={() => this.getTrackerData()}
-            >
-              <h2>Get tracker data</h2>
-            </div>
-            <div 
-              className="button export"
-              onClick={() => this.props.dispatch(exportCountingData())}
-            >
-              <h2>Get counting data</h2>
-            </div>
-            <div
-              className="button count"
-              onClick={() => this.props.dispatch(hideCountingData())}
-            >
-              <h2>Count again</h2>
-            </div>
-          </div>
-        }
-        {this.props.isCounting &&
-          <BtnStopCounting 
-            onClick={() => this.props.dispatch(stopCounting())}
-          />
-        }
+        <div className="exportCountContainer">
+          {this.props.pathVisualizationSelected &&
+            <React.Fragment>
+              <div className="separator"></div>
+              <BtnDownload 
+                label="Tracker Data"
+                onClick={() => this.getTrackerData()}
+              />
+            </React.Fragment>
+          }
+          {!this.props.pathVisualizationSelected &&
+            <React.Fragment>
+            <div className="separator"></div>
+            <BtnDownload 
+              label="Counting Data"
+              onClick={() => this.getCounterData()}
+            />
+            </React.Fragment>
+          }
+          {this.props.pathVisualizationSelected &&
+            <React.Fragment>
+              <div className="separator"></div>
+              <BtnScreenshot onClick={() => this.exportPathVisualizationFrame()} />
+            </React.Fragment>
+          }
+          
+          {this.props.isCounting &&
+            <React.Fragment>
+              <div className="separator"></div>
+              <BtnCounting 
+                label="Stop Tracking"
+                iconStop
+                onClick={() => this.props.dispatch(stopCounting())}
+              />
+            </React.Fragment>
+
+          }
+          {!this.props.isCounting &&
+            <React.Fragment>
+              <div className="separator"></div>
+              <BtnCounting 
+                label="New Tracking"
+                onClick={() => this.props.dispatch(hideCountingData())}
+              />
+            </React.Fragment>
+          }
+        </div>
         <style jsx>{`
           .exportCountContainer{
-            position: fixed;
-            bottom: 1.5rem;
-            height: 3.1rem;
-            left: 50%;
-            transform: translateX(-50%);
+            position: absolute;
+            bottom: 1rem;
             display: flex;
+            width: 100%;
             z-index: 2;
-          }
-          .exportCountContainer .button{
-            height: 2.5rem;
-            width: 10rem;
-            border: 5px solid transparent;
-            display: flex;
-            justify-content: center;
             align-items: center;
+            justify-content: center;
           }
-          .exportCountContainer .export {
-            background-color: white;
-            color: black;
-            margin-right: 1rem;
-          }
-          .exportCountContainer .export:hover{
-            border: 5px solid #D6D6D6;
-          }
-          .exportCountContainer .count{
-            background-color: #5C5C5C;
-            color: white;
-            width: 8.5rem;
-          }
-          .exportCountContainer .count:hover{
-            border: 5px solid #464646;
+
+          .separator {
+            width: 30px;
           }
         `}</style>
       </React.Fragment>

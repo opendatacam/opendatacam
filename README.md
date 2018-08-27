@@ -12,6 +12,62 @@ It is very alpha and we do not provide any guarantee that this will work for you
 - Webcam Logitech C222 (or any usb webcam compatible with Ubuntu 16.04)
 - A smartphone / tablet / laptop that you will use to operate the system
 
+## 💾 Exports documentation
+
+### Counter data export
+
+This export gives you the counters results along with the unique id of each object counted.
+
+```csv
+"Timestamp","Counter","ObjectClass","UniqueID"
+"2018-08-23T09:25:18.946Z","turquoise","car",9
+"2018-08-23T09:25:19.073Z","green","car",14
+"2018-08-23T09:25:19.584Z","yellow","car",1
+"2018-08-23T09:25:20.350Z","green","car",13
+"2018-08-23T09:25:20.600Z","turquoise","car",6
+"2018-08-23T09:25:20.734Z","yellow","car",32
+"2018-08-23T09:25:21.737Z","green","car",11
+"2018-08-23T09:25:22.890Z","turquoise","car",40
+"2018-08-23T09:25:23.145Z","green","car",7
+"2018-08-23T09:25:24.423Z","turquoise","car",4
+"2018-08-23T09:25:24.548Z","yellow","car",0
+"2018-08-23T09:25:24.548Z","turquoise","car",4
+```
+
+### Tracker data export
+
+This export gives you the raw data of all objects tracked with frame timestamps and positionning.
+
+```javascript
+[
+  // 1 Frame
+  {
+    "timestamp": "2018-08-23T08:46:59.677Z" // Time of the frame
+    // Objects in this frame
+    "objects": [{
+      "id": 13417, // unique id of this object
+      "x": 257, // position and size on a 1280x720 canvas
+      "y": 242,
+      "w": 55,
+      "h": 44,
+      "bearing": 230,
+      "name": "car"
+    },{
+      "id": 13418,
+      "x": 312,
+      "y": 354,
+      "w": 99,
+      "h": 101,
+      "bearing": 230,
+      "name": "car"
+    }]
+  },
+  //...
+  // Other frames ...
+}
+```
+
+
 ## ⚙ System overview
 
 See [technical architecture](#technical-architecture) for a more detailed overview
@@ -302,6 +358,65 @@ To debug the app log onto the jetson board and inspect the logs from pm2 or stop
   sudo netstat -nlp | grep :8090
   sudo kill <pid>
   ```
+
+## 🗃 Run open data cam on a video file instead of the webcam feed:
+
+It is possible to run Open Data Cam on a video file instead of the webcam feed. 
+
+Before doing this you should be aware that the neural network (YOLO) will run on all the frames of the video file at ~7-8 FPS (best jetson speed) and do not play the file in real-time. If you want to simulate a real video feed you should drop the framerate of your video down to 7 FPS (or whatever frame rate your jetson board can run YOLO).
+
+To switch the Open Data Cam to "video file reading" mode, you should go to the open-data-cam folder on the jetson.
+
+1. `cd <path/to/open-data-cam>`
+
+2. Then open [YOLO.js](https://github.com/moovel/lab-opendatacam/blob/master/server/processes/YOLO.js#L30), and uncomment those lines:
+
+  ```javascript
+  YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-filename', 'YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4', '-address','ws://localhost','-port','8080'],{
+    max: 1,
+    cwd: config.PATH_TO_YOLO_DARKNET,
+    killTree: true
+  });
+  ```
+
+3. Copy the video file you want to run open data cam on in the `darknet-net` folder on the Jetson *(if you did auto-install, it is this path: ~/darknet-net)* 
+
+```
+// For example, your file is `video-street-moovelab.mp4`, you will end up with the following in the darknet-net folder:
+
+darknet-net
+  |-cfg
+  |-data
+  |-examples
+  |-include
+  |-python
+  |-scripts
+  |-src
+  |# ... other files
+  |video-street-moovellab.mp4 <--- Video file
+```
+
+4. Then replace `YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4` placeholder in [YOLO.js](https://github.com/moovel/lab-opendatacam/blob/master/server/processes/YOLO.js#L37) with your file name, in this case `video-street-moovellab.mp4`
+
+```javascript
+// In our example you should end up with the following:
+
+YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-filename', 'video-street-moovellab.mp4', '-address','ws://localhost','-port','8080'],{
+    max: 1,
+    cwd: config.PATH_TO_YOLO_DARKNET,
+    killTree: true
+  });
+```
+
+
+5. After doing this you should re-build the Open Data Cam node app.
+
+```
+npm run build
+```
+
+
+*You should be able to use any video file that are readable by OpenCV, which is what YOLO implementation use behind the hoods to decode the video stream*
 
 
 ## 🛠 Development notes

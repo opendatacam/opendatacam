@@ -6,7 +6,7 @@ import MenuCountingAreasEditor from './MenuCountingAreasEditor'
 
 import { COLORS } from '../../utils/colors';
 
-import { clearCountingArea, saveCountingArea } from '../../statemanagement/app/CounterStateManagement'
+import { clearCountingArea, saveCountingArea, defaultCountingAreaValue } from '../../statemanagement/app/CounterStateManagement'
 
 class CountingAreasEditor extends Component {
 
@@ -51,7 +51,7 @@ class CountingAreasEditor extends Component {
     });
     
     this.editorCanvas.on('mouse:up', (o) => {
-      let { x1, y1, x2, y2 } = this.lines[this.props.selectedCountingArea] 
+      let { x1, y1, x2, y2 } = this.lines[this.props.selectedCountingArea];
       this.props.dispatch(saveCountingArea(this.props.selectedCountingArea, {
         point1: { x1, y1},
         point2: { x2, y2},
@@ -71,14 +71,20 @@ class CountingAreasEditor extends Component {
 
   componentDidMount() {
     if(this.elCanvas) {
-      const { width, height } = this.elCanvas.getBoundingClientRect();
-      this.editorCanvas = new fabric.Canvas(this.elCanvas, { selection: false, width: width, height: height });
-      if(this.props.selectedCountingArea) {
-        this.initListeners();
+      
+      // If no countingAreas exists already
+      if(this.props.countingAreas.equals(defaultCountingAreaValue)) {
+        const { width, height } = this.elCanvas.getBoundingClientRect();
+        this.editorCanvas = new fabric.Canvas(this.elCanvas, { selection: false, width: width, height: height });
+      } else {
+        // If some counting areas exists already
+        const { refWidth, refHeight } = this.props.countingAreas.find((val) => val !== null).toJS();
+        this.editorCanvas = new fabric.Canvas(this.elCanvas, { selection: false, width: refWidth, height: refHeight });
+        this.reRenderCountingAreasInEditor(this.props.countingAreas)
       }
 
-      if(this.props.countingAreas) {
-        this.reRenderCountingAreasInEditor(this.props.countingAreas)
+      if(this.props.selectedCountingArea) {
+        this.initListeners();
       }
     }
   }
@@ -128,16 +134,16 @@ class CountingAreasEditor extends Component {
           }
 
           @media (min-aspect-ratio: 16/9) {
-            .editor-canvas {
-              width: 100%;
-              height: auto;
+            :global(.canvas-container),.editor-canvas {
+              width: 100% !important;
+              height: auto !important;
             }
           }
 
           @media (max-aspect-ratio: 16/9) {
-            .editor-canvas {
-              width: auto;
-              height: 100%;
+            :global(.canvas-container),.editor-canvas {
+              width: auto !important;
+              height: 100% !important;
             }
           }
         `}</style>
