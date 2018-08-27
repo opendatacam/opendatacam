@@ -369,7 +369,7 @@ To switch the Open Data Cam to "video file reading" mode, you should go to the o
 
 1. `cd <path/to/open-data-cam>`
 
-2. Then open YOLO.js, and uncomment those lines:
+2. Then open [YOLO.js](https://github.com/moovel/lab-opendatacam/blob/master/server/processes/YOLO.js#L30), and uncomment those lines:
 
   ```javascript
   YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-filename', 'YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4', '-address','ws://localhost','-port','8080'],{
@@ -379,9 +379,37 @@ To switch the Open Data Cam to "video file reading" mode, you should go to the o
   });
   ```
 
-3. Copy the video file you want to run in the `darknet-net` folder on the Jetson *(if you did auto-install, it is this path: ~/darknet-net)* and replace `YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4` with the name of your file.
+3. Copy the video file you want to run open data cam on in the `darknet-net` folder on the Jetson *(if you did auto-install, it is this path: ~/darknet-net)* 
 
-4. After doing this you should re-build the Open Data Cam node app.
+```
+// For example, your file is `video-street-moovelab.mp4`, you will end up with the following in the darknet-net folder:
+
+darknet-net
+  |-cfg
+  |-data
+  |-examples
+  |-include
+  |-python
+  |-scripts
+  |-src
+  |# ... other files
+  |video-street-moovellab.mp4 <--- Video file
+```
+
+4. Then replace `YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4` placeholder in [YOLO.js](https://github.com/moovel/lab-opendatacam/blob/master/server/processes/YOLO.js#L37) with your file name, in this case `video-street-moovellab.mp4`
+
+```javascript
+// In our example you should end up with the following:
+
+YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-filename', 'video-street-moovellab.mp4', '-address','ws://localhost','-port','8080'],{
+    max: 1,
+    cwd: config.PATH_TO_YOLO_DARKNET,
+    killTree: true
+  });
+```
+
+
+5. After doing this you should re-build the Open Data Cam node app.
 
 ```
 npm run build
