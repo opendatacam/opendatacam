@@ -9,7 +9,9 @@ class Carousel extends Component {
   constructor(props){
     super(props)
     this.state = {
-      position: 0
+      position: 0,
+      direction: 'next',
+      isSliding: false,
     }
   }
 
@@ -24,14 +26,22 @@ class Carousel extends Component {
     const { position } = this.state
     const { children } = this.props
     const numItems = children.length || 1
-    this.doSliding(position === numItems - 1 ? 0 : position + 1)
+    this.doSliding('next', position === numItems - 1 ? 0 : position + 1)
   }
 
-  doSliding = (position) => {
+  previousSlide = () => {
+    const { position } = this.state
+    const { children } = this.props
+    const numItems = children.length || 1
+    this.doSliding('prev', position === 0 ? numItems - 1 : position - 1)
+  }
+
+  doSliding = (direction, position) => {
     this.setState({
       triggerSliding: true,
       isSliding: true,
-      position
+      position,
+      direction
     })
   
     setTimeout(() => {
@@ -51,7 +61,32 @@ class Carousel extends Component {
   }
 
   render() {
-    const { children } = this.props
+    const { children } = this.props;
+    const numItems = children.length || 1
+
+    let transformCSS = 'translateX(0%)'
+
+    if (numItems === 1) {
+      transformCSS = 'translateX(0%)';
+    }
+    else if (numItems === 2) {
+      if (!this.state.triggerSliding && this.state.direction === 'next') {
+        transformCSS = 'translateX(-100%)';
+      }
+      else if (!this.state.triggerSliding && this.state.direction === 'prev') {
+        transformCSS = 'translateX(0%)';
+      } else if(this.state.direction === 'prev') {
+        transformCSS = 'translateX(-100%)';
+      }
+    } 
+    else {
+      if (!this.state.triggerSliding) {
+        transformCSS = 'translateX(-100%)';
+      }
+      else if (this.state.direction === 'prev') {
+        transformCSS = 'translateX(-200%)';
+      }
+    }
   
     return (
       <div className="carousel">
@@ -59,7 +94,8 @@ class Carousel extends Component {
           {children.map((child, index) => (
             // Visibility hidden on "transitionning" for mobile compatibility of carousel, hacky workaround
             <div
-              className={`carousel-slot ${this.getOrder(index) !== 1 && !this.state.isSliding ? 'hidden' : 'visible' }`}
+              className={`carousel-slot ${this.getOrder(index) !== 1 && !this.state.isSliding ? 'hidden' : 'visible' 
+              }`}
               style={{ order: this.getOrder(index) }}
               key={ index }
             >
@@ -68,6 +104,7 @@ class Carousel extends Component {
           ))}
         </div>
         <SlideArrows 
+          goToPrevious={() => this.previousSlide()} 
           goToNext={() => this.nextSlide()}
         />
         <style jsx>{`
@@ -97,7 +134,7 @@ class Carousel extends Component {
         <style jsx>{`
           .carousel-container {
             transition: ${this.state.triggerSliding ? 'none' : 'transform 0.5s ease-in'};
-            transform: ${!this.state.triggerSliding ? 'translateX(-100%)' : 'translateX(0%)'};
+            transform: ${transformCSS};
           }
         `}</style>
       </div>

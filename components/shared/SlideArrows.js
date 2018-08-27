@@ -5,11 +5,11 @@ class SlideArrows extends Component {
   render () {
     return (
       <React.Fragment>
-        {/* <img
+        <img
           onClick={() => this.props.goToPrevious()}
           className="arrowLeft" 
           src="/static/icons/icon-arrow-left.svg"
-        /> */}
+        />
         <img
           onClick={() => this.props.goToNext()}
           className="arrowRight"
