@@ -367,25 +367,26 @@ Before doing this you should be aware that the neural network (YOLO) will run on
 
 To switch the Open Data Cam to "video file reading" mode, you should go to the open-data-cam folder on the jetson.
 
-`cd <path/to/open-data-cam>`
+1. `cd <path/to/open-data-cam>`
 
-Then open YOLO.js, and uncomment those lines:
+2. Then open YOLO.js, and uncomment those lines:
 
-```javascript
-YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-filename', 'YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4', '-address','ws://localhost','-port','8080'],{
-  max: 1,
-  cwd: config.PATH_TO_YOLO_DARKNET,
-  killTree: true
-});
-```
+  ```javascript
+  YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-filename', 'YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4', '-address','ws://localhost','-port','8080'],{
+    max: 1,
+    cwd: config.PATH_TO_YOLO_DARKNET,
+    killTree: true
+  });
+  ```
 
-Copy paste your video file in the darknet-net folder and replace `YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4` with the name of your file.
+3. Copy the video file you want to run in the `darknet-net` folder on the Jetson *(if you did auto-install, it is this path: ~/darknet-net)* and replace `YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4` with the name of your file.
 
-After doing this you should re-build the Open Data Cam node app.
+4. After doing this you should re-build the Open Data Cam node app.
 
 ```
 npm run build
 ```
+
 
 *You should be able to use any video file that are readable by OpenCV, which is what YOLO implementation use behind the hoods to decode the video stream*
 
