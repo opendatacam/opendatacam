@@ -33,45 +33,50 @@ class EndCountingCTA extends Component {
     return (
       <React.Fragment>
         <div className="exportCountContainer">
-          {/* <div 
-            className="button export"
-            onClick={() => this.getTrackerData()}
-          >
-            <h2>Get tracker data</h2>
-          </div>
-          <div 
-            className="button export"
-            onClick={() => this.getCounterData()}
-          >
-            <h2>Get counting data</h2>
-          </div> */}
-          <BtnDownload 
-            label="Tracker data"
-            onClick={() => this.getTrackerData()}
-          />
-          <div className="separator"></div>
-          <BtnDownload 
-            iconNotepad
-            label="Counting data"
-            onClick={() => this.getCounterData()}
-          />
-          <div className="separator"></div>
           {this.props.pathVisualizationSelected &&
-            <BtnScreenshot onClick={() => this.exportPathVisualizationFrame()} />
+            <React.Fragment>
+              <div className="separator"></div>
+              <BtnDownload 
+                label="Tracker Data"
+                onClick={() => this.getTrackerData()}
+              />
+            </React.Fragment>
           }
-          <div className="separator"></div>
-          {this.props.isCounting &&
-            <BtnCounting 
-              label="Stop tracking"
-              iconStop
-              onClick={() => this.props.dispatch(stopCounting())}
+          {!this.props.pathVisualizationSelected &&
+            <React.Fragment>
+            <div className="separator"></div>
+            <BtnDownload 
+              label="Counting Data"
+              onClick={() => this.getCounterData()}
             />
+            </React.Fragment>
+          }
+          {this.props.pathVisualizationSelected &&
+            <React.Fragment>
+              <div className="separator"></div>
+              <BtnScreenshot onClick={() => this.exportPathVisualizationFrame()} />
+            </React.Fragment>
+          }
+          
+          {this.props.isCounting &&
+            <React.Fragment>
+              <div className="separator"></div>
+              <BtnCounting 
+                label="Stop Tracking"
+                iconStop
+                onClick={() => this.props.dispatch(stopCounting())}
+              />
+            </React.Fragment>
+
           }
           {!this.props.isCounting &&
-            <BtnCounting 
-              label="New tracking"
-              onClick={() => this.props.dispatch(hideCountingData())}
-            />
+            <React.Fragment>
+              <div className="separator"></div>
+              <BtnCounting 
+                label="New Tracking"
+                onClick={() => this.props.dispatch(hideCountingData())}
+              />
+            </React.Fragment>
           }
         </div>
         <style jsx>{`

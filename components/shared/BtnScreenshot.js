@@ -9,7 +9,7 @@ class BtnScreenshot extends Component {
         onClick={() => this.props.onClick()}
       >
         <img src="/static/icons/icon-screenshot.svg" />
-        <h2>Save frame</h2>
+        <h2>Save Frame</h2>
         <style jsx>{`
           .btn-screenshot{
             position: relative;
