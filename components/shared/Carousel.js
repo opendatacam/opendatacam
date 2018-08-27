@@ -72,10 +72,7 @@ class Carousel extends Component {
     else if (numItems === 2) {
       if (!this.state.triggerSliding && this.state.direction === 'next') {
         transformCSS = 'translateX(-100%)';
-      }
-      else if (!this.state.triggerSliding && this.state.direction === 'prev') {
-        transformCSS = 'translateX(0%)';
-      } else if(this.state.direction === 'prev') {
+      } else if(!this.state.triggerSliding && this.state.direction === 'prev') {
         transformCSS = 'translateX(-100%)';
       }
     } 
