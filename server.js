@@ -11,6 +11,7 @@ const WebcamStream = require('./server/processes/WebcamStream');
 const Counter = require('./server/counter/Counter');
 const request = require('request');
 const fs = require('fs');
+const cloneDeep = require('lodash.clonedeep');
 
 const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not running on the Jetson
 
@@ -97,7 +98,9 @@ app.prepare()
   });
 
   express.get('/counter/export', function(req, res) {
-    res.csv(Counter.getCounterHistory(), false ,{'Content-disposition': 'attachment; filename=counterData.csv'});
+    var dataToExport = cloneDeep(Counter.getCounterHistory());
+    // console.log(dataToExport);
+    res.csv(dataToExport, false ,{'Content-disposition': 'attachment; filename=counterData.csv'});
   });
 
 
