@@ -1,6 +1,12 @@
 # Open traffic cam (with YOLO)
 
-# Table of Contents
+This project is offline lightweight DIY solution to monitor urban landscape. After installing this software on the specified hardware (Nvidia Jetson board + Logitech webcam), you will be able to count cars, pedestrians, motorbikes from your webcam live stream.
+
+Behind the scenes, it feeds the webcam stream to a neural network (YOLO darknet) and make sense of the generated detections.
+
+It is very alpha and we do not provide any guarantee that this will work for your use case, but we conceived it as a starting point from where you can build-on & improve.
+
+### Table of Contents
 
 - [Hardware pre-requisite](#-hardware-pre-requisite)
 - [Exports documentation](#-exports-documentation)
@@ -21,12 +27,6 @@
 - [Development notes](#-development-notes)
   - [Technical architecture](#technical-architecture)
   - [Miscellaneous dev tips](#miscellaneous-dev-tips)
-
-This project is offline lightweight DIY solution to monitor urban landscape. After installing this software on the specified hardware (Nvidia Jetson board + Logitech webcam), you will be able to count cars, pedestrians, motorbikes from your webcam live stream.
-
-Behind the scenes, it feeds the webcam stream to a neural network (YOLO darknet) and make sense of the generated detections.
-
-It is very alpha and we do not provide any guarantee that this will work for your use case, but we conceived it as a starting point from where you can build-on & improve.
 
 ## 💻 Hardware pre-requisite
 
@@ -105,6 +105,8 @@ See [technical architecture](#technical-architecture) for a more detailed overvi
 
 - Download [JetPack](https://developer.nvidia.com/embedded/downloads#?search=jetpack%203.1) to Flash your Jetson board with the linux base image and needed dependencies
 - Follow the [install guide](http://docs.nvidia.com/jetpack-l4t/3.1/index.html#developertools/mobile/jetpack/l4t/3.1/jetpack_l4t_install.htm) provided by NVIDIA
+
+> NOTE: You also can find a detailed video tutorial for flashing the Jetson board [here](https://www.youtube.com/watch?v=D7lkth34rgM).
 
 ### 🛩Prepare Jetson Board
 
