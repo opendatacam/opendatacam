@@ -1,5 +1,27 @@
 # Open traffic cam (with YOLO)
 
+# Table of Contents
+
+- [Hardware pre-requisite](#-hardware-pre-requisite)
+- [Exports documentation](#-exports-documentation)
+- [System overview](#-system-overview)
+- [Step by Step install guide](#-step-by-step-install-guide)
+  - [Flash Jetson Board:](#️flash-jetson-board)
+  - [Prepare Jetson Board](#prepare-jetson-board)
+  - [Configure Ubuntu to turn the jetson into a wifi access point](#configure-ubuntu-to-turn-the-jetson-into-a-wifi-access-point)
+  - [Configure jetson to start in overclocking mode:](#configure-jetson-to-start-in-overclocking-mode)
+  - [Install Darknet-net:](#install-darknet-net)
+  - [Install the open-data-cam node app](#install-the-open-data-cam-node-app)
+  - [Restart the jetson board and open http://IP-OF-THE-JETSON-BOARD:8080/](#-restart-the-jetson-board-and-open-httpip-of-the-jetson-board8080)
+  - [Connect you device to the jetson](#connect-you-device-to-the-jetson)
+  - [You are done](#you-are-done-)
+  - [Automatic installation (experimental)](#️automatic-installation-experimental)
+- [Troubleshoothing](#troubleshoothing)
+- [Run open data cam on a video file instead of the webcam feed:](#-run-open-data-cam-on-a-video-file-instead-of-the-webcam-feed)
+- [Development notes](#-development-notes)
+  - [Technical architecture](#technical-architecture)
+  - [Miscellaneous dev tips](#miscellaneous-dev-tips)
+
 This project is offline lightweight DIY solution to monitor urban landscape. After installing this software on the specified hardware (Nvidia Jetson board + Logitech webcam), you will be able to count cars, pedestrians, motorbikes from your webcam live stream.
 
 Behind the scenes, it feeds the webcam stream to a neural network (YOLO darknet) and make sense of the generated detections.
@@ -8,7 +30,7 @@ It is very alpha and we do not provide any guarantee that this will work for you
 
 ## 💻 Hardware pre-requisite
 
-- Nvidia Jetson TX2 
+- Nvidia Jetson TX2
 - Webcam Logitech C222 (or any usb webcam compatible with Ubuntu 16.04)
 - A smartphone / tablet / laptop that you will use to operate the system
 
@@ -67,7 +89,6 @@ This export gives you the raw data of all objects tracked with frame timestamps 
 }
 ```
 
-
 ## ⚙ System overview
 
 See [technical architecture](#technical-architecture) for a more detailed overview
@@ -93,19 +114,19 @@ See [technical architecture](#technical-architecture) for a more detailed overvi
   sudo apt-get update
   ```
 
-- Install __cURL__
+- Install **cURL**
 
   ```bash
   sudo apt-get install curl
   ```
 
-- install __git-core__
+- install **git-core**
 
   ```bash
   sudo apt-get install git-core
   ```
 
-- Install __nodejs__ (v8):
+- Install **nodejs** (v8):
 
   ```bash
   curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
@@ -113,7 +134,7 @@ See [technical architecture](#technical-architecture) for a more detailed overvi
   sudo apt-get install -y build-essential
   ```
 
-- Install __ffmpeg__ (v3)
+- Install **ffmpeg** (v3)
 
   ```bash
   sudo add-apt-repository ppa:jonathonf/ffmpeg-3
@@ -122,7 +143,7 @@ See [technical architecture](#technical-architecture) for a more detailed overvi
   sudo apt-get install ffmpeg
   ```
 
-- Optional: Install __nano__
+- Optional: Install **nano**
 
   ```bash
   sudo apt-get install nano
@@ -130,7 +151,7 @@ See [technical architecture](#technical-architecture) for a more detailed overvi
 
 ### 📡Configure Ubuntu to turn the jetson into a wifi access point
 
-- enable SSID broadcast 
+- enable SSID broadcast
 
   add the following line to `/etc/modprobe.d/bcmdhd.conf`
 
@@ -140,9 +161,9 @@ See [technical architecture](#technical-architecture) for a more detailed overvi
 
   further infos: [here](https://devtalk.nvidia.com/default/topic/910608/jetson-tx1/setting-up-wifi-access-point-on-tx1/post/4786912/#4786912)
 
-- Configure hotspot via UI 
+- Configure hotspot via UI
 
-  __follow this guide: <https://askubuntu.com/a/762885>__
+  **follow this guide: <https://askubuntu.com/a/762885>**
 
 - Define Address range for the hotspot network
 
@@ -173,7 +194,7 @@ See [technical architecture](#technical-architecture) for a more detailed overvi
 - Add the following line to `/etc/rc.local` before `exit 0`:
 
   ```bash
-  #Maximize performances 
+  #Maximize performances
   ( sleep 60 && /home/ubuntu/jetson_clocks.sh )&
   ```
 
@@ -186,10 +207,10 @@ See [technical architecture](#technical-architecture) for a more detailed overvi
 
 ### 👁Install Darknet-net:
 
-__IMPORTANT__ Make sure that __openCV__ (v2) and __CUDA__ will be installed via JetPack (post installation step)
-if not:  (fallback :openCV 2: [install script](https://gist.github.com/jayant-yadav/809723151f2f72a93b2ee1040c337427#file-opencv_install-sh), CUDA: no easy way yet)
+**IMPORTANT** Make sure that **openCV** (v2) and **CUDA** will be installed via JetPack (post installation step)
+if not: (fallback :openCV 2: [install script](https://gist.github.com/jayant-yadav/809723151f2f72a93b2ee1040c337427#file-opencv_install-sh), CUDA: no easy way yet)
 
-- Install __libwsclient__:
+- Install **libwsclient**:
 
   ```bash
   git clone https://github.com/PTS93/libwsclient
@@ -198,7 +219,7 @@ if not:  (fallback :openCV 2: [install script](https://gist.github.com/jayant-ya
   ./configure && make && sudo make install
   ```
 
-- Install __liblo__:
+- Install **liblo**:
 
   ```bash
   wget https://github.com/radarsat1/liblo/releases/download/0.29/liblo-0.29.tar.gz --no-check-certificate
@@ -207,7 +228,7 @@ if not:  (fallback :openCV 2: [install script](https://gist.github.com/jayant-ya
   ./configure && make && sudo make install
   ```
 
-- Install __json-c__:
+- Install **json-c**:
 
   ```bash
   git clone https://github.com/json-c/json-c.git
@@ -216,13 +237,13 @@ if not:  (fallback :openCV 2: [install script](https://gist.github.com/jayant-ya
   ./configure && make && make check && sudo make install
   ```
 
-- Install __darknet-net__:
+- Install **darknet-net**:
 
   ```bash
   git clone https://github.com/meso-unimpressed/darknet-net.git
   ```
 
-- Download __weight files__:
+- Download **weight files**:
 
   link: [yolo.weight-files](https://pjreddie.com/media/files/yolo-voc.weights)
 
@@ -242,12 +263,12 @@ if not:  (fallback :openCV 2: [install script](https://gist.github.com/jayant-ya
     |# ... other files
     |yolo-voc.weights <--- Weight file should be in the root directory
   ```
-  
+
   ```bash
   wget https://pjreddie.com/media/files/yolo-voc.weights --no-check-certificate
   ```
 
-- Make __darknet-net__
+- Make **darknet-net**
 
   ```bash
   cd darknet-net
@@ -256,20 +277,20 @@ if not:  (fallback :openCV 2: [install script](https://gist.github.com/jayant-ya
 
 ### 🎥Install the open-data-cam node app
 
-- Install __pm2__ and __next__ globally
+- Install **pm2** and **next** globally
 
   ```bash
   sudo npm i -g pm2
   sudo npm i -g next
   ```
 
-- Clone __open_data_cam__ repo:
+- Clone **open_data_cam** repo:
 
   ```bash
   git clone https://github.com/moovel/lab-open-data-cam.git
   ```
 
-- Specify __ABSOLUTE__  `PATH_TO_YOLO_DARKNET` path in `lab-open-data-cam/config.json` (open data cam repo)
+- Specify **ABSOLUTE** `PATH_TO_YOLO_DARKNET` path in `lab-open-data-cam/config.json` (open data cam repo)
 
   e.g.:
 
@@ -279,7 +300,7 @@ if not:  (fallback :openCV 2: [install script](https://gist.github.com/jayant-ya
   }
   ```
 
-- Install __open data cam__
+- Install **open data cam**
 
   ```bash
   cd <path/to/open-data-cam>
@@ -287,14 +308,14 @@ if not:  (fallback :openCV 2: [install script](https://gist.github.com/jayant-ya
   npm run build
   ```
 
-- Run __open data cam__ on boot
+- Run **open data cam** on boot
 
   ```bash
   cd <path/to/open-data-cam>
   # launch pm2 at startup
-  # this command gives you instructions to configure pm2 to 
+  # this command gives you instructions to configure pm2 to
   # start at ubuntu startup, follow them
-  sudo pm2 startup  
+  sudo pm2 startup
 
   # Once pm2 is configured to start at startup
   # Configure pm2 to start the Open Traffic Cam app
@@ -306,27 +327,27 @@ if not:  (fallback :openCV 2: [install script](https://gist.github.com/jayant-ya
 
 ### Connect you device to the jetson
 
-> 💡 We should maybe set up a "captive portal" to avoid people needing to enter the ip of the jetson, didn't try yet 💡 
+> 💡 We should maybe set up a "captive portal" to avoid people needing to enter the ip of the jetson, didn't try yet 💡
 
 When the jetson is started you should have a wifi "YOUR-HOTSPOT-NAME" available.
 
 - Connect you device to the jetson wifi
 - Open you browser and open http://IPOFTHEJETSON:8080
-- In our case, IPOFJETSON is: http://192.168.2.1:8080 
+- In our case, IPOFJETSON is: http://192.168.2.1:8080
 
 ### You are done 👌
 
 > 🚨 This alpha version of december is really alpha and you might need to restart ubuntu a lot as it doesn't clean up process well when you switch between the counting and the webcam view 🚨
 
-You should be able to monitor the jetson from the UI we've build and count 🚗 🏍 🚚 !  
+You should be able to monitor the jetson from the UI we've build and count 🚗 🏍 🚚 !
 
 ### ‼️Automatic installation (experimental)
 
-The install script for autmatic installation 
+The install script for autmatic installation
 
-> Setting up the access point is not automated yet! __follow this guide: https://askubuntu.com/a/762885 __ to set up the hotspot.
+> Setting up the access point is not automated yet! **follow this guide: https://askubuntu.com/a/762885 ** to set up the hotspot.
 
-- run the `install.sh` script directly from GitHub 
+- run the `install.sh` script directly from GitHub
 
   ```bash
   wget -O - https://raw.githubusercontent.com/moovel/lab-opendatacam/master/install/install.sh | bash
@@ -334,23 +355,23 @@ The install script for autmatic installation
 
 ## Troubleshoothing
 
-To debug the app log onto the jetson board and inspect the logs from pm2 or stop the pm2 service (`sudo pm2 stop <pid>`) and start the app by using `sudo npm start` to see the console output directly. 
+To debug the app log onto the jetson board and inspect the logs from pm2 or stop the pm2 service (`sudo pm2 stop <pid>`) and start the app by using `sudo npm start` to see the console output directly.
 
-- __Error__: `please specify the path to the raw detections file`
+- **Error**: `please specify the path to the raw detections file`
 
-  Make sure that `ffmpeg` is installed and is above version `2.8.11` 
+  Make sure that `ffmpeg` is installed and is above version `2.8.11`
 
-- __Error__: `Could *not* find a valid build in the '.next' directory! Try building your app with '*next* build' before starting the server`
+- **Error**: `Could *not* find a valid build in the '.next' directory! Try building your app with '*next* build' before starting the server`
 
   Run `npm build` before starting the app
 
 - Could not find darknet. Be sure to `make` darknet without `sudo` otherwise it will abort mid installation.
 
-- __Error__: `cannot open shared object file: No such file or directory`
+- **Error**: `cannot open shared object file: No such file or directory`
 
   Try reinstalling the liblo package.
 
-- __Error__: `Error: Cannot stop process that is not running.` 
+- **Error**: `Error: Cannot stop process that is not running.`
 
   It is possible that a process with the port `8090` is causing the error. Try to kill the process and restart the board:
 
@@ -361,7 +382,7 @@ To debug the app log onto the jetson board and inspect the logs from pm2 or stop
 
 ## 🗃 Run open data cam on a video file instead of the webcam feed:
 
-It is possible to run Open Data Cam on a video file instead of the webcam feed. 
+It is possible to run Open Data Cam on a video file instead of the webcam feed.
 
 Before doing this you should be aware that the neural network (YOLO) will run on all the frames of the video file at ~7-8 FPS (best jetson speed) and do not play the file in real-time. If you want to simulate a real video feed you should drop the framerate of your video down to 7 FPS (or whatever frame rate your jetson board can run YOLO).
 
@@ -371,15 +392,31 @@ To switch the Open Data Cam to "video file reading" mode, you should go to the o
 
 2. Then open [YOLO.js](https://github.com/moovel/lab-opendatacam/blob/master/server/processes/YOLO.js#L30), and uncomment those lines:
 
-  ```javascript
-  YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-filename', 'YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4', '-address','ws://localhost','-port','8080'],{
+```javascript
+YOLO.process = new forever.Monitor(
+  [
+    "./darknet",
+    "detector",
+    "demo",
+    "cfg/voc.data",
+    "cfg/yolo-voc.cfg",
+    "yolo-voc.weights",
+    "-filename",
+    "YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4",
+    "-address",
+    "ws://localhost",
+    "-port",
+    "8080"
+  ],
+  {
     max: 1,
     cwd: config.PATH_TO_YOLO_DARKNET,
     killTree: true
-  });
-  ```
+  }
+);
+```
 
-3. Copy the video file you want to run open data cam on in the `darknet-net` folder on the Jetson *(if you did auto-install, it is this path: ~/darknet-net)* 
+3. Copy the video file you want to run open data cam on in the `darknet-net` folder on the Jetson _(if you did auto-install, it is this path: ~/darknet-net)_
 
 ```
 // For example, your file is `video-street-moovelab.mp4`, you will end up with the following in the darknet-net folder:
@@ -401,13 +438,28 @@ darknet-net
 ```javascript
 // In our example you should end up with the following:
 
-YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-filename', 'video-street-moovellab.mp4', '-address','ws://localhost','-port','8080'],{
+YOLO.process = new forever.Monitor(
+  [
+    "./darknet",
+    "detector",
+    "demo",
+    "cfg/voc.data",
+    "cfg/yolo-voc.cfg",
+    "yolo-voc.weights",
+    "-filename",
+    "video-street-moovellab.mp4",
+    "-address",
+    "ws://localhost",
+    "-port",
+    "8080"
+  ],
+  {
     max: 1,
     cwd: config.PATH_TO_YOLO_DARKNET,
     killTree: true
-  });
+  }
+);
 ```
-
 
 5. After doing this you should re-build the Open Data Cam node app.
 
@@ -415,9 +467,7 @@ YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.dat
 npm run build
 ```
 
-
-*You should be able to use any video file that are readable by OpenCV, which is what YOLO implementation use behind the hoods to decode the video stream*
-
+_You should be able to use any video file that are readable by OpenCV, which is what YOLO implementation use behind the hoods to decode the video stream_
 
 ## 🛠 Development notes
 
@@ -443,4 +493,3 @@ npm run build
 yarn install
 yarn run dev
 ```
-
