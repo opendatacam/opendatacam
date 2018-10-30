@@ -14,6 +14,9 @@
 # ./install.sh or ./install2.sh
 ################################################################################
 
+
+set -e
+
 echo "-----------------------------------------------------------"
 echo "----             start basic package setup             ----"
 echo "-----------------------------------------------------------"
@@ -21,7 +24,7 @@ echo "-----------------------------------------------------------"
 #--------------------------------------------------
 # Update ubuntu packages
 #--------------------------------------------------
-echo "\n---- Update Server ----"
+echo "---- Update Server ----"
 cd ~
 sudo apt-get update
 sudo apt-get upgrade -y
@@ -29,15 +32,15 @@ sudo apt-get upgrade -y
 #--------------------------------------------------
 # Install basic packages
 #--------------------------------------------------
-echo "\n---- Install cURL, git-core, nano, build-essential, hostapd, dnsmasq ----"
+echo "---- Install cURL, git-core, nano, build-essential, hostapd, dnsmasq ----"
 sudo apt-get install curl git-core nano build-essential -y
-#echo "\n---- Experimental packages (hostapd dnsmasq) for hotspot config  ----"
+#echo "---- Experimental packages (hostapd dnsmasq) for hotspot config  ----"
 #sudo apt-get install hostapd dnsmasq -y
 
 #--------------------------------------------------
 # Add sources for ffmpeg v3 and nodejs v8
 #--------------------------------------------------
-echo "\n---- Add sources for ffmpeg v3 and nodejs v8 ----"
+echo "---- Add sources for ffmpeg v3 and nodejs v8 ----"
 curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
 sudo add-apt-repository -y ppa:jonathonf/ffmpeg-3
 sudo apt update
@@ -45,13 +48,13 @@ sudo apt update
 #--------------------------------------------------
 # Install nodejs v8
 #--------------------------------------------------
-echo "\n---- Install nodejs v8 ----"
+echo "---- Install nodejs v8 ----"
 sudo apt-get install -y nodejs
 
 #--------------------------------------------------
 # Install nodejs ffmpeg v3
 #--------------------------------------------------
-echo "\n---- Install ffmpeg v3 ----"
+echo "---- Install ffmpeg v3 ----"
 sudo apt-get install -y ffmpeg
 
 echo "-----------------------------------------------------------"
@@ -64,7 +67,7 @@ echo "-----------------------------------------------------------"
 #--------------------------------------------------
 #  add overclocking script to rc.local
 #--------------------------------------------------
-echo "\n---- Activate overclocking on startup ----"
+echo "---- Activate overclocking on startup ----"
 #echo "#!/bin/bash" > /etc/rc.local
 #echo "#Maximize performances \n (sleep 60 && /home/ubuntu/jetson_clocks.sh)&\n" >> /etc/rc.local
 #echo "exit 0" >> /etc/rc.local
@@ -78,7 +81,7 @@ chmod 755 /etc/rc.local
 #--------------------------------------------------
 #  enable rc-local.service
 #--------------------------------------------------
-echo "\n---- enable rc-local.service ----"
+echo "---- enable rc-local.service ----"
 chmod 755 /etc/init.d/rc.local
 sudo systemctl enable rc-local.service
 
@@ -89,7 +92,7 @@ echo "-----------------------------------------------------------"
 #--------------------------------------------------
 #  Configure hotspot
 #--------------------------------------------------
-echo "\n---- enable SSID broadcast ----"
+echo "---- enable SSID broadcast ----"
 sudo bash -c 'echo "options bcmdhd op_mode=2" >> /etc/modprobe.d/bcmdhd.conf'
 sudo bash -c 'echo "" >> /etc/rc.local'
 
@@ -100,7 +103,7 @@ echo "-----------------------------------------------------------"
 #--------------------------------------------------
 # Install libwsclient
 #--------------------------------------------------
-echo "\n---- Install libwsclient ----"
+echo "---- Install libwsclient ----"
 cd ~
 git clone https://github.com/PTS93/libwsclient
 cd libwsclient
@@ -110,7 +113,7 @@ cd libwsclient
 #--------------------------------------------------
 # Install liblo
 #--------------------------------------------------
-echo "\n---- Install liblo ----"
+echo "---- Install liblo ----"
 cd ~
 wget https://github.com/radarsat1/liblo/releases/download/0.29/liblo-0.29.tar.gz --no-check-certificate
 tar xvfz liblo-0.29.tar.gz
@@ -120,7 +123,7 @@ cd liblo-0.29
 #--------------------------------------------------
 # Install json-c
 #--------------------------------------------------
-echo "\n---- Install json-c ----"
+echo "---- Install json-c ----"
 cd ~
 git clone https://github.com/json-c/json-c.git
 cd json-c
@@ -130,11 +133,11 @@ sh autogen.sh
 #--------------------------------------------------
 # Install darknet-net
 #--------------------------------------------------
-echo "\n---- Install darknet-net ----"
+echo "---- Install darknet-net ----"
 cd ~
 git clone https://github.com/meso-unimpressed/darknet-net.git
 cd darknet-net
-echo "\n---- Download weight files ----"
+echo "---- Download weight files ----"
 wget https://pjreddie.com/media/files/yolo-voc.weights --no-check-certificate
 make
 
@@ -149,19 +152,19 @@ echo "-----------------------------------------------------------"
 #--------------------------------------------------
 # Install open-data-cam
 #--------------------------------------------------
-echo "\n---- Install open-data-cam ----"
+echo "---- Install open-data-cam ----"
 cd ~
-echo "\n---- Install node modules: pm2, next ----"
+echo "---- Install node modules: pm2, next ----"
 sudo npm i -g pm2
 sudo npm i -g next
 git clone https://github.com/moovel/lab-open-data-cam.git
 cd lab-open-data-cam
-echo "\n---- write config.json file ----"
+echo "---- write config.json file ----"
 echo '{"PATH_TO_YOLO_DARKNET":"/home/nvidia/darknet-net"}' > config.json
-echo "\n---- run install and build script ----"
+echo "---- run install and build script ----"
 npm install
 npm run build
-echo "\n---- configure open-data-cam to start on boot ----"
+echo "---- configure open-data-cam to start on boot ----"
 sudo pm2 startup  
 sudo pm2 start npm --name "open-data-cam" -- start
 sudo pm2 save
