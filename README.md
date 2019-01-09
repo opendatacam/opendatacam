@@ -478,7 +478,7 @@ _You should be able to use any video file that are readable by OpenCV, which is 
 
 By default, the opendatacam will track all the classes that the neural network is trained to track. In our case, YOLO is trained with the VOC dataset, here is the [complete list of classes](https://github.com/pjreddie/darknet/blob/master/data/voc.names)
 
-You can restrict the opendatacam to some specific classes with the VALID_CLASSES option in the config.json file.
+You can restrict the opendatacam to some specific classes with the VALID_CLASSES option in the [config.json file](https://github.com/moovel/lab-opendatacam/blob/master/config.json) .
 
 For example, here is a way to only track buses and person:
 
@@ -489,6 +489,8 @@ For example, here is a way to only track buses and person:
 ```
 
 If it's empty or the option is not set, opendatacam will track all the classes.
+
+If you change this config option, you will need to re-build the project by running `npm run build`.
 
 *Extra note: the tracking algorithm might work better by allowing all the classes, in our test we saw that for some classes like Bike/Motorbike, YOLO had a hard time distinguishing them well, and was switching between classes across frames for the same object. By keeping all the detections and ignoring the class switch while tracking we saw that we can avoid losing some objects, this is [discussed here](https://github.com/moovel/lab-opendatacam/issues/51#issuecomment-418019606)*
  
