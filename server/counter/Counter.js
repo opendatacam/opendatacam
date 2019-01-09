@@ -2,6 +2,7 @@ const Tracker = require('node-moving-things-tracker').Tracker;
 const isInsideSomeAreas = require('./utils').isInsideSomeAreas;
 const cloneDeep = require('lodash.clonedeep');
 const fs = require('fs');
+const config = require('../../config.json');
 
 
 const initialState = {
@@ -131,7 +132,7 @@ module.exports = {
     Counter.currentFPS = 1000 / timeDiff
 
     // Scale detection
-    const detectionScaledOfThisFrame = detectionsOfThisFrame.map((detection) => {
+    let detectionScaledOfThisFrame = detectionsOfThisFrame.map((detection) => {
       return {
         name: detection.class,
         x: detection.x * Counter.image.w,
@@ -141,8 +142,11 @@ module.exports = {
       };
     });
 
-
-
+    // If VALID_CLASSES if set, we should keep only those and filter out the rest
+    if(config.VALID_CLASSES && config.VALID_CLASSES.length > 0) {
+      detectionScaledOfThisFrame = detectionScaledOfThisFrame.filter((detection) => config.VALID_CLASSES.indexOf(detection.name) > -1)
+      console.log(`Filtered out ${detectionsOfThisFrame.length - detectionScaledOfThisFrame.length} detections that weren't valid classes`)
+    }
 
     // console.log(`Received Detection:`);
     // console.log('=========');
