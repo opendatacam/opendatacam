@@ -143,7 +143,7 @@ module.exports = {
     });
 
     // If VALID_CLASSES if set, we should keep only those and filter out the rest
-    if(config.VALID_CLASSES && config.VALID_CLASSES.length > 0) {
+    if(config.VALID_CLASSES && config.VALID_CLASSES.indexOf("*") === -1) {
       detectionScaledOfThisFrame = detectionScaledOfThisFrame.filter((detection) => config.VALID_CLASSES.indexOf(detection.name) > -1)
       console.log(`Filtered out ${detectionsOfThisFrame.length - detectionScaledOfThisFrame.length} detections that weren't valid classes`)
     }

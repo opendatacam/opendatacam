@@ -488,9 +488,15 @@ For example, here is a way to only track buses and person:
 }
 ```
 
-If it's empty or the option is not set, opendatacam will track all the classes.
-
 If you change this config option, you will need to re-build the project by running `npm run build`.
+
+In order to track all the classes (default value), you need to set it to:
+
+```json
+{
+  "VALID_CLASSES": ["*"]
+}
+```
 
 *Extra note: the tracking algorithm might work better by allowing all the classes, in our test we saw that for some classes like Bike/Motorbike, YOLO had a hard time distinguishing them well, and was switching between classes across frames for the same object. By keeping all the detections and ignoring the class switch while tracking we saw that we can avoid losing some objects, this is [discussed here](https://github.com/moovel/lab-opendatacam/issues/51#issuecomment-418019606)*
  
