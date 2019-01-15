@@ -47,7 +47,7 @@ class CountingView extends React.Component {
   startLongPolling() {
     this.fetchData = setInterval(() => {
       this.props.dispatch(fetchCountingData());
-    }, 1000);
+    }, 100);
   }
 
   componentDidMount() {
@@ -66,6 +66,14 @@ class CountingView extends React.Component {
     clearInterval(this.fetchData);
   }
 
+  getUrl() {
+    if(process.env.NODE_ENV !== 'production') {
+      return "/static/placeholder/webcam.jpg" 
+    } else {
+      return `${this.props.urlData.protocol}://${this.props.urlData.address}:8090/?${this.state.dateRefresh}`
+    }
+  }
+
   render () {
 
     const selectedSlide = this.state.slides[this.state.selectedSlideIndex];
@@ -81,7 +89,7 @@ class CountingView extends React.Component {
           className="webcam-frame"
           width="1280"
           height="720"
-          src="/static/lastwebcamframe.jpg" 
+         src={this.getUrl()}
         />
         <ActiveAreaIndicator
           color={COLORS[selectedSlide]}
@@ -164,6 +172,7 @@ class CountingView extends React.Component {
 export default connect((state) => {
 
   return {
+    urlData: state.app.get('urlData').toJS(),
     countingAreas: state.counter.get('countingAreas'),
     countingData: state.counter.get('countingData'),
     selectedCountingArea: state.counter.get('selectedCountingArea'),

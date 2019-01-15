@@ -42,8 +42,8 @@ app.prepare()
   express.get('/', (req, res) => {
 
     if(!firstRequestReceived) {
-      // Start webcam stream
-      WebcamStream.start();
+      // Start YOLO process stream
+      YOLO.start();
       firstRequestReceived = true;
     }
 
@@ -58,31 +58,58 @@ app.prepare()
 
   express.post('/counter/start', (req, res) => {
     // Save last frame of webcam before shutting down
-    const url = getWebcamURL(req);
-    request(url, {encoding: 'binary'}, function(error, response, body) {
-      fs.writeFile('static/lastwebcamframe.jpg', body, 'binary', function (err) {});
-      WebcamStream.stop();
-      YOLO.start();
-    });
+    // const url = getWebcamURL(req);
+    // request(url, {encoding: 'binary'}, function(error, response, body) {
+    //   fs.writeFile('static/lastwebcamframe.jpg', body, 'binary', function (err) {});
+    //   WebcamStream.stop();
+    //   YOLO.start();
+    // });
     Counter.reset();
     Counter.start();
     Counter.registerCountingAreas(req.body.countingAreas)
     isCounting = true;
+
+    var options = {
+      hostname: '192.168.2.161',
+      port:     8070,
+      path:     '/',
+      method:   'GET'
+    };
+
+    var req = http.request(options, function(res) {
+      res.on('data', function(chunk) {
+        var msg = chunk.toString();
+        console.log('Message: ' + msg);
+        try {
+          var detectionsOfThisFrame = JSON.parse(msg);
+          Counter.updateWithNewFrame(detectionsOfThisFrame.objects);
+        } catch (error) {
+          console.log("not json")
+        }
+      });
+    });
+
+    req.on('error', function(e) {
+      console.log('Something went wrong: ' + e.message);
+    });
+
+    req.end();
+
     res.json(Counter.getCountingDashboard());
   });
 
   express.get('/counter/stop', (req, res) => {
 
-    YOLO.stop();
+    // YOLO.stop();
 
-    if(delayStartWebcam) {
-      clearTimeout(delayStartWebcam);
-    }
+    // if(delayStartWebcam) {
+    //   clearTimeout(delayStartWebcam);
+    // }
     // Leave time to YOLO to free the webcam before starting it
     // TODO Need to put a clearSetTimeout somewhere
-    delayStartWebcam = setTimeout(() => {
-      WebcamStream.start();
-    }, 2000);
+    // delayStartWebcam = setTimeout(() => {
+    //   WebcamStream.start();
+    // }, 2000);
 
     isCounting = false;
 
@@ -127,63 +154,62 @@ app.prepare()
       console.log(`> Ready on http://localhost:${port}`)
       console.log(`> Ready on http://${ip.address()}:${port}`)
     }
-    
   })
 
   // Start Websocket server
   // Will listen to YOLO detections
-  wsServer = new WebSocketServer({
-    httpServer: server,
-    autoAcceptConnections: false
-  });
+//   wsServer = new WebSocketServer({
+//     httpServer: server,
+//     autoAcceptConnections: false
+//   });
 
-  wsServer.on('request', function(request) {      
-    var connection = request.accept('', request.origin);
-    console.log((new Date()) + ' Connection accepted.');
-    connection.on('message', function(message) {
-        if (message.type === 'utf8') {
-            // console.log('detections from YOLO');
-            var detectionsOfThisFrame = JSON.parse(message.utf8Data);
-            Counter.updateWithNewFrame(detectionsOfThisFrame);
-        }
-    });
-    connection.on('close', function(reasonCode, description) {
-        console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
-    });
-  });
+//   wsServer.on('request', function(request) {      
+//     var connection = request.accept('', request.origin);
+//     console.log((new Date()) + ' Connection accepted.');
+//     connection.on('message', function(message) {
+//         if (message.type === 'utf8') {
+//             // console.log('detections from YOLO');
+//             var detectionsOfThisFrame = JSON.parse(message.utf8Data);
+//             Counter.updateWithNewFrame(detectionsOfThisFrame);
+//         }
+//     });
+//     connection.on('close', function(reasonCode, description) {
+//         console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+//     });
+//   });
 
 })
 
 
 
 // Utilities
-function getWebcamURL(req) {
-  const urlData = getURLData(req)
-  if(process.env.NODE_ENV !== 'production') {
-    return `${urlData.protocol}://${urlData.address}:${port}/static/placeholder/webcam.jpg`
-  } else {
-    return `${urlData.protocol}://${urlData.address}:8090/webcam.jpg`
-  }
-}
+// function getWebcamURL(req) {
+//   const urlData = getURLData(req)
+//   if(process.env.NODE_ENV !== 'production') {
+//     return `${urlData.protocol}://${urlData.address}:${port}/static/placeholder/webcam.jpg`
+//   } else {
+//     return `${urlData.protocol}://${urlData.address}:8090/webcam.jpg`
+//   }
+// }
 
-function getURLData(req) {
-  let protocol = 'http';
-  if(req.headers['x-forwarded-proto'] === 'https') {
-    protocol = 'https';
-  }
+// function getURLData(req) {
+//   let protocol = 'http';
+//   if(req.headers['x-forwarded-proto'] === 'https') {
+//     protocol = 'https';
+//   }
 
-  const parsedUrl = req.get('Host').split(':');
-  if(parsedUrl.length > 1) {
-    return {
-      address: parsedUrl[0],
-      port: parsedUrl[1],
-      protocol
-    }
-  } else {
-    return {
-      address: parsedUrl[0],
-      port: 80,
-      protocol
-    }
-  }
-}
+//   const parsedUrl = req.get('Host').split(':');
+//   if(parsedUrl.length > 1) {
+//     return {
+//       address: parsedUrl[0],
+//       port: parsedUrl[1],
+//       protocol
+//     }
+//   } else {
+//     return {
+//       address: parsedUrl[0],
+//       port: 80,
+//       protocol
+//     }
+//   }
+// }

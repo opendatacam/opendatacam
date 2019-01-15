@@ -23,14 +23,14 @@ class WebcamView extends React.Component {
     if(process.env.NODE_ENV !== 'production') {
       return "/static/placeholder/webcam.jpg" 
     } else {
-      return `${this.props.urlData.protocol}://${this.props.urlData.address}:8090/webcam.jpg?${this.state.dateRefresh}`
+      return `${this.props.urlData.protocol}://${this.props.urlData.address}:8090/?${this.state.dateRefresh}`
     }
   }
 
   componentDidMount() {
     this.refreshInterval = setInterval(() => {
       this.refresh();
-    }, 1000);
+    }, 100);
   }
 
   componentWillUnmount() {
@@ -75,7 +75,7 @@ class WebcamView extends React.Component {
           @media (min-aspect-ratio: 16/9) {
             img {
               width: 100%;
-              height: auto;
+              {/* height: auto; */}
             }
           }
 

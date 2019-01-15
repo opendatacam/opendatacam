@@ -1,4 +1,4 @@
 {
-  "PATH_TO_YOLO_DARKNET" : "/home/nvidia/darknet-net",
+  "PATH_TO_YOLO_DARKNET" : "/home/nvidia/Documents/darknet",
   "VALID_CLASSES": ["*"]
 }

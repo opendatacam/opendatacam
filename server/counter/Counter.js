@@ -4,7 +4,6 @@ const cloneDeep = require('lodash.clonedeep');
 const fs = require('fs');
 const config = require('../../config.json');
 
-
 const initialState = {
   timeLastFrame: new Date(),
   currentFrame: 0,
@@ -134,11 +133,11 @@ module.exports = {
     // Scale detection
     let detectionScaledOfThisFrame = detectionsOfThisFrame.map((detection) => {
       return {
-        name: detection.class,
-        x: detection.x * Counter.image.w,
-        y: detection.y * Counter.image.h,
-        w: detection.w * Counter.image.w,
-        h: detection.h * Counter.image.h
+        name: detection.name,
+        x: detection.relative_coordinates.center_x * Counter.image.w,
+        y: detection.relative_coordinates.center_y * Counter.image.h,
+        w: detection.relative_coordinates.width * Counter.image.w,
+        h: detection.relative_coordinates.height * Counter.image.h
       };
     });
 
