@@ -66,14 +66,6 @@ class CountingView extends React.Component {
     clearInterval(this.fetchData);
   }
 
-  getUrl() {
-    if(process.env.NODE_ENV !== 'production') {
-      return "/static/placeholder/webcam.jpg" 
-    } else {
-      return `${this.props.urlData.protocol}://${this.props.urlData.address}:8090/?${this.state.dateRefresh}`
-    }
-  }
-
   render () {
 
     const selectedSlide = this.state.slides[this.state.selectedSlideIndex];
@@ -85,12 +77,6 @@ class CountingView extends React.Component {
             <Loading />
           </div>
         }
-        <img 
-          className="webcam-frame"
-          width="1280"
-          height="720"
-         src={this.getUrl()}
-        />
         <ActiveAreaIndicator
           color={COLORS[selectedSlide]}
         />
@@ -129,30 +115,6 @@ class CountingView extends React.Component {
             overflow-x: hidden;
           }
 
-          @media (min-aspect-ratio: 16/9) {
-            .webcam-frame {
-              width: 100%;
-              height: auto;
-            }
-          }
-
-          @media (max-aspect-ratio: 16/9) {
-            .webcam-frame {
-              width: auto;
-              height: 100%;
-            }
-          }
-          
-          .webcam-frame {
-            opacity: 0.2;
-            position: absolute;
-            top: 0;
-            right: 0;
-            left: 0;
-            bottom: 0;
-            z-index: 2;
-          }
-
           .loading-overlay {
             position: fixed;
             z-index: 5;
@@ -172,7 +134,6 @@ class CountingView extends React.Component {
 export default connect((state) => {
 
   return {
-    urlData: state.app.get('urlData').toJS(),
     countingAreas: state.counter.get('countingAreas'),
     countingData: state.counter.get('countingData'),
     selectedCountingArea: state.counter.get('selectedCountingArea'),

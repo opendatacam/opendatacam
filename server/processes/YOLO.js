@@ -21,11 +21,11 @@ module.exports = {
     // On webcam
     // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 1 -address "ws://localhost" -port 8080
     // Comment the following lines to run on a file directly
-    // YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-c','0', '-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{
-    //   max: 1,
-    //   cwd: config.PATH_TO_YOLO_DARKNET,
-    //   killTree: true
-    // });
+    YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-c','0', '-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{
+      max: 1,
+      cwd: config.PATH_TO_YOLO_DARKNET,
+      killTree: true
+    });
 
     // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 0 -ext_output -dont_show -json_port 8070 -mjpeg_port 8090
 
@@ -45,11 +45,11 @@ module.exports = {
     // With new darknet implem, no -filename flag
     // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights video-stuttgart.mp4 -ext_output -dont_show
 
-    YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','video-stuttgart-sd.mp4', '-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{
-      max: 1,
-      cwd: config.PATH_TO_YOLO_DARKNET,
-      killTree: true
-    });
+    // YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','video-stuttgart-10-fps-sd.mp4', '-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{
+    //   max: 1,
+    //   cwd: config.PATH_TO_YOLO_DARKNET,
+    //   killTree: true
+    // });
 
     YOLO.process.on("start", () => {
       console.log('Process YOLO started');

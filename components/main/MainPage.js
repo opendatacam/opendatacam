@@ -20,6 +20,9 @@ class MainPage extends React.Component {
   render () {
     return (
       <div className="main-page">
+        <img
+          src={`${this.props.urlData.protocol}://${this.props.urlData.address}:8090/stream.mjpg`}
+        />
         {this.props.deviceOrientation === 'portrait' &&
           <AskLandscape />
         }
@@ -29,7 +32,32 @@ class MainPage extends React.Component {
         {!this.props.showCounterData &&
           <WebcamView />
         }
+        <style jsx>{`
+          .main-page {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+          }
+
+          @media (min-aspect-ratio: 16/9) {
+            img {
+              width: 100%;
+              height: auto;
+            }
+          }
+
+          @media (max-aspect-ratio: 16/9) {
+            img {
+              width: auto;
+              height: 100%;
+            }
+          }
+        `}</style>
       </div>
+      
     )
   }
 }
@@ -37,6 +65,7 @@ class MainPage extends React.Component {
 export default connect((state) => {
   return {
     showCounterData: state.app.get('showCounterData'),
-    deviceOrientation: state.viewport.get('deviceOrientation')
+    deviceOrientation: state.viewport.get('deviceOrientation'),
+    urlData: state.app.get('urlData').toJS()
   }
 })(MainPage)

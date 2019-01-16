@@ -13,7 +13,8 @@ const request = require('request');
 const fs = require('fs');
 const cloneDeep = require('lodash.clonedeep');
 
-const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not running on the Jetson
+// const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not running on the Jetson
+const SIMULATION_MODE = false;
 
 const port = parseInt(process.env.PORT, 10) || 8080
 const dev = process.env.NODE_ENV !== 'production'
@@ -87,9 +88,15 @@ app.prepare()
           console.log("not json")
         }
       });
+
+      res.on('close', () => {
+        console.log("==== HTTP Stream closed by darknet, reset UI, might be running from file and ended it or have troubles with webcam and need restart =====")
+        YOLO.stop();
+      });
     });
 
     req.on('error', function(e) {
+      YOLO.stop();
       console.log('Something went wrong: ' + e.message);
     });
 
