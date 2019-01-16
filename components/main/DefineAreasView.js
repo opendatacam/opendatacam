@@ -6,7 +6,7 @@ import DrawInstructions from '../shared/DrawInstructions';
 import CountingAreasEditor from '../shared/CountingAreasEditor';
 import BtnStartCounting from '../shared/BtnStartCounting';
 
-class WebcamView extends React.Component {
+class DefineAreasView extends React.Component {
 
   constructor(props) {
     super(props);
@@ -42,4 +42,4 @@ export default connect((state) => {
     isOneCountingAreaDefined,
     drawInstructionsShown: state.app.get('drawInstructionsShown')
   }
-})(WebcamView);
+})(DefineAreasView);

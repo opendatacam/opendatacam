@@ -81,7 +81,7 @@ class EndCountingCTA extends Component {
         </div>
         <style jsx>{`
           .exportCountContainer{
-            position: absolute;
+            position: fixed;
             bottom: 1rem;
             display: flex;
             width: 100%;
