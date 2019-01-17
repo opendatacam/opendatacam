@@ -1,6 +1,16 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 
+/*
+  We are pulling the live view from a MJPEG HTTP Stream sent by the YOLO process
+
+  Improvements ideas? 
+    -> Readabl stream improve perfs : ( https://github.com/aruntj/mjpeg-readable-stream but I think not that useful , browser compat
+    -> draw directly on canvas instead of having a <img> tag
+    -> Support other resolution than 16/9
+
+*/ 
+
 class WebcamStream extends Component {
 
   constructor(props) {
@@ -18,9 +28,11 @@ class WebcamStream extends Component {
    }
 
    componentDidMount() {
+     // MJPEG stream should work indefintly without having to restart it, but infortunately this is not the case
+     // So we "restart" the multipart HTTP request every 5s to make sure things are streaming
      this.refreshInterval = setInterval(() => {
        this.refresh();
-     }, 1000);
+     }, 5000);
    }
 
    componentWillUnmount() {
