@@ -114,7 +114,7 @@ class CountingView extends React.Component {
             bottom: 0;
             right: 0;
             color: white;
-            overflow-x: hidden;
+            overflow: hidden;
           }
 
           .loading-overlay {

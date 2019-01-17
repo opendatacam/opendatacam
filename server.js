@@ -7,7 +7,6 @@ const ip = require('ip');
 const WebSocketServer = require('websocket').server;
 const forever = require('forever-monitor');
 const YOLO = require('./server/processes/YOLO');
-const WebcamStream = require('./server/processes/WebcamStream');
 const Counter = require('./server/counter/Counter');
 const request = require('request');
 const fs = require('fs');
@@ -25,13 +24,14 @@ let delayStartWebcam = null;
 
 // Init processes
 YOLO.init(SIMULATION_MODE);
-WebcamStream.init(SIMULATION_MODE);
 
 // First request received ?
 let firstRequestReceived = false;
 
-// Is currently counting state
 let isCounting = false;
+
+// HTTPJSONSTREAM req
+let HTTPJSONStreamReq;
 
 app.prepare()
 .then(() => {
@@ -58,68 +58,60 @@ app.prepare()
   })
 
   express.post('/counter/start', (req, res) => {
-    // Save last frame of webcam before shutting down
-    // const url = getWebcamURL(req);
-    // request(url, {encoding: 'binary'}, function(error, response, body) {
-    //   fs.writeFile('static/lastwebcamframe.jpg', body, 'binary', function (err) {});
-    //   WebcamStream.stop();
-    //   YOLO.start();
-    // });
     Counter.reset();
     Counter.start();
     Counter.registerCountingAreas(req.body.countingAreas)
     isCounting = true;
 
+    // Maybe move this logic inside a separated class / in Counter
+    // Open HTTP request to receive json data of detection from YOLO process
+    const urlData = getURLData(req);
+
     var options = {
-      hostname: '192.168.2.161',
+      hostname: urlData.address,
       port:     8070,
       path:     '/',
       method:   'GET'
     };
 
-    var req = http.request(options, function(res) {
+    HTTPJSONStreamReq = http.request(options, function(res) {
       res.on('data', function(chunk) {
         var msg = chunk.toString();
-        console.log('Message: ' + msg);
+        // console.log('Message: ' + msg);
         try {
           var detectionsOfThisFrame = JSON.parse(msg);
           Counter.updateWithNewFrame(detectionsOfThisFrame.objects);
         } catch (error) {
-          console.log("not json")
+          // console.log("not json")
         }
       });
 
       res.on('close', () => {
-        console.log("==== HTTP Stream closed by darknet, reset UI, might be running from file and ended it or have troubles with webcam and need restart =====")
-        YOLO.stop();
+        if(isCounting)  {
+          console.log("==== HTTP Stream closed by darknet, reset UI, might be running from file and ended it or have troubles with webcam and need restart =====")
+          YOLO.stop();
+          isCounting = false;
+        } else {
+          // Counting stopped by user, keep yolo running
+        }
       });
     });
 
-    req.on('error', function(e) {
+    HTTPJSONStreamReq.on('error', function(e) {
       YOLO.stop();
+      isCounting = false;
       console.log('Something went wrong: ' + e.message);
     });
 
-    req.end();
+    // Actually send request
+    HTTPJSONStreamReq.end();
 
     res.json(Counter.getCountingDashboard());
   });
 
   express.get('/counter/stop', (req, res) => {
-
-    // YOLO.stop();
-
-    // if(delayStartWebcam) {
-    //   clearTimeout(delayStartWebcam);
-    // }
-    // Leave time to YOLO to free the webcam before starting it
-    // TODO Need to put a clearSetTimeout somewhere
-    // delayStartWebcam = setTimeout(() => {
-    //   WebcamStream.start();
-    // }, 2000);
-
     isCounting = false;
-
+    HTTPJSONStreamReq.abort();
     res.send('Stop counting')
   });
 
@@ -162,29 +154,6 @@ app.prepare()
       console.log(`> Ready on http://${ip.address()}:${port}`)
     }
   })
-
-  // Start Websocket server
-  // Will listen to YOLO detections
-//   wsServer = new WebSocketServer({
-//     httpServer: server,
-//     autoAcceptConnections: false
-//   });
-
-//   wsServer.on('request', function(request) {      
-//     var connection = request.accept('', request.origin);
-//     console.log((new Date()) + ' Connection accepted.');
-//     connection.on('message', function(message) {
-//         if (message.type === 'utf8') {
-//             // console.log('detections from YOLO');
-//             var detectionsOfThisFrame = JSON.parse(message.utf8Data);
-//             Counter.updateWithNewFrame(detectionsOfThisFrame);
-//         }
-//     });
-//     connection.on('close', function(reasonCode, description) {
-//         console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
-//     });
-//   });
-
 })
 
 
@@ -199,24 +168,24 @@ app.prepare()
 //   }
 // }
 
-// function getURLData(req) {
-//   let protocol = 'http';
-//   if(req.headers['x-forwarded-proto'] === 'https') {
-//     protocol = 'https';
-//   }
+function getURLData(req) {
+  let protocol = 'http';
+  if(req.headers['x-forwarded-proto'] === 'https') {
+    protocol = 'https';
+  }
 
-//   const parsedUrl = req.get('Host').split(':');
-//   if(parsedUrl.length > 1) {
-//     return {
-//       address: parsedUrl[0],
-//       port: parsedUrl[1],
-//       protocol
-//     }
-//   } else {
-//     return {
-//       address: parsedUrl[0],
-//       port: 80,
-//       protocol
-//     }
-//   }
-// }
+  const parsedUrl = req.get('Host').split(':');
+  if(parsedUrl.length > 1) {
+    return {
+      address: parsedUrl[0],
+      port: parsedUrl[1],
+      protocol
+    }
+  } else {
+    return {
+      address: parsedUrl[0],
+      port: 80,
+      protocol
+    }
+  }
+}

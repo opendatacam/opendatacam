@@ -127,7 +127,7 @@ module.exports = {
     const now = new Date();
     const timeDiff = Math.abs(now.getTime() - Counter.timeLastFrame.getTime());
     Counter.timeLastFrame = now;
-    // console.log(`YOLO detections FPS: ${1000 / timeDiff}`);
+    console.log(`YOLO detections FPS: ${1000 / timeDiff}`);
     Counter.currentFPS = 1000 / timeDiff
 
     // Scale detection

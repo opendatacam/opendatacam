@@ -45,7 +45,7 @@ module.exports = {
     // With new darknet implem, no -filename flag
     // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights video-stuttgart.mp4 -ext_output -dont_show
 
-    // YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','video-stuttgart-10-fps-sd.mp4', '-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{
+    // YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','video-stuttgart-10-fps-sd.mp4','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{
     //   max: 1,
     //   cwd: config.PATH_TO_YOLO_DARKNET,
     //   killTree: true

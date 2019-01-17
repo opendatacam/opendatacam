@@ -4,10 +4,13 @@ import { connect } from 'react-redux';
 /*
   We are pulling the live view from a MJPEG HTTP Stream sent by the YOLO process
 
-  Improvements ideas? 
-    -> Readabl stream improve perfs : ( https://github.com/aruntj/mjpeg-readable-stream but I think not that useful , browser compat
-    -> draw directly on canvas instead of having a <img> tag
+  Improvements ideas:
+    -> Maybe the MJPEG stream is not well implemented on the YOLO process side
+    -> Readable stream improve perfs : ( https://github.com/aruntj/mjpeg-readable-stream but I think not that useful , browser compat
+    -> draw directly on canvas instead of having a <img> tag (https://gist.github.com/codebrainz/eeeeead894e8bdff059b)
     -> Support other resolution than 16/9
+    -> Do not use the mjpeg HTTP Stream:  but launch a HLS stream with Gstreamer: https://stackoverflow.com/questions/34975851/i-want-to-perform-hls-http-live-streaming-using-gstreamer 
+    -  this will enable to launch stream with a <video> tag
 
 */ 
 
@@ -30,6 +33,7 @@ class WebcamStream extends Component {
    componentDidMount() {
      // MJPEG stream should work indefintly without having to restart it, but infortunately this is not the case
      // So we "restart" the multipart HTTP request every 5s to make sure things are streaming
+     // => Maybe the multipart HTTP request
      this.refreshInterval = setInterval(() => {
        this.refresh();
      }, 5000);
