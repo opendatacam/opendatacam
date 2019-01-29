@@ -108,6 +108,8 @@ See [technical architecture](#technical-architecture) for a more detailed overvi
 
 > NOTE: You also can find a detailed video tutorial for flashing the Jetson board [here](https://www.youtube.com/watch?v=D7lkth34rgM).
 
+> NOTE 2: [This tutorial](https://tm3.ghost.io/2018/07/06/setting-up-the-nvidia-jetson-tx2/) might also give additional information
+
 ### 🛩Prepare Jetson Board
 
 - Update packages
