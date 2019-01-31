@@ -35,7 +35,7 @@ class PathVisualization extends Component {
   fadeOutCanvasContent() {
     // Partially clearing canvas by drawing a black small opacity rect on top of it
     let ctx = this.canvasEl.getContext('2d');
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.03)';
+    ctx.fillStyle = 'rgba(0, 0, 0, 0)';
     ctx.fillRect(0, 0, canvasWidth, canvasHeight);
     // ctx.clearRect(0, 0, 1280, 720);
   }

@@ -1,8 +1,11 @@
 const forever = require('forever-monitor');
 const config = require('../../config.json');
-const simulation8FPSDetectionsData = require('../../static/placeholder/rawdetections8FPS.json');
+const simulation30FPSDetectionsData = require('../../static/placeholder/alexeydetections30FPS.json');
 const WebSocketClient = require('websocket').client;
 const fs = require('fs');
+const http = require('http');
+const mjpegServer = require('mjpeg-server');
+const Counter = require('../counter/Counter');
 
 let YOLO = {
   isRunning: false,
@@ -69,63 +72,107 @@ module.exports = {
   },
 
   startYOLOSimulation: function() {
-    let client = new WebSocketClient();
+    // let client = new WebSocketClient();
 
-    client.on('connectFailed', function(error) {
-        console.log('Connect Error: ' + error.toString());
-    });
+    // client.on('connectFailed', function(error) {
+    //     console.log('Connect Error: ' + error.toString());
+    // });
 
-    client.on('connect', function(connection) {
-        console.log('WebSocket Client Connected');
-        connection.on('error', function(error) {
-            console.log("Connection Error: " + error.toString());
-        });
-        connection.on('close', function() {
-            console.log('echo-protocol Connection Closed');
-        });
+    // client.on('connect', function(connection) {
+    //     console.log('WebSocket Client Connected');
+    //     connection.on('error', function(error) {
+    //         console.log("Connection Error: " + error.toString());
+    //     });
+    //     connection.on('close', function() {
+    //         console.log('echo-protocol Connection Closed');
+    //     });
 
-        let detections = simulation8FPSDetectionsData;
-        let frameNb = 0;
+    //     let detections = simulation8FPSDetectionsData;
+    //     let frameNb = 0;
 
-        // Simulate YOLO 15s booting time
-        setTimeout(() => {
-          // Simulate a 8 FPS detections
-          YOLO.simulationInterval = setInterval(sendDetection, 125)
-        }, 2000)
+    //     // Simulate YOLO 15s booting time
+    //     setTimeout(() => {
+    //       // Simulate a 8 FPS detections
+    //       YOLO.simulationInterval = setInterval(sendDetection, 125)
+    //     }, 2000)
         
-        function sendDetection() {
-            if (connection.connected) {
-                // Convert detection coordinates to float
-                // 1920 => 1
-                // detection.x, detection.w => ?
-                // 1080 => 1
-                // detection.y, detection.h => ?
-                let detection = detections[frameNb].map((detection) => {
-                  return {
-                    ...detection,
-                    class: detection.name,
-                    x: detection.x / 1920,
-                    y: detection.y / 1080,
-                    w: detection.w / 1920,
-                    h: detection.h / 1080
-                  }
-                })
-                connection.sendUTF(JSON.stringify(detection));
+    //     function sendDetection() {
+    //         if (connection.connected) {
+    //             // Convert detection coordinates to float
+    //             // 1920 => 1
+    //             // detection.x, detection.w => ?
+    //             // 1080 => 1
+    //             // detection.y, detection.h => ?
+    //             let detection = detections[frameNb].map((detection) => {
+    //               return {
+    //                 ...detection,
+    //                 class: detection.name,
+    //                 x: detection.x / 1920,
+    //                 y: detection.y / 1080,
+    //                 w: detection.w / 1920,
+    //                 h: detection.h / 1080
+    //               }
+    //             })
+    //             connection.sendUTF(JSON.stringify(detection));
 
-                if(detections[frameNb + 1]) {
-                  frameNb++;
-                } else {
-                  console.log('Reset simulation counter')
-                  // Infinite
-                  frameNb = 0;
-                  // clearInterval(YOLO.simulationInterval)
-                }
-            }
+    //             if(detections[frameNb + 1]) {
+    //               frameNb++;
+    //             } else {
+    //               console.log('Reset simulation counter')
+    //               // Infinite
+    //               frameNb = 0;
+    //               // clearInterval(YOLO.simulationInterval)
+    //             }
+    //         }
+    //     }
+        
+    // });
+
+    // client.connect('ws://localhost:8080/');
+
+  
+    // Create MJPEG stream simulated from video file
+    // Original is 30 FPS
+    console.log("Start MJPEG server");
+    var frameNb = 265;
+    var mjpegReqHandler = null;
+    var timer = null;
+    var dataThisFrame = [];
+    http.createServer(function(req, res) {
+      console.log("Got request");
+
+      if(mjpegReqHandler) {
+        mjpegReqHandler.close();
+        clearInterval(timer);
+      }
+      mjpegReqHandler = mjpegServer.createReqHandler(req, res);
+      timer = setInterval(updateJPG, 50);
+
+      function updateJPG() {
+        fs.readFile(__dirname + '/frames/'+ String(frameNb).padStart(3, '0') + '.jpg', sendJPGData);
+        frameNb++;
+      }
+
+      function sendJPGData(err, data) {
+        mjpegReqHandler.write(data, function() {
+          dataThisFrame = simulation30FPSDetectionsData.find((detection) => detection.frame_id == frameNb)
+          if(dataThisFrame) {
+            Counter.updateWithNewFrame(dataThisFrame.objects);
+          }
+          checkIfFinished();
+        });
+      }
+
+      function checkIfFinished() {
+        if (frameNb > 2171) {
+          // clearInterval(timer);
+          // mjpegReqHandler.close();
+          console.log('Reset stream');
+          frameNb = 265;
         }
-        
-    });
+      }
+    }).listen(8090);
 
-    client.connect('ws://localhost:8080/');
   },
 
   start: function() {
