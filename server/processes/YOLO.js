@@ -134,7 +134,7 @@ module.exports = {
     // Create MJPEG stream simulated from video file
     // Original is 30 FPS
     console.log("Start MJPEG server");
-    var frameNb = 265;
+    var frameNb = 16;
     var mjpegReqHandler = null;
     var timer = null;
     var dataThisFrame = [];
@@ -146,7 +146,7 @@ module.exports = {
         clearInterval(timer);
       }
       mjpegReqHandler = mjpegServer.createReqHandler(req, res);
-      timer = setInterval(updateJPG, 50);
+      timer = setInterval(updateJPG, 25);
 
       function updateJPG() {
         fs.readFile(__dirname + '/frames/'+ String(frameNb).padStart(3, '0') + '.jpg', sendJPGData);
@@ -164,11 +164,11 @@ module.exports = {
       }
 
       function checkIfFinished() {
-        if (frameNb > 2171) {
+        if (frameNb > 1823) {
           // clearInterval(timer);
           // mjpegReqHandler.close();
           console.log('Reset stream');
-          frameNb = 265;
+          frameNb = 16;
         }
       }
     }).listen(8090);
