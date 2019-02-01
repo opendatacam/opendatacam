@@ -3,8 +3,17 @@ import { fromJS } from 'immutable'
 // Initial state
 const initialState = fromJS({
   listenersInitialized: false,
-  deviceOrientation: 'none'
+  deviceOrientation: 'none',
+  canvasResolution: {
+    w: 1280,
+    h: 720
+  }
 })
+
+
+/** 
+ *  TODO LATER, copy stuff from beat the traffic ViewportStateManagement to handle any canvas size / ratio depending on innerWith / innerHeight
+ * **/
 
 // Actions
 const SET_PORTRAIT = 'Viewport/SET_PORTRAIT'

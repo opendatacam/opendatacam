@@ -18,7 +18,8 @@ const initialState = {
   trackerDataForLastFrame: null,
   currentFPS: 0,
   timeStartCounting: new Date(),
-  nbItemsTrackedThisFrame: 0
+  nbItemsTrackedThisFrame: 0,
+  sseConnexion: null
 }
 
 let Opendatacam = cloneDeep(initialState);
@@ -126,7 +127,7 @@ module.exports = {
     const now = new Date();
     const timeDiff = Math.abs(now.getTime() - Opendatacam.timeLastFrame.getTime());
     Opendatacam.timeLastFrame = now;
-    console.log(`YOLO detections FPS: ${1000 / timeDiff}`);
+    // console.log(`YOLO detections FPS: ${1000 / timeDiff}`);
     Opendatacam.currentFPS = 1000 / timeDiff
 
     // Scale detection
@@ -262,7 +263,16 @@ module.exports = {
     });
 
     // Remember trackerData for last frame
-    Opendatacam.trackerDataForLastFrame = trackerDataForThisFrame;
+    Opendatacam.trackerDataForLastFrame = {
+      frameIndex: Opendatacam.currentFrame - 1,
+      data: trackerDataForThisFrame
+    }
+
+    // Stream it to client if SSE request is open
+    if(Opendatacam.sseConnexion) {
+      console.log('sending message');
+      Opendatacam.sseConnexion(`data:${JSON.stringify(Opendatacam.trackerDataForLastFrame)}\n\n`);
+    }
   },
 
   getCountingDashboard: function() {
@@ -333,5 +343,9 @@ module.exports = {
       });
       
     });
+  },
+
+  startStreamingTrackerData(sse) {
+    Opendatacam.sseConnexion = sse;
   }
 }

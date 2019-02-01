@@ -3,6 +3,7 @@ const csv = require('csv-express');
 const bodyParser = require('body-parser');
 const http = require('http');
 const next = require('next');
+const sse = require('server-sent-events');
 const ip = require('ip');
 const WebSocketServer = require('websocket').server;
 const forever = require('forever-monitor');
@@ -121,7 +122,7 @@ app.prepare()
     res.json(Opendatacam.getCountingDashboard());
   });
 
-  express.get('/counter/current-tracked-items', (req, res) => {
+  express.get('/tracker/current-tracked-items', (req, res) => {
     res.json(Opendatacam.getTrackedItemsThisFrame());
   });
 
@@ -141,6 +142,13 @@ app.prepare()
     })
   });
 
+
+
+  express.get('/tracker/sse', sse, function(req, res) {
+    console.log('coucou');
+    Opendatacam.startStreamingTrackerData(res.sse);
+  });
+
   // Global next.js handler
   express.get('*', (req, res) => {
     return handle(req, res)
@@ -157,8 +165,6 @@ app.prepare()
     }
   })
 })
-
-
 
 // Utilities
 // function getWebcamURL(req) {

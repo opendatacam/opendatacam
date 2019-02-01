@@ -1,6 +1,6 @@
 import { scaleDetection } from '../../../../utils/resolution'
 
-class DebugTrackerEngine {
+class PathViewEngine {
   drawObjectTrackerData (
     context,
     objectTrackerData,
@@ -64,6 +64,6 @@ class DebugTrackerEngine {
   }
 }
 
-const DebugTrackerEngineInstance = new DebugTrackerEngine()
+const PathViewEngineInstance = new PathViewEngine()
 
-export default DebugTrackerEngineInstance
+export default PathViewEngineInstance

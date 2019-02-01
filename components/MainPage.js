@@ -1,34 +1,35 @@
 import React from 'react'
 import { connect } from 'react-redux'; 
 
-import DefineAreasView from './main/DefineAreasView';
-import CountingView from './main/CountingView';
+// import DefineAreasView from './main/DefineAreasView';
+// import CountingView from './main/CountingView';
 import AskLandscape from './shared/AskLandscape';
 import WebcamStream from './shared/WebcamStream';
 
 import { initViewportListeners } from '../statemanagement/app/ViewportStateManagement'
-import LiveViewVisualization from './shared/LiveViewVisualization';
+import { startListeningToTrackerData } from '../statemanagement/app/TrackerStateManagement'
+import LiveView from './main/LiveView';
+
+import { MODE } from '../utils/constants';
 
 class MainPage extends React.Component {
 
    componentDidMount() {
      this.props.dispatch(initViewportListeners());
+     // TODO Handle specifying canvas size + resizing here, copy from beatthetraffic
+     this.props.dispatch(startListeningToTrackerData());
    }
 
   render () {
     return (
       <div className="main-page">
-        {/* <LiveViewVisualization /> */}
-        <WebcamStream />
         {this.props.deviceOrientation === 'portrait' &&
           <AskLandscape />
         }
-        {this.props.showCounterData &&
-          <CountingView />
+        {this.mode === MODE.LIVEVIEW &&
+          <LiveView />
         }
-        {!this.props.showCounterData &&
-          <DefineAreasView />
-        }
+        <WebcamStream />
         <style jsx>{`
           .main-page {
             width: 100%;
@@ -47,7 +48,6 @@ class MainPage extends React.Component {
 
 export default connect((state) => {
   return {
-    showCounterData: state.app.get('showCounterData'),
     deviceOrientation: state.viewport.get('deviceOrientation')
   }
 })(MainPage)

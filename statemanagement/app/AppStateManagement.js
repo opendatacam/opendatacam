@@ -1,66 +1,42 @@
 import { fromJS } from 'immutable'
 import axios from 'axios';
 
-import { fetchCountingData } from './CounterStateManagement';
+
 
 // Initial state
 const initialState = fromJS({
   urlData: {},
-  isCounting: false,
-  showCounterData: false,
-  drawInstructionsShown: false
+  isRecording: false,
+  mode: "liveview" // mode is oneOf ["liveview", "counter", "pathvisualization"]
 })
 
 // Actions
-const START_COUNTING = 'App/START_COUNTING'
-const STOP_COUNTING = 'App/STOP_COUNTING'
-const HIDE_COUNTERDATA = 'App/HIDE_COUNTERDATA'
-
-const DRAW_INSTRUCTIONS_SHOWN = 'App/DRAW_INSTRUCTIONS_SHOWN'
-
+const START_RECORDING = 'App/START_RECORDING'
+const STOP_RECORDING = 'App/STOP_RECORDING'
 const SET_URLDATA = 'App/SET_URLDATA'
 
-export function startCounting () {
+export function startRecording () {
   return (dispatch, getState) => {
-
-    // Ping webservice to start yolo and shutdown webcam stream
-    axios.post('/counter/start',{
+    // Ping webservice to start storing data on server
+    axios.post('/recording/start',{
       countingAreas: getState().counter.get('countingAreas').toJS()
     });
 
-    // Fetch counting data
-    dispatch(fetchCountingData());
-
-    // Notify UI we start counting
-    dispatch(setIsCounting());
-  }
-}
-
-export function setIsCounting() {
-  return {
-    type: START_COUNTING
-  }
-}
-
-export function showCountingView() {
-  return (dispatch, getState) => {
-
-    // Fetch counting data
-    dispatch(fetchCountingData());
-
-    // Notify UI we start counting
-    dispatch(setIsCounting());
+    // Notify UI we started recording
+    dispatch({
+      type: START_RECORDING
+    })
   }
 }
 
 export function stopCounting() {
   return (dispatch, getState) => {
-    // Ping webservice to start yolo and shutdown webcam stream
-    axios.get('/counter/stop');
+    // Ping webservice to stop storing data on server
+    axios.get('/recording/stop');
 
-    // Notify UI we start counting
+    // Notify UI we stop recording
     dispatch({
-      type: STOP_COUNTING
+      type: STOP_RECORDING
     })
   }
 }
@@ -94,31 +70,15 @@ export function setURLData(req) {
   }
 }
 
-export function drawInstructionsShown() {
-  return {
-    type: DRAW_INSTRUCTIONS_SHOWN
-  }
-}
-
-export function hideCountingData() {
-  return {
-    type: HIDE_COUNTERDATA
-  }
-}
-
 // Reducer
 export default function AppReducer (state = initialState, action = {}) {
   switch (action.type) {
-    case START_COUNTING:
-      return state.set('isCounting', true).set('showCounterData', true)
-    case STOP_COUNTING:
-      return state.set('isCounting', false).set('showCounterData', true)
-    case HIDE_COUNTERDATA:
-      return state.set('showCounterData', false)
+    case START_RECORDING:
+      return state.set('isRecording', true)
+    case STOP_RECORDING:
+      return state.set('isRecording', false)
     case SET_URLDATA:
       return state.set('urlData', fromJS(action.payload))
-    case DRAW_INSTRUCTIONS_SHOWN:
-      return state.set('drawInstructionsShown', true)
     default:
       return state
   }

@@ -10,7 +10,7 @@ const canvasHeight = 1080;
 const trackerDataRefWidth = 1280;
 const trackerDataRefHeight = 720;
 
-class LiveViewVisualization extends Component {
+class LiveView extends Component {
 
   constructor(props) {
     super(props);
@@ -168,4 +168,4 @@ class LiveViewVisualization extends Component {
   }
 }
 
-export default LiveViewVisualization
+export default LiveView
