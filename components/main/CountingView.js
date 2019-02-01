@@ -80,13 +80,13 @@ class CountingView extends React.Component {
         <ActiveAreaIndicator
           color={COLORS[selectedSlide]}
         />
-        <SlideIndicators
+        {/* <SlideIndicators
           slides={this.state.slides}
           selectedSlideIndex={this.state.selectedSlideIndex}
           activeColor={COLORS[selectedSlide]}
-        />
+        /> */}
         <RecordTime />
-        <Carousel onChangeSelectedSlide={(selectedIndex) => this.setState({selectedSlideIndex: selectedIndex})}>
+        {/* <Carousel onChangeSelectedSlide={(selectedIndex) => this.setState({selectedSlideIndex: selectedIndex})}>
           {this.state.slides.map((slide) => 
             <React.Fragment key={slide}>
               {slide !== 'pathvisualization' &&
@@ -102,7 +102,7 @@ class CountingView extends React.Component {
               }
             </React.Fragment>
           )}
-        </Carousel>
+        </Carousel> */}
         <EndCountingCTA pathVisualizationSelected={this.state.selectedSlideIndex === this.state.slides.length - 1} />
         <style jsx>{`
           .counting-view {
