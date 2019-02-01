@@ -17,6 +17,8 @@ class MainPage extends React.Component {
    componentDidMount() {
      this.props.dispatch(initViewportListeners());
      // TODO Handle specifying canvas size + resizing here, copy from beatthetraffic
+
+     // TODO See how we handle the YOLO on / off situation
      this.props.dispatch(startListeningToTrackerData());
    }
 
@@ -26,7 +28,7 @@ class MainPage extends React.Component {
         {this.props.deviceOrientation === 'portrait' &&
           <AskLandscape />
         }
-        {this.mode === MODE.LIVEVIEW &&
+        {this.props.mode === MODE.LIVEVIEW &&
           <LiveView />
         }
         <WebcamStream />
@@ -48,6 +50,7 @@ class MainPage extends React.Component {
 
 export default connect((state) => {
   return {
-    deviceOrientation: state.viewport.get('deviceOrientation')
+    deviceOrientation: state.viewport.get('deviceOrientation'),
+    mode: state.app.get('mode')
   }
 })(MainPage)

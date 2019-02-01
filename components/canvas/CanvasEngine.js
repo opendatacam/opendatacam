@@ -1,10 +1,11 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import raf from 'raf'
+import { MODE } from '../../utils/constants'
 
 import LiveViewEngine from './engines/LiveViewEngine'
 
-import GameEngineStateManager from '../../../statemanagement/app/GameEngineStateManager'
+// import GameEngineStateManager from '../../../statemanagement/app/GameEngineStateManager'
 
 class CanvasEngine extends PureComponent {
   constructor (props) {
@@ -14,7 +15,6 @@ class CanvasEngine extends PureComponent {
   }
 
   componentDidMount () {
-    // Rendering engine that have offscreen canvas to init on client
     this.loopUpdateCanvas();
   }
 
@@ -28,7 +28,8 @@ class CanvasEngine extends PureComponent {
   }
 
   loopUpdateCanvas () {
-    if (this.lastFrameDrawn !== this.trackerData.frameNb) {
+    if (this.lastFrameDrawn !== this.props.trackerData.frameIndex) {
+      this.lastFrameDrawn = this.props.trackerData.frameIndex;
       // Clear previous frame
       this.clearCanvas();
 
@@ -36,7 +37,7 @@ class CanvasEngine extends PureComponent {
       // (sometimes it can be diffrent from the video framerate)
 
       // Get data from tracker for this frame
-      let objectTrackerDataForThisFrame = this.props.objectTrackerData[frame]
+      // let objectTrackerDataForThisFrame = this.props.objectTrackerData[frame]
 
       // Handle user actions
       // TODO Maybe for counting view something like this ??
@@ -50,15 +51,13 @@ class CanvasEngine extends PureComponent {
       */
 
       if(this.props.mode === MODE.LIVEVIEW) {
-        LiveViewEngine.drawTrackerUIData(
+        LiveViewEngine.drawTrackerData(
           this.canvasContext,
-          objectTrackerDataForThisFrame,
+          this.props.trackerData.data,
           this.props.canvasResolution,
           this.props.originalResolution
         )
       }
-   
-      this.lastFrameDrawn = GameEngineStateManager.getCurrentFrame()
     }
     raf(this.loopUpdateCanvas.bind(this))
   }
@@ -119,8 +118,9 @@ class CanvasEngine extends PureComponent {
 export default connect(state => {
 
   return {
-    trackerData: state.tracker.get('').toJS(),
-    originalResolution: state.app.get('originalResolution').toJS(),
-    canvasResolution: state.viewport.get('canvasResolution').toJS()
+    trackerData: state.tracker.get('trackerData').toJS(),
+    originalResolution: state.viewport.get('originalResolution').toJS(),
+    canvasResolution: state.viewport.get('canvasResolution').toJS(),
+    mode: state.app.get('mode')
   }
 })(CanvasEngine)

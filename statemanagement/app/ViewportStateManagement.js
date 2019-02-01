@@ -7,6 +7,11 @@ const initialState = fromJS({
   canvasResolution: {
     w: 1280,
     h: 720
+  },
+  // Maybe can rid of this by directly sending only the percentage value
+  originalResolution: {
+    w: 1280,
+    h: 720
   }
 })
 

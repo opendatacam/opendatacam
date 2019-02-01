@@ -270,7 +270,8 @@ module.exports = {
 
     // Stream it to client if SSE request is open
     if(Opendatacam.sseConnexion) {
-      console.log('sending message');
+      // console.log('sending message');
+      console.log(`send frame ${Opendatacam.trackerDataForLastFrame.frameIndex}`);
       Opendatacam.sseConnexion(`data:${JSON.stringify(Opendatacam.trackerDataForLastFrame)}\n\n`);
     }
   },
