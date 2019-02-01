@@ -7,6 +7,9 @@ const http = require('http');
 const killable = require('killable');
 const mjpegServer = require('mjpeg-server');
 const { updateWithNewFrame } = require('../Opendatacam');
+const {
+  performance
+} = require('perf_hooks');
 
 let YOLO = {
   isStarting: false,
@@ -121,7 +124,10 @@ module.exports = {
         clearInterval(timer);
       }
       mjpegReqHandler = mjpegServer.createReqHandler(req, res);
-      timer = setInterval(updateJPG, 70);
+      timer = setInterval(() => {
+        updateJPG();
+        updateWithNewFrame(simulation30FPSDetectionsData.find((detection) => detection.frame_id === frameNb).objects);
+      }, 70);
 
       function updateJPG() {
         fs.readFile(path.join(__dirname, '../../static/placeholder/frames') + "/" + String(frameNb).padStart(3, '0') + '.jpg', sendJPGData);
@@ -133,16 +139,12 @@ module.exports = {
           console.log(err);
         }
         mjpegReqHandler.write(data, function() {
-          dataThisFrame = simulation30FPSDetectionsData.find((detection) => detection.frame_id == frameNb)
-          if(dataThisFrame) {
-            updateWithNewFrame(dataThisFrame.objects);
-          }
           checkIfFinished();
         });
       }
 
       function checkIfFinished() {
-        if (frameNb > 1823) {
+        if (frameNb > 451) {
           // clearInterval(timer);
           // mjpegReqHandler.close();
           console.log('Reset stream');

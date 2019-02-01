@@ -115,7 +115,6 @@ module.exports = {
   },
 
   updateWithNewFrame: function(detectionsOfThisFrame) {
-
     // Set yolo to started if it's not the case
     // if(!Opendatacam.yoloStarted) {
     //   Opendatacam.timeStartCounting = new Date();
@@ -271,7 +270,7 @@ module.exports = {
     // Stream it to client if SSE request is open
     if(Opendatacam.sseConnexion) {
       // console.log('sending message');
-      console.log(`send frame ${Opendatacam.trackerDataForLastFrame.frameIndex}`);
+      // console.log(`send frame ${Opendatacam.trackerDataForLastFrame.frameIndex}`);
       Opendatacam.sseConnexion(`data:${JSON.stringify(Opendatacam.trackerDataForLastFrame)}\n\n`);
     }
   },
