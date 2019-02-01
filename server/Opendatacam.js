@@ -1,8 +1,9 @@
 const Tracker = require('node-moving-things-tracker').Tracker;
-const isInsideSomeAreas = require('./utils').isInsideSomeAreas;
+const YOLO = require('./processes/YOLO');
+const isInsideSomeAreas = require('./tracker/utils').isInsideSomeAreas;
 const cloneDeep = require('lodash.clonedeep');
 const fs = require('fs');
-const config = require('../../config.json');
+const config = require('../config.json');
 
 const initialState = {
   timeLastFrame: new Date(),
@@ -17,19 +18,17 @@ const initialState = {
   trackerDataForLastFrame: null,
   currentFPS: 0,
   timeStartCounting: new Date(),
-  yoloStarted: false,
-  yoloIsStarting: false,
   nbItemsTrackedThisFrame: 0
 }
 
-let Counter = cloneDeep(initialState);
+let Opendatacam = cloneDeep(initialState);
 
 module.exports = {
 
   reset: function() {
     return new Promise((resolve, reject) => {
       // Reset counter
-      Counter = cloneDeep(initialState);
+      Opendatacam = cloneDeep(initialState);
       // Reset tracker
       Tracker.reset();
       // Create empty trackerHistory.json file
@@ -42,7 +41,7 @@ module.exports = {
   },
 
   start: function() {
-    Counter.yoloIsStarting = true;
+    // Opendatacam.yoloIsStarting = true;
   },
 
   /*
@@ -54,7 +53,7 @@ module.exports = {
     }
   */
   registerCountingAreas : function(countingAreas) {
-    Counter.originalCountingAreas = countingAreas;
+    Opendatacam.originalCountingAreas = countingAreas;
     Object.keys(countingAreas).map((countingAreaKey) => {
       if(countingAreas[countingAreaKey]) {
         this.registerSingleCountingArea(countingAreaKey, countingAreas[countingAreaKey]);
@@ -68,12 +67,12 @@ module.exports = {
     // The editor canvas can be smaller / bigger
     let resizedData = {
       point1: {
-        x1: data.point1.x1 * Counter.image.w / data.refWidth,
-        y1: data.point1.y1 * Counter.image.h / data.refHeight,
+        x1: data.point1.x1 * Opendatacam.image.w / data.refWidth,
+        y1: data.point1.y1 * Opendatacam.image.h / data.refHeight,
       },
       point2: {
-        x2: data.point2.x2 * Counter.image.w / data.refWidth,
-        y2: data.point2.y2 * Counter.image.h / data.refHeight,
+        x2: data.point2.x2 * Opendatacam.image.w / data.refWidth,
+        y2: data.point2.y2 * Opendatacam.image.h / data.refHeight,
       }
     }
 
@@ -94,19 +93,19 @@ module.exports = {
       xMax: Math.max(point1.x1, point2.x2)
     }
 
-    Counter.countingAreas[key] = {
+    Opendatacam.countingAreas[key] = {
       a: a,
       b: b,
       xBounds: xBounds
     }
 
-    // console.log(Counter.countingAreas);
+    // console.log(Opendatacam.countingAreas);
 
   },
 
   countItem: function(trackedItem, countingAreaKey) {
     // Add it to the history (for export feature)
-    Counter.countedItemsHistory.push({
+    Opendatacam.countedItemsHistory.push({
       timestamp: new Date().toISOString(),
       area: countingAreaKey,
       name: trackedItem.name,
@@ -117,27 +116,27 @@ module.exports = {
   updateWithNewFrame: function(detectionsOfThisFrame) {
 
     // Set yolo to started if it's not the case
-    if(!Counter.yoloStarted) {
-      Counter.timeStartCounting = new Date();
-      Counter.yoloStarted = true;
-      Counter.yoloIsStarting = false;
-    }
+    // if(!Opendatacam.yoloStarted) {
+    //   Opendatacam.timeStartCounting = new Date();
+    //   Opendatacam.yoloStarted = true;
+    //   Opendatacam.yoloIsStarting = false;
+    // }
 
     // Compute FPS
     const now = new Date();
-    const timeDiff = Math.abs(now.getTime() - Counter.timeLastFrame.getTime());
-    Counter.timeLastFrame = now;
+    const timeDiff = Math.abs(now.getTime() - Opendatacam.timeLastFrame.getTime());
+    Opendatacam.timeLastFrame = now;
     console.log(`YOLO detections FPS: ${1000 / timeDiff}`);
-    Counter.currentFPS = 1000 / timeDiff
+    Opendatacam.currentFPS = 1000 / timeDiff
 
     // Scale detection
     let detectionScaledOfThisFrame = detectionsOfThisFrame.map((detection) => {
       return {
         name: detection.name,
-        x: detection.relative_coordinates.center_x * Counter.image.w,
-        y: detection.relative_coordinates.center_y * Counter.image.h,
-        w: detection.relative_coordinates.width * Counter.image.w,
-        h: detection.relative_coordinates.height * Counter.image.h
+        x: detection.relative_coordinates.center_x * Opendatacam.image.w,
+        y: detection.relative_coordinates.center_y * Opendatacam.image.h,
+        w: detection.relative_coordinates.width * Opendatacam.image.w,
+        h: detection.relative_coordinates.height * Opendatacam.image.h
       };
     });
 
@@ -152,32 +151,32 @@ module.exports = {
     // console.log(JSON.stringify(detectionScaledOfThisFrame));
     // console.log('=========');
     // console.log('Update tracker with this frame')
-    // console.log(`Frame id: ${Counter.currentFrame}`);
+    // console.log(`Frame id: ${Opendatacam.currentFrame}`);
     // console.log('=========')
 
-    Tracker.updateTrackedItemsWithNewFrame(detectionScaledOfThisFrame, Counter.currentFrame);
+    Tracker.updateTrackedItemsWithNewFrame(detectionScaledOfThisFrame, Opendatacam.currentFrame);
 
     let trackerDataForThisFrame = Tracker.getJSONOfTrackedItems();
 
-    Counter.nbItemsTrackedThisFrame = trackerDataForThisFrame.length;
+    Opendatacam.nbItemsTrackedThisFrame = trackerDataForThisFrame.length;
 
     // Compute deltaYs for all tracked items (between the counting lines and the tracked items position)
     // And check if trackedItem are going through some counting areas 
     // For each new tracked item
     trackerDataForThisFrame = trackerDataForThisFrame.map((trackedItem) => {
       // For each counting areas
-      var countingDeltas = Object.keys(Counter.countingAreas).map((countingAreaKey) => {
-        let countingAreaProps = Counter.countingAreas[countingAreaKey] 
+      var countingDeltas = Object.keys(Opendatacam.countingAreas).map((countingAreaKey) => {
+        let countingAreaProps = Opendatacam.countingAreas[countingAreaKey] 
         // deltaY = Y(detection) - Y(on-counting-line)
         // NB: negating Y detection to get it in "normal" coordinates space
         // deltaY = - Y(detection) - a X(detection) - b
         let deltaY = - trackedItem.y - countingAreaProps.a * trackedItem.x - countingAreaProps.b;
 
         // If trackerDataForLastFrame exists, we can if we items are passing through the counting line
-        if(Counter.trackerDataForLastFrame) {
+        if(Opendatacam.trackerDataForLastFrame) {
 
           // Find trackerItem data of last frame
-          let trackerItemLastFrame = Counter.trackerDataForLastFrame.find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
+          let trackerItemLastFrame = Opendatacam.trackerDataForLastFrame.find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
           if(trackerItemLastFrame) {
             let lastDeltaY = trackerItemLastFrame.countingDeltas[countingAreaKey]
 
@@ -238,7 +237,7 @@ module.exports = {
     // console.log('=========')
 
     // Increment frame number
-    Counter.currentFrame++;
+    Opendatacam.currentFrame++;
 
     // Add tracker data to history
     // NOTE we manually populate the json file with append to avoid reading it in memory as it can be huge
@@ -263,7 +262,7 @@ module.exports = {
     });
 
     // Remember trackerData for last frame
-    Counter.trackerDataForLastFrame = trackerDataForThisFrame;
+    Opendatacam.trackerDataForLastFrame = trackerDataForThisFrame;
   },
 
   getCountingDashboard: function() {
@@ -287,7 +286,7 @@ module.exports = {
 
     var counterDashboard = {};
 
-    Counter.countedItemsHistory.forEach((countedItem) => {
+    Opendatacam.countedItemsHistory.forEach((countedItem) => {
       if(!counterDashboard[countedItem.area]) {
         counterDashboard[countedItem.area] = {}
       }
@@ -299,25 +298,25 @@ module.exports = {
       }
     })
 
-    counterDashboard['currentFps'] = Counter.currentFPS;
-    counterDashboard['currentTime'] = (Counter.timeLastFrame.getTime() - Counter.timeStartCounting.getTime()) / 1000
-    counterDashboard['yoloStarted'] = Counter.yoloStarted;
-    counterDashboard['yoloIsStarting'] = Counter.yoloIsStarting;
-    counterDashboard['nbItemsTrackedThisFrame'] = Counter.nbItemsTrackedThisFrame;
+    counterDashboard['currentFps'] = Opendatacam.currentFPS;
+    counterDashboard['currentTime'] = (Opendatacam.timeLastFrame.getTime() - Opendatacam.timeStartCounting.getTime()) / 1000
+    counterDashboard['yoloStarted'] = YOLO.getState().isStarted;
+    counterDashboard['yoloIsStarting'] = YOLO.getState().isStarting;
+    counterDashboard['nbItemsTrackedThisFrame'] = Opendatacam.nbItemsTrackedThisFrame;
 
     return counterDashboard;
   },
 
   getCounterHistory: function() {
-    return Counter.countedItemsHistory;
+    return Opendatacam.countedItemsHistory;
   },
 
   getOriginalCountingAreas: function() {
-    return Counter.originalCountingAreas
+    return Opendatacam.originalCountingAreas
   },
 
   getTrackedItemsThisFrame: function() {
-    return Counter.trackerDataForLastFrame;
+    return Opendatacam.trackerDataForLastFrame;
   },
 
   getTrackerData: function() {

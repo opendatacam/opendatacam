@@ -1,13 +1,13 @@
 import React from 'react'
 import { connect } from 'react-redux'; 
 
-import DefineAreasView from './DefineAreasView';
-import CountingView from './CountingView';
-import AskLandscape from '../shared/AskLandscape';
-import WebcamStream from '../shared/WebcamStream';
+import DefineAreasView from './main/DefineAreasView';
+import CountingView from './main/CountingView';
+import AskLandscape from './shared/AskLandscape';
+import WebcamStream from './shared/WebcamStream';
 
-import { initViewportListeners } from '../../statemanagement/app/ViewportStateManagement'
-import LiveViewVisualization from '../shared/LiveViewVisualization';
+import { initViewportListeners } from '../statemanagement/app/ViewportStateManagement'
+import LiveViewVisualization from './shared/LiveViewVisualization';
 
 class MainPage extends React.Component {
 

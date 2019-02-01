@@ -7,7 +7,7 @@ const ip = require('ip');
 const WebSocketServer = require('websocket').server;
 const forever = require('forever-monitor');
 const YOLO = require('./server/processes/YOLO');
-const Counter = require('./server/counter/Counter');
+const Opendatacam = require('./server/Opendatacam');
 const request = require('request');
 const fs = require('fs');
 const cloneDeep = require('lodash.clonedeep');
@@ -20,15 +20,13 @@ const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
-let delayStartWebcam = null;
-
 // Init processes
 YOLO.init(SIMULATION_MODE);
 
-// First request received ?
-let firstRequestReceived = false;
+// // First request received ?
+// let firstRequestReceived = false;
 
-let isCounting = false;
+// let isCounting = false;
 
 // HTTPJSONSTREAM req
 let HTTPJSONStreamReq;
@@ -42,26 +40,30 @@ app.prepare()
   // This render pages/index.js for a request to /
   express.get('/', (req, res) => {
 
-    if(!firstRequestReceived) {
-      // Start YOLO process stream
-      YOLO.start();
-      firstRequestReceived = true;
-    }
+    YOLO.start(); // Inside yolo process will check is started
+
+    // if(!firstRequestReceived) {
+    //   // Start YOLO process stream
+    //   YOLO.start();
+    //   firstRequestReceived = true;
+    // }
 
     // Hacky way to pass params to getInitialProps on SSR
-    let query = req.query;
-    query.isCounting = isCounting;
-    // console.log(Counter.getOriginalCountingAreas());
-    query.countingAreas = Counter.getOriginalCountingAreas();
+    // HERE NEED TO PASS THE WHOLE STATE TO HYDRATE THE CLIENT
+    // Remove this and instead fetch on getInitialProps in the client the whole state
+    // let query = req.query;
+    // query.isCounting = isCounting;
+    // // console.log(Opendatacam.getOriginalCountingAreas());
+    // query.countingAreas = Opendatacam.getOriginalCountingAreas();
     
-    return app.render(req, res, '/', query)
+    return app.render(req, res, '/')
   })
 
   express.post('/counter/start', (req, res) => {
-    Counter.reset();
-    Counter.start();
-    Counter.registerCountingAreas(req.body.countingAreas)
-    isCounting = true;
+    Opendatacam.reset();
+    Opendatacam.start();
+    Opendatacam.registerCountingAreas(req.body.countingAreas)
+    // isCounting = true;
 
     // Maybe move this logic inside a separated class / in Counter
     // Open HTTP request to receive json data of detection from YOLO process
@@ -80,7 +82,7 @@ app.prepare()
         // console.log('Message: ' + msg);
         try {
           var detectionsOfThisFrame = JSON.parse(msg);
-          Counter.updateWithNewFrame(detectionsOfThisFrame.objects);
+          Opendatacam.updateWithNewFrame(detectionsOfThisFrame.objects);
         } catch (error) {
           // console.log("not json")
         }
@@ -106,7 +108,7 @@ app.prepare()
     // Actually send request
     HTTPJSONStreamReq.end();
 
-    res.json(Counter.getCountingDashboard());
+    res.json(Opendatacam.getCountingDashboard());
   });
 
   express.get('/counter/stop', (req, res) => {
@@ -116,22 +118,22 @@ app.prepare()
   });
 
   express.get('/counter/dashboard', (req, res) => {
-    res.json(Counter.getCountingDashboard());
+    res.json(Opendatacam.getCountingDashboard());
   });
 
   express.get('/counter/current-tracked-items', (req, res) => {
-    res.json(Counter.getTrackedItemsThisFrame());
+    res.json(Opendatacam.getTrackedItemsThisFrame());
   });
 
   express.get('/counter/export', function(req, res) {
-    var dataToExport = cloneDeep(Counter.getCounterHistory());
+    var dataToExport = cloneDeep(Opendatacam.getCounterHistory());
     // console.log(dataToExport);
     res.csv(dataToExport, false ,{'Content-disposition': 'attachment; filename=counterData.csv'});
   });
 
 
   express.get('/counter/trackerdata', function(req, res) {
-    Counter.getTrackerData().then(() => {
+    Opendatacam.getTrackerData().then(() => {
       // res.send('OK, file ready to download');
       res.download('static/trackerHistoryExport.json', 'trackerHistoryExport.json')
     }, () => {
