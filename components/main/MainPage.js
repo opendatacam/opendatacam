@@ -7,6 +7,7 @@ import AskLandscape from '../shared/AskLandscape';
 import WebcamStream from '../shared/WebcamStream';
 
 import { initViewportListeners } from '../../statemanagement/app/ViewportStateManagement'
+import LiveViewVisualization from '../shared/LiveViewVisualization';
 
 class MainPage extends React.Component {
 
@@ -17,6 +18,7 @@ class MainPage extends React.Component {
   render () {
     return (
       <div className="main-page">
+        {/* <LiveViewVisualization /> */}
         <WebcamStream />
         {this.props.deviceOrientation === 'portrait' &&
           <AskLandscape />

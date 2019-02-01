@@ -146,7 +146,7 @@ module.exports = {
         clearInterval(timer);
       }
       mjpegReqHandler = mjpegServer.createReqHandler(req, res);
-      timer = setInterval(updateJPG, 25);
+      timer = setInterval(updateJPG, 70);
 
       function updateJPG() {
         fs.readFile(__dirname + '/frames/'+ String(frameNb).padStart(3, '0') + '.jpg', sendJPGData);
