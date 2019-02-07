@@ -4,6 +4,7 @@ import raf from 'raf'
 import { MODE } from '../../utils/constants'
 
 import LiveViewEngine from './engines/LiveViewEngine'
+import PathViewEngine from './engines/PathViewEngine';
 
 // import GameEngineStateManager from '../../../statemanagement/app/GameEngineStateManager'
 
@@ -11,6 +12,7 @@ class CanvasEngine extends PureComponent {
   constructor (props) {
     super(props)
     this.lastFrameDrawn = -1
+
     this.loopUpdateCanvas = this.loopUpdateCanvas.bind(this)
   }
 
@@ -29,22 +31,10 @@ class CanvasEngine extends PureComponent {
 
   loopUpdateCanvas () {
     if (this.lastFrameDrawn !== this.props.trackerData.frameIndex) {
-      this.lastFrameDrawn = this.props.trackerData.frameIndex;
       // Clear previous frame
-      this.clearCanvas();
-
-      // Get current frame of the tracker
-      // (sometimes it can be diffrent from the video framerate)
-
-      // Get data from tracker for this frame
-      // let objectTrackerDataForThisFrame = this.props.objectTrackerData[frame]
-
-      // Handle user actions
-      // TODO Maybe for counting view something like this ??
-      // if (GameEngineStateManager.getClicksBuffer().length > 0) {
-        
-      // }
-      //  GameEngineStateManager.resetClickBuffer()
+      if(this.props.mode !== MODE.PATHVIEW) {
+        this.clearCanvas();
+      }
 
       /*
         Draw things for this frame
@@ -67,6 +57,17 @@ class CanvasEngine extends PureComponent {
           this.props.originalResolution
         )
       }
+
+      if(this.props.mode === MODE.PATHVIEW) {
+        PathViewEngine.drawPaths(
+          this.canvasContext,
+          this.props.trackerData.data,
+          this.props.canvasResolution,
+          this.props.originalResolution
+        )
+      }
+
+      this.lastFrameDrawn = this.props.trackerData.frameIndex;
     }
     raf(this.loopUpdateCanvas.bind(this))
   }

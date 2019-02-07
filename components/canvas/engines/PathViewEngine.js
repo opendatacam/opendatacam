@@ -1,65 +1,62 @@
-import { scaleDetection } from '../../../../utils/resolution'
+import { scaleDetection } from '../../../utils/resolution';
 
 class PathViewEngine {
-  drawObjectTrackerData (
-    context,
-    objectTrackerData,
-    canvasResolution,
-    originalResolution
-  ) {
-    context.globalAlpha = 1
-    context.strokeStyle = 'blue'
-    context.lineWidth = 5
-    context.font = '30px Arial'
-    context.fillStyle = 'blue'
-    objectTrackerData.map(objectTracked => {
-      let objectTrackedScaled = scaleDetection(
+
+  constructor() {
+    this.lastFrameData = [];
+    this.pathsColors = [
+      "#1f77b4",
+      "#ff7f0e",
+      "#2ca02c",
+      "#d62728",
+      "#9467bd",
+      "#8c564b",
+      "#e377c2",
+      "#7f7f7f",
+      "#bcbd22",
+      "#17becf"
+    ];
+  }
+
+  drawLine(context, line, color = 'green') {
+    context.strokeStyle = color;
+    context.lineWidth = 5;
+    context.beginPath();
+    context.moveTo(line.pointA.x, line.pointA.y);
+    context.lineTo(line.pointB.x, line.pointB.y);
+    context.stroke();
+  }
+
+  drawPaths (context, currentFrameData,  canvasResolution, originalResolution) {
+    this.lastFrameData = currentFrameData.map((objectTracked) => {
+      let trackedItemScaled = scaleDetection(
         objectTracked,
         canvasResolution,
         originalResolution
       )
-      if (objectTrackedScaled.isZombie) {
-        context.fillStyle = `rgba(255, 153, 0, ${
-          objectTrackedScaled.zombieOpacity
-        })`
-        context.strokeStyle = `rgba(255, 153, 0, ${
-          objectTrackedScaled.zombieOpacity
-        })`
-      } else {
-        context.fillStyle = 'blue'
-        context.strokeStyle = 'blue'
+      // If this tracked Item was already there in last frame
+      var lastFrameTrackedItem = this.lastFrameData.find((lastFrameItemTracked) => trackedItemScaled.id === lastFrameItemTracked.id)
+      if(lastFrameTrackedItem) {
+        let lastFrameTrackedItemScaled = scaleDetection(
+          lastFrameTrackedItem,
+          canvasResolution,
+          originalResolution
+        )
+        let color = lastFrameTrackedItemScaled.color ? lastFrameTrackedItemScaled.color : this.pathsColors[Math.floor(Math.random()*this.pathsColors.length)]
+        trackedItemScaled.color = color;
+        this.drawLine(context, {
+          pointA: {
+            x: lastFrameTrackedItemScaled.x,
+            y: lastFrameTrackedItemScaled.y
+          },
+          pointB: {
+            x: trackedItemScaled.x,
+            y: trackedItemScaled.y
+          }
+        }, color)
       }
-      let x = objectTrackedScaled.x - objectTrackedScaled.w / 2
-      let y = objectTrackedScaled.y - objectTrackedScaled.h / 2
-      context.strokeRect(
-        x + 5,
-        y + 5,
-        objectTrackedScaled.w - 10,
-        objectTrackedScaled.h - 10
-      )
-      context.fillText(
-        objectTrackedScaled.idDisplay,
-        x + objectTrackedScaled.w / 2 - 20,
-        y + objectTrackedScaled.h / 2
-      )
-    })
-  }
 
-  drawRawDetections (context, detections, canvasResolution, originalResolution) {
-    context.strokeStyle = '#f00'
-    context.lineWidth = 5
-    context.font = '15px Arial'
-    context.fillStyle = '#f00'
-    detections.map(detection => {
-      let scaledDetection = scaleDetection(
-        detection,
-        canvasResolution,
-        originalResolution
-      )
-      let x = scaledDetection.x - scaledDetection.w / 2
-      let y = scaledDetection.y - scaledDetection.h / 2
-      context.strokeRect(x, y, scaledDetection.w, scaledDetection.h)
-      context.fillText(scaledDetection.name, x, y - 10)
+      return trackedItemScaled;
     })
   }
 }
