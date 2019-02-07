@@ -73,7 +73,7 @@ class CountingAreasEditor extends Component {
     if(this.elCanvas) {
       
       // If no countingAreas exists already
-      if(this.props.countingAreas.equals(defaultCountingAreaValue)) {
+      if(this.props.countingAreas.count((value) => value !== null) === 0) {
         const { width, height } = this.elCanvas.getBoundingClientRect();
         this.editorCanvas = new fabric.Canvas(this.elCanvas, { selection: false, width: width, height: height });
       } else {

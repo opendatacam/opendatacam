@@ -1,5 +1,6 @@
 import { fromJS } from 'immutable'
 import axios from 'axios';
+import { MODE } from '../../utils/constants';
 
 
 
@@ -7,13 +8,14 @@ import axios from 'axios';
 const initialState = fromJS({
   urlData: {},
   isRecording: false,
-  mode: "liveview" // mode is oneOf ["liveview", "counter", "pathvisualization"]
+  mode: MODE.LIVEVIEW
 })
 
 // Actions
 const START_RECORDING = 'App/START_RECORDING'
 const STOP_RECORDING = 'App/STOP_RECORDING'
 const SET_URLDATA = 'App/SET_URLDATA'
+const SET_MODE = 'App/SET_MODE'
 
 export function startRecording () {
   return (dispatch, getState) => {
@@ -38,6 +40,13 @@ export function stopCounting() {
     dispatch({
       type: STOP_RECORDING
     })
+  }
+}
+
+export function setMode(mode) {
+  return {
+    type: SET_MODE,
+    payload: mode
   }
 }
 
@@ -79,6 +88,8 @@ export default function AppReducer (state = initialState, action = {}) {
       return state.set('isRecording', false)
     case SET_URLDATA:
       return state.set('urlData', fromJS(action.payload))
+    case SET_MODE:
+      return state.set('mode', action.payload)
     default:
       return state
   }

@@ -1,16 +1,17 @@
 import React from 'react'
 import { connect } from 'react-redux'; 
 
-// import DefineAreasView from './main/DefineAreasView';
-// import CountingView from './main/CountingView';
 import AskLandscape from './shared/AskLandscape';
 import WebcamStream from './shared/WebcamStream';
 
 import { initViewportListeners } from '../statemanagement/app/ViewportStateManagement'
 import { startListeningToTrackerData } from '../statemanagement/app/TrackerStateManagement'
 import LiveView from './main/LiveView';
+import CounterView from './main/CounterView';
+import PathView from './main/PathView';
 
 import { MODE } from '../utils/constants';
+import UIControls from './main/UIControls';
 
 class MainPage extends React.Component {
 
@@ -28,8 +29,15 @@ class MainPage extends React.Component {
         {this.props.deviceOrientation === 'portrait' &&
           <AskLandscape />
         }
+        <UIControls />
         {this.props.mode === MODE.LIVEVIEW &&
           <LiveView />
+        }
+        {this.props.mode === MODE.COUNTERVIEW &&
+          <CounterView />
+        }
+        {this.props.mode === MODE.PATHVIEW &&
+          <PathView />
         }
         <WebcamStream />
         <style jsx>{`

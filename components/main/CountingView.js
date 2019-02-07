@@ -14,7 +14,7 @@ import RecordTime from '../shared/RecordTime';
 
 import { selectNextCountingArea, selectPreviousCountingArea } from  '../../statemanagement/app/CounterStateManagement'
 import Loading from '../shared/Loading';
-import PathVisualization from '../shared/PathVisualization';
+import PathVisualization from './PathView';
 import CountingAreasVisualizer from '../shared/CountingAreasVisualizer';
 
 import Carousel from '../shared/Carousel'

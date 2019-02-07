@@ -2,41 +2,19 @@ import { fromJS } from 'immutable'
 import axios from 'axios';
 import { AVAILABLE_COLORS } from '../../utils/colors';
 
-export const defaultCountingAreaValue = fromJS({
-  yellow: null
-});
-
 // Initial state
 const initialState = fromJS({
-  countingData: {
-    currentFPS: 0,
-    currentTime: 0,
-    yoloStarted: false,
-    yoloIsStarting: false,
-    nbItemsTrackedThisFrame: 0
-  },
-  countingAreas: defaultCountingAreaValue,
+  countingAreas: {},
   selectedCountingArea: 'yellow'
+
 })
 
 // Actions
-const FETCH_COUNTINGDATA_SUCCESS = 'Counter/FETCH_COUNTINGDATA'
 const SELECT_COUNTING_AREA = 'Counter/SELECT_COUNTING_AREA'
 const DELETE_COUNTING_AREA = 'Counter/DELETE_COUNTING_AREA'
 const SAVE_COUNTING_AREA = 'Counter/SAVE_COUNTING_AREA'
 const ADD_COUNTING_AREA = 'Counter/ADD_COUNTING_AREA'
 const RESTORE_COUNTING_AREAS = 'Counter/RESTORE_COUNTING_AREAS'
-
-export function fetchCountingData() {
-  return (dispatch, getState) => {
-    axios.get('/counter/dashboard').then((response) => {
-      dispatch({
-        type: FETCH_COUNTINGDATA_SUCCESS,
-        payload: response.data
-      })
-    });
-  }
-}
 
 export function selectCountingArea(color) {
   return {
@@ -129,8 +107,6 @@ export function restoreCountingAreas(countingAreas) {
 // Reducer
 export default function CounterReducer (state = initialState, action = {}) {
   switch (action.type) {
-    case FETCH_COUNTINGDATA_SUCCESS:
-      return state.set('countingData', fromJS(action.payload))
     case SELECT_COUNTING_AREA:
       return state.set('selectedCountingArea', action.payload)
     case DELETE_COUNTING_AREA:

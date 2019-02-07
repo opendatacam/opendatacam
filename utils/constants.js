@@ -1,6 +1,6 @@
 
 export const MODE = {
     LIVEVIEW: "liveview",
-    COUNTINGVIEW: "countingview",
+    COUNTERVIEW: "counterview",
     PATHVIEW: "pathview"
 }

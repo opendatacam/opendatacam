@@ -42,7 +42,7 @@ class MenuCountingAreasEditor extends Component {
             height: 3rem;
             display: flex;
             position: fixed;
-            top: 1.5rem;
+            bottom: 1.5rem;
             left: 1.5rem;
             z-index: 5;
           }

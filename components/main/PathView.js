@@ -10,7 +10,7 @@ const canvasHeight = 1080;
 const trackerDataRefWidth = 1280;
 const trackerDataRefHeight = 720;
 
-class PathVisualization extends Component {
+class PathView extends Component {
 
   constructor(props) {
     super(props);
@@ -142,4 +142,4 @@ class PathVisualization extends Component {
   }
 }
 
-export default PathVisualization
+export default PathView
