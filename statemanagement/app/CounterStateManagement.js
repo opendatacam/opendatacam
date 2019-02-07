@@ -64,6 +64,7 @@ export function deleteCountingArea(color) {
     if(remainingCountingAreas.length > 0) {
       dispatch(selectCountingArea(remainingCountingAreas[remainingCountingAreas.length - 1]));
     }
+    dispatch(registerCountingAreasOnServer());
   }
 }
 
@@ -86,12 +87,16 @@ export function addCountingArea() {
 }
 
 export function saveCountingArea(color, data) {
-  return {
-    type: SAVE_COUNTING_AREA,
-    payload: {
-      color: color,
-      data: data
-    }
+  return (dispatch, getState) => {
+    dispatch({
+      type: SAVE_COUNTING_AREA,
+      payload: {
+        color: color,
+        data: data
+      }
+    });
+
+    dispatch(registerCountingAreasOnServer());
   }
 }
 
@@ -99,6 +104,18 @@ export function restoreCountingAreas(countingAreas) {
   return {
     type: RESTORE_COUNTING_AREAS,
     payload: countingAreas
+  }
+}
+
+// TODO LATER , introduce Redux saga here to make it more explicit that this is triggered by
+// => SAVE_COUNTING_AREA
+// => DELETE_COUNTING_AREA
+export function registerCountingAreasOnServer() {
+  return (dispatch, getState) => {
+    // Ping webservice to start storing data on server
+    axios.post('/counter/areas',{
+      countingAreas: getState().counter.get('countingAreas').toJS()
+    });
   }
 }
 

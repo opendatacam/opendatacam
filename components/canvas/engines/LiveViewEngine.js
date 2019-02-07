@@ -1,4 +1,5 @@
 import { scaleDetection } from '../../../utils/resolution';
+import { COLORS } from '../../../utils/colors';
 
 class LiveViewEngine {
   drawTrackerData (
@@ -60,15 +61,36 @@ class LiveViewEngine {
       //   objectTrackedScaled.w - 10,
       //   objectTrackedScaled.h - 10
       // )
-      context.setLineDash([10, 10]);
-      context.strokeStyle = 'white'
-      context.strokeRect(
-        x + 5,
-        y + 5,
-        objectTrackedScaled.w - 10,
-        objectTrackedScaled.h - 10
-      )
-      context.setLineDash([]);
+    
+      if(objectTracked.counted) {
+        // counted contain countingareakey : see Opendatacam.js on server side
+        context.strokeStyle = COLORS[objectTracked.counted];
+        context.fillStyle = COLORS[objectTracked.counted];
+        context.strokeRect(
+          x + 5,
+          y + 5,
+          objectTrackedScaled.w - 10,
+          objectTrackedScaled.h - 10
+        )
+        context.globalAlpha = 0.1;
+        context.fillRect(
+          x + 5,
+          y + 5,
+          objectTrackedScaled.w - 10,
+          objectTrackedScaled.h - 10
+        )
+        context.globalAlpha = 1;
+      } else {
+        context.setLineDash([10, 10]);
+        context.strokeStyle = 'white'
+        context.strokeRect(
+          x + 5,
+          y + 5,
+          objectTrackedScaled.w - 10,
+          objectTrackedScaled.h - 10
+        )
+        context.setLineDash([]);
+      }
     })
   }
 

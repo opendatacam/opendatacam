@@ -137,7 +137,8 @@ module.exports = {
         x: detection.relative_coordinates.center_x * Opendatacam.image.w,
         y: detection.relative_coordinates.center_y * Opendatacam.image.h,
         w: detection.relative_coordinates.width * Opendatacam.image.w,
-        h: detection.relative_coordinates.height * Opendatacam.image.h
+        h: detection.relative_coordinates.height * Opendatacam.image.h,
+        counted: false
       };
     });
 
@@ -175,11 +176,16 @@ module.exports = {
 
         // If trackerDataForLastFrame exists, we can if we items are passing through the counting line
         if(Opendatacam.trackerDataForLastFrame) {
-
           // Find trackerItem data of last frame
-          let trackerItemLastFrame = Opendatacam.trackerDataForLastFrame.find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
-          if(trackerItemLastFrame) {
+          let trackerItemLastFrame = Opendatacam.trackerDataForLastFrame.data.find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
+          // If trackedItemLastFrame exist and deltaY was computed last frame
+          if(trackerItemLastFrame && trackerItemLastFrame.countingDeltas[countingAreaKey]) {
             let lastDeltaY = trackerItemLastFrame.countingDeltas[countingAreaKey]
+            // Remind counted status
+            if(trackerItemLastFrame.counted) {
+              // console.log(`${trackerItemLastFrame.id} appear to have been counted on last frame`);
+              trackedItem.counted = trackerItemLastFrame.counted;
+            }
 
             if(Math.sign(lastDeltaY) !== Math.sign(deltaY)) {
 
@@ -200,6 +206,8 @@ module.exports = {
                 // Tracked item has cross the {countingAreaKey} counting line
                 // Count it
                 this.countItem(trackedItem, countingAreaKey);
+                trackedItem.counted = countingAreaKey;
+                // console.log(`Counting ${trackedItem.id}`);
 
               } else {
                 // console.log('NOT IN xBOUNDS');
@@ -378,7 +386,9 @@ module.exports = {
           var detectionsOfThisFrame = JSON.parse(msg);
           self.updateWithNewFrame(detectionsOfThisFrame.objects);
         } catch (error) {
-          console.log("Error while parsing JSON message from YOLO")
+          console.log("Error while updating Opendatacam with new frame")
+          console.log(error);
+          res.emit('close');
         }
       });
 
