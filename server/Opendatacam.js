@@ -138,7 +138,8 @@ module.exports = {
         y: detection.relative_coordinates.center_y * Opendatacam.image.h,
         w: detection.relative_coordinates.width * Opendatacam.image.w,
         h: detection.relative_coordinates.height * Opendatacam.image.h,
-        counted: false
+        counted: false,
+        confidence: detection.confidence
       };
     });
 
@@ -156,6 +157,8 @@ module.exports = {
     // console.log(`Frame id: ${Opendatacam.currentFrame}`);
     // console.log('=========')
 
+    // TODO UPDATE Tracker code to keep confidence score
+     
     Tracker.updateTrackedItemsWithNewFrame(detectionScaledOfThisFrame, Opendatacam.currentFrame);
 
     let trackerDataForThisFrame = Tracker.getJSONOfTrackedItems();

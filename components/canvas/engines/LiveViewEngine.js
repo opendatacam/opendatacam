@@ -9,30 +9,44 @@ class LiveViewEngine {
     originalResolution
   ) {
     context.globalAlpha = 1
-    context.strokeStyle = 'blue'
-    context.lineWidth = 5
-    context.font = '30px Arial'
-    context.fillStyle = 'blue'
+    context.lineWidth = 2
     objectTrackerData.map(objectTracked => {
       let objectTrackedScaled = scaleDetection(
         objectTracked,
         canvasResolution,
         originalResolution
       )
-      context.fillStyle = 'blue'
-      context.strokeStyle = 'blue'
       let x = objectTrackedScaled.x - objectTrackedScaled.w / 2
       let y = objectTrackedScaled.y - objectTrackedScaled.h / 2
+      // context.strokeStyle = 'black'
+      // context.strokeRect(
+      //   x + 5,
+      //   y + 5,
+      //   objectTrackedScaled.w - 10,
+      //   objectTrackedScaled.h - 10
+      // )
+      context.setLineDash([10, 10]);
+      context.strokeStyle = 'white'
       context.strokeRect(
         x + 5,
         y + 5,
         objectTrackedScaled.w - 10,
         objectTrackedScaled.h - 10
       )
+      context.setLineDash([]);
+      context.fillStyle = 'white';
+      context.fillRect(
+        x + 4,
+        y - 10,
+        objectTrackedScaled.w - 8,
+        17
+      )
+      context.font = '10px'
+      context.fillStyle = 'black'
       context.fillText(
-        objectTrackedScaled.id,
-        x + objectTrackedScaled.w / 2 - 20,
-        y + objectTrackedScaled.h / 2
+        `${objectTrackedScaled.name}`,
+        x + 8,
+        y
       )
     })
   }
@@ -54,13 +68,6 @@ class LiveViewEngine {
       
       let x = objectTrackedScaled.x - objectTrackedScaled.w / 2
       let y = objectTrackedScaled.y - objectTrackedScaled.h / 2
-      // context.strokeStyle = 'black'
-      // context.strokeRect(
-      //   x + 5,
-      //   y + 5,
-      //   objectTrackedScaled.w - 10,
-      //   objectTrackedScaled.h - 10
-      // )
     
       if(objectTracked.counted) {
         // counted contain countingareakey : see Opendatacam.js on server side
