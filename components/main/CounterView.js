@@ -29,7 +29,7 @@ class CounterView extends React.Component {
         {Object.keys(this.props.countingAreas).length > 0 &&
           <CountingAreasEditor />
         }
-        <CanvasEngine mode={MODE.COUNTINGVIEW} />
+        <CanvasEngine mode={MODE.COUNTERVIEW} />
         {/* {this.props.isOneCountingAreaDefined &&
           <BtnStartCounting onClick={() => this.handleStartCounting()} />
         } */}

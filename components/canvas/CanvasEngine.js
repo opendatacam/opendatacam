@@ -97,13 +97,14 @@ class CanvasEngine extends PureComponent {
             top: 0;
             left: 0;
             pointer-events: none;
+            visibility: ${this.props.hidden ? 'hidden' : 'visible'};
           }
           .canvas {
             display: block;
             position: absolute;
             top: 0;
             left: 0;
-            z-index: 2;
+            z-index: 1;
           }
 
           @media (min-aspect-ratio: 16/9) {
@@ -130,7 +131,6 @@ export default connect(state => {
   return {
     trackerData: state.tracker.get('trackerData').toJS(),
     originalResolution: state.viewport.get('originalResolution').toJS(),
-    canvasResolution: state.viewport.get('canvasResolution').toJS(),
-    mode: state.app.get('mode')
+    canvasResolution: state.viewport.get('canvasResolution').toJS()
   }
 })(CanvasEngine)

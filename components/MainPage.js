@@ -36,9 +36,7 @@ class MainPage extends React.Component {
         {this.props.mode === MODE.COUNTERVIEW &&
           <CounterView />
         }
-        {this.props.mode === MODE.PATHVIEW &&
-          <PathView />
-        }
+        <PathView hidden={this.props.mode !== MODE.PATHVIEW} />
         <WebcamStream />
         <style jsx>{`
           .main-page {

@@ -22,7 +22,7 @@ class PathView extends Component {
   render () {
     return (
       <>
-        <CanvasEngine mode={MODE.PATHVIEW} />
+        <CanvasEngine mode={MODE.PATHVIEW} hidden={this.props.hidden} />
       </>
     )
   }
