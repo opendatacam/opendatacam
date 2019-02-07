@@ -5,6 +5,9 @@ import { addCountingArea } from '../../statemanagement/app/CounterStateManagemen
 import DrawInstructions from '../shared/DrawInstructions';
 import CountingAreasEditor from '../shared/CountingAreasEditor';
 import BtnStartCounting from '../shared/BtnStartCounting';
+import CanvasEngine from '../canvas/CanvasEngine';
+
+import { MODE } from '../../utils/constants';
 
 class CounterView extends React.Component {
 
@@ -26,6 +29,7 @@ class CounterView extends React.Component {
         {Object.keys(this.props.countingAreas).length > 0 &&
           <CountingAreasEditor />
         }
+        <CanvasEngine mode={MODE.COUNTINGVIEW} />
         {/* {this.props.isOneCountingAreaDefined &&
           <BtnStartCounting onClick={() => this.handleStartCounting()} />
         } */}

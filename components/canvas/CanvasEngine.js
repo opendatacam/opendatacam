@@ -58,6 +58,15 @@ class CanvasEngine extends PureComponent {
           this.props.originalResolution
         )
       }
+
+      if(this.props.mode === MODE.COUNTERVIEW) {
+        LiveViewEngine.drawTrackerDataCounterEditor(
+          this.canvasContext,
+          this.props.trackerData.data,
+          this.props.canvasResolution,
+          this.props.originalResolution
+        )
+      }
     }
     raf(this.loopUpdateCanvas.bind(this))
   }

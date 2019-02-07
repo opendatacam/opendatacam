@@ -5,7 +5,7 @@ class DrawInstructions extends Component {
   render () {
     return (
       <div className="instructions">
-        <h1>Draw to define Active Areas</h1>
+        <h1>Draw to define counting lines</h1>
         <div
           onClick={() => this.props.onConfirm()}
           className="button ok"

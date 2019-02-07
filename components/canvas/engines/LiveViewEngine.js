@@ -36,6 +36,33 @@ class LiveViewEngine {
     })
   }
 
+  drawTrackerDataCounterEditor (
+    context,
+    objectTrackerData,
+    canvasResolution,
+    originalResolution
+  ) {
+    context.globalAlpha = 1
+    context.strokeStyle = 'white'
+    context.lineWidth = 2
+    objectTrackerData.map(objectTracked => {
+      let objectTrackedScaled = scaleDetection(
+        objectTracked,
+        canvasResolution,
+        originalResolution
+      )
+      context.setLineDash([10, 10]);
+      let x = objectTrackedScaled.x - objectTrackedScaled.w / 2
+      let y = objectTrackedScaled.y - objectTrackedScaled.h / 2
+      context.strokeRect(
+        x + 5,
+        y + 5,
+        objectTrackedScaled.w - 10,
+        objectTrackedScaled.h - 10
+      )
+    })
+  }
+
   // drawRawDetections (context, detections, canvasResolution, originalResolution) {
   //   context.strokeStyle = '#f00'
   //   context.lineWidth = 5
