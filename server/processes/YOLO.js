@@ -6,7 +6,6 @@ const path = require('path');
 const http = require('http');
 const killable = require('killable');
 const mjpegServer = require('mjpeg-server');
-const { updateWithNewFrame } = require('../Opendatacam');
 const {
   performance
 } = require('perf_hooks');
@@ -17,7 +16,8 @@ let YOLO = {
   isInitialized: false,
   process: null,
   simulationMode: false,
-  simulationServer: null
+  simulationMJPEGServer: null,
+  simulationJSONHTTPStreamServer: null
 };
 
 
@@ -76,6 +76,13 @@ module.exports = {
     // https://github.com/foreverjs/forever-monitor#events-available-when-using-an-instance-of-forever-in-nodejs
   },
 
+  getStatus: function() {
+    return {
+      isStarting: YOLO.isStarting,
+      isStarted: YOLO.isStarted
+    }
+  },
+
   start: function() {
     // Do not start it twice
     if(YOLO.isStarted && YOLO.isStarting) {
@@ -104,20 +111,38 @@ module.exports = {
     }
   },
 
+  setIsStarted() {
+    YOLO.isStarting = false;
+    YOLO.isStarted = true;
+  },
+
   startYOLOSimulation: function() {
     /**
      *   Used in Dev mode for faster development
      *     - Simulate a MJPEG stream on port 8090
      *     - Update opendatacam tracker on each frame
      */
-  
-    console.log("Start MJPEG server");
     var frameNb = 16;
     var mjpegReqHandler = null;
     var timer = null;
     var dataThisFrame = [];
-    YOLO.simulationServer = http.createServer(function(req, res) {
-      console.log("Got request");
+    var JSONStreamRes = null;
+    
+    // TODO Simulate delay starting
+
+    console.log("Start HTTP JSON Stream server");
+
+    YOLO.simulationJSONHTTPStreamServer = http.createServer(function(req, res) {
+      console.log("Got request on JSON Stream server started");
+      JSONStreamRes = res;
+    }).listen(8070);
+
+
+    console.log("Start MJPEG server");
+    
+
+    YOLO.simulationMJPEGServer = http.createServer(function(req, res) {
+      console.log("Got request on MJPEG server");
 
       if(mjpegReqHandler) {
         mjpegReqHandler.close();
@@ -126,7 +151,11 @@ module.exports = {
       mjpegReqHandler = mjpegServer.createReqHandler(req, res);
       timer = setInterval(() => {
         updateJPG();
-        updateWithNewFrame(simulation30FPSDetectionsData.find((detection) => detection.frame_id === frameNb).objects);
+        if(JSONStreamRes) {
+          JSONStreamRes.write(JSON.stringify(simulation30FPSDetectionsData.find((detection) => detection.frame_id === frameNb)));
+        } else {
+          console.log("JSONStream connexion not opened yet");
+        }
       }, 70);
 
       function updateJPG() {
@@ -152,11 +181,6 @@ module.exports = {
         }
       }
     }).listen(8090);
-    killable(YOLO.simulationServer);
-
+    killable(YOLO.simulationMJPEGServer);
   },
-
-  getState() {
-    return YOLO;
-  }
 }

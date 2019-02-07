@@ -5,13 +5,11 @@ const http = require('http');
 const next = require('next');
 const sse = require('server-sent-events');
 const ip = require('ip');
-const WebSocketServer = require('websocket').server;
-const forever = require('forever-monitor');
 const YOLO = require('./server/processes/YOLO');
 const Opendatacam = require('./server/Opendatacam');
-const request = require('request');
-const fs = require('fs');
 const cloneDeep = require('lodash.clonedeep');
+const getURLData = require('./server/utils/urlHelper').getURLData;
+const simulation30FPSDetectionsData = require('./static/placeholder/alexeydetections30FPS.json');
 
 // const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not running on the Jetson
 const SIMULATION_MODE = true;
@@ -24,14 +22,6 @@ const handle = app.getRequestHandler()
 // Init processes
 YOLO.init(SIMULATION_MODE);
 
-// // First request received ?
-// let firstRequestReceived = false;
-
-// let isCounting = false;
-
-// HTTPJSONSTREAM req
-let HTTPJSONStreamReq;
-
 app.prepare()
 .then(() => {
   // Start HTTP server
@@ -43,88 +33,27 @@ app.prepare()
 
     YOLO.start(); // Inside yolo process will check is started
 
-    // if(!firstRequestReceived) {
-    //   // Start YOLO process stream
-    //   YOLO.start();
-    //   firstRequestReceived = true;
-    // }
-
-    // Hacky way to pass params to getInitialProps on SSR
-    // HERE NEED TO PASS THE WHOLE STATE TO HYDRATE THE CLIENT
-    // Remove this and instead fetch on getInitialProps in the client the whole state
-    // let query = req.query;
-    // query.isCounting = isCounting;
-    // // console.log(Opendatacam.getOriginalCountingAreas());
-    // query.countingAreas = Opendatacam.getOriginalCountingAreas();
-    
+    const urlData = getURLData(req);
+    Opendatacam.listenToYOLO(urlData);
     return app.render(req, res, '/')
   })
 
-  express.post('/counter/start', (req, res) => {
-    Opendatacam.reset();
-    Opendatacam.start();
+  express.post('/counter/areas', (req, res) => {
     Opendatacam.registerCountingAreas(req.body.countingAreas)
-    // isCounting = true;
-
-    // Maybe move this logic inside a separated class / in Counter
-    // Open HTTP request to receive json data of detection from YOLO process
-    const urlData = getURLData(req);
-
-    var options = {
-      hostname: urlData.address,
-      port:     8070,
-      path:     '/',
-      method:   'GET'
-    };
-
-    HTTPJSONStreamReq = http.request(options, function(res) {
-      res.on('data', function(chunk) {
-        var msg = chunk.toString();
-        // console.log('Message: ' + msg);
-        try {
-          var detectionsOfThisFrame = JSON.parse(msg);
-          Opendatacam.updateWithNewFrame(detectionsOfThisFrame.objects);
-        } catch (error) {
-          // console.log("not json")
-        }
-      });
-
-      res.on('close', () => {
-        if(isCounting)  {
-          console.log("==== HTTP Stream closed by darknet, reset UI, might be running from file and ended it or have troubles with webcam and need restart =====")
-          YOLO.stop();
-          isCounting = false;
-        } else {
-          // Counting stopped by user, keep yolo running
-        }
-      });
-    });
-
-    HTTPJSONStreamReq.on('error', function(e) {
-      YOLO.stop();
-      isCounting = false;
-      console.log('Something went wrong: ' + e.message);
-    });
-
-    // Actually send request
-    HTTPJSONStreamReq.end();
-
-    res.json(Opendatacam.getCountingDashboard());
+    res.sendStatus(200)
   });
 
-  express.get('/counter/stop', (req, res) => {
-    isCounting = false;
-    HTTPJSONStreamReq.abort();
-    res.send('Stop counting')
+  express.get('/tracker/sse', sse, function(req, res) {
+    Opendatacam.startStreamingData(res.sse);
   });
 
-  express.get('/counter/dashboard', (req, res) => {
-    res.json(Opendatacam.getCountingDashboard());
-  });
+  // express.get('/counter/dashboard', (req, res) => {
+  //   res.json(Opendatacam.getCountingDashboard());
+  // });
 
-  express.get('/tracker/current-tracked-items', (req, res) => {
-    res.json(Opendatacam.getTrackedItemsThisFrame());
-  });
+  // express.get('/tracker/current-tracked-items', (req, res) => {
+  //   res.json(Opendatacam.getTrackedItemsThisFrame());
+  // });
 
   express.get('/counter/export', function(req, res) {
     var dataToExport = cloneDeep(Opendatacam.getCounterHistory());
@@ -140,13 +69,6 @@ app.prepare()
     }, () => {
       res.status(500).send('Something broke while generating the tracking history!');
     })
-  });
-
-
-
-  express.get('/tracker/sse', sse, function(req, res) {
-    console.log('coucou');
-    Opendatacam.startStreamingTrackerData(res.sse);
   });
 
   // Global next.js handler
@@ -165,35 +87,3 @@ app.prepare()
     }
   })
 })
-
-// Utilities
-// function getWebcamURL(req) {
-//   const urlData = getURLData(req)
-//   if(process.env.NODE_ENV !== 'production') {
-//     return `${urlData.protocol}://${urlData.address}:${port}/static/placeholder/webcam.jpg`
-//   } else {
-//     return `${urlData.protocol}://${urlData.address}:8090/webcam.jpg`
-//   }
-// }
-
-function getURLData(req) {
-  let protocol = 'http';
-  if(req.headers['x-forwarded-proto'] === 'https') {
-    protocol = 'https';
-  }
-
-  const parsedUrl = req.get('Host').split(':');
-  if(parsedUrl.length > 1) {
-    return {
-      address: parsedUrl[0],
-      port: parsedUrl[1],
-      protocol
-    }
-  } else {
-    return {
-      address: parsedUrl[0],
-      port: 80,
-      protocol
-    }
-  }
-}

@@ -31,7 +31,7 @@ export function startListeningToTrackerData() {
         // Parse JSON
         dispatch({
             type: UPDATE_DATA,
-            payload: JSON.parse(msg.data)
+            payload: JSON.parse(msg.data).trackerDataForLastFrame
         })
     }
   }

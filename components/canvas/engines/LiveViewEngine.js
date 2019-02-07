@@ -43,7 +43,6 @@ class LiveViewEngine {
     originalResolution
   ) {
     context.globalAlpha = 1
-    context.strokeStyle = 'white'
     context.lineWidth = 2
     objectTrackerData.map(objectTracked => {
       let objectTrackedScaled = scaleDetection(
@@ -51,15 +50,25 @@ class LiveViewEngine {
         canvasResolution,
         originalResolution
       )
-      context.setLineDash([10, 10]);
+      
       let x = objectTrackedScaled.x - objectTrackedScaled.w / 2
       let y = objectTrackedScaled.y - objectTrackedScaled.h / 2
+      // context.strokeStyle = 'black'
+      // context.strokeRect(
+      //   x + 5,
+      //   y + 5,
+      //   objectTrackedScaled.w - 10,
+      //   objectTrackedScaled.h - 10
+      // )
+      context.setLineDash([10, 10]);
+      context.strokeStyle = 'white'
       context.strokeRect(
         x + 5,
         y + 5,
         objectTrackedScaled.w - 10,
         objectTrackedScaled.h - 10
       )
+      context.setLineDash([]);
     })
   }
 

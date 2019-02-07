@@ -3,6 +3,7 @@ const YOLO = require('./processes/YOLO');
 const isInsideSomeAreas = require('./tracker/utils').isInsideSomeAreas;
 const cloneDeep = require('lodash.clonedeep');
 const fs = require('fs');
+const http = require('http');
 const config = require('../config.json');
 
 const initialState = {
@@ -116,11 +117,11 @@ module.exports = {
 
   updateWithNewFrame: function(detectionsOfThisFrame) {
     // Set yolo to started if it's not the case
-    // if(!Opendatacam.yoloStarted) {
-    //   Opendatacam.timeStartCounting = new Date();
-    //   Opendatacam.yoloStarted = true;
-    //   Opendatacam.yoloIsStarting = false;
-    // }
+    if(!YOLO.getStatus().isStarted) {
+      YOLO.setIsStarted();
+    }
+
+    // TODO when start recording, record the date
 
     // Compute FPS
     const now = new Date();
@@ -241,25 +242,28 @@ module.exports = {
 
     // Add tracker data to history
     // NOTE we manually populate the json file with append to avoid reading it in memory as it can be huge
-    const trackerHistoryEntry = {
-      timestamp: now,
-      objects: trackerDataForThisFrame.map((trackerData) => {
-        return {
-          id: trackerData.idDisplay,
-          x: Math.round(trackerData.x),
-          y: Math.round(trackerData.y),
-          w: Math.round(trackerData.w),
-          h: Math.round(trackerData.h),
-          bearing: Math.round(trackerData.bearing),
-          name: trackerData.name
-        }
-      })
-    }
+
+    // TODO IF RECORDING : 
+
+      // const trackerHistoryEntry = {
+      //   timestamp: now,
+      //   objects: trackerDataForThisFrame.map((trackerData) => {
+      //     return {
+      //       id: trackerData.idDisplay,
+      //       x: Math.round(trackerData.x),
+      //       y: Math.round(trackerData.y),
+      //       w: Math.round(trackerData.w),
+      //       h: Math.round(trackerData.h),
+      //       bearing: Math.round(trackerData.bearing),
+      //       name: trackerData.name
+      //     }
+      //   })
+      // }
 
 
-    fs.appendFile('./static/trackerHistory.json', `,\n${JSON.stringify(trackerHistoryEntry)}`, function (err) {
-      if (err) throw err;
-    });
+      // fs.appendFile('./static/trackerHistory.json', `,\n${JSON.stringify(trackerHistoryEntry)}`, function (err) {
+      //   if (err) throw err;
+      // });
 
     // Remember trackerData for last frame
     Opendatacam.trackerDataForLastFrame = {
@@ -271,7 +275,11 @@ module.exports = {
     if(Opendatacam.sseConnexion) {
       // console.log('sending message');
       // console.log(`send frame ${Opendatacam.trackerDataForLastFrame.frameIndex}`);
-      Opendatacam.sseConnexion(`data:${JSON.stringify(Opendatacam.trackerDataForLastFrame)}\n\n`);
+      // TODO add isRecording
+      Opendatacam.sseConnexion(`data:${JSON.stringify({
+        trackerDataForLastFrame: Opendatacam.trackerDataForLastFrame,
+        yoloStatus: YOLO.getStatus()
+      })}\n\n`);
     }
   },
 
@@ -310,8 +318,8 @@ module.exports = {
 
     counterDashboard['currentFps'] = Opendatacam.currentFPS;
     counterDashboard['currentTime'] = (Opendatacam.timeLastFrame.getTime() - Opendatacam.timeStartCounting.getTime()) / 1000
-    counterDashboard['yoloStarted'] = YOLO.getState().isStarted;
-    counterDashboard['yoloIsStarting'] = YOLO.getState().isStarting;
+    counterDashboard['yoloStarted'] = YOLO.getStatus().isStarted;
+    counterDashboard['yoloIsStarting'] = YOLO.getStatus().isStarting;
     counterDashboard['nbItemsTrackedThisFrame'] = Opendatacam.nbItemsTrackedThisFrame;
 
     return counterDashboard;
@@ -345,7 +353,51 @@ module.exports = {
     });
   },
 
-  startStreamingTrackerData(sse) {
+  startStreamingData(sse) {
     Opendatacam.sseConnexion = sse;
+  },
+
+  // Listen to 8070 for Tracker data detections
+  listenToYOLO(urlData) {
+    var self = this;
+    // HTTPJSONSTREAM req
+    let HTTPJSONStreamReq;
+
+    var options = {
+      hostname: urlData.address,
+      port:     8070,
+      path:     '/',
+      method:   'GET'
+    };
+
+    HTTPJSONStreamReq = http.request(options, function(res) {
+      res.on('data', function(chunk) {
+        var msg = chunk.toString();
+        // console.log('Message: ' + msg);
+        try {
+          var detectionsOfThisFrame = JSON.parse(msg);
+          self.updateWithNewFrame(detectionsOfThisFrame.objects);
+        } catch (error) {
+          console.log("Error while parsing JSON message from YOLO")
+        }
+      });
+
+      res.on('close', () => {
+        if(YOLO.getStatus().isStarted)  {
+          console.log("==== HTTP Stream closed by darknet, reset UI, might be running from file and ended it or have troubles with webcam and need restart =====")
+          YOLO.stop();
+        } else {
+          // Counting stopped by user, keep yolo running
+        }
+      });
+    });
+
+    HTTPJSONStreamReq.on('error', function(e) {
+      YOLO.stop();
+      console.log('Something went wrong: ' + e.message);
+    });
+
+    // Actually send request
+    HTTPJSONStreamReq.end();
   }
 }

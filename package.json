@@ -28,7 +28,6 @@
     "redux-thunk": "^2.3.0",
     "request": "^2.88.0",
     "server-sent-events": "^1.0.1",
-    "uuid": "^3.3.2",
-    "websocket": "^1.0.28"
+    "uuid": "^3.3.2"
   }
 }

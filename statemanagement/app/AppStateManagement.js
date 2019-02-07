@@ -1,13 +1,16 @@
 import { fromJS } from 'immutable'
 import axios from 'axios';
 import { MODE } from '../../utils/constants';
-
-
+import { getURLData } from '../../server/utils/urlHelper';
 
 // Initial state
 const initialState = fromJS({
   urlData: {},
   isRecording: false,
+  yoloStatus: {
+    isStarted: false,
+    isStarting: true
+  },
   mode: MODE.LIVEVIEW
 })
 
@@ -16,6 +19,7 @@ const START_RECORDING = 'App/START_RECORDING'
 const STOP_RECORDING = 'App/STOP_RECORDING'
 const SET_URLDATA = 'App/SET_URLDATA'
 const SET_MODE = 'App/SET_MODE'
+const UPDATE_YOLOSTATUS = 'App/UPDATE_YOLOSTATUS'
 
 export function startRecording () {
   return (dispatch, getState) => {
@@ -43,32 +47,17 @@ export function stopCounting() {
   }
 }
 
+export function updateYOLOStatus(data) {
+  return {
+    type: UPDATE_YOLOSTATUS,
+    payload: data
+  }
+}
+
 export function setMode(mode) {
   return {
     type: SET_MODE,
     payload: mode
-  }
-}
-
-function getURLData(req) {
-  let protocol = 'http';
-  if(req.headers['x-forwarded-proto'] === 'https') {
-    protocol = 'https';
-  }
-
-  const parsedUrl = req.get('Host').split(':');
-  if(parsedUrl.length > 1) {
-    return {
-      address: parsedUrl[0],
-      port: parsedUrl[1],
-      protocol
-    }
-  } else {
-    return {
-      address: parsedUrl[0],
-      port: 80,
-      protocol
-    }
   }
 }
 
@@ -90,6 +79,8 @@ export default function AppReducer (state = initialState, action = {}) {
       return state.set('urlData', fromJS(action.payload))
     case SET_MODE:
       return state.set('mode', action.payload)
+    case UPDATE_YOLOSTATUS: 
+      return state.set('yoloStatus', action.payload)
     default:
       return state
   }
