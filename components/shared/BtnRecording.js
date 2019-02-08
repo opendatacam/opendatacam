@@ -9,7 +9,7 @@ class BtnStartCounting extends Component {
         onClick={() => this.props.onClick()}
       >
         <img src="/static/icons/icon-start-recording.svg" />
-        <h2>Start Tracking</h2>
+        <h2>Start Recording</h2>
         <style jsx>{`
           .record{
             position: fixed;
