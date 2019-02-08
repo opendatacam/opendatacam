@@ -42,7 +42,7 @@ class UIControls extends Component {
             top: 0;
             left: 0;
             right: 0;
-            z-index: 2;
+            z-index: 3;
           }
 
           .nav-bottom {
@@ -50,7 +50,7 @@ class UIControls extends Component {
             bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 2;
+            z-index: 3;
           }
 
           .recording-status {
@@ -61,6 +61,7 @@ class UIControls extends Component {
             padding-top: 2px;
             padding-bottom: 2px;
             width: 100%;
+            z-index: 3;
           }
         `}</style>
       </React.Fragment>

@@ -26,8 +26,6 @@ class CountingAreasVisualizer extends Component {
 
   componentDidMount() {
     if(this.elCanvas) {
-      // const { width, height } = this.elCanvas.getBoundingClientRect();
-      // const { refWidth, refHeight } = this.props.countingAreas.get(this.props.color)
       this.editorCanvas = new fabric.Canvas(this.elCanvas, { selection: false });
 
       if(this.props.color) {
@@ -43,7 +41,7 @@ class CountingAreasVisualizer extends Component {
 
     const area = this.props.countingAreas.get(color);
     let data = area.toJS();
-    let points = [ data.point1.x1, data.point1.y1, data.point2.x2, data.point2.y2 ];
+    let points = [ data.point1.x, data.point1.y, data.point2.x, data.point2.y ];
     this.lines[color] = new fabric.Line(points, {
       strokeWidth: 5,
       fill: COLORS[color],
@@ -58,7 +56,7 @@ class CountingAreasVisualizer extends Component {
   render () {
 
     const isEditing = Object.keys(this.props.countingAreas.toJS()).length > 0
-    const { refWidth, refHeight } = this.props.countingAreas.get(this.props.color).toJS();
+    const { refResolution } = this.props.countingAreas.get(this.props.color).toJS();
 
     return (
       <div
@@ -66,8 +64,8 @@ class CountingAreasVisualizer extends Component {
       >
         <canvas
           ref={(el) => this.elCanvas = el}
-          width={refWidth}
-          height={refHeight}
+          width={refResolution.w}
+          height={refResolution.h}
           className="editor-canvas" />
         <style jsx>{`
           .counting-areas-editor,.editor-canvas  {

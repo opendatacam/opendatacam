@@ -1,4 +1,4 @@
-import { scaleDetection } from '../../../utils/resolution';
+import { scaleDetection, scalePoint } from '../../../utils/resolution';
 import { COLORS } from '../../../utils/colors';
 
 class LiveViewEngine {
@@ -103,18 +103,30 @@ class LiveViewEngine {
 
   drawCountingAreas (
     context,
-    countingAreas
+    countingAreas,
+    canvasResolution
   ) {
     countingAreas.map((area, color) => {
       if(area !== null) {
         let data = area.toJS();
-        let points = [ data.point1.x1, data.point1.y1, data.point2.x2, data.point2.y2 ];
+        data.point1 = scalePoint(data.point1, canvasResolution, data.refResolution);
+        data.point2 = scalePoint(data.point2, canvasResolution, data.refResolution);
         context.strokeStyle = COLORS[color];
-        context.lineWidth = 5;
+        context.fillStyle = COLORS[color];
+        context.lineWidth = 5; // TODO Have those dynamic depending on canvas resolution
+        let edgeCircleRadius = 5;
+        // Draw line
         context.beginPath();
-        context.moveTo(data.point1.x1, data.point1.y1);
-        context.lineTo(data.point2.x2, data.point2.y2);
+        context.moveTo(data.point1.x, data.point1.y);
+        context.lineTo(data.point2.x, data.point2.y);
         context.stroke();
+        // Draw circles on edges
+        context.beginPath();
+        context.arc(data.point1.x, data.point1.y, edgeCircleRadius, 0, 2 * Math.PI, false);
+        context.fill();
+        context.beginPath();
+        context.arc(data.point2.x, data.point2.y, edgeCircleRadius, 0, 2 * Math.PI, false);
+        context.fill();
       }
     });
   }

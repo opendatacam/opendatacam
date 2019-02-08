@@ -3,10 +3,11 @@ import { connect } from 'react-redux';
 
 import { addCountingArea } from '../../statemanagement/app/CounterStateManagement';
 import DrawInstructions from '../shared/DrawInstructions';
-import CountingAreasEditor from '../shared/CountingAreasEditor';
+import CounterAreasEditor from '../shared/CounterAreasEditor';
 import CanvasEngine from '../canvas/CanvasEngine';
 
 import { MODE } from '../../utils/constants';
+import CounterAreasVisualizer from '../shared/CounterAreasVisualizer';
 
 class CounterView extends React.Component {
 
@@ -19,13 +20,14 @@ class CounterView extends React.Component {
               <DrawInstructions onConfirm={() => this.props.dispatch(addCountingArea())} />
             }
             {this.props.isAtLeastOneCountingAreasDefined &&
-              <CountingAreasEditor />
+              <CounterAreasEditor />
             }
             <CanvasEngine mode={MODE.COUNTERVIEW} />
           </>
         }
         {this.props.isRecording && this.props.isAtLeastOneCountingAreasDefined &&
           <>
+            <CounterAreasVisualizer />
             <CanvasEngine mode={MODE.COUNTERVIEW_RECORDING} />
           </>
         }

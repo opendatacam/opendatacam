@@ -5,8 +5,8 @@ import { AVAILABLE_COLORS } from '../../utils/colors';
 // Initial state
 const initialState = fromJS({
   countingAreas: {},
-  selectedCountingArea: 'yellow'
-
+  selectedCountingArea: 'yellow',
+  counterDashboard: {}
 })
 
 // Actions
@@ -15,6 +15,15 @@ const DELETE_COUNTING_AREA = 'Counter/DELETE_COUNTING_AREA'
 const SAVE_COUNTING_AREA = 'Counter/SAVE_COUNTING_AREA'
 const ADD_COUNTING_AREA = 'Counter/ADD_COUNTING_AREA'
 const RESTORE_COUNTING_AREAS = 'Counter/RESTORE_COUNTING_AREAS'
+const UPDATE_COUNTERDASHBOARD = 'Counter/UPDATE_COUNTERDASHBOARD'
+
+export function updateCounterDashboard(data) {
+  return {
+    type: UPDATE_COUNTERDASHBOARD,
+    payload: data
+  }
+}
+
 
 export function selectCountingArea(color) {
   return {
@@ -134,6 +143,8 @@ export default function CounterReducer (state = initialState, action = {}) {
       return state.setIn(['countingAreas', action.payload], null)
     case RESTORE_COUNTING_AREAS:
       return state.set('countingAreas', fromJS(action.payload))
+    case UPDATE_COUNTERDASHBOARD:
+      return state.mergeIn(['counterDashboard'], fromJS(action.payload))
     default:
       return state
   }

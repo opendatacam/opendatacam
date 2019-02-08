@@ -14,6 +14,7 @@ class CanvasEngine extends PureComponent {
     this.lastFrameDrawn = -1
 
     this.loopUpdateCanvas = this.loopUpdateCanvas.bind(this)
+    this.rafHandle = null;
   }
 
   componentDidMount () {
@@ -61,7 +62,8 @@ class CanvasEngine extends PureComponent {
       if(this.props.mode === MODE.COUNTERVIEW_RECORDING) {
         LiveViewEngine.drawCountingAreas(
           this.canvasContext,
-          this.props.countingAreas
+          this.props.countingAreas,
+          this.props.canvasResolution
         )
         LiveViewEngine.drawTrackerDataCounterEditor(
           this.canvasContext,
@@ -82,7 +84,13 @@ class CanvasEngine extends PureComponent {
 
       this.lastFrameDrawn = this.props.trackerData.frameIndex;
     }
-    raf(this.loopUpdateCanvas.bind(this))
+    this.rafHandle = raf(this.loopUpdateCanvas.bind(this))
+  }
+
+  componentWillUnmount() {
+    if(this.rafHandle) {
+      raf.cancel(this.rafHandle);
+    }
   }
 
   render () {

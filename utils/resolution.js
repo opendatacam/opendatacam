@@ -11,3 +11,15 @@ export function scaleDetection (
         h: detection.h * canvasResolution.h / originalResolution.h
     }
 }
+
+export function scalePoint (
+  point,
+  canvasResolution,
+  originalResolution
+) {
+  return {
+      ...point,
+      x: point.x * canvasResolution.w / originalResolution.w,
+      y: point.y * canvasResolution.h / originalResolution.h
+  }
+}

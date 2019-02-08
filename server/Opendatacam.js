@@ -30,6 +30,7 @@ let Opendatacam = cloneDeep(initialState);
 
 module.exports = {
 
+  // TODO Adapt this when working with multiple recording / multiple files
   reset: function() {
     return new Promise((resolve, reject) => {
       // Reset counter
@@ -45,15 +46,11 @@ module.exports = {
     
   },
 
-  start: function() {
-    // Opendatacam.yoloIsStarting = true;
-  },
-
   /*
     Example countingAreas
 
     { 
-      yellow: { point1: { x1: 35.05624790519486, y1: 69.33333587646484 }, point2: { x2: 111.38124638170021, y2: 27.11111068725586 } },
+      yellow: { point1: { x: 35.05624790519486, y: 69.33333587646484 }, point2: { x: 111.38124638170021, y: 27.11111068725586 } },
       turquoise: null 
     }
   */
@@ -72,12 +69,12 @@ module.exports = {
     // The editor canvas can be smaller / bigger
     let resizedData = {
       point1: {
-        x1: data.point1.x1 * Opendatacam.image.w / data.refWidth,
-        y1: data.point1.y1 * Opendatacam.image.h / data.refHeight,
+        x: data.point1.x * Opendatacam.image.w / data.refResolution.w,
+        y: data.point1.y * Opendatacam.image.h / data.refResolution.h,
       },
       point2: {
-        x2: data.point2.x2 * Opendatacam.image.w / data.refWidth,
-        y2: data.point2.y2 * Opendatacam.image.h / data.refHeight,
+        x: data.point2.x * Opendatacam.image.w / data.refResolution.w,
+        y: data.point2.y * Opendatacam.image.h / data.refResolution.h,
       }
     }
 
@@ -90,12 +87,12 @@ module.exports = {
 
     let { point1, point2 } = resizedData;
 
-    let a = (- point2.y2 + point1.y1) / (point2.x2 - point1.x1);
-    let b = - point1.y1 - a * point1.x1;
+    let a = (- point2.y + point1.y) / (point2.x - point1.x);
+    let b = - point1.y - a * point1.x;
     // Store xBounds to determine if the point is "intersecting" the line on the drawn part
     let xBounds = {
-      xMin: Math.min(point1.x1, point2.x2),
-      xMax: Math.max(point1.x1, point2.x2)
+      xMin: Math.min(point1.x, point2.x),
+      xMax: Math.max(point1.x, point2.x)
     }
 
     Opendatacam.countingAreas[key] = {
@@ -292,6 +289,7 @@ module.exports = {
       // TODO add isRecording
       Opendatacam.sseConnexion(`data:${JSON.stringify({
         trackerDataForLastFrame: Opendatacam.trackerDataForLastFrame,
+        counterDashboard: this.getCounterDashboard(),
         appState: {
           yoloStatus: YOLO.getStatus(),
           recordingStatus: Opendatacam.recordingStatus
@@ -300,7 +298,7 @@ module.exports = {
     }
   },
 
-  getCountingDashboard: function() {
+  getCounterDashboard: function() {
 
     // Generate dashboard from countingHistory
     // example
@@ -312,7 +310,8 @@ module.exports = {
     //       person: 0,
     //       bicycle: 0,
     //       motorbike: 0,
-    //       bus: 0
+    //       bus: 0,
+    //       _total: 0
     //     }
     //   }
     //   "blablal": {
@@ -328,16 +327,12 @@ module.exports = {
 
       if(!counterDashboard[countedItem.area][countedItem.name]) {
         counterDashboard[countedItem.area][countedItem.name] = 1;
+        counterDashboard[countedItem.area]['_total'] = 1;
       } else {
         counterDashboard[countedItem.area][countedItem.name]++;
+        counterDashboard[countedItem.area]['_total']++;
       }
     })
-
-    counterDashboard['currentFps'] = Opendatacam.recordingStatus.currentFPS;
-    counterDashboard['currentTime'] = (Opendatacam.timeLastFrame.getTime() - Opendatacam.timeStartCounting.getTime()) / 1000
-    counterDashboard['yoloStarted'] = YOLO.getStatus().isStarted;
-    counterDashboard['yoloIsStarting'] = YOLO.getStatus().isStarting;
-    counterDashboard['nbItemsTrackedThisFrame'] = Opendatacam.nbItemsTrackedThisFrame;
 
     return counterDashboard;
   },
@@ -381,7 +376,10 @@ module.exports = {
 
   stopRecording() {
     console.log('Stop recording');
+    // Reset counters
     Opendatacam.recordingStatus.isRecording = false;
+    Opendatacam.countedItemsHistory = [];
+    
   },
 
   // Listen to 8070 for Tracker data detections

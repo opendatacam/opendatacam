@@ -8,7 +8,7 @@ import { COLORS } from '../../utils/colors';
 
 import { clearCountingArea, saveCountingArea, defaultCountingAreaValue } from '../../statemanagement/app/CounterStateManagement'
 
-class CountingAreasEditor extends Component {
+class CounterAreasEditor extends Component {
 
   constructor(props) {
     super(props);
@@ -53,10 +53,13 @@ class CountingAreasEditor extends Component {
     this.editorCanvas.on('mouse:up', (o) => {
       let { x1, y1, x2, y2 } = this.lines[this.props.selectedCountingArea];
       this.props.dispatch(saveCountingArea(this.props.selectedCountingArea, {
-        point1: { x1, y1},
-        point2: { x2, y2},
-        refWidth: this.editorCanvas.width, 
-        refHeight: this.editorCanvas.height
+        point1: { x:x1, y:y1},
+        point2: { x:x2, y:y2},
+        refResolution: {
+          w: this.editorCanvas.width,
+          h: this.editorCanvas.height
+        }
+        
       }))
       this.mouseDown = false;
     });
@@ -78,8 +81,8 @@ class CountingAreasEditor extends Component {
         this.editorCanvas = new fabric.Canvas(this.elCanvas, { selection: false, width: width, height: height });
       } else {
         // If some counting areas exists already
-        const { refWidth, refHeight } = this.props.countingAreas.find((val) => val !== null).toJS();
-        this.editorCanvas = new fabric.Canvas(this.elCanvas, { selection: false, width: refWidth, height: refHeight });
+        const { refResolution } = this.props.countingAreas.find((val) => val !== null).toJS();
+        this.editorCanvas = new fabric.Canvas(this.elCanvas, { selection: false, width: refResolution.w, height: refResolution.h });
         this.reRenderCountingAreasInEditor(this.props.countingAreas)
       }
 
@@ -97,7 +100,7 @@ class CountingAreasEditor extends Component {
     countingAreas.map((area, color) => {
       if(area !== null) {
         let data = area.toJS();
-        let points = [ data.point1.x1, data.point1.y1, data.point2.x2, data.point2.y2 ];
+        let points = [ data.point1.x, data.point1.y, data.point2.x, data.point2.y ];
         this.lines[color] = new fabric.Line(points, {
           strokeWidth: 5,
           fill: COLORS[color],
@@ -157,4 +160,4 @@ export default connect((state) => {
     countingAreas: state.counter.get('countingAreas'),
     selectedCountingArea: state.counter.get('selectedCountingArea')
   }
-})(CountingAreasEditor)
+})(CounterAreasEditor)
