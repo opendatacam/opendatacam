@@ -36,7 +36,13 @@ app.prepare()
 
     const urlData = getURLData(req);
     Opendatacam.listenToYOLO(urlData);
-    return app.render(req, res, '/')
+
+    // Hacky way to pass params to getInitialProps on SSR
+    // Should hydrate differently
+    let query = req.query;
+    query.countingAreas = Opendatacam.getOriginalCountingAreas();
+
+    return app.render(req, res, '/', query)
   })
 
   express.post('/counter/areas', (req, res) => {

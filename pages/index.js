@@ -15,7 +15,7 @@ class Index extends React.Component {
       // if(query.isCounting) {
       //   // Jetson app is currently counting, display counting view
       //   // Restore counting areas
-      //   await store.dispatch(restoreCountingAreas(query.countingAreas))
+      await store.dispatch(restoreCountingAreas(query.countingAreas))
       //   await store.dispatch(drawInstructionsShown());
       //   await store.dispatch(showCountingView());
       // }
