@@ -19,8 +19,8 @@ class UIControls extends Component {
     return (
       <React.Fragment>
         <div className="nav">
-          {this.props.isRecording &&
-            <div className="recording-status">Recording ...</div>
+          {this.props.recordingStatus.isRecording &&
+            <div className="recording-status">Recording ...  | FPS: {this.props.recordingStatus.currentFPS}</div>
           }
           <div>
             <button onClick={() => this.props.dispatch(setMode(MODE.LIVEVIEW))}>Live view</button>
@@ -29,10 +29,10 @@ class UIControls extends Component {
           </div>
         </div>
         <div className="nav-bottom">
-          {!this.props.isRecording &&
+          {!this.props.recordingStatus.isRecording &&
             <BtnRecording label="Start recording" onClick={() => this.props.dispatch(startRecording())} />
           }
-          {this.props.isRecording &&
+          {this.props.recordingStatus.isRecording &&
             <BtnRecording label="Stop recording" stop onClick={() => this.props.dispatch(stopRecording())} />
           }
         </div>
@@ -70,6 +70,6 @@ class UIControls extends Component {
 
 export default connect((state) => {
   return {
-    isRecording: state.app.getIn(['recordingStatus','isRecording'])
+    recordingStatus: state.app.get('recordingStatus').toJS()
   }
 })(UIControls);

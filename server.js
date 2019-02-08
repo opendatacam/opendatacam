@@ -9,7 +9,6 @@ const YOLO = require('./server/processes/YOLO');
 const Opendatacam = require('./server/Opendatacam');
 const cloneDeep = require('lodash.clonedeep');
 const getURLData = require('./server/utils/urlHelper').getURLData;
-const simulation30FPSDetectionsData = require('./static/placeholder/alexeydetections30FPS.json');
 
 // const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not running on the Jetson
 const SIMULATION_MODE = true;

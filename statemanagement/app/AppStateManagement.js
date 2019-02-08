@@ -8,7 +8,8 @@ import { updateTrackerData } from './TrackerStateManagement';
 const initialState = fromJS({
   urlData: {},
   recordingStatus: {
-    isRecording: false
+    isRecording: false,
+    currentFPS: 0
   },
   yoloStatus: {
     isStarted: false,
@@ -90,8 +91,8 @@ export default function AppReducer (state = initialState, action = {}) {
     case SET_MODE:
       return state.set('mode', action.payload)
     case UPDATE_APPSTATE: 
-      return state.set('yoloStatus', action.payload.yoloStatus)
-                  .set('recordingStatus', action.payload.recordingStatus)
+      return state.set('yoloStatus', fromJS(action.payload.yoloStatus))
+                  .set('recordingStatus', fromJS(action.payload.recordingStatus))
     default:
       return state
   }

@@ -17,12 +17,12 @@ const initialState = {
   countingAreas: {},
   originalCountingAreas: {},
   trackerDataForLastFrame: null,
-  currentFPS: 0,
   timeStartCounting: new Date(),
   nbItemsTrackedThisFrame: 0,
   sseConnexion: null,
   recordingStatus: {
-    isRecording: false
+    isRecording: false,
+    currentFPS: 0
   }
 }
 
@@ -131,7 +131,7 @@ module.exports = {
     const timeDiff = Math.abs(now.getTime() - Opendatacam.timeLastFrame.getTime());
     Opendatacam.timeLastFrame = now;
     // console.log(`YOLO detections FPS: ${1000 / timeDiff}`);
-    Opendatacam.currentFPS = 1000 / timeDiff
+    Opendatacam.recordingStatus.currentFPS = Math.round(1000 / timeDiff)
 
     // Scale detection
     let detectionScaledOfThisFrame = detectionsOfThisFrame.map((detection) => {
@@ -333,7 +333,7 @@ module.exports = {
       }
     })
 
-    counterDashboard['currentFps'] = Opendatacam.currentFPS;
+    counterDashboard['currentFps'] = Opendatacam.recordingStatus.currentFPS;
     counterDashboard['currentTime'] = (Opendatacam.timeLastFrame.getTime() - Opendatacam.timeStartCounting.getTime()) / 1000
     counterDashboard['yoloStarted'] = YOLO.getStatus().isStarted;
     counterDashboard['yoloIsStarting'] = YOLO.getStatus().isStarting;
