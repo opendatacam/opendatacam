@@ -85,7 +85,8 @@ module.exports = {
 
   start: function() {
     // Do not start it twice
-    if(YOLO.isStarted && YOLO.isStarting) {
+    if(YOLO.isStarted || YOLO.isStarting) {
+      console.log('already started');
       return;
     }
 
