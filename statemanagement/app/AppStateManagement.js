@@ -2,6 +2,7 @@ import { fromJS } from 'immutable'
 import axios from 'axios';
 import { MODE } from '../../utils/constants';
 import { getURLData } from '../../server/utils/urlHelper';
+import { updateTrackerData } from './TrackerStateManagement';
 
 // Initial state
 const initialState = fromJS({
@@ -13,23 +14,28 @@ const initialState = fromJS({
     isStarted: false,
     isStarting: true
   },
-  mode: MODE.LIVEVIEW
+  mode: MODE.LIVEVIEW,
+  isListeningToServerData: false,
+  eventSourceServerData: null
 })
 
 // Actions
 const SET_URLDATA = 'App/SET_URLDATA'
 const SET_MODE = 'App/SET_MODE'
 const UPDATE_APPSTATE = 'App/UPDATE_APPSTATE'
+const START_LISTENING_SERVERDATA = 'App/START_LISTENING_SERVERDATA'
+// TODO LATER HANDLE STOP LISTENING ...
+const STOP_LISTENING_SERVERDATA = 'App/STOP_LISTENING_SERVERDATA'
 
 export function startRecording() {
-  return (dispatch, getState) => {
+  return () => {
     // Ping webservice to start storing data on server
     axios.get('/recording/start');
   }
 }
 
 export function stopRecording() {
-  return (dispatch, getState) => {
+  return () => {
     // Ping webservice to stop storing data on server
     axios.get('/recording/stop');
   }
@@ -56,9 +62,29 @@ export function setURLData(req) {
   }
 }
 
+export function startListeningToServerData() {
+  return (dispatch, getState) => {
+    const eventSource = new EventSource("/tracker/sse");
+    dispatch({
+        type: START_LISTENING_SERVERDATA,
+        payload: eventSource
+    })
+
+    // On new tracker data coming from server, update redux store
+    eventSource.onmessage = (msg) => {
+        // Parse JSON
+        let message = JSON.parse(msg.data);
+        dispatch(updateTrackerData(message.trackerDataForLastFrame))
+        dispatch(updateAppState(message.appState))
+    }
+  }
+}
+
 // Reducer
 export default function AppReducer (state = initialState, action = {}) {
   switch (action.type) {
+    case START_LISTENING_SERVERDATA:
+        return state.set("isListeningToServerData", true).set("eventSourceServerData", action.payload);
     case SET_URLDATA:
       return state.set('urlData', fromJS(action.payload))
     case SET_MODE:

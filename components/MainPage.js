@@ -5,7 +5,7 @@ import AskLandscape from './shared/AskLandscape';
 import WebcamStream from './shared/WebcamStream';
 
 import { initViewportListeners } from '../statemanagement/app/ViewportStateManagement'
-import { startListeningToTrackerData } from '../statemanagement/app/TrackerStateManagement'
+import { startListeningToServerData } from '../statemanagement/app/AppStateManagement'
 import LiveView from './main/LiveView';
 import CounterView from './main/CounterView';
 import PathView from './main/PathView';
@@ -20,7 +20,7 @@ class MainPage extends React.Component {
      // TODO Handle specifying canvas size + resizing here, copy from beatthetraffic
 
      // TODO See how we handle the YOLO on / off situation
-     this.props.dispatch(startListeningToTrackerData());
+     this.props.dispatch(startListeningToServerData());
    }
 
   render () {
