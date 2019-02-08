@@ -20,7 +20,10 @@ const initialState = {
   currentFPS: 0,
   timeStartCounting: new Date(),
   nbItemsTrackedThisFrame: 0,
-  sseConnexion: null
+  sseConnexion: null,
+  recordingStatus: {
+    isRecording: false
+  }
 }
 
 let Opendatacam = cloneDeep(initialState);
@@ -289,7 +292,10 @@ module.exports = {
       // TODO add isRecording
       Opendatacam.sseConnexion(`data:${JSON.stringify({
         trackerDataForLastFrame: Opendatacam.trackerDataForLastFrame,
-        yoloStatus: YOLO.getStatus()
+        appState: {
+          yoloStatus: YOLO.getStatus(),
+          recordingStatus: Opendatacam.recordingStatus
+        }
       })}\n\n`);
     }
   },
@@ -366,6 +372,16 @@ module.exports = {
 
   startStreamingData(sse) {
     Opendatacam.sseConnexion = sse;
+  },
+
+  startRecording() {
+    console.log('Start recording');
+    Opendatacam.recordingStatus.isRecording = true;
+  },
+
+  stopRecording() {
+    console.log('Stop recording');
+    Opendatacam.recordingStatus.isRecording = false;
   },
 
   // Listen to 8070 for Tracker data detections

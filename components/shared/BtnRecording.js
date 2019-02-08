@@ -1,25 +1,29 @@
 import React, { Component } from 'react'
 
-class BtnStartCounting extends Component {
+class BtnRecording extends Component {
 
   render () {
     return (
       <div
-        className="record"
+        className="btn-record"
         onClick={() => this.props.onClick()}
       >
-        <img src="/static/icons/icon-start-recording.svg" />
-        <h2>Start Recording</h2>
+        {this.props.stop &&
+           <img src="/static/icons/icon-stop-recording.svg" />
+        }
+        {!this.props.stop && 
+          <img src="/static/icons/icon-start-recording.svg" />
+        }
+        <h2>{this.props.label}</h2>
         <style jsx>{`
-          .record{
-            position: fixed;
-            bottom: 1.5rem;
-            left: 50%;
-            transform: translateX(-50%);
+          .btn-record {
+            position: relative;
             text-align: center;
+            z-index: 2;
+            cursor: pointer;
           }
       
-          .record h2{
+          .btn-record h2{
             margin-top: 0.5rem;
           }
         `}</style>
@@ -28,4 +32,4 @@ class BtnStartCounting extends Component {
   }
 }
 
-export default BtnStartCounting
+export default BtnRecording

@@ -4,35 +4,44 @@ import { connect } from 'react-redux';
 import { addCountingArea } from '../../statemanagement/app/CounterStateManagement';
 import DrawInstructions from '../shared/DrawInstructions';
 import CountingAreasEditor from '../shared/CountingAreasEditor';
-import BtnStartCounting from '../shared/BtnStartCounting';
 import CanvasEngine from '../canvas/CanvasEngine';
 
 import { MODE } from '../../utils/constants';
 
 class CounterView extends React.Component {
 
-  constructor(props) {
-    super(props);
-    // this.handleStartCounting = this.handleStartCounting.bind(this);
-  }
-
-  // handleStartCounting() {
-  //   this.props.dispatch(startCounting());
-  // }
-
   render () {
     return (
-      <div className="webcam-view">
-        {Object.keys(this.props.countingAreas).length === 0 &&
-          <DrawInstructions onConfirm={() => this.props.dispatch(addCountingArea())} />
+      <div>
+        {!this.props.isRecording &&
+          <>
+            {!this.props.isAtLeastOneCountingAreasDefined &&
+              <DrawInstructions onConfirm={() => this.props.dispatch(addCountingArea())} />
+            }
+            {this.props.isAtLeastOneCountingAreasDefined &&
+              <CountingAreasEditor />
+            }
+            <CanvasEngine mode={MODE.COUNTERVIEW} />
+          </>
         }
-        {Object.keys(this.props.countingAreas).length > 0 &&
-          <CountingAreasEditor />
+        {this.props.isRecording && this.props.isAtLeastOneCountingAreasDefined &&
+          <>
+            <CanvasEngine mode={MODE.COUNTERVIEW_RECORDING} />
+          </>
         }
-        <CanvasEngine mode={MODE.COUNTERVIEW} />
-        {/* {this.props.isOneCountingAreaDefined &&
-          <BtnStartCounting onClick={() => this.handleStartCounting()} />
-        } */}
+        {this.props.isRecording && !this.props.isAtLeastOneCountingAreasDefined &&
+          <>
+            <div className="modal">Not counting lines defined , Blablabalbla Define counting lines before start recording</div>
+          </>
+        }
+        <style jsx>{`
+            .modal {
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              transform: translate(-50%, -50%);
+            }
+        `}</style>
       </div>
     )
   }
@@ -40,10 +49,8 @@ class CounterView extends React.Component {
 
 export default connect((state) => {
 
-  // let isOneCountingAreaDefined = Object.values(state.counter.get('countingAreas').toJS()).filter((value) => value !== null).length > 0
-  // console.log(Object.keys(state.counter.get('countingAreas')));
-
   return {
-    countingAreas: state.counter.get('countingAreas').toJS()
+    isAtLeastOneCountingAreasDefined: Object.keys(state.counter.get('countingAreas').toJS()).length > 0,
+    isRecording: state.app.getIn(['recordingStatus','isRecording'])
   }
 })(CounterView);

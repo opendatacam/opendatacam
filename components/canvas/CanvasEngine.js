@@ -58,6 +58,19 @@ class CanvasEngine extends PureComponent {
         )
       }
 
+      if(this.props.mode === MODE.COUNTERVIEW_RECORDING) {
+        LiveViewEngine.drawCountingAreas(
+          this.canvasContext,
+          this.props.countingAreas
+        )
+        LiveViewEngine.drawTrackerDataCounterEditor(
+          this.canvasContext,
+          this.props.trackerData.data,
+          this.props.canvasResolution,
+          this.props.originalResolution
+        )
+      }
+
       if(this.props.mode === MODE.PATHVIEW) {
         PathViewEngine.drawPaths(
           this.canvasContext,
@@ -131,6 +144,7 @@ export default connect(state => {
   return {
     trackerData: state.tracker.get('trackerData').toJS(),
     originalResolution: state.viewport.get('originalResolution').toJS(),
-    canvasResolution: state.viewport.get('canvasResolution').toJS()
+    canvasResolution: state.viewport.get('canvasResolution').toJS(),
+    countingAreas: state.counter.get('countingAreas')
   }
 })(CanvasEngine)

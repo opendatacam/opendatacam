@@ -6,7 +6,9 @@ import { getURLData } from '../../server/utils/urlHelper';
 // Initial state
 const initialState = fromJS({
   urlData: {},
-  isRecording: false,
+  recordingStatus: {
+    isRecording: false
+  },
   yoloStatus: {
     isStarted: false,
     isStarting: true
@@ -15,41 +17,27 @@ const initialState = fromJS({
 })
 
 // Actions
-const START_RECORDING = 'App/START_RECORDING'
-const STOP_RECORDING = 'App/STOP_RECORDING'
 const SET_URLDATA = 'App/SET_URLDATA'
 const SET_MODE = 'App/SET_MODE'
-const UPDATE_YOLOSTATUS = 'App/UPDATE_YOLOSTATUS'
+const UPDATE_APPSTATE = 'App/UPDATE_APPSTATE'
 
-export function startRecording () {
+export function startRecording() {
   return (dispatch, getState) => {
     // Ping webservice to start storing data on server
-    axios.post('/recording/start',{
-      countingAreas: getState().counter.get('countingAreas').toJS()
-    });
-
-    // Notify UI we started recording
-    dispatch({
-      type: START_RECORDING
-    })
+    axios.get('/recording/start');
   }
 }
 
-export function stopCounting() {
+export function stopRecording() {
   return (dispatch, getState) => {
     // Ping webservice to stop storing data on server
     axios.get('/recording/stop');
-
-    // Notify UI we stop recording
-    dispatch({
-      type: STOP_RECORDING
-    })
   }
 }
 
-export function updateYOLOStatus(data) {
+export function updateAppState(data) {
   return {
-    type: UPDATE_YOLOSTATUS,
+    type: UPDATE_APPSTATE,
     payload: data
   }
 }
@@ -71,16 +59,13 @@ export function setURLData(req) {
 // Reducer
 export default function AppReducer (state = initialState, action = {}) {
   switch (action.type) {
-    case START_RECORDING:
-      return state.set('isRecording', true)
-    case STOP_RECORDING:
-      return state.set('isRecording', false)
     case SET_URLDATA:
       return state.set('urlData', fromJS(action.payload))
     case SET_MODE:
       return state.set('mode', action.payload)
-    case UPDATE_YOLOSTATUS: 
-      return state.set('yoloStatus', action.payload)
+    case UPDATE_APPSTATE: 
+      return state.set('yoloStatus', action.payload.yoloStatus)
+                  .set('recordingStatus', action.payload.recordingStatus)
     default:
       return state
   }

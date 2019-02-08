@@ -27,6 +27,8 @@ app.prepare()
   // Start HTTP server
   const server = http.createServer(express);
   express.use(bodyParser.json());
+
+  // TODO add compression: https://github.com/expressjs/compression
   
   // This render pages/index.js for a request to /
   express.get('/', (req, res) => {
@@ -43,17 +45,20 @@ app.prepare()
     res.sendStatus(200)
   });
 
+  // Maybe Remove the need for dependency with direct express implem: https://github.com/expressjs/compression#server-sent-events
   express.get('/tracker/sse', sse, function(req, res) {
     Opendatacam.startStreamingData(res.sse);
   });
 
-  // express.get('/counter/dashboard', (req, res) => {
-  //   res.json(Opendatacam.getCountingDashboard());
-  // });
+  express.get('/recording/start', (req, res) => {
+    Opendatacam.startRecording();
+    res.sendStatus(200)
+  });
 
-  // express.get('/tracker/current-tracked-items', (req, res) => {
-  //   res.json(Opendatacam.getTrackedItemsThisFrame());
-  // });
+  express.get('/recording/stop', (req, res) => {
+    Opendatacam.stopRecording();
+    res.sendStatus(200)
+  });
 
   express.get('/counter/export', function(req, res) {
     var dataToExport = cloneDeep(Opendatacam.getCounterHistory());

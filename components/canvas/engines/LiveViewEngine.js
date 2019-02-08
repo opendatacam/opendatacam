@@ -101,6 +101,24 @@ class LiveViewEngine {
     })
   }
 
+  drawCountingAreas (
+    context,
+    countingAreas
+  ) {
+    countingAreas.map((area, color) => {
+      if(area !== null) {
+        let data = area.toJS();
+        let points = [ data.point1.x1, data.point1.y1, data.point2.x2, data.point2.y2 ];
+        context.strokeStyle = COLORS[color];
+        context.lineWidth = 5;
+        context.beginPath();
+        context.moveTo(data.point1.x1, data.point1.y1);
+        context.lineTo(data.point2.x2, data.point2.y2);
+        context.stroke();
+      }
+    });
+  }
+
   // drawRawDetections (context, detections, canvasResolution, originalResolution) {
   //   context.strokeStyle = '#f00'
   //   context.lineWidth = 5

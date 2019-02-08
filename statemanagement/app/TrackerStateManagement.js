@@ -1,5 +1,5 @@
 import { fromJS } from 'immutable'
-import axios from 'axios';
+import { updateAppState } from './AppStateManagement';
 
 // Initial state
 const initialState = fromJS({
@@ -18,6 +18,8 @@ const UPDATE_DATA = 'Tracker/UPDATE_DATA'
 // TODO LATER HANDLE STOP LISTENING ...
 const STOP_LISTENING = 'Tracker/STOP_LISTENING'
 
+// Make more sence to move this global listener to AppStateManagement and just update Tracker data here
+// Because there is not only tracker data, there is app state, and also recordingData soon
 export function startListeningToTrackerData() {
   return (dispatch, getState) => {
     const eventSource = new EventSource("/tracker/sse");
@@ -29,10 +31,14 @@ export function startListeningToTrackerData() {
     // On new tracker data coming from server, update redux store
     eventSource.onmessage = (msg) => {
         // Parse JSON
+        let message = JSON.parse(msg.data);
+
         dispatch({
             type: UPDATE_DATA,
-            payload: JSON.parse(msg.data).trackerDataForLastFrame
+            payload: message.trackerDataForLastFrame
         })
+
+        dispatch(updateAppState(message.appState))
     }
   }
 }
