@@ -70,6 +70,16 @@ class CounterAreasEditor extends Component {
     if(newProps.countingAreas !== this.props.countingAreas) {
       this.reRenderCountingAreasInEditor(newProps.countingAreas)
     }
+
+
+    // TODO later in order to fix bug if resizing windows while in counter editing mode
+    // if(newProps.canvasResolution !== this.props.canvasResolution) {
+    //   this.editorCanvas.setDimensions({
+    //     width: newProps.canvasResolution.get('w'),
+    //     height: newProps.canvasResolution.get('h')
+    //   });
+    //   // TODO Update counting areas with new refResolution
+    // }
   } 
 
   componentDidMount() {
@@ -124,8 +134,8 @@ class CounterAreasEditor extends Component {
         <MenuCountingAreasEditor />
         <canvas
           ref={(el) => this.elCanvas = el}
-          width={this.props.canvasResolution.w}
-          height={this.props.canvasResolution.h}
+          width={this.props.canvasResolution.get('w')}
+          height={this.props.canvasResolution.get('h')}
           className="editor-canvas" />
         <style jsx>{`
           .counting-areas-editor,.editor-canvas  {
@@ -159,6 +169,6 @@ export default connect((state) => {
   return {
     countingAreas: state.counter.get('countingAreas'),
     selectedCountingArea: state.counter.get('selectedCountingArea'),
-    canvasResolution: state.viewport.get('canvasResolution').toJS()
+    canvasResolution: state.viewport.get('canvasResolution')
   }
 })(CounterAreasEditor)

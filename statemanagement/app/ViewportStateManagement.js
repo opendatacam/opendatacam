@@ -8,19 +8,16 @@ const initialState = fromJS({
     w: 1280,
     h: 720
   },
+  // TODO LATER
   // Maybe can rid of this by directly sending only the percentage value
   // This means original resolution of the YOLO detections & tracker
   // image field in opendatacam class on server
+  // This should by set by the server
   originalResolution: {
     w: 1280,
     h: 720
   }
 })
-
-
-/** 
- *  TODO LATER, copy stuff from beat the traffic ViewportStateManagement to handle any canvas size / ratio depending on innerWith / innerHeight
- * **/
 
 // Actions
 const SET_PORTRAIT = 'Viewport/SET_PORTRAIT'
