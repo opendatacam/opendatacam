@@ -1,8 +1,13 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 
-import { MODE, CIRCLE_RADIUS } from '../../utils/constants';
+import { CIRCLE_RADIUS } from '../../utils/constants';
 import { COLORS } from '../../utils/colors';
+import { scalePoint } from '../../utils/resolution';
+
+/* 
+  Here we suppose that the dom parent element is positionned the same as the canvas
+*/
 
 class CounterAreasVisualizer extends Component {
 
@@ -61,14 +66,17 @@ class CounterAreasVisualizer extends Component {
 }
 
 export default connect(state => {
-
     // Enrich countingAreas with more data
     // Maybe persist directly this data so we can reuse here and in the canvas engine
     const countingAreas = state.counter.get('countingAreas').map((area, color) => {
-        return area.set('center', {
+        return area.set('center', scalePoint(
+          {
             x: Math.abs(area.getIn(['point2','x']) - area.getIn(['point1','x'])) / 2 + Math.min(area.getIn(['point1','x']), area.getIn(['point2','x'])),
             y: Math.abs(area.getIn(['point2','y']) - area.getIn(['point1','y'])) / 2 + Math.min(area.getIn(['point1','y']), area.getIn(['point2','y']))
-        })
+          }, 
+          state.viewport.get('canvasResolution').toJS(), 
+          area.get('refResolution').toJS()
+        ))
     })
 
     return {

@@ -53,6 +53,19 @@ export function initViewportListeners () {
       )
       handleOrientationChange(dispatch)
       dispatch(setCanvasResolution(getCanvasResolution()))
+
+
+      let resizeDebounceTimeout = null;
+      window.addEventListener('resize', () => {
+        if (resizeDebounceTimeout) {
+          // clear the timeout
+          clearTimeout(resizeDebounceTimeout);
+        }
+        // start timing for event "completion"
+        resizeDebounceTimeout = setTimeout(() => 
+          dispatch(setCanvasResolution(getCanvasResolution())), 
+        250)
+      })
     }
   }
 }
