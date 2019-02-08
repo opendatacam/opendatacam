@@ -20,7 +20,7 @@ class UIControls extends Component {
       <React.Fragment>
         <div className="nav">
           {this.props.recordingStatus.isRecording &&
-            <div className="recording-status">Recording ...  | FPS: {this.props.recordingStatus.currentFPS}</div>
+            <div className="recording-status">Recording ...  | {this.props.recordingStatus.currentFPS} FPS</div>
           }
           <div>
             <button onClick={() => this.props.dispatch(setMode(MODE.LIVEVIEW))}>Live view</button>
