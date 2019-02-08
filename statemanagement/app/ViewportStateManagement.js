@@ -9,6 +9,8 @@ const initialState = fromJS({
     h: 720
   },
   // Maybe can rid of this by directly sending only the percentage value
+  // This means original resolution of the YOLO detections & tracker
+  // image field in opendatacam class on server
   originalResolution: {
     w: 1280,
     h: 720
@@ -24,6 +26,7 @@ const initialState = fromJS({
 const SET_PORTRAIT = 'Viewport/SET_PORTRAIT'
 const SET_LANDSCAPE = 'Viewport/SET_LANDSCAPE'
 const INIT_LISTENERS = 'Viewport/INIT_LISTENERS'
+const SET_CANVAS_RESOLUTION = 'Viewport/SET_CANVAS_RESOLUTION'
 
 export function handleOrientationChange (dispatch) {
   // console.log(window.orientation)
@@ -49,6 +52,7 @@ export function initViewportListeners () {
         handleOrientationChange.bind(this, dispatch)
       )
       handleOrientationChange(dispatch)
+      dispatch(setCanvasResolution(getCanvasResolution()))
     }
   }
 }
@@ -65,6 +69,32 @@ export function setPortrait () {
   }
 }
 
+export function setCanvasResolution (size) {
+  return {
+    type: SET_CANVAS_RESOLUTION,
+    payload: size
+  }
+}
+
+export function getCanvasResolution () {
+  let innerWidth = window.innerWidth
+  let innerHeight = window.innerHeight
+
+  if (innerWidth / innerHeight < 16 / 9) {
+    // Height is 100% and there is a scroll on the width
+    return {
+      w: innerHeight * 16 / 9,
+      h: innerHeight
+    }
+  } else {
+    // Width is 100% and there is a scroll on the height
+    return {
+      w: innerWidth,
+      h: innerWidth * 9 / 16
+    }
+  }
+}
+
 // Reducer
 export default function ViewportStateManagement (
   state = initialState,
@@ -77,6 +107,8 @@ export default function ViewportStateManagement (
       return state.set('deviceOrientation', 'portrait')
     case INIT_LISTENERS:
       return state.set('listenersInitialized', true)
+    case SET_CANVAS_RESOLUTION:
+      return state.set('canvasResolution', fromJS(action.payload))
     default:
       return state
   }

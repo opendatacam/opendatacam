@@ -124,8 +124,8 @@ class CounterAreasEditor extends Component {
         <MenuCountingAreasEditor />
         <canvas
           ref={(el) => this.elCanvas = el}
-          width={1280}
-          height={720}
+          width={this.props.canvasResolution.w}
+          height={this.props.canvasResolution.h}
           className="editor-canvas" />
         <style jsx>{`
           .counting-areas-editor,.editor-canvas  {
@@ -158,6 +158,7 @@ class CounterAreasEditor extends Component {
 export default connect((state) => {
   return {
     countingAreas: state.counter.get('countingAreas'),
-    selectedCountingArea: state.counter.get('selectedCountingArea')
+    selectedCountingArea: state.counter.get('selectedCountingArea'),
+    canvasResolution: state.viewport.get('canvasResolution').toJS()
   }
 })(CounterAreasEditor)
