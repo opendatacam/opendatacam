@@ -9,4 +9,4 @@ static/trackerHistory.json
 yarn-error.log
 static/lastwebcamframe.jpg
 static/trackerHistoryExport.json
-static/placeholder/frames/
+# static/placeholder/frames/
