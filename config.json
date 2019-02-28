@@ -1,4 +1,5 @@
 {
   "PATH_TO_YOLO_DARKNET" : "/home/nvidia/Documents/darknet",
-  "VALID_CLASSES": ["*"]
+  "VALID_CLASSES": ["*"],
+  "DISPLAY_CLASSES": ["bicycle", "car", "bus", "motorbike", "truck", "person"]
 }

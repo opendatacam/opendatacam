@@ -1,9 +1,9 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
+import { Map } from 'immutable'
 
-import { CIRCLE_RADIUS } from '../../utils/constants';
-import { COLORS } from '../../utils/colors';
 import { scalePoint } from '../../utils/resolution';
+import SingleCounterArea from './SingleCounterArea';
 
 /* 
   Here we suppose that the dom parent element is positionned the same as the canvas
@@ -31,35 +31,14 @@ class CounterAreasVisualizer extends Component {
     return (
       <React.Fragment>
         {Object.values(this.props.countingAreas).map((area, index) =>
-            <div 
-                key={countingAreasKeys[index]}
-                className="circle"
-                style={{
-                    top: area.center.y - CIRCLE_RADIUS / 2, 
-                    left: area.center.x - CIRCLE_RADIUS / 2,
-                    backgroundColor: COLORS[countingAreasKeys[index]]
-                }} 
-            >
-             {this.props.counterDashboard.getIn([countingAreasKeys[index],'_total']) || 0}
-            </div>
+            /* TODO Create a CounterArea component */ 
+            <SingleCounterArea 
+              key={countingAreasKeys[index]}
+              area={area}
+              counterData={this.props.counterDashboard.get(countingAreasKeys[index]) || Map()}
+              areaKey={countingAreasKeys[index]}
+            />
         )}
-        <style jsx>{`
-            .circle {
-                position: absolute;
-                border-radius: ${CIRCLE_RADIUS}px;
-                z-index: 2;
-                min-width: ${CIRCLE_RADIUS}px;
-                height: ${CIRCLE_RADIUS}px;
-                line-height: ${CIRCLE_RADIUS}px;
-                font-size: 16px;
-                font-weight: bold;
-                padding-left: 5px;
-                padding-right: 5px;
-                color: black;
-                text-align: center;
-                cursor: pointer;
-            }    
-        `}</style>
       </React.Fragment>
     )
   }
