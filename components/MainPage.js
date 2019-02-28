@@ -9,19 +9,21 @@ import { startListeningToServerData } from '../statemanagement/app/AppStateManag
 import LiveView from './main/LiveView';
 import CounterView from './main/CounterView';
 import PathView from './main/PathView';
+import ConsoleView from './main/ConsoleView';
+import DataView from './main/DataView';
 
 import { MODE } from '../utils/constants';
 import UIControls from './main/UIControls';
 
 class MainPage extends React.Component {
 
-   componentDidMount() {
-     this.props.dispatch(initViewportListeners());
-     // TODO Handle specifying canvas size + resizing here, copy from beatthetraffic
+  componentDidMount() {
+    this.props.dispatch(initViewportListeners());
+    // TODO Handle specifying canvas size + resizing here, copy from beatthetraffic
 
-     // TODO See how we handle the YOLO on / off situation
-     this.props.dispatch(startListeningToServerData());
-   }
+    // TODO See how we handle the YOLO on / off situation
+    this.props.dispatch(startListeningToServerData());
+  }
 
   render () {
     return (
@@ -30,12 +32,19 @@ class MainPage extends React.Component {
           <AskLandscape />
         }
         <UIControls />
+        {this.props.mode === MODE.DATAVIEW &&
+          <DataView />
+        }
+        {this.props.mode === MODE.CONSOLEVIEW &&
+          <ConsoleView />
+        }
         {this.props.mode === MODE.LIVEVIEW &&
           <LiveView />
         }
         {this.props.mode === MODE.COUNTERVIEW &&
           <CounterView />
         }
+        {/* Need to keep pathview in the DOM as it continuously renders */}
         <PathView hidden={this.props.mode !== MODE.PATHVIEW} />
         <WebcamStream />
         <style jsx>{`

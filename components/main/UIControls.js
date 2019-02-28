@@ -22,10 +22,14 @@ class UIControls extends Component {
           {this.props.recordingStatus.isRecording &&
             <div className="recording-status">Recording ...  | {this.props.recordingStatus.currentFPS} FPS</div>
           }
-          <div>
+          <div className="nav-left">
             <button onClick={() => this.props.dispatch(setMode(MODE.LIVEVIEW))}>Live view</button>
             <button onClick={() => this.props.dispatch(setMode(MODE.COUNTERVIEW))}>Counter</button>
             <button onClick={() => this.props.dispatch(setMode(MODE.PATHVIEW))}>Path finder</button>
+          </div>
+          <div className="nav-right">
+            <button onClick={() => this.props.dispatch(setMode(MODE.DATAVIEW))}>Data</button>
+            <button onClick={() => this.props.dispatch(setMode(MODE.CONSOLEVIEW))}>Console</button>
           </div>
         </div>
         <div className="nav-bottom">
@@ -43,6 +47,16 @@ class UIControls extends Component {
             left: 0;
             right: 0;
             z-index: 3;
+          }
+
+          .nav-left {
+            display: inline-block;
+          }
+
+          .nav-right {
+            position: absolute;
+            right: 0;
+            display: inline-block;
           }
 
           .nav-bottom {
