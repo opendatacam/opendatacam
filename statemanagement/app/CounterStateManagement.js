@@ -144,7 +144,7 @@ export default function CounterReducer (state = initialState, action = {}) {
     case RESTORE_COUNTING_AREAS:
       return state.set('countingAreas', fromJS(action.payload))
     case UPDATE_COUNTERDASHBOARD:
-      return state.mergeIn(['counterDashboard'], fromJS(action.payload))
+      return state.setIn(['counterDashboard'], fromJS(action.payload))
     default:
       return state
   }

@@ -106,13 +106,17 @@ module.exports = {
   },
 
   countItem: function(trackedItem, countingAreaKey) {
-    // Add it to the history (for export feature)
-    Opendatacam.countedItemsHistory.push({
-      timestamp: new Date().toISOString(),
-      area: countingAreaKey,
-      name: trackedItem.name,
-      id: trackedItem.idDisplay
-    })
+    if(Opendatacam.recordingStatus.isRecording) {
+      // Add it to the history
+      Opendatacam.countedItemsHistory.push({
+        timestamp: new Date().toISOString(),
+        area: countingAreaKey,
+        name: trackedItem.name,
+        id: trackedItem.idDisplay
+      })
+    }
+    // Mark tracked item as counted this frame for display
+    trackedItem.counted = countingAreaKey;
   },
 
   updateWithNewFrame: function(detectionsOfThisFrame) {
@@ -209,7 +213,6 @@ module.exports = {
                 // Tracked item has cross the {countingAreaKey} counting line
                 // Count it
                 this.countItem(trackedItem, countingAreaKey);
-                trackedItem.counted = countingAreaKey;
                 // console.log(`Counting ${trackedItem.id}`);
 
               } else {
