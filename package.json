@@ -10,6 +10,7 @@
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "csv-express": "^1.2.2",
+    "dayjs": "^1.8.8",
     "express": "^4.16.4",
     "forever-monitor": "^1.7.1",
     "immutable": "^4.0.0-rc.12",

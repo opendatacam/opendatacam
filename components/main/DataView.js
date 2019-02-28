@@ -1,5 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
+import { fetchHistory } from '../../statemanagement/app/HistoryStateManagement';
+import dayjs from 'dayjs';
 
 class DataView extends Component {
 
@@ -9,7 +11,7 @@ class DataView extends Component {
 
 
   componentDidMount() {
-
+    this.props.dispatch(fetchHistory());
   }
 
   componentWillUnmount() {
@@ -19,7 +21,11 @@ class DataView extends Component {
   render () {
     return (
         <div className="data-view">
-          Data blablabala
+          {this.props.recordingHistory.map((recording) =>
+            <div key={recording._id}>
+              <p>{dayjs(recording.dateStart).format('MMM DD, YYYY')} : {dayjs(recording.dateStart).format('hh:mm a')} - {dayjs(recording.dateEnd).format('hh:mm a')}</p>
+            </div>
+          )}
           <style jsx>{`
             .data-view {
               width: 100%;
@@ -37,4 +43,8 @@ class DataView extends Component {
   }
 }
 
-export default DataView
+export default connect((state) => {
+  return {
+    recordingHistory: state.history.get('recordingHistory').toJS()
+  }
+})(DataView)
