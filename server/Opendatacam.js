@@ -5,6 +5,9 @@ const cloneDeep = require('lodash.clonedeep');
 const fs = require('fs');
 const http = require('http');
 const config = require('../config.json');
+const Recording = require('./model/Recording');
+const DBManager = require('./db/DBManager')
+
 
 const initialState = {
   timeLastFrame: new Date(),
@@ -17,12 +20,13 @@ const initialState = {
   countingAreas: {},
   originalCountingAreas: {},
   trackerDataForLastFrame: null,
-  timeStartCounting: new Date(),
   nbItemsTrackedThisFrame: 0,
   sseConnexion: null,
   recordingStatus: {
     isRecording: false,
-    currentFPS: 0
+    currentFPS: 0,
+    recordingId: null,
+    dateStarted: null
   }
 }
 
@@ -107,16 +111,48 @@ module.exports = {
 
   countItem: function(trackedItem, countingAreaKey) {
     if(Opendatacam.recordingStatus.isRecording) {
-      // Add it to the history
-      Opendatacam.countedItemsHistory.push({
-        timestamp: new Date().toISOString(),
+      var countedItem = {
+        timestamp: new Date(),
         area: countingAreaKey,
         name: trackedItem.name,
         id: trackedItem.idDisplay
-      })
+      }
+      // Add it to the history
+      Opendatacam.countedItemsHistory.push(countedItem)
     }
     // Mark tracked item as counted this frame for display
     trackedItem.counted = countingAreaKey;
+    return countedItem;
+  },
+
+  /* Persist in DB */ 
+  persistNewRecordingFrame: function(frameTimestamp, countedItemsForThisFrame, trackerDataForThisFrame) {
+
+    const trackerEntry = {
+      timestamp: frameTimestamp,
+      objects: trackerDataForThisFrame.map((trackerData) => {
+        return {
+          id: trackerData.idDisplay,
+          x: Math.round(trackerData.x),
+          y: Math.round(trackerData.y),
+          w: Math.round(trackerData.w),
+          h: Math.round(trackerData.h),
+          bearing: Math.round(trackerData.bearing),
+          name: trackerData.name
+        }
+      })
+    }
+
+    DBManager.updateRecordingWithNewframe(
+      Opendatacam.recordingStatus.recordingId,
+      frameTimestamp,
+      countedItemsForThisFrame,
+      trackerEntry
+    ).then(() => {
+      console.log('success updateRecordingWithNewframe');
+    }, () => {
+      console.log('error updateRecordingWithNewframe');
+    })
   },
 
   updateWithNewFrame: function(detectionsOfThisFrame) {
@@ -128,9 +164,9 @@ module.exports = {
     // TODO when start recording, record the date
 
     // Compute FPS
-    const now = new Date();
-    const timeDiff = Math.abs(now.getTime() - Opendatacam.timeLastFrame.getTime());
-    Opendatacam.timeLastFrame = now;
+    const frameTimestamp = new Date();
+    const timeDiff = Math.abs(frameTimestamp.getTime() - Opendatacam.timeLastFrame.getTime());
+    Opendatacam.timeLastFrame = frameTimestamp;
     // console.log(`YOLO detections FPS: ${1000 / timeDiff}`);
     Opendatacam.recordingStatus.currentFPS = Math.round(1000 / timeDiff)
 
@@ -166,6 +202,7 @@ module.exports = {
     Tracker.updateTrackedItemsWithNewFrame(detectionScaledOfThisFrame, Opendatacam.currentFrame);
 
     let trackerDataForThisFrame = Tracker.getJSONOfTrackedItems();
+    let countedItemsForThisFrame = [];
 
     Opendatacam.nbItemsTrackedThisFrame = trackerDataForThisFrame.length;
 
@@ -212,7 +249,8 @@ module.exports = {
   
                 // Tracked item has cross the {countingAreaKey} counting line
                 // Count it
-                this.countItem(trackedItem, countingAreaKey);
+                let countedItem = this.countItem(trackedItem, countingAreaKey);
+                countedItemsForThisFrame.push(countedItem);
                 // console.log(`Counting ${trackedItem.id}`);
 
               } else {
@@ -254,37 +292,16 @@ module.exports = {
     // Increment frame number
     Opendatacam.currentFrame++;
 
-    // Add tracker data to history
-    // NOTE we manually populate the json file with append to avoid reading it in memory as it can be huge
-
-    // TODO IF RECORDING : 
-
-      // const trackerHistoryEntry = {
-      //   timestamp: now,
-      //   objects: trackerDataForThisFrame.map((trackerData) => {
-      //     return {
-      //       id: trackerData.idDisplay,
-      //       x: Math.round(trackerData.x),
-      //       y: Math.round(trackerData.y),
-      //       w: Math.round(trackerData.w),
-      //       h: Math.round(trackerData.h),
-      //       bearing: Math.round(trackerData.bearing),
-      //       name: trackerData.name
-      //     }
-      //   })
-      // }
-
-
-      // fs.appendFile('./static/trackerHistory.json', `,\n${JSON.stringify(trackerHistoryEntry)}`, function (err) {
-      //   if (err) throw err;
-      // });
-
     // Remember trackerData for last frame
     Opendatacam.trackerDataForLastFrame = {
       frameIndex: Opendatacam.currentFrame - 1,
       data: trackerDataForThisFrame
     }
 
+    // Persist to db
+    if(Opendatacam.recordingStatus.isRecording) {
+      this.persistNewRecordingFrame(frameTimestamp, countedItemsForThisFrame, trackerDataForThisFrame);
+    }
     // Stream it to client if SSE request is open
     if(Opendatacam.sseConnexion) {
       // console.log('sending message');
@@ -375,13 +392,26 @@ module.exports = {
   startRecording() {
     console.log('Start recording');
     Opendatacam.recordingStatus.isRecording = true;
+    Opendatacam.recordingStatus.dateStarted = new Date();
+    // Persist recording
+    DBManager.insertRecording(new Recording(
+      Opendatacam.recordingStatus.dateStarted, 
+      Opendatacam.recordingStatus.dateStarted,
+      Opendatacam.countingAreas
+    )).then((recording) => {
+      Opendatacam.recordingStatus.recordingId = recording.insertedId;
+    }, (error) => {
+      console.log(error);
+    })
   },
 
   stopRecording() {
     console.log('Stop recording');
     // Reset counters
     Opendatacam.recordingStatus.isRecording = false;
+
     Opendatacam.countedItemsHistory = [];
+    
     
   },
 

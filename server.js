@@ -9,6 +9,7 @@ const YOLO = require('./server/processes/YOLO');
 const Opendatacam = require('./server/Opendatacam');
 const cloneDeep = require('lodash.clonedeep');
 const getURLData = require('./server/utils/urlHelper').getURLData;
+const DBManager = require('./server/db/DBManager')
 
 // const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not running on the Jetson
 const SIMULATION_MODE = true;
@@ -20,6 +21,16 @@ const handle = app.getRequestHandler()
 
 // Init processes
 YOLO.init(SIMULATION_MODE);
+
+// Init connection to db
+DBManager.init().then(
+  () => {
+    console.log('Success init db')
+  },
+  err => {
+    console.error(err)
+  }
+)
 
 app.prepare()
 .then(() => {
