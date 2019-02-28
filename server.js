@@ -76,6 +76,12 @@ app.prepare()
     res.sendStatus(200)
   });
 
+  express.get('/recording/history', (req, res) => {
+    DBManager.getRecordings().then((recordings) => {
+      res.json(recordings)
+    });
+  });
+
   express.get('/counter/export', function(req, res) {
     var dataToExport = cloneDeep(Opendatacam.getCounterHistory());
     // console.log(dataToExport);

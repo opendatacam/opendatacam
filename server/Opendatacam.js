@@ -115,7 +115,7 @@ module.exports = {
         timestamp: new Date(),
         area: countingAreaKey,
         name: trackedItem.name,
-        id: trackedItem.idDisplay
+        id: trackedItem.id
       }
       // Add it to the history
       Opendatacam.countedItemsHistory.push(countedItem)
@@ -127,12 +127,12 @@ module.exports = {
 
   /* Persist in DB */ 
   persistNewRecordingFrame: function(frameTimestamp, countedItemsForThisFrame, trackerDataForThisFrame) {
-
+    
     const trackerEntry = {
       timestamp: frameTimestamp,
       objects: trackerDataForThisFrame.map((trackerData) => {
         return {
-          id: trackerData.idDisplay,
+          id: trackerData.id,
           x: Math.round(trackerData.x),
           y: Math.round(trackerData.y),
           w: Math.round(trackerData.w),
