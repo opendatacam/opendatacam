@@ -82,6 +82,17 @@ app.prepare()
     });
   });
 
+  express.get('/recording/:id/trackerhistory', (req, res) => {
+    DBManager.getTrackerHistoryOfRecording(req.params.id).then((trackerData) => {
+      res.json(trackerData);
+      // res.setHeader('Content-disposition', 'attachment; filename= trackerData.json');
+      // res.setHeader('Content-type', 'application/json');
+      // res.write(JSON.stringify(trackerData), function (err) {
+      //     res.end();
+      // })
+    });
+  })
+
   express.get('/counter/export', function(req, res) {
     var dataToExport = cloneDeep(Opendatacam.getCounterHistory());
     // console.log(dataToExport);

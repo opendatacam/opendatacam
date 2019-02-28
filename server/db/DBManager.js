@@ -1,4 +1,5 @@
 var MongoClient = require('mongodb').MongoClient
+var ObjectID = require('mongodb').ObjectID
 
 var mongoURL = 'mongodb://127.0.0.1:27017'
 var RECORDING_COLLECTION = 'recordings';
@@ -120,16 +121,18 @@ class DBManager {
       this.getDB().then(db => {
         db
           .collection(RECORDING_COLLECTION)
-          .find({ _id : recordingId})
-          .project({ trackerHistory: 1 })
-          .toArray(function (err, docs) {
-            if (err) {
-              reject(err)
-            } else {
-              resolve(docs)
+          .findOne(
+            { _id : ObjectID(recordingId)}, 
+            { trackerHistory: 1 }, 
+            function (err, docs) {
+              if (err) {
+                reject(err)
+              } else {
+                resolve(docs)
+              }
             }
-          })
-      })
+          )
+      });
     })
   }
 

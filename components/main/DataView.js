@@ -24,6 +24,7 @@ class DataView extends Component {
           {this.props.recordingHistory.map((recording) =>
             <div key={recording._id}>
               <p>{dayjs(recording.dateStart).format('MMM DD, YYYY')} : {dayjs(recording.dateStart).format('hh:mm a')} - {dayjs(recording.dateEnd).format('hh:mm a')}</p>
+              <a href={`/recording/${recording._id}/trackerhistory`} target="_blank">Download tracker data</a>
             </div>
           )}
           <style jsx>{`
