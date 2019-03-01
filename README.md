@@ -58,7 +58,7 @@ This export gives you the counters results along with the unique id of each obje
 
 ### Tracker data export
 
-This export gives you the raw data of all objects tracked with frame timestamps and positionning.
+This export gives you the raw data of all objects tracked with frame timestamps and positioning.
 
 ```javascript
 [
