@@ -182,6 +182,7 @@ class CounterAreasEditor extends Component {
           <DeleteModal
             countingAreasWithCenters={computeCountingAreasCenters(this.props.countingAreas, this.props.canvasResolution)}
             delete={(id) => this.props.dispatch(deleteCountingArea(id))}
+            cancel={() => { this.props.dispatch(setMode(EDITOR_MODE.EDIT)) }}
           />
         }
         <MenuCountingAreasEditor />

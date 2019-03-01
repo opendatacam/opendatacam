@@ -12,37 +12,51 @@ class AskNameModal extends Component {
     };
 
     this.handleChange = this.handleChange.bind(this);
+    this.escFunction = this.escFunction.bind(this);
   }
 
   handleChange(event) {
     this.setState({name: event.target.value});
   }
 
+  escFunction(event){
+    if(event.keyCode === 27) {
+      this.props.cancel()
+    }
+  }
+
+  componentDidMount(){
+    document.addEventListener("keydown", this.escFunction, false);
+  }
+  componentWillUnmount(){
+    document.removeEventListener("keydown", this.escFunction, false);
+  }
+
   render() {
     return (
       <div className="overlay">
-        <div className="ask-name">
+        <form className="ask-name" onSubmit={(e) => {
+          e.preventDefault()
+          if(this.state.name !== '') {
+            this.props.save(this.state.name)
+          }
+        }}>
           <input 
             type="text" 
             value={this.state.name} 
             onChange={this.handleChange} 
             placeholder='Counting line name'
+            autoFocus
           />
-          <button
-            onClick={() => {
-              if(this.state.name !== '') {
-                this.props.save(this.state.name)
-              }
-            }}
-          >
-            OK
-          </button>
+          <input type="submit"
+            value="OK"
+          />
           <button
             onClick={() => this.props.cancel()}
           >
             Cancel
           </button>
-        </div>
+        </form>
         <CanvasEngine mode={CANVAS_RENDERING_MODE.COUNTING_AREAS} />
         <style jsx>{`
           .overlay {

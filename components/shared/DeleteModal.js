@@ -2,8 +2,27 @@ import React, { Component } from 'react';
 import CanvasEngine from '../canvas/CanvasEngine';
 import { MODE, CIRCLE_RADIUS, CANVAS_RENDERING_MODE } from '../../utils/constants';
 import { COLORS } from '../../utils/colors';
+import { EDITOR_MODE } from '../../statemanagement/app/CounterStateManagement';
 
 class DeleteModal extends Component {
+
+  constructor(props) {
+    super(props);
+    this.escFunction = this.escFunction.bind(this);
+  }
+
+  escFunction(event){
+    if(event.keyCode === 27) {
+      this.props.cancel()
+    }
+  }
+
+  componentDidMount(){
+    document.addEventListener("keydown", this.escFunction, false);
+  }
+  componentWillUnmount(){
+    document.removeEventListener("keydown", this.escFunction, false);
+  }
 
   render() {
 
