@@ -54,6 +54,7 @@ class LiveViewEngine {
   drawTrackerDataCounterEditor (
     context,
     objectTrackerData,
+    countingAreas,
     canvasResolution,
     originalResolution
   ) {
@@ -71,8 +72,8 @@ class LiveViewEngine {
     
       if(objectTracked.counted) {
         // counted contain countingareakey : see Opendatacam.js on server side
-        context.strokeStyle = COLORS[objectTracked.counted];
-        context.fillStyle = COLORS[objectTracked.counted];
+        context.strokeStyle = COLORS[countingAreas.getIn([objectTracked.counted, 'color'])];
+        context.fillStyle = COLORS[countingAreas.getIn([objectTracked.counted, 'color'])];
         context.strokeRect(
           x + 5,
           y + 5,
@@ -106,9 +107,10 @@ class LiveViewEngine {
     countingAreas,
     canvasResolution
   ) {
-    countingAreas.map((area, color) => {
-      if(area !== null) {
-        let data = area.toJS();
+    countingAreas.map((area, id) => {
+      if(area.get('location') !== null) {
+        let data = area.get('location').toJS();
+        let color = area.get('color');
         data.point1 = scalePoint(data.point1, canvasResolution, data.refResolution);
         data.point2 = scalePoint(data.point2, canvasResolution, data.refResolution);
         context.strokeStyle = COLORS[color];

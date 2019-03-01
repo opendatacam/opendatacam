@@ -18,7 +18,7 @@ class MenuCountingAreasEditor extends Component {
             <img className="icon" src="/static/icons/icon-delete.svg" />
           </div>
         }
-        {Object.keys(this.props.countingAreas.toJS()).map((color) =>
+        {/* {Object.keys(this.props.countingAreas.toJS()).map((color) =>
           <div 
             key={color}
             className={`new-color
@@ -36,7 +36,7 @@ class MenuCountingAreasEditor extends Component {
           >
             <img className="icon" src="/static/icons/icon-plus.svg" />
           </div>
-        }
+        } */}
         <style jsx>{`
           .menu-active-areas{
             height: 3rem;
@@ -64,7 +64,8 @@ class MenuCountingAreasEditor extends Component {
           .menu-active-areas .delete:hover {
             border: 5px solid #D6D6D6;
           }
-          .menu-active-areas .yellow {
+          
+          {/* .menu-active-areas .yellow {
             background-color: ${COLORS.yellow};
           }
           .menu-active-areas .yellow:hover,
@@ -93,7 +94,7 @@ class MenuCountingAreasEditor extends Component {
           .menu-active-areas .purple:hover,
           .menu-active-areas .purple.selected {
             border: 5px solid ${COLORS.purpleBorder};
-          }
+          } */}
         `}</style>
       </div>
     )

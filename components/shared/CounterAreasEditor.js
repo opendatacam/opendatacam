@@ -6,7 +6,8 @@ import MenuCountingAreasEditor from './MenuCountingAreasEditor'
 
 import { COLORS } from '../../utils/colors';
 
-import { clearCountingArea, saveCountingArea, defaultCountingAreaValue } from '../../statemanagement/app/CounterStateManagement'
+import { clearCountingArea, saveCountingAreaLocation, defaultCountingAreaValue, saveCountingAreaName } from '../../statemanagement/app/CounterStateManagement'
+import AskCountingAreaName from './AskCountingAreaName';
 
 class CounterAreasEditor extends Component {
 
@@ -33,8 +34,8 @@ class CounterAreasEditor extends Component {
       let points = [ pointer.x, pointer.y, pointer.x, pointer.y ];
       this.lines[this.props.selectedCountingArea] = new fabric.Line(points, {
         strokeWidth: 5,
-        fill: COLORS[this.props.selectedCountingArea],
-        stroke: COLORS[this.props.selectedCountingArea],
+        fill: COLORS[this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])],
+        stroke: COLORS[this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])],
         originX: 'center',
         originY: 'center'
       });
@@ -52,14 +53,13 @@ class CounterAreasEditor extends Component {
     
     this.editorCanvas.on('mouse:up', (o) => {
       let { x1, y1, x2, y2 } = this.lines[this.props.selectedCountingArea];
-      this.props.dispatch(saveCountingArea(this.props.selectedCountingArea, {
+      this.props.dispatch(saveCountingAreaLocation(this.props.selectedCountingArea, {
         point1: { x:x1, y:y1},
         point2: { x:x2, y:y2},
         refResolution: {
           w: this.editorCanvas.width,
           h: this.editorCanvas.height
         }
-        
       }))
       this.mouseDown = false;
     });
@@ -86,12 +86,12 @@ class CounterAreasEditor extends Component {
     if(this.elCanvas) {
       
       // If no countingAreas exists already
-      if(this.props.countingAreas.count((value) => value !== null) === 0) {
+      if(this.props.countingAreas.count((value) => value.get('location') !== undefined) === 0) {
         const { width, height } = this.elCanvas.getBoundingClientRect();
         this.editorCanvas = new fabric.Canvas(this.elCanvas, { selection: false, width: width, height: height });
       } else {
         // If some counting areas exists already
-        const { refResolution } = this.props.countingAreas.find((val) => val !== null).toJS();
+        const { refResolution } = this.props.countingAreas.find((val) => val.get('location') !== null).toJS().location;
         this.editorCanvas = new fabric.Canvas(this.elCanvas, { selection: false, width: refResolution.w, height: refResolution.h });
         this.reRenderCountingAreasInEditor(this.props.countingAreas)
       }
@@ -107,9 +107,10 @@ class CounterAreasEditor extends Component {
     this.editorCanvas.clear();
     this.lines = {}
 
-    countingAreas.map((area, color) => {
-      if(area !== null) {
-        let data = area.toJS();
+    countingAreas.map((area, id) => {
+      if(area.get('location') !== undefined) {
+        let data = area.get('location').toJS();
+        let color = area.get('color');
         let points = [ data.point1.x, data.point1.y, data.point2.x, data.point2.y ];
         this.lines[color] = new fabric.Line(points, {
           strokeWidth: 5,
@@ -131,6 +132,11 @@ class CounterAreasEditor extends Component {
       <div
         className="counting-areas-editor"
       >
+        {this.props.askName &&
+          <AskCountingAreaName
+            save={(name) => this.props.dispatch(saveCountingAreaName(this.props.selectedCountingArea, name))}
+          />
+        }
         <MenuCountingAreasEditor />
         <canvas
           ref={(el) => this.elCanvas = el}
@@ -169,6 +175,7 @@ export default connect((state) => {
   return {
     countingAreas: state.counter.get('countingAreas'),
     selectedCountingArea: state.counter.get('selectedCountingArea'),
-    canvasResolution: state.viewport.get('canvasResolution')
+    canvasResolution: state.viewport.get('canvasResolution'),
+    askName: state.counter.get('askName')
   }
 })(CounterAreasEditor)

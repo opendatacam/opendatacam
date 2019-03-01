@@ -73,12 +73,12 @@ module.exports = {
     // The editor canvas can be smaller / bigger
     let resizedData = {
       point1: {
-        x: data.point1.x * Opendatacam.image.w / data.refResolution.w,
-        y: data.point1.y * Opendatacam.image.h / data.refResolution.h,
+        x: data.location.point1.x * Opendatacam.image.w / data.location.refResolution.w,
+        y: data.location.point1.y * Opendatacam.image.h / data.location.refResolution.h,
       },
       point2: {
-        x: data.point2.x * Opendatacam.image.w / data.refResolution.w,
-        y: data.point2.y * Opendatacam.image.h / data.refResolution.h,
+        x: data.location.point2.x * Opendatacam.image.w / data.location.refResolution.w,
+        y: data.location.point2.y * Opendatacam.image.h / data.location.refResolution.h,
       }
     }
 

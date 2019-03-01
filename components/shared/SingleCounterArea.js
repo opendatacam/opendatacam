@@ -49,8 +49,8 @@ class SingleCounterArea extends Component {
           <div 
               className="area-popover"
               style={{
-                  top: this.props.area.center.y - POPOVER_HEIGHT - CIRCLE_RADIUS / 2 - POPOVER_ARROW_SIZE - 5, 
-                  left: this.props.area.center.x - POPOVER_WIDTH / 2
+                  top: this.props.area.location.center.y - POPOVER_HEIGHT - CIRCLE_RADIUS / 2 - POPOVER_ARROW_SIZE - 5, 
+                  left: this.props.area.location.center.x - POPOVER_WIDTH / 2
               }}
           >
               <div className="area-popover-title">
@@ -71,9 +71,9 @@ class SingleCounterArea extends Component {
             className="circle"
             onClick={this.togglePopover}
             style={{
-                top: this.props.area.center.y - CIRCLE_RADIUS / 2, 
-                left: this.props.area.center.x - CIRCLE_RADIUS / 2,
-                backgroundColor: COLORS[this.props.areaKey]
+                top: this.props.area.location.center.y - CIRCLE_RADIUS / 2, 
+                left: this.props.area.location.center.x - CIRCLE_RADIUS / 2,
+                backgroundColor: COLORS[this.props.area.color]
             }} 
         >
         {this.props.counterData && this.props.counterData.get('_total') || 0}

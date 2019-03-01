@@ -54,6 +54,7 @@ class CanvasEngine extends PureComponent {
         LiveViewEngine.drawTrackerDataCounterEditor(
           this.canvasContext,
           this.props.trackerData.data,
+          this.props.countingAreas,
           this.props.canvasResolution,
           this.props.originalResolution
         )
@@ -68,6 +69,7 @@ class CanvasEngine extends PureComponent {
         LiveViewEngine.drawTrackerDataCounterEditor(
           this.canvasContext,
           this.props.trackerData.data,
+          this.props.countingAreas,
           this.props.canvasResolution,
           this.props.originalResolution
         )
