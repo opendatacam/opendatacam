@@ -66,6 +66,8 @@ class DBManager {
   // TODO For larges array like the one we are using, we can't do that, perfs are terrible
   // we need to push trackerEntry in another collection and ref it 
   // Or maybe try to batch update not on every frame
+  // I think a simple fix would be to store trackerData in it's own collection
+  // db.collection(recordingId.toString()).insertOne(trackerEntry);
   updateRecordingWithNewframe (recordingId, frameDate, counterEntry, trackerEntry) {
     return new Promise((resolve, reject) => {
 
@@ -73,23 +75,26 @@ class DBManager {
         //   trackerHistory: trackerEntry
         // };
 
+        let updateRequest = {
+          $set: {
+            dateEnd: frameDate,
+            // MAYBE dashboard: currentDashboard
+          }
+          // Only add $push if we have a counted item
+        }
+
         let itemsToAdd = {}
 
         // Add counterHistory when somethings counted 
         if(counterEntry.length > 0) {
-          itemsToAdd['counterHistory'] = counterEntry
+          itemsToAdd['counterHistory'] = counterEntry;
+          updateRequest['$push'] = itemsToAdd;
         }
 
         this.getDB().then(db => {
             db.collection(RECORDING_COLLECTION).update(
                 { _id: recordingId },
-                { 
-                    $set: {
-                        dateEnd: frameDate,
-                        // MAYBE dashboard: currentDashboard
-                    },
-                    $push: itemsToAdd
-                },
+                updateRequest,
                 (err, r) => {
                     if (err) {
                         reject(err)

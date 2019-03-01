@@ -150,7 +150,8 @@ module.exports = {
       trackerEntry
     ).then(() => {
       console.log('success updateRecordingWithNewframe');
-    }, () => {
+    }, (error) => {
+      console.log(error);
       console.log('error updateRecordingWithNewframe');
     })
   },
