@@ -63,12 +63,18 @@ class DBManager {
     })
   }
 
+  // TODO For larges array like the one we are using, we can't do that, perfs are terrible
+  // we need to push trackerEntry in another collection and ref it 
+  // Or maybe try to batch update not on every frame
   updateRecordingWithNewframe (recordingId, frameDate, counterEntry, trackerEntry) {
     return new Promise((resolve, reject) => {
 
-        let itemsToAdd = {
-          trackerHistory: trackerEntry
-        };
+        // let itemsToAdd = {
+        //   trackerHistory: trackerEntry
+        // };
+
+        let itemsToAdd = {}
+
         // Add counterHistory when somethings counted 
         if(counterEntry.length > 0) {
           itemsToAdd['counterHistory'] = counterEntry
