@@ -8,9 +8,10 @@ import uuidv4 from 'uuid/v4'
 
 import { COLORS } from '../../utils/colors';
 
-import { clearCountingArea, saveCountingAreaLocation, defaultCountingAreaValue, saveCountingAreaName, EDITOR_MODE, deleteCountingArea, computeCountingAreasCenters, addCountingArea, computeDistance } from '../../statemanagement/app/CounterStateManagement'
+import { clearCountingArea, saveCountingAreaLocation, defaultCountingAreaValue, saveCountingAreaName, EDITOR_MODE, deleteCountingArea, computeCountingAreasCenters, addCountingArea, computeDistance, setMode } from '../../statemanagement/app/CounterStateManagement'
 import AskNameModal from './AskNameModal';
 import DeleteModal from './DeleteModal';
+import { CANVAS_RENDERING_MODE } from '../../utils/constants';
 
 class CounterAreasEditor extends Component {
 
@@ -44,6 +45,14 @@ class CounterAreasEditor extends Component {
         originY: 'center'
       });
       this.editorCanvas.add(this.lines[this.props.selectedCountingArea]);
+      this.editorCanvas.add(new fabric.Circle({
+        radius: 5,
+        fill: COLORS[this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])],
+        top: pointer.y,
+        left: pointer.x,
+        originX: 'center',
+        originY: 'center'
+      }));
     });
     
     this.editorCanvas.on('mouse:move', (o) => {
@@ -69,15 +78,6 @@ class CounterAreasEditor extends Component {
             h: this.editorCanvas.height
           }
         }))
-
-        // Add circles
-        new fabric.Circle(point1, {
-          strokeWidth: 5,
-          fill: COLORS[this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])],
-          stroke: COLORS[this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])],
-          originX: 'center',
-          originY: 'center'
-        });
       } else {
         // Cancel line, not long enough
         this.props.dispatch(deleteCountingArea(this.props.selectedCountingArea));
@@ -89,7 +89,6 @@ class CounterAreasEditor extends Component {
   componentDidUpdate(prevProps) {
     // We may have to delete some lines
     if(prevProps.countingAreas !== this.props.countingAreas) {
-      console.log('rerendering');
       this.reRenderCountingAreasInEditor(this.props.countingAreas)
     }
 
@@ -142,6 +141,22 @@ class CounterAreasEditor extends Component {
           originY: 'center'
         });
         this.editorCanvas.add(this.lines[id]);
+        this.editorCanvas.add(new fabric.Circle({
+          radius: 5,
+          fill: COLORS[color],
+          top: data.point1.y,
+          left: data.point1.x,
+          originX: 'center',
+          originY: 'center'
+        }));
+        this.editorCanvas.add(new fabric.Circle({
+          radius: 5,
+          fill: COLORS[color],
+          top: data.point2.y,
+          left: data.point2.x,
+          originX: 'center',
+          originY: 'center'
+        }));
       }
     })
   }
@@ -157,7 +172,10 @@ class CounterAreasEditor extends Component {
         {this.props.mode === EDITOR_MODE.ASKNAME &&
           <AskNameModal
             save={(name) => this.props.dispatch(saveCountingAreaName(this.props.selectedCountingArea, name))}
-            cancel={(name) => this.props.dispatch(deleteCountingArea(this.props.selectedCountingArea))}
+            cancel={(name) => {
+              this.props.dispatch(deleteCountingArea(this.props.selectedCountingArea))
+              this.props.dispatch(setMode(EDITOR_MODE.EDIT))
+            }}
           />
         }
         {this.props.mode === EDITOR_MODE.DELETE &&

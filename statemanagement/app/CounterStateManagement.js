@@ -109,9 +109,8 @@ export function saveCountingAreaLocation(id, location) {
 
     if(!getState().counter.getIn(['countingAreas', id, 'name'])) {
       dispatch(setMode(EDITOR_MODE.ASKNAME));
-    } else {
-      dispatch(registerCountingAreasOnServer());
     }
+    dispatch(registerCountingAreasOnServer());
   }
 }
 

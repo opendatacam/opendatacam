@@ -1,4 +1,6 @@
 import React, { Component } from 'react'
+import CanvasEngine from '../canvas/CanvasEngine';
+import { CANVAS_RENDERING_MODE } from '../../utils/constants';
 
 class AskNameModal extends Component {
 
@@ -27,7 +29,11 @@ class AskNameModal extends Component {
             placeholder='Counting line name'
           />
           <button
-            onClick={() => this.props.save(this.state.name)}
+            onClick={() => {
+              if(this.state.name !== '') {
+                this.props.save(this.state.name)
+              }
+            }}
           >
             OK
           </button>
@@ -37,6 +43,7 @@ class AskNameModal extends Component {
             Cancel
           </button>
         </div>
+        <CanvasEngine mode={CANVAS_RENDERING_MODE.COUNTING_AREAS} />
         <style jsx>{`
           .overlay {
             position: fixed;
