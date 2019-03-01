@@ -59,7 +59,10 @@ module.exports = {
     }
   */
   registerCountingAreas : function(countingAreas) {
+    // Store as it is to be able to render them again on client
     Opendatacam.originalCountingAreas = countingAreas;
+    // Reset existing
+    Opendatacam.countingAreas = {}
     Object.keys(countingAreas).map((countingAreaKey) => {
       if(countingAreas[countingAreaKey]) {
         this.registerSingleCountingArea(countingAreaKey, countingAreas[countingAreaKey]);

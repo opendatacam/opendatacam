@@ -1,7 +1,7 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux'
 import raf from 'raf'
-import { MODE } from '../../utils/constants'
+import { CANVAS_RENDERING_MODE } from '../../utils/constants'
 
 import LiveViewEngine from './engines/LiveViewEngine'
 import PathViewEngine from './engines/PathViewEngine';
@@ -33,7 +33,7 @@ class CanvasEngine extends PureComponent {
   loopUpdateCanvas () {
     if (this.lastFrameDrawn !== this.props.trackerData.frameIndex) {
       // Clear previous frame
-      if(this.props.mode !== MODE.PATHVIEW) {
+      if(this.props.mode !== CANVAS_RENDERING_MODE.PATHVIEW) {
         this.clearCanvas();
       }
 
@@ -41,7 +41,7 @@ class CanvasEngine extends PureComponent {
         Draw things for this frame
       */
 
-      if(this.props.mode === MODE.LIVEVIEW) {
+      if(this.props.mode === CANVAS_RENDERING_MODE.LIVEVIEW) {
         LiveViewEngine.drawTrackerData(
           this.canvasContext,
           this.props.trackerData.data,
@@ -50,7 +50,7 @@ class CanvasEngine extends PureComponent {
         )
       }
 
-      if(this.props.mode === MODE.COUNTERVIEW) {
+      if(this.props.mode === CANVAS_RENDERING_MODE.COUNTERVIEW) {
         LiveViewEngine.drawTrackerDataCounterEditor(
           this.canvasContext,
           this.props.trackerData.data,
@@ -60,7 +60,7 @@ class CanvasEngine extends PureComponent {
         )
       }
 
-      if(this.props.mode === MODE.COUNTERVIEW_RECORDING) {
+      if(this.props.mode === CANVAS_RENDERING_MODE.COUNTERVIEW_RECORDING) {
         LiveViewEngine.drawCountingAreas(
           this.canvasContext,
           this.props.countingAreas,
@@ -75,7 +75,15 @@ class CanvasEngine extends PureComponent {
         )
       }
 
-      if(this.props.mode === MODE.PATHVIEW) {
+      if(this.props.mode === CANVAS_RENDERING_MODE.COUNTING_AREAS) {
+        LiveViewEngine.drawCountingAreas(
+          this.canvasContext,
+          this.props.countingAreas,
+          this.props.canvasResolution
+        )
+      }
+
+      if(this.props.mode === CANVAS_RENDERING_MODE.PATHVIEW) {
         PathViewEngine.drawPaths(
           this.canvasContext,
           this.props.trackerData.data,

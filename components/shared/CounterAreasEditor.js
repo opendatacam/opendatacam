@@ -4,10 +4,13 @@ import { connect } from 'react-redux';
 
 import MenuCountingAreasEditor from './MenuCountingAreasEditor'
 
+import uuidv4 from 'uuid/v4'
+
 import { COLORS } from '../../utils/colors';
 
-import { clearCountingArea, saveCountingAreaLocation, defaultCountingAreaValue, saveCountingAreaName } from '../../statemanagement/app/CounterStateManagement'
-import AskCountingAreaName from './AskCountingAreaName';
+import { clearCountingArea, saveCountingAreaLocation, defaultCountingAreaValue, saveCountingAreaName, EDITOR_MODE, deleteCountingArea, computeCountingAreasCenters, addCountingArea, computeDistance } from '../../statemanagement/app/CounterStateManagement'
+import AskNameModal from './AskNameModal';
+import DeleteModal from './DeleteModal';
 
 class CounterAreasEditor extends Component {
 
@@ -26,12 +29,13 @@ class CounterAreasEditor extends Component {
   initListeners() {
 
     this.editorCanvas.on('mouse:down', (o) => {
-      if(this.lines[this.props.selectedCountingArea]) {
-        this.editorCanvas.remove(this.lines[this.props.selectedCountingArea])
-      }
+      this.props.dispatch(addCountingArea());
+
       this.mouseDown = true;
       let pointer = this.editorCanvas.getPointer(o.e);
       let points = [ pointer.x, pointer.y, pointer.x, pointer.y ];
+      // Potential cause of bug if this.props.selectedCountingArea isn't
+      // defined when we reach here
       this.lines[this.props.selectedCountingArea] = new fabric.Line(points, {
         strokeWidth: 5,
         fill: COLORS[this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])],
@@ -46,29 +50,47 @@ class CounterAreasEditor extends Component {
       if (!this.mouseDown) return;
       let pointer = this.editorCanvas.getPointer(o.e);
       this.lines[this.props.selectedCountingArea].set({ x2: pointer.x, y2: pointer.y });
-      
       // TODO STORE LINE DATA POINTS
       this.editorCanvas.renderAll();
     });
     
     this.editorCanvas.on('mouse:up', (o) => {
       let { x1, y1, x2, y2 } = this.lines[this.props.selectedCountingArea];
-      this.props.dispatch(saveCountingAreaLocation(this.props.selectedCountingArea, {
-        point1: { x:x1, y:y1},
-        point2: { x:x2, y:y2},
-        refResolution: {
-          w: this.editorCanvas.width,
-          h: this.editorCanvas.height
-        }
-      }))
+      let point1 = { x:x1, y:y1};
+      let point2 = { x:x2, y:y2};
+      // Only record if line distance if superior to some threshold to avoid single clicks
+      if(computeDistance(point1, point2) > 50) {
+        // Maybe use getCenterPoint to persist center
+        this.props.dispatch(saveCountingAreaLocation(this.props.selectedCountingArea, {
+          point1: point1,
+          point2: point2,
+          refResolution: {
+            w: this.editorCanvas.width,
+            h: this.editorCanvas.height
+          }
+        }))
+
+        // Add circles
+        new fabric.Circle(point1, {
+          strokeWidth: 5,
+          fill: COLORS[this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])],
+          stroke: COLORS[this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])],
+          originX: 'center',
+          originY: 'center'
+        });
+      } else {
+        // Cancel line, not long enough
+        this.props.dispatch(deleteCountingArea(this.props.selectedCountingArea));
+      }
       this.mouseDown = false;
     });
   }
 
-  componentWillReceiveProps(newProps) {
+  componentDidUpdate(prevProps) {
     // We may have to delete some lines
-    if(newProps.countingAreas !== this.props.countingAreas) {
-      this.reRenderCountingAreasInEditor(newProps.countingAreas)
+    if(prevProps.countingAreas !== this.props.countingAreas) {
+      console.log('rerendering');
+      this.reRenderCountingAreasInEditor(this.props.countingAreas)
     }
 
 
@@ -96,9 +118,9 @@ class CounterAreasEditor extends Component {
         this.reRenderCountingAreasInEditor(this.props.countingAreas)
       }
 
-      if(this.props.selectedCountingArea) {
-        this.initListeners();
-      }
+      // if(this.props.selectedCountingArea) {
+      this.initListeners();
+      // }
     }
   }
 
@@ -112,29 +134,36 @@ class CounterAreasEditor extends Component {
         let data = area.get('location').toJS();
         let color = area.get('color');
         let points = [ data.point1.x, data.point1.y, data.point2.x, data.point2.y ];
-        this.lines[color] = new fabric.Line(points, {
+        this.lines[id] = new fabric.Line(points, {
           strokeWidth: 5,
           fill: COLORS[color],
           stroke: COLORS[color],
           originX: 'center',
           originY: 'center'
         });
-        this.editorCanvas.add(this.lines[color]);
+        this.editorCanvas.add(this.lines[id]);
       }
     })
   }
 
   render () {
-
-    const isEditing = Object.keys(this.props.countingAreas.toJS()).length > 0
-
     return (
       <div
         className="counting-areas-editor"
       >
-        {this.props.askName &&
-          <AskCountingAreaName
+        {this.props.mode === EDITOR_MODE.SHOW_INSTRUCTION &&
+          <DrawInstructions />
+        }
+        {this.props.mode === EDITOR_MODE.ASKNAME &&
+          <AskNameModal
             save={(name) => this.props.dispatch(saveCountingAreaName(this.props.selectedCountingArea, name))}
+            cancel={(name) => this.props.dispatch(deleteCountingArea(this.props.selectedCountingArea))}
+          />
+        }
+        {this.props.mode === EDITOR_MODE.DELETE &&
+          <DeleteModal
+            countingAreasWithCenters={computeCountingAreasCenters(this.props.countingAreas, this.props.canvasResolution)}
+            delete={(id) => this.props.dispatch(deleteCountingArea(id))}
           />
         }
         <MenuCountingAreasEditor />
@@ -172,10 +201,13 @@ class CounterAreasEditor extends Component {
 }
 
 export default connect((state) => {
+
+  const countingAreasWithCenters = computeCountingAreasCenters(state.counter.get('countingAreas'), state.viewport.get('canvasResolution'))
+
   return {
-    countingAreas: state.counter.get('countingAreas'),
+    countingAreas: state.counter.get('countingAreas'), // Need to inject this as is it for componentDidUpdate comparison
     selectedCountingArea: state.counter.get('selectedCountingArea'),
     canvasResolution: state.viewport.get('canvasResolution'),
-    askName: state.counter.get('askName')
+    mode: state.counter.get('mode')
   }
 })(CounterAreasEditor)

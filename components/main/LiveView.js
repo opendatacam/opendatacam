@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 
 import CanvasEngine from '../canvas/CanvasEngine';
-import { MODE } from '../../utils/constants';
+import { CANVAS_RENDERING_MODE } from '../../utils/constants';
 
 class LiveView extends Component {
 
@@ -22,7 +22,7 @@ class LiveView extends Component {
   render () {
     return (
       <>
-        <CanvasEngine mode={MODE.LIVEVIEW} />
+        <CanvasEngine mode={CANVAS_RENDERING_MODE.LIVEVIEW} />
       </>
     )
   }

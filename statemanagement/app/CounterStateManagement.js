@@ -1,26 +1,43 @@
 import { fromJS } from 'immutable'
 import axios from 'axios';
-import { AVAILABLE_COLORS } from '../../utils/colors';
+import { AVAILABLE_COLORS, DEFAULT_COLOR } from '../../utils/colors';
 import uuidv4 from 'uuid/v4'
+import { scalePoint } from '../../utils/resolution';
+
+// Rename this to CounterEditorStateManagement
+
+export const EDITOR_MODE = {
+  EDIT: 'edit',
+  ASKNAME: 'askname',
+  DELETE: 'delete',
+  SHOW_INSTRUCTION: 'showinstruction'
+}
 
 // Initial state
 const initialState = fromJS({
   countingAreas: {},
   selectedCountingArea: null,
-  askName: false,
-  counterDashboard: {}
+  mode: EDITOR_MODE.EDIT, // oneOf EDITOR_MODE
+  counterDashboard: {} // Maybe move this somewhere else
 })
 
 // Actions
 const SELECT_COUNTING_AREA = 'Counter/SELECT_COUNTING_AREA'
 const DELETE_COUNTING_AREA = 'Counter/DELETE_COUNTING_AREA'
 const SAVE_COUNTING_AREA_LOCATION = 'Counter/SAVE_COUNTING_AREA_LOCATION'
-const ASK_COUNTING_AREA_NAME = 'Counter/ASK_COUNTING_AREA_NAME'
+const SET_MODE = 'Counter/SET_MODE'
 const SAVE_COUNTING_AREA_NAME = 'Counter/SAVE_COUNTING_AREA_NAME'
 const ADD_COUNTING_AREA = 'Counter/ADD_COUNTING_AREA'
 const RESTORE_COUNTING_AREAS = 'Counter/RESTORE_COUNTING_AREAS'
 const UPDATE_COUNTERDASHBOARD = 'Counter/UPDATE_COUNTERDASHBOARD'
 
+
+export function setMode(mode) {
+  return {
+    type: SET_MODE,
+    payload: mode
+  }
+}
 
 export function updateCounterDashboard(data) {
   return {
@@ -44,6 +61,9 @@ export function deleteCountingArea(id) {
       payload: id
     });
 
+    if(getState().counter.get('countingAreas').size === 0) {
+      dispatch(setMode(EDITOR_MODE.EDIT));
+    }
     dispatch(registerCountingAreasOnServer());
   }
 }
@@ -51,12 +71,18 @@ export function deleteCountingArea(id) {
 export function addCountingArea() {
   return (dispatch, getState) => {
 
+    // TODO Before adding a counting area, verify if selectedCountingArea is complete, otherwise delete it
+
     let newCountingAreaId = uuidv4();
 
     // Get a color unused
     let color = AVAILABLE_COLORS.find((potentialColor) => {
       return getState().counter.get('countingAreas').findEntry((value) => value.get('color') === potentialColor) === undefined
     })
+
+    if(!color) {
+      color = DEFAULT_COLOR;
+    }
 
     dispatch({
       type: ADD_COUNTING_AREA,
@@ -82,7 +108,7 @@ export function saveCountingAreaLocation(id, location) {
     });
 
     if(!getState().counter.getIn(['countingAreas', id, 'name'])) {
-      dispatch(askForCountingAreaName());
+      dispatch(setMode(EDITOR_MODE.ASKNAME));
     } else {
       dispatch(registerCountingAreasOnServer());
     }
@@ -91,6 +117,7 @@ export function saveCountingAreaLocation(id, location) {
 
 export function saveCountingAreaName(id, name) {
   return (dispatch, getState) => {
+    // console.log('saveName')
     dispatch({
       type: SAVE_COUNTING_AREA_NAME,
       payload: {
@@ -100,12 +127,7 @@ export function saveCountingAreaName(id, name) {
     })
 
     dispatch(registerCountingAreasOnServer());
-  }
-}
-
-export function askForCountingAreaName() {
-  return {
-    type: ASK_COUNTING_AREA_NAME
+    dispatch(setMode(EDITOR_MODE.EDIT));
   }
 }
 
@@ -127,6 +149,28 @@ export function registerCountingAreasOnServer() {
       countingAreas: getState().counter.get('countingAreas').toJS()
     });
   }
+}
+
+export function computeCountingAreasCenters(countingAreas, canvasResolution) {
+  return countingAreas.map((data, id) => {
+    let location = data.get('location');
+    if(location) {
+      return data.setIn(['location','center'], scalePoint(
+        {
+          x: Math.abs(location.getIn(['point2','x']) - location.getIn(['point1','x'])) / 2 + Math.min(location.getIn(['point1','x']), location.getIn(['point2','x'])),
+          y: Math.abs(location.getIn(['point2','y']) - location.getIn(['point1','y'])) / 2 + Math.min(location.getIn(['point1','y']), location.getIn(['point2','y']))
+        }, 
+        canvasResolution.toJS(), 
+        location.get('refResolution').toJS()
+      ))
+    } else {
+      return data;
+    }
+  })
+}
+
+export function computeDistance(point1, point2) {
+  return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2))
 }
 
 
@@ -169,14 +213,13 @@ export default function CounterReducer (state = initialState, action = {}) {
     case SAVE_COUNTING_AREA_LOCATION:
       return state.setIn(['countingAreas', action.payload.id, 'location'], fromJS(action.payload.location))
     case SAVE_COUNTING_AREA_NAME:
-      return state.set('askName', false)
-                  .setIn(['countingAreas', action.payload.id, 'name'], action.payload.name)
-    case ASK_COUNTING_AREA_NAME:
-      return state.set('askName', true)
+      return state.setIn(['countingAreas', action.payload.id, 'name'], action.payload.name)
     case ADD_COUNTING_AREA:
       return state.setIn(['countingAreas', action.payload.id], fromJS({
         color: action.payload.color
       }))
+    case SET_MODE:
+      return state.set('mode', action.payload)
     case RESTORE_COUNTING_AREAS:
       return state.set('countingAreas', fromJS(action.payload))
     case UPDATE_COUNTERDASHBOARD:

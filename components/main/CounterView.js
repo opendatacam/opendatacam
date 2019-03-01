@@ -6,7 +6,7 @@ import DrawInstructions from '../shared/DrawInstructions';
 import CounterAreasEditor from '../shared/CounterAreasEditor';
 import CanvasEngine from '../canvas/CanvasEngine';
 
-import { MODE } from '../../utils/constants';
+import { CANVAS_RENDERING_MODE } from '../../utils/constants';
 import CounterAreasVisualizer from '../shared/CounterAreasVisualizer';
 
 class CounterView extends React.Component {
@@ -16,19 +16,14 @@ class CounterView extends React.Component {
       <div>
         {!this.props.isRecording &&
           <>
-            {!this.props.isAtLeastOneCountingAreasDefined &&
-              <DrawInstructions onConfirm={() => this.props.dispatch(addCountingArea())} />
-            }
-            {this.props.isAtLeastOneCountingAreasDefined &&
-              <CounterAreasEditor />
-            }
-            <CanvasEngine mode={MODE.COUNTERVIEW} />
+            <CounterAreasEditor />
+            <CanvasEngine mode={CANVAS_RENDERING_MODE.COUNTERVIEW} />
           </>
         }
         {this.props.isRecording && this.props.isAtLeastOneCountingAreasDefined &&
           <>
             <CounterAreasVisualizer />
-            <CanvasEngine mode={MODE.COUNTERVIEW_RECORDING} />
+            <CanvasEngine mode={CANVAS_RENDERING_MODE.COUNTERVIEW_RECORDING} />
           </>
         }
         {this.props.isRecording && !this.props.isAtLeastOneCountingAreasDefined &&

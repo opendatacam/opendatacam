@@ -4,6 +4,7 @@ import { Map } from 'immutable'
 
 import { scalePoint } from '../../utils/resolution';
 import SingleCounterArea from './SingleCounterArea';
+import { computeCountingAreasCenters } from '../../statemanagement/app/CounterStateManagement';
 
 /* 
   Here we suppose that the dom parent element is positionned the same as the canvas
@@ -46,20 +47,10 @@ class CounterAreasVisualizer extends Component {
 export default connect(state => {
     // Enrich countingAreas with more data
     // Maybe persist directly this data so we can reuse here and in the canvas engine
-    const countingAreas = state.counter.get('countingAreas').map((data, id) => {
-        let location = data.get('location');
-        return data.setIn(['location','center'], scalePoint(
-          {
-            x: Math.abs(location.getIn(['point2','x']) - location.getIn(['point1','x'])) / 2 + Math.min(location.getIn(['point1','x']), location.getIn(['point2','x'])),
-            y: Math.abs(location.getIn(['point2','y']) - location.getIn(['point1','y'])) / 2 + Math.min(location.getIn(['point1','y']), location.getIn(['point2','y']))
-          }, 
-          state.viewport.get('canvasResolution').toJS(), 
-          location.get('refResolution').toJS()
-        ))
-    })
+    const countingAreasWithCenters = computeCountingAreasCenters(state.counter.get('countingAreas'), state.viewport.get('canvasResolution'))
 
     return {
-      countingAreas: countingAreas.toJS(),
+      countingAreas: countingAreasWithCenters.toJS(),
       counterDashboard: state.counter.get('counterDashboard')
     }
   })(CounterAreasVisualizer)

@@ -3,7 +3,7 @@ import Layout from '../components/shared/Layout'
 import MainPage from '../components/MainPage'
 
 import { setURLData, showCountingView, drawInstructionsShown } from '../statemanagement/app/AppStateManagement';
-import { restoreCountingAreas } from '../statemanagement/app/CounterStateManagement';
+import { restoreCountingAreas, addCountingArea } from '../statemanagement/app/CounterStateManagement';
 
 class Index extends React.Component {
 

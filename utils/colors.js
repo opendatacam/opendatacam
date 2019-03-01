@@ -7,3 +7,4 @@ export const COLORS = {
 }
 
 export const AVAILABLE_COLORS = ['yellow', 'turquoise', 'green', 'purple']
+export const DEFAULT_COLOR = 'yellow'

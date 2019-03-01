@@ -1,21 +1,38 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
 
-import { selectCountingArea, deleteCountingArea, addCountingArea } from '../../statemanagement/app/CounterStateManagement'
+import { selectCountingArea, deleteCountingArea, addCountingArea, setMode, EDITOR_MODE } from '../../statemanagement/app/CounterStateManagement'
 
 import { COLORS, AVAILABLE_COLORS } from '../../utils/colors';
 
 class MenuCountingAreasEditor extends Component {
 
+  handleDelete() {
+    if(this.props.countingAreas.size > 1) {
+      this.props.dispatch(setMode(EDITOR_MODE.DELETE))
+    } else {
+      this.props.dispatch(deleteCountingArea(this.props.countingAreas.keySeq().first()))
+    }
+  }
+
   render () {
+
     return (
       <div className="menu-active-areas">
-        {Object.keys(this.props.countingAreas.toJS()).length > 0 &&
+        {this.props.countingAreas.size > 0 && this.props.mode !== EDITOR_MODE.DELETE &&
           <div
-            className="delete button"
-            onClick={() => this.props.dispatch(deleteCountingArea(this.props.selectedCountingArea))}
+            className="btn"
+            onClick={() => this.handleDelete()}
           >
             <img className="icon" src="/static/icons/icon-delete.svg" />
+          </div>
+        }
+        {this.props.mode === EDITOR_MODE.DELETE &&
+          <div
+            className="btn"
+            onClick={() => this.props.dispatch(setMode(EDITOR_MODE.EDIT))}
+          >
+            <img className="icon" src="/static/icons/icon-close.svg" />
           </div>
         }
         {/* {Object.keys(this.props.countingAreas.toJS()).map((color) =>
@@ -47,7 +64,7 @@ class MenuCountingAreasEditor extends Component {
             z-index: 5;
           }
       
-          .menu-active-areas .button{
+          .menu-active-areas .btn{
             width: 2.5rem;
             height: 2.5rem;
             margin-right: 1.5rem;
@@ -58,10 +75,10 @@ class MenuCountingAreasEditor extends Component {
             align-items: center;
           }
       
-          .menu-active-areas .delete{
+          .menu-active-areas .btn{
             background-color: white;
           }
-          .menu-active-areas .delete:hover {
+          .menu-active-areas .btn:hover {
             border: 5px solid #D6D6D6;
           }
           
@@ -104,6 +121,7 @@ class MenuCountingAreasEditor extends Component {
 export default connect((state) => {
   return {
     countingAreas: state.counter.get('countingAreas'),
-    selectedCountingArea: state.counter.get('selectedCountingArea')
+    selectedCountingArea: state.counter.get('selectedCountingArea'),
+    mode: state.counter.get('mode')
   }
 })(MenuCountingAreasEditor)
