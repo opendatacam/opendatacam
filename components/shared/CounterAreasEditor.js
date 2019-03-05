@@ -4,14 +4,12 @@ import { connect } from 'react-redux';
 
 import MenuCountingAreasEditor from './MenuCountingAreasEditor'
 
-import uuidv4 from 'uuid/v4'
-
 import { COLORS } from '../../utils/colors';
 
 import { clearCountingArea, saveCountingAreaLocation, defaultCountingAreaValue, saveCountingAreaName, EDITOR_MODE, deleteCountingArea, computeCountingAreasCenters, addCountingArea, computeDistance, setMode } from '../../statemanagement/app/CounterStateManagement'
 import AskNameModal from './AskNameModal';
 import DeleteModal from './DeleteModal';
-import { CANVAS_RENDERING_MODE } from '../../utils/constants';
+import InstructionsModal from './InstructionsModal'
 
 class CounterAreasEditor extends Component {
 
@@ -105,11 +103,11 @@ class CounterAreasEditor extends Component {
 
   componentDidMount() {
     if(this.elCanvas) {
-      
       // If no countingAreas exists already
-      if(this.props.countingAreas.count((value) => value.get('location') !== undefined) === 0) {
+      if(this.props.countingAreas.size === 0) {
         const { width, height } = this.elCanvas.getBoundingClientRect();
         this.editorCanvas = new fabric.Canvas(this.elCanvas, { selection: false, width: width, height: height });
+        this.props.dispatch(setMode(EDITOR_MODE.SHOW_INSTRUCTION))
       } else {
         // If some counting areas exists already
         const { refResolution } = this.props.countingAreas.find((val) => val.get('location') !== null).toJS().location;
@@ -117,9 +115,7 @@ class CounterAreasEditor extends Component {
         this.reRenderCountingAreasInEditor(this.props.countingAreas)
       }
 
-      // if(this.props.selectedCountingArea) {
       this.initListeners();
-      // }
     }
   }
 
@@ -167,7 +163,9 @@ class CounterAreasEditor extends Component {
         className="counting-areas-editor"
       >
         {this.props.mode === EDITOR_MODE.SHOW_INSTRUCTION &&
-          <DrawInstructions />
+          <InstructionsModal
+            close={() => this.props.dispatch(setMode(EDITOR_MODE.EDIT))}
+          />
         }
         {this.props.mode === EDITOR_MODE.ASKNAME &&
           <AskNameModal

@@ -1,8 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'; 
 
-import { addCountingArea } from '../../statemanagement/app/CounterStateManagement';
-import DrawInstructions from '../shared/DrawInstructions';
 import CounterAreasEditor from '../shared/CounterAreasEditor';
 import CanvasEngine from '../canvas/CanvasEngine';
 
@@ -47,7 +45,7 @@ class CounterView extends React.Component {
 export default connect((state) => {
 
   return {
-    isAtLeastOneCountingAreasDefined: Object.keys(state.counter.get('countingAreas').toJS()).length > 0,
+    isAtLeastOneCountingAreasDefined: state.counter.get('countingAreas').size > 0,
     isRecording: state.app.getIn(['recordingStatus','isRecording'])
   }
 })(CounterView);
