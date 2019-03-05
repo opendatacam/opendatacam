@@ -17,13 +17,13 @@ class Layout extends Component {
         {this.props.children}
         <style jsx>{`
 
-          @font-face{ 
+          {/* @font-face{ 
             font-family: 'Roboto';
             src: url('/static/font/Roboto-Regular.woff') format('woff');
-          }
+          } */}
 
 
-          :global(html, body) {
+          {/* :global(html, body) {
             height: 100%;
             width: 100%;
             margin: 0;
@@ -36,9 +36,9 @@ class Layout extends Component {
             cursor: default;
             font-family: 'Roboto', sans-serif;
             font-size: 16px;
-          }
+          } */}
 
-          @media (max-width: 700px) {
+          {/* @media (max-width: 700px) {
             :global(body,
             html) {
               font-size: 13px;
@@ -92,7 +92,7 @@ class Layout extends Component {
 
           :global(#__next > div > div) {
             height: 100%;
-          }
+          } */}
         `}</style>
       </div>
     )
