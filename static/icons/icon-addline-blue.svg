@@ -1,6 +1,6 @@
-<svg width="33" height="35" viewBox="0 0 33 35" fill="none" xmlns="http://www.w3.org/2000/svg">
-    <rect x="15.5951" y="5.94447" width="7.88937" height="18" transform="rotate(31 15.5951 5.94447)" stroke="#197BFF" stroke-width="2"/>
-    <path fill-rule="evenodd" clip-rule="evenodd" d="M5.10149 30.5141L5.6378 24.2123L10.9799 27.3801L5.10149 30.5141Z" stroke="#197BFF" stroke-width="2"/>
-    <path d="M28 0V9.68221" stroke="#197BFF" stroke-width="2"/>
-    <path d="M32.6826 5H23.4004" stroke="#197BFF" stroke-width="2"/>
+<svg width="32" height="33" viewBox="0 0 33 35" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <rect x="15.5951" y="5.94447" width="7.88937" height="18" transform="rotate(31 15.5951 5.94447)" stroke="#006CFF" stroke-width="2"/>
+    <path fill-rule="evenodd" clip-rule="evenodd" d="M5.10149 30.5141L5.6378 24.2123L10.9799 27.3801L5.10149 30.5141Z" stroke="#006CFF" stroke-width="2"/>
+    <path d="M28 0V9.68221" stroke="#006CFF" stroke-width="2"/>
+    <path d="M32.6826 5H23.4004" stroke="#006CFF" stroke-width="2"/>
 </svg>

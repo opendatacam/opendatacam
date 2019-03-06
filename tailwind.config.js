@@ -51,6 +51,8 @@ let colors = {
   'inverse': 'var(--color-inverse)',
   'inverse-soft': 'var(--color-inverse-soft)',
 
+  'primary': '#006CFF',
+
   'black': '#22292f',
   'grey-darkest': '#3d4852',
   'grey-darker': '#606f7b',

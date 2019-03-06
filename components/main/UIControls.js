@@ -22,7 +22,7 @@ class UIControls extends Component {
           {this.props.recordingStatus.isRecording &&
             <div className="recording-status">Recording ...  | {this.props.recordingStatus.currentFPS} FPS</div>
           }
-          <div className="nav-left mt-2 ml-2">
+          <div className="nav-left mt-2 ml-2 shadow">
             <button 
               className={`btn btn-default rounded-l ${this.props.mode === MODE.LIVEVIEW ? 'btn-default--active' : ''}`}
               onClick={() => this.props.dispatch(setMode(MODE.LIVEVIEW))}
@@ -42,7 +42,7 @@ class UIControls extends Component {
               Path finder
             </button>
           </div>
-          <div className="nav-right mt-2 mr-2">
+          <div className="nav-right mt-2 mr-2 shadow">
             <button
               className={`btn btn-default rounded-l ${this.props.mode === MODE.CONSOLEVIEW ? 'btn-default--active' : ''}`}
               onClick={() => this.props.dispatch(setMode(MODE.DATAVIEW))}>
@@ -66,7 +66,7 @@ class UIControls extends Component {
         </div>
         <style jsx>{`
           .nav {
-            position: absolute;
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
@@ -84,7 +84,7 @@ class UIControls extends Component {
           }
 
           .nav-bottom {
-            position: absolute;
+            position: fixed;
             bottom: 10px;
             left: 50%;
             transform: translateX(-50%);
@@ -95,7 +95,6 @@ class UIControls extends Component {
             background-color: red;
             text-align: center;
             color: white;
-            font-size: 14px;
             padding-top: 2px;
             padding-bottom: 2px;
             width: 100%;

@@ -14,7 +14,7 @@ class BtnRecording extends Component {
         {!this.props.stop && 
           <img src="/static/icons/icon-start-recording.svg" />
         }
-        <h2>{this.props.label}</h2>
+        <h3 className="btn-record-label text-default">{this.props.label}</h3>
         <style jsx>{`
           .btn-record {
             position: relative;
@@ -23,8 +23,9 @@ class BtnRecording extends Component {
             cursor: pointer;
           }
       
-          .btn-record h2{
+          .btn-record-label {
             margin-top: 0.5rem;
+            text-shadow: 0px 2px 4px rgba(73, 73, 73, 0.5);
           }
         `}</style>
       </div>

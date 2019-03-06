@@ -36,7 +36,7 @@ class MenuCountingAreasEditor extends Component {
         }
         {this.props.mode === EDITOR_MODE.DELETE &&
           <button
-            className="btn btn-default inline-flex items-center"
+            className="btn btn-default inline-flex items-center shadow rounded"
             onClick={() => this.props.dispatch(setMode(EDITOR_MODE.EDIT))}
           >
             <img className="icon" src="/static/icons/icon-close.svg" />

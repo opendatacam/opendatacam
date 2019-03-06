@@ -11,13 +11,13 @@
 }
 
 .btn-default:hover {
-    @apply bg-default-soft;
-    text-shadow: 1px 0 0 currentColor;
+    @apply bg-default-soft text-primary;
+    /* text-shadow: 1px 0 0 currentColor; */
 }
 
 .btn-default--active {
-    @apply bg-default-soft;
-    text-shadow: 1px 0 0 currentColor;
+    @apply bg-default-soft text-primary;
+    /* text-shadow: 1px 0 0 currentColor; */
 }
 
 .btn-primary {
