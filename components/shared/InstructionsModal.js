@@ -6,9 +6,16 @@ class InstructionsModal extends Component {
 
     return (
       <div className="overlay" onClick={() => this.props.close()}>
-        <div className="modal">
-          <h1>Draw to define counting lines</h1>
-          <button onClick={() => this.props.close()}>OK</button>
+        <div className="modal rounded p-10 shadow">
+          <h3 className="text-center">
+            Draw to define counting lines
+          </h3>
+          <div className="border-t border-default-soft" />
+          <button 
+            className="btn btn-primary btn-rounded min-w-100 mt-5"
+            onClick={() => this.props.close()}>
+            OK
+          </button>
         </div>
         <style jsx>{`
           .overlay {
@@ -31,6 +38,10 @@ class InstructionsModal extends Component {
             height: auto;
             padding: 15px;
             color: black;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
           }
         `}</style>
       </div>

@@ -572,6 +572,7 @@ module.exports = {
 
   minWidth: {
     '0': '0',
+    '100': '100px',
     'full': '100%',
   },
 
@@ -920,7 +921,7 @@ module.exports = {
     objectFit: false,
     objectPosition: false,
     opacity: ['responsive'],
-    outline: ['focus'],
+    outline: false,
     overflow: ['responsive'],
     padding: ['responsive'],
     pointerEvents: ['responsive'],

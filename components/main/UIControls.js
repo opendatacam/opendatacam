@@ -22,14 +22,38 @@ class UIControls extends Component {
           {this.props.recordingStatus.isRecording &&
             <div className="recording-status">Recording ...  | {this.props.recordingStatus.currentFPS} FPS</div>
           }
-          <div className="nav-left">
-            <button className="btn btn-default rounded-l" onClick={() => this.props.dispatch(setMode(MODE.LIVEVIEW))}>Live view</button>
-            <button className="btn btn-default" onClick={() => this.props.dispatch(setMode(MODE.COUNTERVIEW))}>Counter</button>
-            <button className="btn btn-default rounded-r" onClick={() => this.props.dispatch(setMode(MODE.PATHVIEW))}>Path finder</button>
+          <div className="nav-left mt-2 ml-2">
+            <button 
+              className={`btn btn-default rounded-l ${this.props.mode === MODE.LIVEVIEW ? 'btn-default--active' : ''}`}
+              onClick={() => this.props.dispatch(setMode(MODE.LIVEVIEW))}
+            >
+              Live view
+            </button>
+            <button
+              className={`btn btn-default border-r border-l border-default-soft border-solid ${this.props.mode === MODE.COUNTERVIEW ? 'btn-default--active' : ''}`}
+              onClick={() => this.props.dispatch(setMode(MODE.COUNTERVIEW))}
+            >
+              Counter
+            </button>
+            <button
+              className={`btn btn-default rounded-r ${this.props.mode === MODE.PATHVIEW ? 'btn-default--active' : ''}`}
+              onClick={() => this.props.dispatch(setMode(MODE.PATHVIEW))}
+            >
+              Path finder
+            </button>
           </div>
-          <div className="nav-right">
-            <button className="btn btn-default rounded-l" onClick={() => this.props.dispatch(setMode(MODE.DATAVIEW))}>Data</button>
-            <button className="btn btn-default rounded-r" onClick={() => this.props.dispatch(setMode(MODE.CONSOLEVIEW))}>Console</button>
+          <div className="nav-right mt-2 mr-2">
+            <button
+              className={`btn btn-default rounded-l ${this.props.mode === MODE.CONSOLEVIEW ? 'btn-default--active' : ''}`}
+              onClick={() => this.props.dispatch(setMode(MODE.DATAVIEW))}>
+              Data
+            </button>
+            <button 
+              className={`btn btn-default rounded-r border-l border-default-soft border-solid ${this.props.mode === MODE.CONSOLEVIEW ? 'btn-default--active' : ''}`}
+              onClick={() => this.props.dispatch(setMode(MODE.CONSOLEVIEW))}
+            >
+              Console
+            </button>
           </div>
         </div>
         <div className="nav-bottom">
@@ -85,6 +109,7 @@ class UIControls extends Component {
 
 export default connect((state) => {
   return {
-    recordingStatus: state.app.get('recordingStatus').toJS()
+    recordingStatus: state.app.get('recordingStatus').toJS(),
+    mode: state.app.get('mode')
   }
 })(UIControls);

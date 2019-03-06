@@ -1,7 +1,11 @@
 .btn {
     @apply py-2 px-4 font-medium;
 }
-  
+
+.btn:focus {
+    outline: none;
+}
+
 .btn-default {
     @apply bg-default text-inverse;
 }
@@ -9,4 +13,21 @@
 .btn-default:hover {
     @apply bg-default-soft;
     text-shadow: 1px 0 0 currentColor;
+}
+
+.btn-default--active {
+    @apply bg-default-soft;
+    text-shadow: 1px 0 0 currentColor;
+}
+
+.btn-primary {
+    @apply bg-inverse text-default shadow;
+}
+
+.btn-primary:hover {
+    @apply bg-inverse-soft;
+}
+
+.btn-rounded {
+    @apply rounded-full;
 }
