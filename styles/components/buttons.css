@@ -3,15 +3,10 @@
 }
   
 .btn-default {
-    @apply bg-white text-black;
+    @apply bg-default text-inverse;
 }
 
 .btn-default:hover {
-    @apply bg-grey-lightest;
+    @apply bg-default-soft;
     text-shadow: 1px 0 0 currentColor;
 }
-
-/* 
-    TODO MOVE TO PRIMARY SECONDARY FOR BLACK AND WHITE like in
-    https://github.com/adamwathan/theming-tailwind-demo
-*/

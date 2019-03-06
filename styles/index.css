@@ -62,3 +62,16 @@
   * @import "utilities/skew-transforms";
   */
  
+body {
+    --color-default: #fff;
+    --color-default-soft: #F3F3F3;
+    --color-inverse: #22292f;
+    --color-inverse-soft: #2F2F2F;
+}
+
+body.theme-dark {
+    --color-default: #22292f;
+    --color-default-soft: #2F2F2F;
+    --color-inverse: #fff;
+    --color-inverse-soft: #F3F3F3;
+}

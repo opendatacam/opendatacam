@@ -8,3 +8,8 @@ export const COLORS = {
 
 export const AVAILABLE_COLORS = ['yellow', 'turquoise', 'green', 'purple']
 export const DEFAULT_COLOR = 'yellow'
+
+// TODO memoize this for performance
+export function evaluateCSSVariable(color) {
+  return window.getComputedStyle(document.body).getPropertyValue(color.match(/\((.*?)\)/)[1]);
+}

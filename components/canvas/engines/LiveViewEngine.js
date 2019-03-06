@@ -1,5 +1,6 @@
 import { scaleDetection, scalePoint } from '../../../utils/resolution';
-import { COLORS } from '../../../utils/colors';
+import { COLORS, evaluateCSSVariable } from '../../../utils/colors';
+import { colors } from '../../../tailwind.config';
 
 class LiveViewEngine {
   drawTrackerData (
@@ -26,7 +27,7 @@ class LiveViewEngine {
       //   objectTrackedScaled.h - 10
       // )
       context.setLineDash([10, 10]);
-      context.strokeStyle = 'white'
+      context.strokeStyle = evaluateCSSVariable(colors.default);
       context.strokeRect(
         x + 5,
         y + 5,
@@ -34,7 +35,7 @@ class LiveViewEngine {
         objectTrackedScaled.h - 10
       )
       context.setLineDash([]);
-      context.fillStyle = 'white';
+      context.fillStyle = evaluateCSSVariable(colors.default);
       context.fillRect(
         x + 4,
         y - 10,
@@ -42,7 +43,7 @@ class LiveViewEngine {
         17
       )
       context.font = '10px'
-      context.fillStyle = 'black'
+      context.fillStyle = evaluateCSSVariable(colors.inverse);
       context.fillText(
         `${objectTrackedScaled.name}`,
         x + 8,
@@ -90,7 +91,7 @@ class LiveViewEngine {
         context.globalAlpha = 1;
       } else {
         context.setLineDash([10, 10]);
-        context.strokeStyle = 'white'
+        context.strokeStyle = evaluateCSSVariable(colors.default);
         context.strokeRect(
           x + 5,
           y + 5,
