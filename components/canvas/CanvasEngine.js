@@ -136,6 +136,7 @@ class CanvasEngine extends PureComponent {
             top: 0;
             left: 0;
             z-index: 1;
+            background-color:  ${this.props.mode === CANVAS_RENDERING_MODE.PATHVIEW ? 'rgba(0,0,0,0.5)' : 'none'};
           }
 
           @media (min-aspect-ratio: 16/9) {
