@@ -53,14 +53,14 @@ class SingleCounterArea extends Component {
                   left: this.props.area.location.center.x - POPOVER_WIDTH / 2
               }}
           >
-              <div className="area-popover-title">
-                  Neckator
-              </div>
+              <h4 className="area-popover-title text-center py-2">
+                {this.props.area.name}
+              </h4>
               <div className="area-popover-content">
                 {/* TODO LIMIT to 6 ?, put on it's own component to reuse in dashboard */}
                 {DISPLAY_CLASSES.map((counterClass) =>
-                  <div className="area-popover-item" key={counterClass}>
-                    <div className="area-popover-count">{this.props.counterData.get(counterClass) || 0}</div>
+                  <div className="area-popover-item mb-2" key={counterClass}>
+                    <div className="area-popover-count mr-2">{this.props.counterData.get(counterClass) || 0}</div>
                     <img className="area-popover-icon" src={`/static/icons/counter/${counterClass}.svg`} />
                   </div>
                 )}
@@ -108,9 +108,6 @@ class SingleCounterArea extends Component {
             .area-popover-title {
               background-color: #252525;
               width: 100%;
-              padding: 5px;
-              text-align: center;
-              font-size: 20px;
             }
 
             .area-popover-content {
@@ -125,10 +122,6 @@ class SingleCounterArea extends Component {
               width: 75px;
               align-items: center;
               justify-content: center;
-            }
-
-            .area-popover-count {
-              margin-right: 5px;
             }
 
             .area-popover:after {

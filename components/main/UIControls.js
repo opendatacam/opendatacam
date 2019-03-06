@@ -20,7 +20,7 @@ class UIControls extends Component {
       <React.Fragment>
         <div className="nav">
           {this.props.recordingStatus.isRecording &&
-            <div className="recording-status">Recording ...  | {this.props.recordingStatus.currentFPS} FPS</div>
+            <div className="recording-status text-sm py-1">Recording ...  | {this.props.recordingStatus.currentFPS} FPS</div>
           }
           <div className="nav-left mt-2 ml-2 shadow">
             <button 
@@ -95,8 +95,6 @@ class UIControls extends Component {
             background-color: red;
             text-align: center;
             color: white;
-            padding-top: 2px;
-            padding-bottom: 2px;
             width: 100%;
             z-index: 3;
           }

@@ -8,7 +8,7 @@ class AskNameModal extends Component {
     super(props);
 
     this.state = {
-      name: ''
+      name: props.name || ''
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -74,12 +74,12 @@ class AskNameModal extends Component {
           }
 
           .ask-name{
-              text-align: center;
-              position: fixed;
-              top: 50%;
-              left: 50%;
-              transform: translate(-50%, -50%);
-              z-index: 6;
+            text-align: center;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 6;
           }
         `}</style>
       </div>

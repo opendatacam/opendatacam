@@ -62,6 +62,7 @@ class CounterAreasEditor extends Component {
     });
     
     this.editorCanvas.on('mouse:up', (o) => {
+      if (!this.mouseDown) return;
       let { x1, y1, x2, y2 } = this.lines[this.props.selectedCountingArea];
       let point1 = { x:x1, y:y1};
       let point2 = { x:x2, y:y2};
