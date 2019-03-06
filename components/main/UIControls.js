@@ -23,13 +23,13 @@ class UIControls extends Component {
             <div className="recording-status">Recording ...  | {this.props.recordingStatus.currentFPS} FPS</div>
           }
           <div className="nav-left">
-            <button className="bg-grey-light hover:bg-grey text-grey-darkest font-bold py-2 px-4 rounded-l" onClick={() => this.props.dispatch(setMode(MODE.LIVEVIEW))}>Live view</button>
-            <button className="bg-grey-light hover:bg-grey text-grey-darkest font-bold py-2 px-4" onClick={() => this.props.dispatch(setMode(MODE.COUNTERVIEW))}>Counter</button>
-            <button className="bg-grey-light hover:bg-grey text-grey-darkest font-bold py-2 px-4 rounded-r" onClick={() => this.props.dispatch(setMode(MODE.PATHVIEW))}>Path finder</button>
+            <button className="btn btn-default rounded-l" onClick={() => this.props.dispatch(setMode(MODE.LIVEVIEW))}>Live view</button>
+            <button className="btn btn-default" onClick={() => this.props.dispatch(setMode(MODE.COUNTERVIEW))}>Counter</button>
+            <button className="btn btn-default rounded-r" onClick={() => this.props.dispatch(setMode(MODE.PATHVIEW))}>Path finder</button>
           </div>
           <div className="nav-right">
-            <button onClick={() => this.props.dispatch(setMode(MODE.DATAVIEW))}>Data</button>
-            <button onClick={() => this.props.dispatch(setMode(MODE.CONSOLEVIEW))}>Console</button>
+            <button className="btn btn-default rounded-l" onClick={() => this.props.dispatch(setMode(MODE.DATAVIEW))}>Data</button>
+            <button className="btn btn-default rounded-r" onClick={() => this.props.dispatch(setMode(MODE.CONSOLEVIEW))}>Console</button>
           </div>
         </div>
         <div className="nav-bottom">
