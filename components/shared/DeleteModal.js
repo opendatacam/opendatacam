@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import CanvasEngine from '../canvas/CanvasEngine';
-import { MODE, CIRCLE_RADIUS, CANVAS_RENDERING_MODE } from '../../utils/constants';
+import { MODE, CIRCLE_DELETE_RADIUS, CANVAS_RENDERING_MODE } from '../../utils/constants';
 import { COLORS } from '../../utils/colors';
 import { EDITOR_MODE } from '../../statemanagement/app/CounterStateManagement';
 
@@ -34,8 +34,8 @@ class DeleteModal extends Component {
             key={id}
             onClick={() => this.props.delete(id)}
             style={{
-                top: countingArea.getIn(['location','center','y']) - (CIRCLE_RADIUS) / 2, 
-                left: countingArea.getIn(['location','center','x']) - (CIRCLE_RADIUS) / 2,
+                top: countingArea.getIn(['location','center','y']) - (CIRCLE_DELETE_RADIUS) / 2, 
+                left: countingArea.getIn(['location','center','x']) - (CIRCLE_DELETE_RADIUS) / 2,
                 backgroundColor: COLORS[countingArea.get('color')]
             }}
           >
@@ -57,11 +57,11 @@ class DeleteModal extends Component {
 
           .circle {
             position: absolute;
-            border-radius: ${CIRCLE_RADIUS}px;
+            border-radius: ${CIRCLE_DELETE_RADIUS}px;
             z-index: 2;
-            min-width: ${CIRCLE_RADIUS}px;
-            height: ${CIRCLE_RADIUS}px;
-            line-height: ${CIRCLE_RADIUS}px;
+            min-width: ${CIRCLE_DELETE_RADIUS}px;
+            height: ${CIRCLE_DELETE_RADIUS}px;
+            line-height: ${CIRCLE_DELETE_RADIUS}px;
             font-size: 16px;
             font-weight: bold;
             padding-left: 5px;
@@ -69,6 +69,9 @@ class DeleteModal extends Component {
             color: black;
             text-align: center;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
           }
         `}</style>
       </div>
