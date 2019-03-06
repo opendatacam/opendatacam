@@ -10,7 +10,6 @@ class InstructionsModal extends Component {
           <h3 className="text-center">
             Draw to define counting lines
           </h3>
-          <div className="border-t border-default-soft" />
           <button 
             className="btn btn-primary btn-rounded min-w-100 mt-5"
             onClick={() => this.props.close()}>

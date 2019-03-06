@@ -35,26 +35,30 @@ class AskNameModal extends Component {
   render() {
     return (
       <div className="overlay">
-        <form className="ask-name" onSubmit={(e) => {
+        <form className="ask-name flex" onSubmit={(e) => {
           e.preventDefault()
           if(this.state.name !== '') {
             this.props.save(this.state.name)
           }
         }}>
           <input 
-            type="text" 
+            type="text"
+            className="appearance-none rounded-l py-2 px-3" 
             value={this.state.name} 
             onChange={this.handleChange} 
             placeholder='Counting line name'
             autoFocus
           />
-          <input type="submit"
+          <input 
+            type="submit"
+            className="btn btn-default cursor-pointer"
             value="OK"
           />
           <button
+            className="btn btn-default rounded-r inline-flex items-center"
             onClick={() => this.props.cancel()}
           >
-            Cancel
+            <img src="/static/icons/icon-close.svg" className="w-4 h-4" />
           </button>
         </form>
         <CanvasEngine mode={CANVAS_RENDERING_MODE.COUNTING_AREAS} />
