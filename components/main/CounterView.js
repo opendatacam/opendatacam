@@ -6,6 +6,7 @@ import CanvasEngine from '../canvas/CanvasEngine';
 
 import { CANVAS_RENDERING_MODE } from '../../utils/constants';
 import CounterAreasVisualizer from '../shared/CounterAreasVisualizer';
+import BtnRecording from '../shared/BtnRecording';
 
 class CounterView extends React.Component {
 
@@ -29,6 +30,7 @@ class CounterView extends React.Component {
             <div className="modal">Not counting lines defined , Blablabalbla Define counting lines before start recording</div>
           </>
         }
+        <BtnRecording />
         <style jsx>{`
             .modal {
               position: absolute;

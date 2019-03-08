@@ -16,59 +16,54 @@ class UIControls extends Component {
   // }
 
   render () {
+
     return (
       <React.Fragment>
-        <div className="nav flex">
+        <div className="nav">
           {this.props.recordingStatus.isRecording &&
             <div className="recording-status text-sm py-1">Recording ...  | {this.props.recordingStatus.currentFPS} FPS</div>
           }
-          <div className="nav-left mt-2 ml-2 shadow flex">
-            <button 
-              className={`btn btn-default rounded-l ${this.props.mode === MODE.LIVEVIEW ? 'btn-default--active' : ''}`}
-              onClick={() => this.props.dispatch(setMode(MODE.LIVEVIEW))}
-            >
-              Live view
-            </button>
-            <button
-              className={`btn btn-default border-r border-l border-default-soft border-solid ${this.props.mode === MODE.COUNTERVIEW ? 'btn-default--active' : ''}`}
-              onClick={() => this.props.dispatch(setMode(MODE.COUNTERVIEW))}
-            >
-              Counter
-            </button>
-            <button
-              className={`btn btn-default rounded-r ${this.props.mode === MODE.PATHVIEW ? 'btn-default--active' : ''}`}
-              onClick={() => this.props.dispatch(setMode(MODE.PATHVIEW))}
-            >
-              Path finder
-            </button>
+          <div className="flex">
+            <div className="nav-left mt-2 ml-2 shadow flex">
+              <button 
+                className={`btn btn-default rounded-l ${this.props.mode === MODE.LIVEVIEW ? 'btn-default--active' : ''}`}
+                onClick={() => this.props.dispatch(setMode(MODE.LIVEVIEW))}
+              >
+                Live view
+              </button>
+              <button
+                className={`btn btn-default border-r border-l border-default-soft border-solid ${this.props.mode === MODE.COUNTERVIEW ? 'btn-default--active' : ''}`}
+                onClick={() => this.props.dispatch(setMode(MODE.COUNTERVIEW))}
+              >
+                Counter
+              </button>
+              <button
+                className={`btn btn-default rounded-r ${this.props.mode === MODE.PATHVIEW ? 'btn-default--active' : ''}`}
+                onClick={() => this.props.dispatch(setMode(MODE.PATHVIEW))}
+              >
+                Path finder
+              </button>
+            </div>
+            <div className="nav-right mt-2 mr-2 shadow flex">
+              <button
+                className={`btn btn-default rounded-l ${this.props.mode === MODE.DATAVIEW ? 'btn-default--active' : ''}`}
+                onClick={() => this.props.dispatch(setMode(MODE.DATAVIEW))}>
+                Data
+              </button>
+              <button 
+                className={`btn btn-default rounded-r border-l border-default-soft border-solid ${this.props.mode === MODE.CONSOLEVIEW ? 'btn-default--active' : ''}`}
+                onClick={() => this.props.dispatch(setMode(MODE.CONSOLEVIEW))}
+              >
+                Console
+              </button>
+              <button 
+                className={`btn btn-default ml-2 py-0 px-3 rounded border border-default-soft border-solid flex items-center ${this.props.mode === MODE.CONSOLEVIEW ? 'btn-default--active' : ''}`}
+                onClick={() => this.props.dispatch(setMode(MODE.CONSOLEVIEW))}
+              >
+                <img src="/static/icons/icon-menu.svg" className="w-5 h-5" />
+              </button>
+            </div>
           </div>
-          <div className="nav-right mt-2 mr-2 shadow flex">
-            <button
-              className={`btn btn-default rounded-l ${this.props.mode === MODE.DATAVIEW ? 'btn-default--active' : ''}`}
-              onClick={() => this.props.dispatch(setMode(MODE.DATAVIEW))}>
-              Data
-            </button>
-            <button 
-              className={`btn btn-default rounded-r border-l border-default-soft border-solid ${this.props.mode === MODE.CONSOLEVIEW ? 'btn-default--active' : ''}`}
-              onClick={() => this.props.dispatch(setMode(MODE.CONSOLEVIEW))}
-            >
-              Console
-            </button>
-            <button 
-              className={`btn btn-default ml-2 py-0 px-3 rounded border border-default-soft border-solid flex items-center ${this.props.mode === MODE.CONSOLEVIEW ? 'btn-default--active' : ''}`}
-              onClick={() => this.props.dispatch(setMode(MODE.CONSOLEVIEW))}
-            >
-              <img src="/static/icons/icon-menu.svg" className="w-5 h-5" />
-            </button>
-          </div>
-        </div>
-        <div className="nav-bottom">
-          {!this.props.recordingStatus.isRecording &&
-            <BtnRecording label="Start recording" onClick={() => this.props.dispatch(startRecording())} />
-          }
-          {this.props.recordingStatus.isRecording &&
-            <BtnRecording label="Stop recording" stop onClick={() => this.props.dispatch(stopRecording())} />
-          }
         </div>
         <style jsx>{`
           .nav {
@@ -82,14 +77,6 @@ class UIControls extends Component {
           .nav-right {
             position: absolute;
             right: 0;
-          }
-
-          .nav-bottom {
-            position: fixed;
-            bottom: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 3;
           }
 
           .recording-status {

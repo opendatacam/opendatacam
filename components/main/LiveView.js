@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import CanvasEngine from '../canvas/CanvasEngine';
 import { CANVAS_RENDERING_MODE } from '../../utils/constants';
+import BtnRecording from '../shared/BtnRecording';
 
 class LiveView extends Component {
 
@@ -23,6 +24,7 @@ class LiveView extends Component {
     return (
       <>
         <CanvasEngine mode={CANVAS_RENDERING_MODE.LIVEVIEW} />
+        <BtnRecording />
       </>
     )
   }

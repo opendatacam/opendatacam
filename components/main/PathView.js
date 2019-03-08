@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import CanvasEngine from '../canvas/CanvasEngine';
 import { MODE, CANVAS_RENDERING_MODE } from '../../utils/constants';
+import BtnRecording from '../shared/BtnRecording';
 
 class PathView extends Component {
 
@@ -23,6 +24,9 @@ class PathView extends Component {
     return (
       <>
         <CanvasEngine mode={CANVAS_RENDERING_MODE.PATHVIEW} hidden={this.props.hidden} />
+        {!this.props.hidden &&
+          <BtnRecording />
+        }
       </>
     )
   }
