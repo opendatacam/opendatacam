@@ -14,6 +14,7 @@ import DataView from './main/DataView';
 
 import { MODE } from '../utils/constants';
 import UIControls from './main/UIControls';
+import Menu from './main/Menu';
 
 class MainPage extends React.Component {
 
@@ -32,6 +33,9 @@ class MainPage extends React.Component {
           <AskLandscape />
         }
         <UIControls />
+        {false &&  
+          <Menu />
+        }
         {this.props.mode === MODE.DATAVIEW &&
           <DataView />
         }

@@ -18,11 +18,11 @@ class UIControls extends Component {
   render () {
     return (
       <React.Fragment>
-        <div className="nav">
+        <div className="nav flex">
           {this.props.recordingStatus.isRecording &&
             <div className="recording-status text-sm py-1">Recording ...  | {this.props.recordingStatus.currentFPS} FPS</div>
           }
-          <div className="nav-left mt-2 ml-2 shadow">
+          <div className="nav-left mt-2 ml-2 shadow flex">
             <button 
               className={`btn btn-default rounded-l ${this.props.mode === MODE.LIVEVIEW ? 'btn-default--active' : ''}`}
               onClick={() => this.props.dispatch(setMode(MODE.LIVEVIEW))}
@@ -42,9 +42,9 @@ class UIControls extends Component {
               Path finder
             </button>
           </div>
-          <div className="nav-right mt-2 mr-2 shadow">
+          <div className="nav-right mt-2 mr-2 shadow flex">
             <button
-              className={`btn btn-default rounded-l ${this.props.mode === MODE.CONSOLEVIEW ? 'btn-default--active' : ''}`}
+              className={`btn btn-default rounded-l ${this.props.mode === MODE.DATAVIEW ? 'btn-default--active' : ''}`}
               onClick={() => this.props.dispatch(setMode(MODE.DATAVIEW))}>
               Data
             </button>
@@ -53,6 +53,12 @@ class UIControls extends Component {
               onClick={() => this.props.dispatch(setMode(MODE.CONSOLEVIEW))}
             >
               Console
+            </button>
+            <button 
+              className={`btn btn-default ml-2 py-0 px-3 rounded border border-default-soft border-solid flex items-center ${this.props.mode === MODE.CONSOLEVIEW ? 'btn-default--active' : ''}`}
+              onClick={() => this.props.dispatch(setMode(MODE.CONSOLEVIEW))}
+            >
+              <img src="/static/icons/icon-menu.svg" className="w-5 h-5" />
             </button>
           </div>
         </div>
@@ -73,14 +79,9 @@ class UIControls extends Component {
             z-index: 3;
           }
 
-          .nav-left {
-            display: inline-block;
-          }
-
           .nav-right {
             position: absolute;
             right: 0;
-            display: inline-block;
           }
 
           .nav-bottom {
