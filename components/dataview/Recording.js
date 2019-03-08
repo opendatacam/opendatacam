@@ -28,18 +28,15 @@ class Recording extends Component {
   }
 
   render() {
-
-    const recording = this.props.recording;
-
     return (
-      <div className="recording pl-2">
+      <div className="recording pl-5">
         <div className="text-white flex">
-          <h4>{dayjs(recording.dateStart).format('MMM DD, YYYY')}</h4>
+          <h4>{dayjs(this.props.dateStart).format('MMM DD, YYYY')}</h4>
           <div className="ml-8">
-            {dayjs(recording.dateStart).format('hh:mm a')} - {this.renderDateEnd(recording.dateEnd, this.props.active)}
+            {dayjs(this.props.dateStart).format('hh:mm a')} - {this.renderDateEnd(this.props.dateEnd, this.props.active)}
           </div>
         </div>
-        <a href={`/recording/${recording._id}/trackerhistory`} target="_blank">Download tracker data</a>
+        <a href={`/recording/${this.props.id}/trackerhistory`} target="_blank">Download tracker data</a>
         <style jsx>{`
             .recording {
               width: 100%;

@@ -22,11 +22,19 @@ class DataView extends Component {
   render () {
     return (
         <div className="data-view">
-          {this.props.recordingHistory.map((recording, index) =>
+          {this.props.recordingStatus.get('isRecording') &&
             <Recording 
-              key={recording._id} 
-              recording={recording}
-              active={this.props.isRecording && index === 0}
+              id={this.props.recordingStatus.get('recordingId')} 
+              dateStart={this.props.recordingStatus.get('dateStarted')}
+              active
+            />
+          }
+          {this.props.recordingHistory.map((recording) =>
+            <Recording 
+              key={recording.get('_id')} 
+              id={recording.get('_id')} 
+              dateStart={recording.get('dateStart')}
+              dateEnd={recording.get('dateEnd')}
             />
           )}
           <style jsx>{`
@@ -50,8 +58,9 @@ class DataView extends Component {
 }
 
 export default connect((state) => {
+  
   return {
-    recordingHistory: state.history.get('recordingHistory').toJS(),
-    isRecording: state.app.getIn(['recordingStatus', 'isRecording'])
+    recordingHistory: state.app.getIn(['recordingStatus', 'isRecording']) ? state.history.get('recordingHistory').skip(1) : state.history.get('recordingHistory'),
+    recordingStatus: state.app.get('recordingStatus')
   }
 })(DataView)

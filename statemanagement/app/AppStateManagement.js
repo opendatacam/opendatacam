@@ -4,6 +4,7 @@ import { MODE } from '../../utils/constants';
 import { getURLData } from '../../server/utils/urlHelper';
 import { updateTrackerData } from './TrackerStateManagement';
 import { updateCounterDashboard } from './CounterStateManagement';
+import { fetchHistory } from './HistoryStateManagement';
 
 // Initial state
 const initialState = fromJS({
@@ -30,16 +31,18 @@ const START_LISTENING_SERVERDATA = 'App/START_LISTENING_SERVERDATA'
 const STOP_LISTENING_SERVERDATA = 'App/STOP_LISTENING_SERVERDATA'
 
 export function startRecording() {
-  return () => {
+  return (dispatch) => {
     // Ping webservice to start storing data on server
     axios.get('/recording/start');
+    dispatch(fetchHistory());
   }
 }
 
 export function stopRecording() {
-  return () => {
+  return (dispatch) => {
     // Ping webservice to stop storing data on server
     axios.get('/recording/stop');
+    dispatch(fetchHistory());
   }
 }
 
