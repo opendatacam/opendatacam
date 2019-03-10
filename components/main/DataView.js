@@ -28,17 +28,18 @@ class DataView extends Component {
               dateStart={this.props.recordingStatus.get('dateStarted')}
               counterData={this.props.counterDashboard}
               countingAreas={this.props.countingAreas}
+              nbPaths={this.props.nbPaths}
               active
             />
           }
-          {this.props.recordingHistory.map((recording) =>
+          {/* {this.props.recordingHistory.map((recording) =>
             <Recording 
               key={recording.get('_id')} 
               id={recording.get('_id')} 
               dateStart={recording.get('dateStart')}
               dateEnd={recording.get('dateEnd')}
             />
-          )}
+          )} */}
           <style jsx>{`
             .data-view {
               width: 100%;
@@ -64,6 +65,7 @@ export default connect((state) => {
     recordingHistory: state.app.getIn(['recordingStatus', 'isRecording']) ? state.history.get('recordingHistory').skip(1) : state.history.get('recordingHistory'),
     recordingStatus: state.app.get('recordingStatus'),
     counterDashboard: state.counter.get('counterDashboard'),
-    countingAreas: state.counter.get('countingAreas')
+    countingAreas: state.counter.get('countingAreas'),
+    nbPaths: state.tracker.get('trackerData').get('data').last().get('id') // TODO This is not true
   }
 })(DataView)

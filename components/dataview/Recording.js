@@ -75,9 +75,9 @@ class Recording extends PureComponent {
               <h3 className="mr-3">Pathfinder</h3>
               <a className="btn-text" href={`/recording/${this.props.id}/trackerhistory`} target="_blank">Download data</a>
             </div>
-            <div className="mt-4 relative">
+            <div className="mt-6 rounded relative">
               <div className="text-white absolute" style={{ bottom: 10, left : 10}}>
-                <h2 className="inline">2001</h2> paths
+                <h2 className="inline">{this.props.nbPaths}</h2> paths
               </div>
               <img src="/static/placeholder/pathview.jpg" />
             </div>
