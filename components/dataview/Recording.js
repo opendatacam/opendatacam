@@ -70,6 +70,18 @@ class Recording extends PureComponent {
               )}
             </div>
           </div>
+          <div className="flex flex-col rounded bg-white text-black p-4 ml-4">
+            <div className="flex items-end justify-between">
+              <h3 className="mr-3">Pathfinder</h3>
+              <a className="btn-text" href={`/recording/${this.props.id}/trackerhistory`} target="_blank">Download data</a>
+            </div>
+            <div className="mt-4 relative">
+              <div className="text-white absolute" style={{ bottom: 10, left : 10}}>
+                <h2 className="inline">2001</h2> paths
+              </div>
+              <img src="/static/placeholder/pathview.jpg" />
+            </div>
+          </div>
         </div>
       </div>
     )

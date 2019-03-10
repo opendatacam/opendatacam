@@ -41,7 +41,7 @@ class UIControls extends Component {
                 className={`btn btn-default rounded-r ${this.props.mode === MODE.PATHVIEW ? 'btn-default--active' : ''}`}
                 onClick={() => this.props.dispatch(setMode(MODE.PATHVIEW))}
               >
-                Path finder
+                Pathfinder
               </button>
             </div>
             <div className="nav-right mt-2 mr-2 shadow flex">
@@ -80,7 +80,7 @@ class UIControls extends Component {
           }
 
           .recording-status {
-            background-color: red;
+            background-color: #e3342f;
             text-align: center;
             color: white;
             width: 100%;
