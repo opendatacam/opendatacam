@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import dayjs from 'dayjs';
+import { DISPLAY_CLASSES } from '../../config.json';
 
 class Recording extends Component {
 
@@ -29,19 +30,43 @@ class Recording extends Component {
 
   render() {
     return (
-      <div className="recording pl-5">
+      <div className="recording pl-8 w-full mb-10">
         <div className="text-white flex">
-          <h4>{dayjs(this.props.dateStart).format('MMM DD, YYYY')}</h4>
-          <div className="ml-8">
+          <div>{dayjs(this.props.dateStart).format('MMM DD, YYYY')}</div>
+          <div className="ml-10">
             {dayjs(this.props.dateStart).format('hh:mm a')} - {this.renderDateEnd(this.props.dateEnd, this.props.active)}
           </div>
         </div>
-        <a href={`/recording/${this.props.id}/trackerhistory`} target="_blank">Download tracker data</a>
-        <style jsx>{`
-            .recording {
-              width: 100%;
-            }
-          `}</style>
+        <div className="flex flex-no-wrap overflow-x-auto mt-5">
+          <div className="flex flex-col rounded bg-white text-black p-4">
+            <div className="flex items-end">
+              <h3 className="mr-3">Counter</h3>
+              <a className="btn-text" href={`/recording/${this.props.id}/trackerhistory`} target="_blank">Download tracker data</a>
+            </div>
+            <div className="mt-4 flex flex-no-wrap">
+              {this.props.countingAreas && this.props.countingAreas.entrySeq().map(([countingAreaId, countingAreaData]) =>
+                <div 
+                  key={countingAreaId} 
+                  className="bg-grey-lighter mt-2 rounded p-4 mr-4"
+                >
+                  <h4>{countingAreaData.get('name')}</h4>
+                  <div className="flex flex-wrap mt-5 w-64">
+                    {/* TODO LIMIT to 6 ?, put on its own component to reuse in popover */}
+                    {DISPLAY_CLASSES.map((counterClass) =>
+                      <div 
+                        className="flex w-16 m-2 items-center justify-center" 
+                        key={counterClass}
+                      >
+                        <h4 className="mr-2">{this.props.counterData && this.props.counterData.getIn([countingAreaId, counterClass]) || 0}</h4>
+                        <img src={`/static/icons/counter/transparent/${counterClass}.svg`} />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     )
   }

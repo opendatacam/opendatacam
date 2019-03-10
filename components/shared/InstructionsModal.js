@@ -8,7 +8,7 @@ class InstructionsModal extends Component {
       <div className="overlay" onClick={() => this.props.close()}>
         <div className="modal rounded p-10 shadow">
           <h3 className="text-center">
-            Draw to define counting lines
+            Draw to define the counting zones (crossing vehicles increase counter by 1)
           </h3>
           <button 
             className="btn btn-primary btn-rounded min-w-100 mt-5"

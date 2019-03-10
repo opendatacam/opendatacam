@@ -31,3 +31,11 @@
 .btn-rounded {
     @apply rounded-full;
 }
+
+.btn-text {
+    @apply text-grey no-underline;
+}
+
+.btn-text:hover {
+    @apply text-grey-darker;
+}

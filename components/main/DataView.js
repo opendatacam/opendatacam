@@ -21,11 +21,13 @@ class DataView extends Component {
 
   render () {
     return (
-        <div className="data-view">
+        <div className="data-view bg-black">
           {this.props.recordingStatus.get('isRecording') &&
             <Recording 
               id={this.props.recordingStatus.get('recordingId')} 
               dateStart={this.props.recordingStatus.get('dateStarted')}
+              counterData={this.props.counterDashboard}
+              countingAreas={this.props.countingAreas}
               active
             />
           }
@@ -49,7 +51,6 @@ class DataView extends Component {
               left: 0;
               bottom: 0;
               right: 0;
-              background-color: black;
             }
           `}</style>
         </div>
@@ -61,6 +62,8 @@ export default connect((state) => {
   
   return {
     recordingHistory: state.app.getIn(['recordingStatus', 'isRecording']) ? state.history.get('recordingHistory').skip(1) : state.history.get('recordingHistory'),
-    recordingStatus: state.app.get('recordingStatus')
+    recordingStatus: state.app.get('recordingStatus'),
+    counterDashboard: state.counter.get('counterDashboard'),
+    countingAreas: state.counter.get('countingAreas')
   }
 })(DataView)
