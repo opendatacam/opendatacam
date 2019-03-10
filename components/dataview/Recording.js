@@ -1,9 +1,10 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { connect } from 'react-redux';
 import dayjs from 'dayjs';
 import { DISPLAY_CLASSES } from '../../config.json';
+import { COLORS } from '../../utils/colors';
 
-class Recording extends Component {
+class Recording extends PureComponent {
 
   constructor(props) {
     super(props);
@@ -39,17 +40,20 @@ class Recording extends Component {
         </div>
         <div className="flex flex-no-wrap overflow-x-auto mt-5">
           <div className="flex flex-col rounded bg-white text-black p-4">
-            <div className="flex items-end">
+            <div className="flex items-end justify-between">
               <h3 className="mr-3">Counter</h3>
-              <a className="btn-text" href={`/recording/${this.props.id}/trackerhistory`} target="_blank">Download tracker data</a>
+              <a className="btn-text" href={`/recording/${this.props.id}/trackerhistory`} target="_blank">Download data</a>
             </div>
             <div className="mt-4 flex flex-no-wrap">
-              {this.props.countingAreas && this.props.countingAreas.entrySeq().map(([countingAreaId, countingAreaData]) =>
+              {this.props.countingAreas && this.props.countingAreas.entrySeq().map(([countingAreaId, countingAreaData], index) =>
                 <div 
                   key={countingAreaId} 
-                  className="bg-grey-lighter mt-2 rounded p-4 mr-4"
+                  className={`bg-grey-lighter mt-2 rounded p-4 ${index === 0 ? '' : 'ml-4' }`}
                 >
-                  <h4>{countingAreaData.get('name')}</h4>
+                  <div className="flex items-center">
+                    <h4>{countingAreaData.get('name')}</h4>
+                    <div className="w-4 h-4 ml-2 rounded-full" style={{'backgroundColor': COLORS[countingAreaData.get('color')]}}></div>
+                  </div>
                   <div className="flex flex-wrap mt-5 w-64">
                     {/* TODO LIMIT to 6 ?, put on its own component to reuse in popover */}
                     {DISPLAY_CLASSES.map((counterClass) =>
