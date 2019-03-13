@@ -93,21 +93,16 @@ app.prepare()
     });
   })
 
-  express.get('/counter/export', function(req, res) {
-    var dataToExport = cloneDeep(Opendatacam.getCounterHistory());
-    // console.log(dataToExport);
-    res.csv(dataToExport, false ,{'Content-disposition': 'attachment; filename=counterData.csv'});
-  });
-
-
-  express.get('/counter/trackerdata', function(req, res) {
-    Opendatacam.getTrackerData().then(() => {
-      // res.send('OK, file ready to download');
-      res.download('static/trackerHistoryExport.json', 'trackerHistoryExport.json')
-    }, () => {
-      res.status(500).send('Something broke while generating the tracking history!');
-    })
-  });
+  express.get('/recording/:id/counterhistory', (req, res) => {
+    DBManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
+      res.json(counterData);
+      // res.setHeader('Content-disposition', 'attachment; filename= trackerData.json');
+      // res.setHeader('Content-type', 'application/json');
+      // res.write(JSON.stringify(trackerData), function (err) {
+      //     res.end();
+      // })
+    });
+  })
 
   // Global next.js handler
   express.get('*', (req, res) => {

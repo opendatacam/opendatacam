@@ -3,6 +3,7 @@ var ObjectID = require('mongodb').ObjectID
 
 var mongoURL = 'mongodb://127.0.0.1:27017'
 var RECORDING_COLLECTION = 'recordings';
+var TRACKER_COLLECTION = 'tracker';
 
 // Where "mongo" is the name of the service in the docker-compose.yml file
 // if (process.env.DOCKER_DEPLOY) {
@@ -28,10 +29,14 @@ class DBManager {
           let db = client.db('opendatacam')
           this.db = db
 
-          // Get the highscore collection
-          const collection = db.collection(RECORDING_COLLECTION)
+          // Get the collection
+          const recordingCollection = db.collection(RECORDING_COLLECTION)
           // Create the index
-          collection.createIndex({ dateEnd: -1 })
+          recordingCollection.createIndex({ dateEnd: -1 })
+
+          const trackerCollection = db.collection(TRACKER_COLLECTION)
+          // Create the index
+          trackerCollection.createIndex({ recordingId : 1})
 
           resolve(db)
         }
@@ -111,6 +116,8 @@ class DBManager {
                     }
                 }
             )
+
+            db.collection(TRACKER_COLLECTION).insertOne(trackerEntry)
         })
     })
   }
@@ -139,24 +146,38 @@ class DBManager {
     return new Promise((resolve, reject) => {
       this.getDB().then(db => {
         db
-          .collection(RECORDING_COLLECTION)
-          .findOne(
-            { _id : ObjectID(recordingId)}, 
-            { trackerHistory: 1 }, 
-            function (err, docs) {
-              if (err) {
-                reject(err)
-              } else {
-                resolve(docs)
-              }
-            }
+          .collection(TRACKER_COLLECTION)
+          .find(
+            { recordingId : ObjectID(recordingId)}
           )
+          .toArray(function (err, docs) {
+            if (err) {
+              reject(err)
+            } else {
+              resolve(docs)
+            }
+          })
       });
     })
   }
 
-  getCounterHistoryOfRecording(recordingId, area) {
-    // TODO when area key id mess sorted out
+  getCounterHistoryOfRecording(recordingId) {
+    return new Promise((resolve, reject) => {
+      this.getDB().then(db => {
+        db
+          .collection(RECORDING_COLLECTION)
+          .find(
+            { _id : ObjectID(recordingId)}
+          )
+          .toArray(function (err, docs) {
+            if (err) {
+              reject(err)
+            } else {
+              resolve(docs)
+            }
+          })
+      });
+    })
   }
 
 }

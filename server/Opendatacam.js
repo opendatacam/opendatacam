@@ -136,6 +136,7 @@ module.exports = {
   ) {
     
     const trackerEntry = {
+      recordingId: Opendatacam.recordingStatus.recordingId,
       timestamp: frameTimestamp,
       objects: trackerDataForThisFrame.map((trackerData) => {
         return {
@@ -158,7 +159,7 @@ module.exports = {
       countedItemsForThisFrame,
       trackerEntry
     ).then(() => {
-      console.log('success updateRecordingWithNewframe');
+      // console.log('success updateRecordingWithNewframe');
     }, (error) => {
       console.log(error);
       console.log('error updateRecordingWithNewframe');
@@ -422,6 +423,7 @@ module.exports = {
     console.log('Start recording');
     Opendatacam.recordingStatus.isRecording = true;
     Opendatacam.recordingStatus.dateStarted = new Date();
+    Opendatacam.totalItemsTracked = 0;
     // Persist recording
     DBManager.insertRecording(new Recording(
       Opendatacam.recordingStatus.dateStarted, 
@@ -450,7 +452,7 @@ module.exports = {
     // HTTPJSONSTREAM req
     if(self.HTTPRequestListeningToYOLO) {
       // Already listening
-      return;
+      self.clean();
     }
 
     var options = {
