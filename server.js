@@ -43,9 +43,7 @@ app.prepare()
   // This render pages/index.js for a request to /
   express.get('/', (req, res) => {
 
-    // setTimeout(() => {
     YOLO.start(); // Inside yolo process will check is started
-    // }, 5000)
 
     const urlData = getURLData(req);
     Opendatacam.listenToYOLO(urlData);

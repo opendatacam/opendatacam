@@ -89,6 +89,8 @@ module.exports = {
       console.log('already started');
       return;
     }
+    
+    YOLO.isStarting = true;
 
     if(YOLO.simulationMode) {
       setTimeout(() => {

@@ -28,6 +28,7 @@ const initialState = {
     recordingId: null,
     dateStarted: null
   },
+  isListeningToYOLO: false,
   HTTPRequestListeningToYOLO: null,
   HTTPRequestListeningToYOLOMaxRetries: 20
 }
@@ -169,8 +170,8 @@ module.exports = {
 
   updateWithNewFrame: function(detectionsOfThisFrame) {
     // Set yolo to started if it's not the case
-    if(!YOLO.getStatus().isStarted) {
-      YOLO.setIsStarted();
+    if(!Opendatacam.isListeningToYOLO) {
+      Opendatacam.isListeningToYOLO = true;
     }
 
     // TODO when start recording, record the date
@@ -451,10 +452,10 @@ module.exports = {
   listenToYOLO(urlData) {
     var self = this;
     // HTTPJSONSTREAM req
-    if(self.HTTPRequestListeningToYOLO) {
+    if(Opendatacam.isListeningToYOLO) {
       // Already listening
-      console.log('Already listening, clean')
-      self.clean();
+      console.log('Already listening')
+      return;
     }
 
     var options = {
@@ -488,7 +489,7 @@ module.exports = {
       });
 
       res.on('close', () => {
-        if(YOLO.getStatus().isStarted)  {
+        if(Opendatacam.isListeningToYOLO)  {
           console.log("==== HTTP Stream closed by darknet, reset UI, might be running from file and ended it or have troubles with webcam and need restart =====")
           YOLO.stop();
         } else {
@@ -500,7 +501,7 @@ module.exports = {
     self.HTTPRequestListeningToYOLO.on('error', function(e) {
       // TODO Need a YOLO.isRunning()
       if(
-        // !YOLO.getStatus().isRunning && 
+        !Opendatacam.isListeningToYOLO &&
         Opendatacam.HTTPRequestListeningToYOLOMaxRetries > 0
       ) {
         console.log('Will retry in 1s')
