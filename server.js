@@ -43,11 +43,10 @@ app.prepare()
   // This render pages/index.js for a request to /
   express.get('/', (req, res) => {
 
+    YOLO.start(); // Inside yolo process will check is started
+
     const urlData = getURLData(req);
     Opendatacam.listenToYOLO(urlData);
-
-
-    YOLO.start(); // Inside yolo process will check is started
 
     // Hacky way to pass params to getInitialProps on SSR
     // Should hydrate differently
