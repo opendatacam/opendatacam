@@ -496,7 +496,10 @@ module.exports = {
     });
 
     self.HTTPRequestListeningToYOLO.on('error', function(e) {
-      if(Opendatacam.HTTPRequestListeningToYOLOMaxRetries > 0) {
+      if(
+        !YOLO.getStatus().isStarted && 
+        Opendatacam.HTTPRequestListeningToYOLOMaxRetries > 0
+      ) {
         console.log('Will retry in 1s')
         // Retry, YOLO might not have started server just yet
         setTimeout(() => {
