@@ -455,6 +455,8 @@ module.exports = {
       self.clean();
     }
 
+    console.log(urlData.address);
+
     var options = {
       hostname: urlData.address,
       port:     8070,
