@@ -473,15 +473,17 @@ module.exports = {
         if(msg.charAt(0) === ',' || msg.charAt(0) === '[') {
           msg = msg.substr(1);
         }
-        
-        try {
-          var detectionsOfThisFrame = JSON.parse(msg);
-          self.updateWithNewFrame(detectionsOfThisFrame.objects);
-        } catch (error) {
-          console.log("Error while updating Opendatacam with new frame")
-          console.log(msg);
-          console.log(error);
-          res.emit('close');
+
+        if(msg.length > 0) {
+          try {
+            var detectionsOfThisFrame = JSON.parse(msg);
+            self.updateWithNewFrame(detectionsOfThisFrame.objects);
+          } catch (error) {
+            console.log("Error with msg send by YOLO, not valid JSON")
+            console.log(msg);
+            console.log(error);
+            // res.emit('close');
+          }
         }
       });
 
@@ -509,7 +511,6 @@ module.exports = {
           Opendatacam.HTTPRequestListeningToYOLOMaxRetries--;
         }, 1000)
       } else {
-        console.l
         YOLO.stop();
         console.log('Something went wrong: ' + e.message);
       }
