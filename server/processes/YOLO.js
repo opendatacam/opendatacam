@@ -91,7 +91,10 @@ module.exports = {
     }
 
     if(YOLO.simulationMode) {
-      this.startYOLOSimulation();
+      setTimeout(() => {
+        // Simulate 5s to start yolo
+        this.startYOLOSimulation();
+      }, 5000);
     } else {
       if(!YOLO.isStarted) {
         YOLO.process.start();

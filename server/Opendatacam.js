@@ -28,7 +28,8 @@ const initialState = {
     recordingId: null,
     dateStarted: null
   },
-  HTTPRequestListeningToYOLO: null
+  HTTPRequestListeningToYOLO: null,
+  HTTPRequestListeningToYOLOMaxRetries: 20
 }
 
 let Opendatacam = cloneDeep(initialState);
@@ -452,10 +453,9 @@ module.exports = {
     // HTTPJSONSTREAM req
     if(self.HTTPRequestListeningToYOLO) {
       // Already listening
+      console.log('Already listening, clean')
       self.clean();
     }
-
-    console.log(urlData.address);
 
     var options = {
       hostname: urlData.address,
@@ -464,7 +464,9 @@ module.exports = {
       method:   'GET'
     };
 
+    console.log('Send request to connect to YOLO JSON Stream')
     self.HTTPRequestListeningToYOLO = http.request(options, function(res) {
+      console.log(`statusCode: ${res.statusCode}`)
       res.on('data', function(chunk) {
         var msg = chunk.toString();
         // console.log('Message: ' + msg);
@@ -489,8 +491,18 @@ module.exports = {
     });
 
     self.HTTPRequestListeningToYOLO.on('error', function(e) {
-      YOLO.stop();
-      console.log('Something went wrong: ' + e.message);
+      if(Opendatacam.HTTPRequestListeningToYOLOMaxRetries > 0) {
+        console.log('Will retry in 1s')
+        // Retry, YOLO might not have started server just yet
+        setTimeout(() => {
+          console.log("Retry connect to YOLO");
+          self.listenToYOLO(urlData);
+          Opendatacam.HTTPRequestListeningToYOLOMaxRetries--;
+        }, 1000)
+      } else {
+        YOLO.stop();
+        console.log('Something went wrong: ' + e.message);
+      }
     });
 
     // Actually send request

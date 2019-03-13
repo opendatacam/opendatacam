@@ -43,7 +43,9 @@ app.prepare()
   // This render pages/index.js for a request to /
   express.get('/', (req, res) => {
 
+    // setTimeout(() => {
     YOLO.start(); // Inside yolo process will check is started
+    // }, 5000)
 
     const urlData = getURLData(req);
     Opendatacam.listenToYOLO(urlData);
@@ -127,10 +129,9 @@ app.prepare()
 process.stdin.resume(); //so the program will not close instantly
 
 function exitHandler(options, exitCode) {
-  if (options.cleanup) {
-    // Clean open HTTP Request listening to YOLO
-    Opendatacam.clean();
-  };
+  // if (options.cleanup) {
+  Opendatacam.clean();
+  // };
   if (exitCode || exitCode === 0) console.log(exitCode);
   if (options.exit) process.exit();
 }
@@ -146,4 +147,10 @@ process.on('SIGUSR1', exitHandler.bind(null, {exit:true}));
 process.on('SIGUSR2', exitHandler.bind(null, {exit:true}));
 
 //catches uncaught exceptions
-process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
+// process.on('uncaughtException', exitHandler.bind(null, {exit:true}));
+
+
+process.on('uncaughtException', function (err) {
+  // This should not happen
+  console.log("Pheew ....! Something unexpected happened. This should be handled more gracefully. I am sorry. The culprit is: ", err);
+});
