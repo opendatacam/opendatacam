@@ -474,7 +474,7 @@ module.exports = {
           msg = msg.substr(1);
         }
 
-        if(msg.length > 0) {
+        if(msg.trim().length > 0) {
           try {
             var detectionsOfThisFrame = JSON.parse(msg);
             self.updateWithNewFrame(detectionsOfThisFrame.objects);
