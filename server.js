@@ -11,8 +11,8 @@ const cloneDeep = require('lodash.clonedeep');
 const getURLData = require('./server/utils/urlHelper').getURLData;
 const DBManager = require('./server/db/DBManager')
 
-// const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not running on the Jetson
-const SIMULATION_MODE = true;
+const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not running on the Jetson
+// const SIMULATION_MODE = true;
 
 const port = parseInt(process.env.PORT, 10) || 8080
 const dev = process.env.NODE_ENV !== 'production'
