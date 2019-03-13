@@ -27,7 +27,8 @@ class WebcamStream extends Component {
    }
 
    getUrl() {
-      return `${this.props.urlData.protocol}://${this.props.urlData.address}:8090/?time=${this.state.dateRefresh}`
+      // return `${this.props.urlData.protocol}://${this.props.urlData.address}:8090/?time=${this.state.dateRefresh}`
+      return `/index1.jpg`
    }
 
    componentDidMount() {

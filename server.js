@@ -10,6 +10,7 @@ const Opendatacam = require('./server/Opendatacam');
 const cloneDeep = require('lodash.clonedeep');
 const getURLData = require('./server/utils/urlHelper').getURLData;
 const DBManager = require('./server/db/DBManager')
+const MjpegProxy = require('mjpeg-proxy').MjpegProxy;
 
 const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not running on the Jetson
 // const SIMULATION_MODE = true;
@@ -55,6 +56,8 @@ app.prepare()
 
     return app.render(req, res, '/', query)
   })
+
+  express.get('/index1.jpg', new MjpegProxy('http://192.168.2.161:8090').proxyRequest);
 
   express.post('/counter/areas', (req, res) => {
     Opendatacam.registerCountingAreas(req.body.countingAreas)
