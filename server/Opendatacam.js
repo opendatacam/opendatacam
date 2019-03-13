@@ -469,7 +469,7 @@ module.exports = {
       console.log(`statusCode: ${res.statusCode}`)
       res.on('data', function(chunk) {
         var msg = chunk.toString();
-        // console.log('Message: ' + msg);
+        console.log(msg);
         try {
           var detectionsOfThisFrame = JSON.parse(msg);
           self.updateWithNewFrame(detectionsOfThisFrame.objects);
