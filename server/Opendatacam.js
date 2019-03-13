@@ -172,6 +172,7 @@ module.exports = {
     // Set yolo to started if it's not the case
     if(!Opendatacam.isListeningToYOLO) {
       Opendatacam.isListeningToYOLO = true;
+      Opendatacam.HTTPRequestListeningToYOLOMaxRetries = initialState.HTTPRequestListeningToYOLOMaxRetries;
     }
 
     // TODO when start recording, record the date
