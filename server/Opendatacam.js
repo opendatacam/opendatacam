@@ -469,7 +469,11 @@ module.exports = {
       console.log(`statusCode: ${res.statusCode}`)
       res.on('data', function(chunk) {
         var msg = chunk.toString();
-        console.log(msg);
+        // Clean up as darknet does not send valid JSON
+        if(msg.charAt(0) === ',' || msg.charAt(0) === '[') {
+          msg = msg.substr(1);
+        }
+        
         try {
           var detectionsOfThisFrame = JSON.parse(msg);
           self.updateWithNewFrame(detectionsOfThisFrame.objects);
