@@ -18,7 +18,8 @@ const initialState = fromJS({
   countingAreas: {},
   selectedCountingArea: null,
   mode: EDITOR_MODE.EDIT, // oneOf EDITOR_MODE
-  counterDashboard: {} // Maybe move this somewhere else
+  counterSummary: {},
+  trackerSummary: {} 
 })
 
 // Actions
@@ -29,7 +30,8 @@ const SET_MODE = 'Counter/SET_MODE'
 const SAVE_COUNTING_AREA_NAME = 'Counter/SAVE_COUNTING_AREA_NAME'
 const ADD_COUNTING_AREA = 'Counter/ADD_COUNTING_AREA'
 const RESTORE_COUNTING_AREAS = 'Counter/RESTORE_COUNTING_AREAS'
-const UPDATE_COUNTERDASHBOARD = 'Counter/UPDATE_COUNTERDASHBOARD'
+const UPDATE_COUNTERSUMMARY = 'Counter/UPDATE_COUNTERSUMMARY'
+const UPDATE_TRACKERSUMMARY = 'Counter/UPDATE_TRACKERSUMMARY'
 
 
 export function setMode(mode) {
@@ -39,9 +41,16 @@ export function setMode(mode) {
   }
 }
 
-export function updateCounterDashboard(data) {
+export function updateCounterSummary(data) {
   return {
-    type: UPDATE_COUNTERDASHBOARD,
+    type: UPDATE_COUNTERSUMMARY,
+    payload: data
+  }
+}
+
+export function updateTrackerSummary(data) {
+  return {
+    type: UPDATE_TRACKERSUMMARY,
     payload: data
   }
 }
@@ -172,36 +181,6 @@ export function computeDistance(point1, point2) {
   return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2))
 }
 
-
-// export function selectNextCountingArea() {
-//   return (dispatch, getState) => {
-//     let countingAreas = Object.keys(getState().counter.get('countingAreas').toJS());
-//     let selectedArea = getState().counter.get('selectedCountingArea');
-//     let index = countingAreas.indexOf(selectedArea);
-//     if((index + 1) > (countingAreas.length - 1)) {
-//       // Select first item
-//       dispatch(selectCountingArea(countingAreas[0]))
-//     } else {
-//       dispatch(selectCountingArea(countingAreas[index + 1]))
-//     }
-//   }
-// }
-
-// export function selectPreviousCountingArea() {
-//   return (dispatch, getState) => {
-//     let countingAreas = Object.keys(getState().counter.get('countingAreas').toJS());
-//     let selectedArea = getState().counter.get('selectedCountingArea');
-//     let index = countingAreas.indexOf(selectedArea);
-//     if(index - 1 < 0) {
-//       // Select last item
-//       dispatch(selectCountingArea(countingAreas[countingAreas.length - 1]))
-//     } else {
-//       dispatch(selectCountingArea(countingAreas[index - 1]))
-//     }
-//   }
-// }
-
-
 // Reducer
 export default function CounterReducer (state = initialState, action = {}) {
   switch (action.type) {
@@ -221,8 +200,10 @@ export default function CounterReducer (state = initialState, action = {}) {
       return state.set('mode', action.payload)
     case RESTORE_COUNTING_AREAS:
       return state.set('countingAreas', fromJS(action.payload))
-    case UPDATE_COUNTERDASHBOARD:
-      return state.setIn(['counterDashboard'], fromJS(action.payload));
+    case UPDATE_COUNTERSUMMARY:
+      return state.setIn(['counterSummary'], fromJS(action.payload));
+    case UPDATE_TRACKERSUMMARY:
+      return state.setIn(['trackerSummary'], fromJS(action.payload));
     default:
       return state
   }

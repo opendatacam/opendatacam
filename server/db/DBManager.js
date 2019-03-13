@@ -68,7 +68,14 @@ class DBManager {
   // Or maybe try to batch update not on every frame
   // I think a simple fix would be to store trackerData in it's own collection
   // db.collection(recordingId.toString()).insertOne(trackerEntry);
-  updateRecordingWithNewframe (recordingId, frameDate, counterSummary, counterEntry, trackerEntry) {
+  updateRecordingWithNewframe (
+    recordingId,
+    frameDate,
+    counterSummary,
+    trackerSummary,
+    counterEntry,
+    trackerEntry
+  ) {
     return new Promise((resolve, reject) => {
 
         // let itemsToAdd = {
@@ -78,8 +85,8 @@ class DBManager {
         let updateRequest = {
           $set: {
             dateEnd: frameDate,
-            counterSummary: counterSummary
-            // MAYBE dashboard: currentDashboard
+            counterSummary: counterSummary,
+            trackerSummary: trackerSummary
           }
           // Only add $push if we have a counted item
         }

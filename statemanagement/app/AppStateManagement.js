@@ -3,7 +3,7 @@ import axios from 'axios';
 import { MODE } from '../../utils/constants';
 import { getURLData } from '../../server/utils/urlHelper';
 import { updateTrackerData } from './TrackerStateManagement';
-import { updateCounterDashboard } from './CounterStateManagement';
+import { updateCounterSummary, updateTrackerSummary } from './CounterStateManagement';
 import { fetchHistory } from './HistoryStateManagement';
 
 // Initial state
@@ -81,7 +81,8 @@ export function startListeningToServerData() {
         let message = JSON.parse(msg.data);
         dispatch(updateTrackerData(message.trackerDataForLastFrame))
         dispatch(updateAppState(message.appState))
-        dispatch(updateCounterDashboard(message.counterDashboard))
+        dispatch(updateCounterSummary(message.counterSummary))
+        dispatch(updateTrackerSummary(message.trackerSummary))
     }
   }
 }

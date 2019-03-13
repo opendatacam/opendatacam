@@ -36,7 +36,7 @@ class CounterAreasVisualizer extends Component {
             <SingleCounterArea 
               key={countingAreasIds[index]}
               area={area}
-              counterData={this.props.counterDashboard.get(countingAreasIds[index]) || Map()}
+              counterData={this.props.counterSummary.get(countingAreasIds[index]) || Map()}
             />
         )}
       </React.Fragment>
@@ -51,6 +51,6 @@ export default connect(state => {
 
     return {
       countingAreas: countingAreasWithCenters.toJS(),
-      counterDashboard: state.counter.get('counterDashboard')
+      counterSummary: state.counter.get('counterSummary')
     }
   })(CounterAreasVisualizer)

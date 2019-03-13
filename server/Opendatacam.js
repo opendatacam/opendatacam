@@ -20,6 +20,7 @@ const initialState = {
   countingAreas: {},
   trackerDataForLastFrame: null,
   nbItemsTrackedThisFrame: 0,
+  totalItemsTracked: 0,
   sseConnexion: null,
   recordingStatus: {
     isRecording: false,
@@ -126,7 +127,13 @@ module.exports = {
   },
 
   /* Persist in DB */ 
-  persistNewRecordingFrame: function(frameTimestamp, counterSummary, countedItemsForThisFrame, trackerDataForThisFrame) {
+  persistNewRecordingFrame: function(
+    frameTimestamp,
+    counterSummary,
+    trackerSummary,
+    countedItemsForThisFrame,
+    trackerDataForThisFrame
+  ) {
     
     const trackerEntry = {
       timestamp: frameTimestamp,
@@ -147,6 +154,7 @@ module.exports = {
       Opendatacam.recordingStatus.recordingId,
       frameTimestamp,
       counterSummary,
+      trackerSummary,
       countedItemsForThisFrame,
       trackerEntry
     ).then(() => {
@@ -263,6 +271,9 @@ module.exports = {
 
               
             }
+          } else {
+            // Newly tracked item, increment nbPath
+            Opendatacam.totalItemsTracked++;
           }
         }
 
@@ -300,12 +311,18 @@ module.exports = {
       data: trackerDataForThisFrame
     }
 
-
-    let counterSummary = this.getCounterDashboard();
+    let counterSummary = this.getCounterSummary();
+    let trackerSummary = this.getTrackerSummary();
 
     // Persist to db
     if(Opendatacam.recordingStatus.isRecording) {
-      this.persistNewRecordingFrame(frameTimestamp, counterSummary, countedItemsForThisFrame, trackerDataForThisFrame);
+      this.persistNewRecordingFrame(
+        frameTimestamp,
+        counterSummary,
+        trackerSummary,
+        countedItemsForThisFrame,
+        trackerDataForThisFrame
+      );
     }
     // Stream it to client if SSE request is open
     if(Opendatacam.sseConnexion) {
@@ -314,7 +331,8 @@ module.exports = {
       // TODO add isRecording
       Opendatacam.sseConnexion(`data:${JSON.stringify({
         trackerDataForLastFrame: Opendatacam.trackerDataForLastFrame,
-        counterDashboard: counterSummary,
+        counterSummary: counterSummary,
+        trackerSummary: trackerSummary,
         appState: {
           yoloStatus: YOLO.getStatus(),
           recordingStatus: Opendatacam.recordingStatus
@@ -323,7 +341,7 @@ module.exports = {
     }
   },
 
-  getCounterDashboard: function() {
+  getCounterSummary: function() {
 
     // Generate dashboard from countingHistory
     // example
@@ -343,23 +361,29 @@ module.exports = {
     //   }
     // }
 
-    var counterDashboard = {};
+    var counterSummary = {};
 
     Opendatacam.countedItemsHistory.forEach((countedItem) => {
-      if(!counterDashboard[countedItem.area]) {
-        counterDashboard[countedItem.area] = {}
+      if(!counterSummary[countedItem.area]) {
+        counterSummary[countedItem.area] = {}
       }
 
-      if(!counterDashboard[countedItem.area][countedItem.name]) {
-        counterDashboard[countedItem.area][countedItem.name] = 1;
-        counterDashboard[countedItem.area]['_total'] = 1;
+      if(!counterSummary[countedItem.area][countedItem.name]) {
+        counterSummary[countedItem.area][countedItem.name] = 1;
+        counterSummary[countedItem.area]['_total'] = 1;
       } else {
-        counterDashboard[countedItem.area][countedItem.name]++;
-        counterDashboard[countedItem.area]['_total']++;
+        counterSummary[countedItem.area][countedItem.name]++;
+        counterSummary[countedItem.area]['_total']++;
       }
     })
 
-    return counterDashboard;
+    return counterSummary;
+  },
+
+  getTrackerSummary: function() {
+    return {
+      totalItemsTracked: Opendatacam.totalItemsTracked
+    }
   },
 
   getCounterHistory: function() {

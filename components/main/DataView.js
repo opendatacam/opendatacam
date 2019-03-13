@@ -26,9 +26,9 @@ class DataView extends Component {
             <Recording 
               id={this.props.recordingStatus.get('recordingId')} 
               dateStart={this.props.recordingStatus.get('dateStarted')}
-              counterData={this.props.counterDashboard}
+              counterData={this.props.counterSummary}
               countingAreas={this.props.countingAreas}
-              nbPaths={this.props.nbPaths}
+              nbPaths={this.props.totalItemsTracked}
               active
             />
           }
@@ -40,6 +40,7 @@ class DataView extends Component {
               dateEnd={recording.get('dateEnd')}
               counterData={recording.get('counterSummary')}
               countingAreas={recording.get('areas')}
+              nbPaths={recording.getIn(['trackerSummary', 'totalItemsTracked'])}
             />
           )}
           <style jsx>{`
@@ -66,8 +67,8 @@ export default connect((state) => {
   return {
     recordingHistory: state.app.getIn(['recordingStatus', 'isRecording']) ? state.history.get('recordingHistory').skip(1) : state.history.get('recordingHistory'),
     recordingStatus: state.app.get('recordingStatus'),
-    counterDashboard: state.counter.get('counterDashboard'),
+    counterSummary: state.counter.get('counterSummary'),
     countingAreas: state.counter.get('countingAreas'),
-    nbPaths: state.tracker.get('trackerData').get('data').last().get('id') // TODO This is not true
+    totalItemsTracked: state.counter.getIn(['trackerSummary', 'totalItemsTracked'])
   }
 })(DataView)
