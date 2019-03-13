@@ -496,8 +496,9 @@ module.exports = {
     });
 
     self.HTTPRequestListeningToYOLO.on('error', function(e) {
+      // TODO Need a YOLO.isRunning()
       if(
-        !YOLO.getStatus().isStarted && 
+        // !YOLO.getStatus().isRunning && 
         Opendatacam.HTTPRequestListeningToYOLOMaxRetries > 0
       ) {
         console.log('Will retry in 1s')
@@ -508,6 +509,7 @@ module.exports = {
           Opendatacam.HTTPRequestListeningToYOLOMaxRetries--;
         }, 1000)
       } else {
+        console.l
         YOLO.stop();
         console.log('Something went wrong: ' + e.message);
       }
