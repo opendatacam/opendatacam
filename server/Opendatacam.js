@@ -479,6 +479,7 @@ module.exports = {
           self.updateWithNewFrame(detectionsOfThisFrame.objects);
         } catch (error) {
           console.log("Error while updating Opendatacam with new frame")
+          console.log(msg);
           console.log(error);
           res.emit('close');
         }
