@@ -32,14 +32,16 @@ class DataView extends Component {
               active
             />
           }
-          {/* {this.props.recordingHistory.map((recording) =>
+          {this.props.recordingHistory.map((recording) =>
             <Recording 
               key={recording.get('_id')} 
               id={recording.get('_id')} 
               dateStart={recording.get('dateStart')}
               dateEnd={recording.get('dateEnd')}
+              counterData={recording.get('counterSummary')}
+              countingAreas={recording.get('areas')}
             />
-          )} */}
+          )}
           <style jsx>{`
             .data-view {
               width: 100%;

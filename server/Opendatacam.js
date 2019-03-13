@@ -18,7 +18,6 @@ const initialState = {
     h: 720
   },
   countingAreas: {},
-  originalCountingAreas: {},
   trackerDataForLastFrame: null,
   nbItemsTrackedThisFrame: 0,
   sseConnexion: null,
@@ -27,7 +26,8 @@ const initialState = {
     currentFPS: 0,
     recordingId: null,
     dateStarted: null
-  }
+  },
+  HTTPRequestListeningToYOLO: null
 }
 
 let Opendatacam = cloneDeep(initialState);
@@ -39,7 +39,7 @@ module.exports = {
     return new Promise((resolve, reject) => {
       // Reset counter
       Opendatacam = cloneDeep(initialState);
-      // Reset tracker
+      // Reset tracker (TODO here reset id of itemstracked)
       Tracker.reset();
       // Create empty trackerHistory.json file
       fs.open("./static/trackerHistory.json", "wx", function (err, fd) {
@@ -59,8 +59,6 @@ module.exports = {
     }
   */
   registerCountingAreas : function(countingAreas) {
-    // Store as it is to be able to render them again on client
-    Opendatacam.originalCountingAreas = countingAreas;
     // Reset existing
     Opendatacam.countingAreas = {}
     Object.keys(countingAreas).map((countingAreaKey) => {
@@ -102,14 +100,13 @@ module.exports = {
       xMax: Math.max(point1.x, point2.x)
     }
 
-    Opendatacam.countingAreas[key] = {
+    Opendatacam.countingAreas[key] = data;
+
+    Opendatacam.countingAreas[key]['computed'] = {
       a: a,
       b: b,
       xBounds: xBounds
     }
-
-    // console.log(Opendatacam.countingAreas);
-
   },
 
   countItem: function(trackedItem, countingAreaKey) {
@@ -129,7 +126,7 @@ module.exports = {
   },
 
   /* Persist in DB */ 
-  persistNewRecordingFrame: function(frameTimestamp, countedItemsForThisFrame, trackerDataForThisFrame) {
+  persistNewRecordingFrame: function(frameTimestamp, counterSummary, countedItemsForThisFrame, trackerDataForThisFrame) {
     
     const trackerEntry = {
       timestamp: frameTimestamp,
@@ -149,6 +146,7 @@ module.exports = {
     DBManager.updateRecordingWithNewframe(
       Opendatacam.recordingStatus.recordingId,
       frameTimestamp,
+      counterSummary,
       countedItemsForThisFrame,
       trackerEntry
     ).then(() => {
@@ -216,7 +214,7 @@ module.exports = {
     trackerDataForThisFrame = trackerDataForThisFrame.map((trackedItem) => {
       // For each counting areas
       var countingDeltas = Object.keys(Opendatacam.countingAreas).map((countingAreaKey) => {
-        let countingAreaProps = Opendatacam.countingAreas[countingAreaKey] 
+        let countingAreaProps = Opendatacam.countingAreas[countingAreaKey].computed;
         // deltaY = Y(detection) - Y(on-counting-line)
         // NB: negating Y detection to get it in "normal" coordinates space
         // deltaY = - Y(detection) - a X(detection) - b
@@ -302,9 +300,12 @@ module.exports = {
       data: trackerDataForThisFrame
     }
 
+
+    let counterSummary = this.getCounterDashboard();
+
     // Persist to db
     if(Opendatacam.recordingStatus.isRecording) {
-      this.persistNewRecordingFrame(frameTimestamp, countedItemsForThisFrame, trackerDataForThisFrame);
+      this.persistNewRecordingFrame(frameTimestamp, counterSummary, countedItemsForThisFrame, trackerDataForThisFrame);
     }
     // Stream it to client if SSE request is open
     if(Opendatacam.sseConnexion) {
@@ -313,7 +314,7 @@ module.exports = {
       // TODO add isRecording
       Opendatacam.sseConnexion(`data:${JSON.stringify({
         trackerDataForLastFrame: Opendatacam.trackerDataForLastFrame,
-        counterDashboard: this.getCounterDashboard(),
+        counterDashboard: counterSummary,
         appState: {
           yoloStatus: YOLO.getStatus(),
           recordingStatus: Opendatacam.recordingStatus
@@ -365,8 +366,8 @@ module.exports = {
     return Opendatacam.countedItemsHistory;
   },
 
-  getOriginalCountingAreas: function() {
-    return Opendatacam.originalCountingAreas
+  getCountingAreas: function() {
+    return Opendatacam.countingAreas;
   },
 
   getTrackedItemsThisFrame: function() {
@@ -423,7 +424,10 @@ module.exports = {
   listenToYOLO(urlData) {
     var self = this;
     // HTTPJSONSTREAM req
-    let HTTPJSONStreamReq;
+    if(self.HTTPRequestListeningToYOLO) {
+      // Already listening
+      return;
+    }
 
     var options = {
       hostname: urlData.address,
@@ -432,7 +436,7 @@ module.exports = {
       method:   'GET'
     };
 
-    HTTPJSONStreamReq = http.request(options, function(res) {
+    self.HTTPRequestListeningToYOLO = http.request(options, function(res) {
       res.on('data', function(chunk) {
         var msg = chunk.toString();
         // console.log('Message: ' + msg);
@@ -456,12 +460,18 @@ module.exports = {
       });
     });
 
-    HTTPJSONStreamReq.on('error', function(e) {
+    self.HTTPRequestListeningToYOLO.on('error', function(e) {
       YOLO.stop();
       console.log('Something went wrong: ' + e.message);
     });
 
     // Actually send request
-    HTTPJSONStreamReq.end();
+    self.HTTPRequestListeningToYOLO.end();
+  },
+
+  clean() {
+    if(this.HTTPRequestListeningToYOLO) {
+      this.HTTPRequestListeningToYOLO.destroy();
+    }
   }
 }
