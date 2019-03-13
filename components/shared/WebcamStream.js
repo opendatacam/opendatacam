@@ -34,13 +34,13 @@ class WebcamStream extends Component {
      // MJPEG stream should work indefintly without having to restart it, but infortunately this is not the case
      // So we "restart" the multipart HTTP request every 5s to make sure things are streaming
      // => Maybe the multipart HTTP request
-     this.refreshInterval = setInterval(() => {
-       this.refresh();
-     }, 5000);
+    //  this.refreshInterval = setInterval(() => {
+    //    this.refresh();
+    //  }, 5000);
    }
 
    componentWillUnmount() {
-     clearInterval(this.refreshInterval);
+    //  clearInterval(this.refreshInterval);
    }
 
    refresh() {
