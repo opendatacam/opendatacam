@@ -15,6 +15,7 @@
     "express": "^4.16.4",
     "forever-monitor": "^1.7.1",
     "immutable": "^4.0.0-rc.12",
+    "intercept-stdout": "^0.1.2",
     "ip": "^1.1.5",
     "killable": "^1.0.1",
     "lodash.clonedeep": "^4.5.0",
