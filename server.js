@@ -34,11 +34,18 @@ DBManager.init().then(
   }
 )
 
-var videoResolution = ""
+var videoResolution = {
+  w: 0,
+  h: 0
+}
 var stdoutBuffer = "";
 var unhook_intercept = intercept(function(text) {
   if(text.indexOf('Video stream:') > -1) {
-    videoResolution = text;
+    var splitOnStream = string.split("stream:")
+    var ratio = splitOnStream[1].split("\n")[0];
+    videoResolution.w = ratio.split("x")[0].trim();
+    videoResolution.h = ratio.split("x")[1].trim();
+
   }
   stdoutBuffer += text;
   // Keep buffer maximum to 3000 characters
@@ -82,7 +89,7 @@ app.prepare()
   })
 
   express.get('/videoresolution',  (req, res) => {
-    res.send(videoResolution);
+    res.json(videoResolution);
   })
 
   express.post('/counter/areas', (req, res) => {
