@@ -17,6 +17,7 @@ const initialState = fromJS({
     isStarted: false,
     isStarting: true
   },
+  isListeningToYOLO: false,
   mode: MODE.LIVEVIEW,
   isListeningToServerData: false,
   eventSourceServerData: null
@@ -98,6 +99,7 @@ export default function AppReducer (state = initialState, action = {}) {
       return state.set('mode', action.payload)
     case UPDATE_APPSTATE: 
       return state.set('yoloStatus', fromJS(action.payload.yoloStatus))
+                  .set('isListeningToYOLO', action.payload.isListeningToYOLO)
                   .set('recordingStatus', fromJS(action.payload.recordingStatus))
     default:
       return state

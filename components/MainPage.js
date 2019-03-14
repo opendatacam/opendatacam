@@ -50,7 +50,9 @@ class MainPage extends React.Component {
         }
         {/* Need to keep pathview in the DOM as it continuously renders */}
         <PathView hidden={this.props.mode !== MODE.PATHVIEW} />
-        <WebcamStream />
+        {this.props.isListeningToYOLO &&
+          <WebcamStream />
+        }
         <style jsx>{`
           .main-page {
             width: 100%;
@@ -70,6 +72,7 @@ class MainPage extends React.Component {
 export default connect((state) => {
   return {
     deviceOrientation: state.viewport.get('deviceOrientation'),
-    mode: state.app.get('mode')
+    mode: state.app.get('mode'),
+    isListeningToYOLO: state.app.get('isListeningToYOLO')
   }
 })(MainPage)

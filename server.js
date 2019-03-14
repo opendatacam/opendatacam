@@ -57,7 +57,11 @@ app.prepare()
     return app.render(req, res, '/', query)
   })
 
-  express.get('/index1.jpg', new MjpegProxy('http://192.168.2.161:8090').proxyRequest);
+  // Proxy MJPEG stream from darknet to avoid freezing issues
+  express.get('/webcamstream', (req, res) => {
+    const urlData = getURLData(req);
+    return new MjpegProxy(`http://${urlData.address}:8090`).proxyRequest(req, res);
+  });
 
   express.post('/counter/areas', (req, res) => {
     Opendatacam.registerCountingAreas(req.body.countingAreas)

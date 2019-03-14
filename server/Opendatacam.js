@@ -339,6 +339,7 @@ module.exports = {
         trackerSummary: trackerSummary,
         appState: {
           yoloStatus: YOLO.getStatus(),
+          isListeningToYOLO: Opendatacam.isListeningToYOLO,
           recordingStatus: Opendatacam.recordingStatus
         }
       })}\n\n`);
