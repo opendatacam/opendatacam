@@ -34,8 +34,12 @@ DBManager.init().then(
   }
 )
 
+var videoResolution = ""
 var stdoutBuffer = "";
 var unhook_intercept = intercept(function(text) {
+  if(text.indexOf('Video stream:') > -1) {
+    videoResolution = text;
+  }
   stdoutBuffer += text;
   // Keep buffer maximum to 3000 characters
   if(stdoutBuffer.length > 3000) {
@@ -75,6 +79,10 @@ app.prepare()
 
   express.get('/console',  (req, res) => {
     res.send(stdoutBuffer);
+  })
+
+  express.get('/videoresolution',  (req, res) => {
+    res.send(videoResolution);
   })
 
   express.post('/counter/areas', (req, res) => {
