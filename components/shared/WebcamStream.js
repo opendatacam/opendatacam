@@ -70,6 +70,11 @@ class WebcamStream extends Component {
               height: 100%;
             }
           } */}
+
+          /* Overwrite some default of tailwindcss */
+          img {
+            height: inherit;
+          }
         `}</style>
       </React.Fragment>
     )
