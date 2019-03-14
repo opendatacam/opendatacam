@@ -24,6 +24,7 @@ const SET_PORTRAIT = 'Viewport/SET_PORTRAIT'
 const SET_LANDSCAPE = 'Viewport/SET_LANDSCAPE'
 const INIT_LISTENERS = 'Viewport/INIT_LISTENERS'
 const SET_CANVAS_RESOLUTION = 'Viewport/SET_CANVAS_RESOLUTION'
+const SET_ORIGINAL_RESOLUTION = 'Viewport/SET_ORIGINAL_RESOLUTION'
 
 export function handleOrientationChange (dispatch) {
   // console.log(window.orientation)
@@ -86,6 +87,13 @@ export function setCanvasResolution (size) {
   }
 }
 
+export function setOriginalResolution (resolution) {
+  return {
+    type: SET_CANVAS_RESOLUTION,
+    payload: resolution
+  }
+}
+
 export function getCanvasResolution () {
   let innerWidth = window.innerWidth
   let innerHeight = window.innerHeight
@@ -119,6 +127,8 @@ export default function ViewportStateManagement (
       return state.set('listenersInitialized', true)
     case SET_CANVAS_RESOLUTION:
       return state.set('canvasResolution', fromJS(action.payload))
+    case SET_ORIGINAL_RESOLUTION:
+      return state.set('originalResolution', fromJS(action.payload))
     default:
       return state
   }

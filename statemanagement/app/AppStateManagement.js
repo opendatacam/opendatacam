@@ -5,6 +5,7 @@ import { getURLData } from '../../server/utils/urlHelper';
 import { updateTrackerData } from './TrackerStateManagement';
 import { updateCounterSummary, updateTrackerSummary } from './CounterStateManagement';
 import { fetchHistory } from './HistoryStateManagement';
+import { setOriginalResolution } from './ViewportStateManagement';
 
 // Initial state
 const initialState = fromJS({
@@ -78,12 +79,15 @@ export function startListeningToServerData() {
 
     // On new tracker data coming from server, update redux store
     eventSource.onmessage = (msg) => {
-        // Parse JSON
-        let message = JSON.parse(msg.data);
-        dispatch(updateTrackerData(message.trackerDataForLastFrame))
-        dispatch(updateAppState(message.appState))
-        dispatch(updateCounterSummary(message.counterSummary))
-        dispatch(updateTrackerSummary(message.trackerSummary))
+      // Parse JSON
+      let message = JSON.parse(msg.data);
+      if(message.videoResolution) {
+        dispatch(setOriginalResolution(message.videoResolution))
+      }
+      dispatch(updateTrackerData(message.trackerDataForLastFrame))
+      dispatch(updateAppState(message.appState))
+      dispatch(updateCounterSummary(message.counterSummary))
+      dispatch(updateTrackerSummary(message.trackerSummary))
     }
   }
 }

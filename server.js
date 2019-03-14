@@ -34,12 +34,14 @@ DBManager.init().then(
   }
 )
 
+// TODO Move the stdout code into it's own module
 var videoResolution = null;
 
 var stdoutBuffer = "";
 var unhook_intercept = intercept(function(text) {
   var stdoutText = text.toString();
   // Hacky way to get the video resolution from YOLO
+  // We parse the stdout looking for "Video stream: 640 x 480"
   // alternative would be to add this info to the JSON stream sent by YOLO, would need to send a PR to https://github.com/alexeyab/darknet
   if(stdoutText.indexOf('Video stream:') > -1) {
     var splitOnStream = stdoutText.toString().split("stream:")
@@ -48,6 +50,7 @@ var unhook_intercept = intercept(function(text) {
       w : parseInt(ratio.split("x")[0].trim()),
       h : parseInt(ratio.split("x")[1].trim())
     }
+    Opendatacam.setVideoResolution(videoResolution);
   }
   stdoutBuffer += stdoutText;
   // Keep buffer maximum to 3000 characters

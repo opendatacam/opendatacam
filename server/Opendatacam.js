@@ -13,10 +13,7 @@ const initialState = {
   timeLastFrame: new Date(),
   currentFrame: 0,
   countedItemsHistory: [],
-  image: {
-    w: 1280,
-    h: 720
-  },
+  videoResolution: null,
   countingAreas: {},
   trackerDataForLastFrame: null,
   nbItemsTrackedThisFrame: 0,
@@ -77,12 +74,12 @@ module.exports = {
     // The editor canvas can be smaller / bigger
     let resizedData = {
       point1: {
-        x: data.location.point1.x * Opendatacam.image.w / data.location.refResolution.w,
-        y: data.location.point1.y * Opendatacam.image.h / data.location.refResolution.h,
+        x: data.location.point1.x * Opendatacam.videoResolution.w / data.location.refResolution.w,
+        y: data.location.point1.y * Opendatacam.videoResolution.h / data.location.refResolution.h,
       },
       point2: {
-        x: data.location.point2.x * Opendatacam.image.w / data.location.refResolution.w,
-        y: data.location.point2.y * Opendatacam.image.h / data.location.refResolution.h,
+        x: data.location.point2.x * Opendatacam.videoResolution.w / data.location.refResolution.w,
+        y: data.location.point2.y * Opendatacam.videoResolution.h / data.location.refResolution.h,
       }
     }
 
@@ -175,6 +172,11 @@ module.exports = {
       Opendatacam.HTTPRequestListeningToYOLOMaxRetries = initialState.HTTPRequestListeningToYOLOMaxRetries;
     }
 
+    // If we didn't get the videoResolution yet
+    if(!Opendatacam.videoResolution) {
+      return;
+    }
+
     // TODO when start recording, record the date
 
     // Compute FPS
@@ -188,10 +190,10 @@ module.exports = {
     let detectionScaledOfThisFrame = detectionsOfThisFrame.map((detection) => {
       return {
         name: detection.name,
-        x: detection.relative_coordinates.center_x * Opendatacam.image.w,
-        y: detection.relative_coordinates.center_y * Opendatacam.image.h,
-        w: detection.relative_coordinates.width * Opendatacam.image.w,
-        h: detection.relative_coordinates.height * Opendatacam.image.h,
+        x: detection.relative_coordinates.center_x * Opendatacam.videoResolution.w,
+        y: detection.relative_coordinates.center_y * Opendatacam.videoResolution.h,
+        w: detection.relative_coordinates.width * Opendatacam.videoResolution.w,
+        h: detection.relative_coordinates.height * Opendatacam.videoResolution.h,
         counted: false,
         confidence: detection.confidence
       };
@@ -337,6 +339,7 @@ module.exports = {
         trackerDataForLastFrame: Opendatacam.trackerDataForLastFrame,
         counterSummary: counterSummary,
         trackerSummary: trackerSummary,
+        videoResolution: Opendatacam.videoResolution, 
         appState: {
           yoloStatus: YOLO.getStatus(),
           isListeningToYOLO: Opendatacam.isListeningToYOLO,
@@ -448,6 +451,10 @@ module.exports = {
     Opendatacam.countedItemsHistory = [];
     
     
+  },
+
+  setVideoResolution(videoResolution) {
+    Opendatacam.videoResolution = videoResolution;
   },
 
   // Listen to 8070 for Tracker data detections
