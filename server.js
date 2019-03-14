@@ -38,9 +38,13 @@ var videoResolution = {
   w: 0,
   h: 0
 }
+
+var originalCatch = "";
+
 var stdoutBuffer = "";
 var unhook_intercept = intercept(function(text) {
   if(text.indexOf('Video stream:') > -1) {
+    originalCatch = text;
     var splitOnStream = string.split("stream:")
     var ratio = splitOnStream[1].split("\n")[0];
     videoResolution.w = ratio.split("x")[0].trim();
@@ -89,7 +93,10 @@ app.prepare()
   })
 
   express.get('/videoresolution',  (req, res) => {
-    res.json(videoResolution);
+    res.json({
+      originalCatch: originalCatch,
+      videoResolution
+    });
   })
 
   express.post('/counter/areas', (req, res) => {
