@@ -34,20 +34,22 @@ DBManager.init().then(
   }
 )
 
-var videoResolution = {
-  w: 0,
-  h: 0
-}
+var videoResolution = null;
 
 var stdoutBuffer = "";
 var unhook_intercept = intercept(function(text) {
-  if(text.indexOf('Video stream:') > -1) {
-    var splitOnStream = text.split("stream:")
+  var stdoutText = text.toString();
+  // Hacky way to get the video resolution from YOLO
+  // alternative would be to add this info to the JSON stream sent by YOLO, would need to send a PR to https://github.com/alexeyab/darknet
+  if(stdoutText.indexOf('Video stream:') > -1) {
+    var splitOnStream = stdoutText.toString().split("stream:")
     var ratio = splitOnStream[1].split("\n")[0];
-    videoResolution.w = ratio.split("x")[0].trim();
-    videoResolution.h = ratio.split("x")[1].trim();
+    videoResolution = {
+      w : parseInt(ratio.split("x")[0].trim()),
+      h : parseInt(ratio.split("x")[1].trim())
+    }
   }
-  stdoutBuffer += text;
+  stdoutBuffer += stdoutText;
   // Keep buffer maximum to 3000 characters
   if(stdoutBuffer.length > 3000) {
     stdoutBuffer = stdoutBuffer.substring(stdoutBuffer.length - 3000, stdoutBuffer.length);
