@@ -21,7 +21,7 @@ const app = next({ dev })
 const handle = app.getRequestHandler()
 
 // Init processes
-YOLO.init(SIMULATION_MODE);
+YOLO.init(true);
 
 // Init connection to db
 DBManager.init().then(

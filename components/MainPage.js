@@ -15,6 +15,7 @@ import DataView from './main/DataView';
 import { MODE } from '../utils/constants';
 import UIControls from './main/UIControls';
 import Menu from './main/Menu';
+import InitializingView from './shared/InitializingView';
 
 class MainPage extends React.Component {
 
@@ -52,6 +53,9 @@ class MainPage extends React.Component {
         <PathView hidden={this.props.mode !== MODE.PATHVIEW} />
         {this.props.isListeningToYOLO &&
           <WebcamStream />
+        }
+        {!this.props.isListeningToYOLO &&
+          <InitializingView />
         }
         <style jsx>{`
           .main-page {
