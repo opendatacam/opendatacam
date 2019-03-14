@@ -89,7 +89,7 @@ export function setCanvasResolution (size) {
 
 export function setOriginalResolution (resolution) {
   return {
-    type: SET_CANVAS_RESOLUTION,
+    type: SET_ORIGINAL_RESOLUTION,
     payload: resolution
   }
 }

@@ -174,6 +174,7 @@ module.exports = {
 
     // If we didn't get the videoResolution yet
     if(!Opendatacam.videoResolution) {
+      console.log('Didn\'t get video resolution yet, not sending tracker info');
       return;
     }
 
