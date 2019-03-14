@@ -52,12 +52,12 @@ class WebcamStream extends Component {
     return (
       <React.Fragment>
         <img
-           width={1280}
-           height={720}
+           width={this.props.resolution.w}
+           height={this.props.resolution.h}
            src={this.getUrl()}
          />
         <style jsx>{`
-          @media (min-aspect-ratio: 16/9) {
+          {/* @media (min-aspect-ratio: 16/9) {
             img {
               width: 100%;
               height: auto;
@@ -69,7 +69,7 @@ class WebcamStream extends Component {
               width: auto;
               height: 100%;
             }
-          }
+          } */}
         `}</style>
       </React.Fragment>
     )
@@ -78,6 +78,8 @@ class WebcamStream extends Component {
 
 export default connect((state) => {
   return {
-    urlData: state.app.get('urlData').toJS()
+    urlData: state.app.get('urlData').toJS(),
+    resolution: state.viewport.get('canvasResolution').toJS()
+
   }
 })(WebcamStream)

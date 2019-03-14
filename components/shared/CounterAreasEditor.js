@@ -199,7 +199,7 @@ class CounterAreasEditor extends Component {
             bottom: 0;
           }
 
-          @media (min-aspect-ratio: 16/9) {
+          {/* @media (min-aspect-ratio: 16/9) {
             :global(.canvas-container),.editor-canvas {
               width: 100% !important;
               height: auto !important;
@@ -211,7 +211,7 @@ class CounterAreasEditor extends Component {
               width: auto !important;
               height: 100% !important;
             }
-          }
+          } */}
         `}</style>
       </div>
     )

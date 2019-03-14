@@ -14,8 +14,8 @@ const initialState = fromJS({
   // image field in opendatacam class on server
   // This should by set by the server
   originalResolution: {
-    w: 1280,
-    h: 720
+    w: 0,
+    h: 0
   }
 })
 
@@ -98,18 +98,23 @@ export function getCanvasResolution () {
   let innerWidth = window.innerWidth
   let innerHeight = window.innerHeight
 
-  if (innerWidth / innerHeight < 16 / 9) {
-    // Height is 100% and there is a scroll on the width
-    return {
-      w: innerHeight * 16 / 9,
-      h: innerHeight
-    }
-  } else {
-    // Width is 100% and there is a scroll on the height
-    return {
-      w: innerWidth,
-      h: innerWidth * 9 / 16
-    }
+  // if (innerWidth / innerHeight < 16 / 9) {
+  //   // Height is 100% and there is a scroll on the width
+  //   return {
+  //     w: innerHeight * 16 / 9,
+  //     h: innerHeight
+  //   }
+  // } else {
+  //   // Width is 100% and there is a scroll on the height
+  //   return {
+  //     w: innerWidth,
+  //     h: innerWidth * 9 / 16
+  //   }
+  // }
+
+  return {
+    w: innerWidth,
+    h: innerHeight
   }
 }
 

@@ -139,7 +139,7 @@ class CanvasEngine extends PureComponent {
             background-color:  ${this.props.mode === CANVAS_RENDERING_MODE.PATHVIEW ? 'rgba(0,0,0,0.5)' : 'none'};
           }
 
-          @media (min-aspect-ratio: 16/9) {
+          {/* @media (min-aspect-ratio: 16/9) {
             .canvas {
               width: 100%;
               height: auto;
@@ -151,7 +151,7 @@ class CanvasEngine extends PureComponent {
               width: auto;
               height: 100%;
             }
-          }
+          } */}
         `}</style>
       </div>
     )
