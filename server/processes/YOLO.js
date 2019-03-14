@@ -62,6 +62,7 @@ module.exports = {
     YOLO.process.on("start", () => {
       console.log('Process YOLO started');
       YOLO.isStarted = true;
+      YOLO.isStarting = false;
     });
 
     YOLO.process.on("stop", () => {
@@ -117,11 +118,6 @@ module.exports = {
     }
   },
 
-  setIsStarted() {
-    YOLO.isStarting = false;
-    YOLO.isStarted = true;
-  },
-
   startYOLOSimulation: function() {
     /**
      *   Used in Dev mode for faster development
@@ -141,6 +137,8 @@ module.exports = {
     YOLO.simulationJSONHTTPStreamServer = http.createServer(function(req, res) {
       console.log("Got request on JSON Stream server started");
       JSONStreamRes = res;
+      // Send one frame on the JSON stream to start things
+      JSONStreamRes.write(JSON.stringify(simulation30FPSDetectionsData.find((detection) => detection.frame_id === frameNb)));
     }).listen(8070);
 
 

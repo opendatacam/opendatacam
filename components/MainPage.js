@@ -33,29 +33,31 @@ class MainPage extends React.Component {
         {this.props.deviceOrientation === 'portrait' &&
           <AskLandscape />
         }
-        <UIControls />
-        {false &&  
-          <Menu />
-        }
-        {this.props.mode === MODE.DATAVIEW &&
-          <DataView />
-        }
-        {this.props.mode === MODE.CONSOLEVIEW &&
-          <ConsoleView />
-        }
-        {this.props.mode === MODE.LIVEVIEW &&
-          <LiveView />
-        }
-        {this.props.mode === MODE.COUNTERVIEW &&
-          <CounterView />
-        }
-        {/* Need to keep pathview in the DOM as it continuously renders */}
-        <PathView hidden={this.props.mode !== MODE.PATHVIEW} />
-        {this.props.isListeningToYOLO &&
-          <WebcamStream />
-        }
         {!this.props.isListeningToYOLO &&
           <InitializingView />
+        }
+        {this.props.isListeningToYOLO &&
+          <>
+            <UIControls />
+            {false &&  
+              <Menu />
+            }
+            {this.props.mode === MODE.DATAVIEW &&
+              <DataView />
+            }
+            {this.props.mode === MODE.CONSOLEVIEW &&
+              <ConsoleView />
+            }
+            {this.props.mode === MODE.LIVEVIEW &&
+              <LiveView />
+            }
+            {this.props.mode === MODE.COUNTERVIEW &&
+              <CounterView />
+            }
+            {/* Need to keep pathview in the DOM as it continuously renders */}
+            <PathView hidden={this.props.mode !== MODE.PATHVIEW} />
+            <WebcamStream />
+          </>
         }
         <style jsx>{`
           .main-page {
