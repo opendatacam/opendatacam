@@ -27,7 +27,7 @@ const initialState = {
   },
   isListeningToYOLO: false,
   HTTPRequestListeningToYOLO: null,
-  HTTPRequestListeningToYOLOMaxRetries: 20
+  HTTPRequestListeningToYOLOMaxRetries: 60
 }
 
 let Opendatacam = cloneDeep(initialState);
@@ -524,6 +524,8 @@ module.exports = {
       } else {
         YOLO.stop();
         console.log('Something went wrong: ' + e.message);
+        console.log('Too much retries, YOLO took more than 1 min to start, likely an error')
+        console.log(Opendatacam.HTTPRequestListeningToYOLOMaxRetries)
       }
     });
 
