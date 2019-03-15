@@ -1,7 +1,7 @@
 var MongoClient = require('mongodb').MongoClient
 var ObjectID = require('mongodb').ObjectID
 
-var mongoURL = 'mongodb://127.0.0.1:27017'
+var mongoURL = 'mongodb://mongo'
 var RECORDING_COLLECTION = 'recordings';
 var TRACKER_COLLECTION = 'tracker';
 

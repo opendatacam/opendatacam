@@ -10,6 +10,7 @@
     "@zeit/next-css": "^1.0.1",
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
+    "buffertools": "^2.1.6",
     "csv-express": "^1.2.2",
     "dayjs": "^1.8.8",
     "express": "^4.16.4",
