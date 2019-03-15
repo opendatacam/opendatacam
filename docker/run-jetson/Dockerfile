@@ -47,16 +47,9 @@ RUN apt-get install make gcc g++ python
 
 RUN git clone --depth 1 -b docker https://github.com/moovel/lab-opendatacam
 
-RUN rm -rf /tmp/node_modules
-RUN cp lab-opendatacam/package.json /tmp/package.json
-RUN cd /tmp && npm install
-                                                       
-RUN mkdir -p /app && cp -a /tmp/node_modules /app/
+WORKDIR /lab-opendatacam
 
-RUN cp -a lab-opendatacam/ /app
-
-WORKDIR /app
-
+RUN npm install
 RUN npm run build
 
 EXPOSE 8080 8070 8090
