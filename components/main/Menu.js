@@ -63,6 +63,24 @@ class Menu extends Component {
             label="Dark mode"
             description="Turn dark UI elements on"
           />
+          <div className="mb-4 mt-4 flex items-center justify-between">
+            <div className="mr-3">
+              <h4 className="mb-2">Dimmer</h4>
+              <p className="text-xs">Opacity of camera image</p>
+            </div>
+            <div className="flex">
+              <button 
+                className='btn btn-default py-1 px-3 rounded-l border border-default-soft border-solid flex items-center text-xl font-bold'
+              >
+                +
+              </button>
+              <button 
+                className='btn btn-default py-1 px-3 rounded-r border border-default-soft border-solid flex items-center text-xl font-bold'
+              >
+                -
+              </button>
+            </div>
+          </div>
         </div>
         <style jsx>{`
           .overlay {
