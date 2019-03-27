@@ -44,6 +44,12 @@ class Menu extends Component {
           ref={node => this.node = node}
           className="menu text-default bg-black p-5"
         >
+          <button
+            className="btn btn-default btn-close flex items-center shadow rounded"
+            onClick={() => this.props.dispatch(hideMenu())}
+          >
+            <img className="icon" src="/static/icons/icon-close.svg" />
+          </button>
           <h3 className="mb-4">Open data cam</h3>
           <Toggle 
             label="Counter"
@@ -75,6 +81,12 @@ class Menu extends Component {
             bottom: 0;
             z-index: 3;
             min-width: 250px;
+          }
+
+          .btn-close {
+            position: absolute;
+            left: -80px;
+            height: 3rem;
           }
         `}</style>
       </div>
