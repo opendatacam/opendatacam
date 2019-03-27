@@ -21,6 +21,12 @@ const initialState = fromJS({
   isListeningToYOLO: false,
   mode: MODE.LIVEVIEW,
   showMenu: false,
+  userSettings: {
+    dimmerOpacity: 0.1,
+    darkMode: false,
+    counter: true,
+    pathfinder: true
+  },
   isListeningToServerData: false,
   eventSourceServerData: null
 })
@@ -31,6 +37,7 @@ const SET_MODE = 'App/SET_MODE'
 const SHOW_MENU = 'App/SHOW_MENU'
 const HIDE_MENU = 'App/HIDE_MENU'
 const UPDATE_APPSTATE = 'App/UPDATE_APPSTATE'
+const SET_USERSETTING = 'App/SET_USERSETTING'
 const START_LISTENING_SERVERDATA = 'App/START_LISTENING_SERVERDATA'
 // TODO LATER HANDLE STOP LISTENING ...
 const STOP_LISTENING_SERVERDATA = 'App/STOP_LISTENING_SERVERDATA'
@@ -77,6 +84,16 @@ export function hideMenu() {
   }
 }
 
+export function setUserSetting(setting, value) {
+  return {
+    type: SET_USERSETTING,
+    payload: {
+      setting,
+      value
+    }
+  }
+}
+
 export function setURLData(req) {
   return {
     type: SET_URLDATA,
@@ -120,6 +137,8 @@ export default function AppReducer (state = initialState, action = {}) {
       return state.set('showMenu', true)
     case HIDE_MENU:
       return state.set('showMenu', false)
+    case SET_USERSETTING:
+      return state.setIn(['userSettings', action.payload.setting], fromJS(action.payload.value))
     case UPDATE_APPSTATE: 
       return state.set('yoloStatus', fromJS(action.payload.yoloStatus))
                   .set('isListeningToYOLO', action.payload.isListeningToYOLO)

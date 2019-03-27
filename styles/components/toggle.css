@@ -13,7 +13,7 @@
     @apply absolute block bg-white pin-y w-6 rounded -ml-1;
     right: 50%;
     content: "";
-    transition: all 0.2s ease-in;
+    transition: all 0.1s ease-in;
 }
 .form-switch-checkbox:checked + .form-switch-label,
 .form-switch-checkbox:checked + .form-switch-label:before {

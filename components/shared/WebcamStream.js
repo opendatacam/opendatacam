@@ -50,7 +50,7 @@ class WebcamStream extends Component {
 
   render () {
     return (
-      <React.Fragment>
+      <>
         <img
            width={this.props.resolution.w}
            height={this.props.resolution.h}
@@ -76,7 +76,7 @@ class WebcamStream extends Component {
             height: inherit;
           }
         `}</style>
-      </React.Fragment>
+      </>
     )
   }
 }

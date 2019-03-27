@@ -136,7 +136,7 @@ class CanvasEngine extends PureComponent {
             top: 0;
             left: 0;
             z-index: 1;
-            background-color:  ${this.props.mode === CANVAS_RENDERING_MODE.PATHVIEW ? 'rgba(0,0,0,0.5)' : 'none'};
+            background-color: rgba(0,0,0,${this.props.userSettings.get('dimmerOpacity')});
           }
 
           {/* @media (min-aspect-ratio: 16/9) {
@@ -164,6 +164,7 @@ export default connect(state => {
     trackerData: state.tracker.get('trackerData').toJS(),
     originalResolution: state.viewport.get('originalResolution').toJS(),
     canvasResolution: state.viewport.get('canvasResolution').toJS(),
-    countingAreas: state.counter.get('countingAreas')
+    countingAreas: state.counter.get('countingAreas'),
+    userSettings: state.app.get('userSettings')
   }
 })(CanvasEngine)

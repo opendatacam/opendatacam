@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
-import { hideMenu } from '../../statemanagement/app/AppStateManagement';
+import { hideMenu, setUserSetting } from '../../statemanagement/app/AppStateManagement';
 import Toggle from '../shared/Toggle';
 
 class Menu extends Component {
@@ -39,7 +39,7 @@ class Menu extends Component {
 
   render() {
     return (
-      <div className="overlay">
+      <>
         <div
           ref={node => this.node = node}
           className="menu text-default bg-black p-5"
@@ -48,20 +48,26 @@ class Menu extends Component {
             className="btn btn-default btn-close flex items-center shadow rounded"
             onClick={() => this.props.dispatch(hideMenu())}
           >
-            <img className="icon" src="/static/icons/icon-close.svg" />
+            <img className="icon w-5 h-5" src="/static/icons/icon-close.svg" />
           </button>
           <h3 className="mb-4">Open data cam</h3>
           <Toggle 
             label="Counter"
             description="Count objects on active areas"
+            enabled={this.props.userSettings.get('counter')}
+            onChange={(value) => this.props.dispatch(setUserSetting('counter', value))}
           />
           <Toggle 
             label="Pathfinder"
             description="Track paths and positions"
+            enabled={this.props.userSettings.get('pathfinder')}
+            onChange={(value) => this.props.dispatch(setUserSetting('pathfinder', value))}
           />
           <Toggle 
             label="Dark mode"
             description="Turn dark UI elements on"
+            enabled={this.props.userSettings.get('darkMode')}
+            onChange={(value) => this.props.dispatch(setUserSetting('darkMode', value))}
           />
           <div className="mb-4 mt-4 flex items-center justify-between">
             <div className="mr-3">
@@ -71,11 +77,21 @@ class Menu extends Component {
             <div className="flex">
               <button 
                 className='btn btn-default py-1 px-3 rounded-l border border-default-soft border-solid flex items-center text-xl font-bold'
+                onClick={() => 
+                  this.props.dispatch(setUserSetting('dimmerOpacity', 
+                    Math.min(this.props.userSettings.get('dimmerOpacity') + 0.1, 1)
+                  ))
+                }
               >
                 +
               </button>
               <button 
                 className='btn btn-default py-1 px-3 rounded-r border border-default-soft border-solid flex items-center text-xl font-bold'
+                onClick={() => 
+                  this.props.dispatch(setUserSetting('dimmerOpacity', 
+                    Math.max(this.props.userSettings.get('dimmerOpacity') - 0.1, 0)
+                  ))
+                }
               >
                 -
               </button>
@@ -83,15 +99,6 @@ class Menu extends Component {
           </div>
         </div>
         <style jsx>{`
-          .overlay {
-            position: fixed;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.8);
-            z-index: 10;
-          }
           .menu {
             position: absolute;
             top: 0;
@@ -107,13 +114,14 @@ class Menu extends Component {
             height: 3rem;
           }
         `}</style>
-      </div>
+      </>
     )
   }
 }
 
 export default connect((state) => {
   return {
-    mode: state.app.get('mode')
+    mode: state.app.get('mode'),
+    userSettings: state.app.get('userSettings')
   }
 })(Menu);

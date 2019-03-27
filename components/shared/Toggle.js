@@ -20,11 +20,12 @@ class Toggle extends Component {
         </label>
         <div className="form-switch inline-block align-middle">
           <input 
-            type="checkbox" 
+            type="checkbox"
             name={this.state.id}
             id={this.state.id}
-            defaultChecked={true} 
+            defaultChecked={this.props.enabled} 
             className="form-switch-checkbox"
+            onChange={(e) => this.props.onChange(e.target.checked)}
            />
           <label className="form-switch-label" for={this.state.id}></label>
         </div>
