@@ -14,7 +14,7 @@ class Toggle extends Component {
   render() {
     return (
       <div className="mb-4 mt-4 flex items-center justify-between">
-        <label for={this.state.id} className="mr-3">
+        <label htmlFor={this.state.id} className="mr-3">
           <h4 className="mb-2">{this.props.label}</h4>
           <p className="text-xs">{this.props.description}</p>
         </label>
@@ -23,11 +23,11 @@ class Toggle extends Component {
             type="checkbox"
             name={this.state.id}
             id={this.state.id}
-            defaultChecked={this.props.enabled} 
+            checked={this.props.enabled} 
             className="form-switch-checkbox"
             onChange={(e) => this.props.onChange(e.target.checked)}
            />
-          <label className="form-switch-label" for={this.state.id}></label>
+          <label className="form-switch-label" htmlFor={this.state.id}></label>
         </div>
       </div>
     )
