@@ -39,7 +39,7 @@ class MainPage extends React.Component {
         {this.props.isListeningToYOLO &&
           <>
             <UIControls />
-            {false &&  
+            {this.props.showMenu &&  
               <Menu />
             }
             {this.props.mode === MODE.DATAVIEW &&
@@ -80,6 +80,7 @@ export default connect((state) => {
   return {
     deviceOrientation: state.viewport.get('deviceOrientation'),
     mode: state.app.get('mode'),
-    isListeningToYOLO: state.app.get('isListeningToYOLO')
+    isListeningToYOLO: state.app.get('isListeningToYOLO'),
+    showMenu: state.app.get('showMenu')
   }
 })(MainPage)

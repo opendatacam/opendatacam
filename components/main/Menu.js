@@ -1,24 +1,62 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
+import { hideMenu } from '../../statemanagement/app/AppStateManagement';
+import Toggle from '../shared/Toggle';
 
 class Menu extends Component {
 
-  constructor(props) {
+  constructor(props){
     super(props);
+    this.escFunction = this.escFunction.bind(this);
+    this.handleClick = this.handleClick.bind(this);
   }
 
-  // handleStartRecording() {
-  //   this.props.dispatch(startCounting());
-  // }
+  escFunction(event){
+    if(event.keyCode === 27) {
+      this.props.dispatch(hideMenu());
+    }
+  }
+
+  componentDidMount(){
+    document.addEventListener("keydown", this.escFunction, false);
+    document.addEventListener("click", this.handleClick, false);
+  }
+
+  componentWillUnmount(){
+    document.removeEventListener("keydown", this.escFunction, false);
+    document.removeEventListener("click", this.handleClick, false);
+  }
+
+  handleClick(e) {
+    if(this.node.contains(e.target)) {
+      // click inside menu, do nothing
+      return;
+    }
+
+    // Click outside, hide menu
+    this.props.dispatch(hideMenu());
+  }
 
   render() {
     return (
       <div className="overlay">
-        <div className="menu text-default">
-          <h5>Open data cam</h5>
-          <p>Counter</p>
-          <p>Counter</p>
-          <p>Counter</p>
+        <div
+          ref={node => this.node = node}
+          className="menu text-default bg-black p-5"
+        >
+          <h3 className="mb-4">Open data cam</h3>
+          <Toggle 
+            label="Counter"
+            description="Count objects on active areas"
+          />
+          <Toggle 
+            label="Pathfinder"
+            description="Track paths and positions"
+          />
+          <Toggle 
+            label="Dark mode"
+            description="Turn dark UI elements on"
+          />
         </div>
         <style jsx>{`
           .overlay {
@@ -28,7 +66,7 @@ class Menu extends Component {
             width: 100%;
             height: 100%;
             background-color: rgba(0,0,0,0.8);
-            z-index: 5;
+            z-index: 10;
           }
           .menu {
             position: absolute;

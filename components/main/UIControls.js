@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 
 import { MODE } from '../../utils/constants';
-import { setMode, startRecording, stopRecording } from '../../statemanagement/app/AppStateManagement';
+import { setMode, startRecording, stopRecording, showMenu } from '../../statemanagement/app/AppStateManagement';
 import BtnRecording from '../shared/BtnRecording';
 
 class UIControls extends Component {
@@ -58,7 +58,7 @@ class UIControls extends Component {
               </button>
               <button 
                 className={`btn btn-default ml-2 py-0 px-3 rounded border border-default-soft border-solid flex items-center ${this.props.mode === MODE.CONSOLEVIEW ? 'btn-default--active' : ''}`}
-                onClick={() => this.props.dispatch(setMode(MODE.CONSOLEVIEW))}
+                onClick={() => this.props.dispatch(showMenu())}
               >
                 <img src="/static/icons/icon-menu.svg" className="w-5 h-5" />
               </button>
