@@ -29,6 +29,7 @@ module.exports = {
     // On webcam
     // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 1 -address "ws://localhost" -port 8080
     // Comment the following lines to run on a file directly
+    // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink" -ext_output -dont_show
     YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-c','0', '-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{
       max: 1,
       cwd: config.PATH_TO_YOLO_DARKNET,

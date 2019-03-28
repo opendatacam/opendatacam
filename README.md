@@ -142,6 +142,7 @@ wget https://pjreddie.com/media/files/yolo-voc.weights --no-check-certificate
 
 ```bash
 # Install node.js
+sudo apt-get install curl
 curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 sudo apt-get install -y nodejs
 
@@ -214,6 +215,7 @@ sudo pm2 save
 
 ### Compile Opencv on jetson (this takes 1h+)
 
+*Compile*
 
 Need this because darknet needs to be compiled with the same version as the one running inside the docker file
 
@@ -237,21 +239,35 @@ vi buildAndPackageOpenCV.sh
 ./buildAndPackageOpenCV.sh
 ```
 
-
+*Install*
 
 ```bash
 # Remove all old opencv stuffs installed by JetPack
-sudo apt-get purge libopencv
+sudo apt-get purge libopencv*
 
+# Go to ~/opencv/build
+cd ~/opencv/build
 
+# Install .deb files
+sudo dpkg -i OpenCV-<OpenCV Version info>-aarch64-libs.deb
+# For example: $ sudo dpkg -i OpenCV-3.4.3-1-g75a2577-aarch64-libs.deb
+sudo apt-get install -f
+sudo dpkg -i OpenCV-<OpenCV Version info>-aarch64-dev.deb
+sudo dpkg -i OpenCV-<OpenCV Version info>-aarch64-python.deb
 
 # Verify opencv version
 pkg-config --modversion opencv
 ```
 
+
 ### Create the docker image
 
 // TODO pull necessary files, darknet-docker script, Dockerfile
+
+```bash
+# Create a docker folder
+```
+
 
 // TODO copy darknet folder inside working folder 
 
