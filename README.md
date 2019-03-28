@@ -58,20 +58,201 @@ TODO
 
 ### Install docker on jetson
 
-TODO
+*TODO Florian verify this on a freshly flashed jetson*
+
+Docker comes preinstalled on Ubuntu with Jetpack 4.2, if it is not installed, please follow this guide: https://docs.docker.com/install/linux/docker-ce/ubuntu/
+
+To verify if docker is installed, type this command:
+
+```
+docker --version
+```
 
 ### Run opendatacam image
 
 TODO
 
-## How to update the docker image (recompile it)
-
-TODO
-
 ## How to run opendatacam without docker
 
-1. Install Darknet
-2. Install node, mongo, run opendatacam
+### 1. Install Darknet (Neural network framework running YOLO)
+
+#### Get the source files
+
+```bash
+#TODO Change to final fork url, the only change from https://github.com/alexeyab/darknet is : https://github.com/tdurand/darknet/pull/1/files
+
+git clone --depth 1 https://github.com/tdurand/darknet
+```
+
+#### Modify the Makefile before compiling
+
+Open the `Makefile` in the darknet folder and make these changes:
+
+*For Jetson TX2*
+
+```Makefile
+# Set these variable to 1:
+GPU=1
+CUDNN=1
+OPENCV=1
+
+# Uncomment the following line
+# For Jetson Tx2 or Drive-PX2 uncomment
+ARCH= -gencode arch=compute_62,code=[sm_62,compute_62]
+```
+
+*For Jetson Xavier*
+
+```Makefile
+# Set these variable to 1:
+GPU=1
+CUDNN=1
+CUDNN_HALF=1
+OPENCV=1
+
+# Uncomment the following line
+# Jetson XAVIER
+ARCH= -gencode arch=compute_72,code=[sm_72,compute_72]
+```
+
+#### Compile darknet
+
+```bash
+# Go to darknet folder
+cd darknet 
+# Optional: put jetson in performance mode to speed up things
+sudo nvpmodel -m 0
+sudo jetson_clocks
+# Compile
+make
+```
+
+#### Download weight file
+
+The .weights file needs to be in the root of the `/darknet` folder
+
+```bash
+cd darknet #if you are not already in the darknet folder
+wget https://pjreddie.com/media/files/yolo-voc.weights --no-check-certificate
+```
+
+*Direct link to weight file: [yolo-voc.weights](https://pjreddie.com/media/files/yolo-voc.weights)*
+
+### 2. Install node.js, mongodb
+
+```bash
+# Install node.js
+curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+sudo apt-get install -y nodejs
+
+# Install mongodb
+# Detailed doc: https://computingforgeeks.com/how-to-install-latest-mongodb-on-ubuntu-18-04-ubuntu-16-04/
+# NB: at time of writing this guide, we install the mongodb package for ubuntu 16.04 as the arm64 version of it isn't available for 18.04
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
+echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+sudo apt-get update
+sudo apt-get install -y openssl libcurl3 mongodb-org
+
+# Start service
+sudo systemctl start mongod
+
+# Enable service on boot
+sudo systemctl enable mongod
+```
+
+### 3. Install opendatacam
+
+- Download source
+
+```bash
+# TODO Remove branch v2 once released
+git clone --depth 1 -b v2 https://github.com/moovel/lab-opendatacam.git
+cd lab-opendatacam
+```
+
+- Specify **ABSOLUTE** `PATH_TO_YOLO_DARKNET` path in `lab-open-data-cam/config.json` (open data cam repo)
+
+```json
+{
+  "PATH_TO_YOLO_DARKNET" : "/home/nvidia/darknet"
+}
+```
+
+```bash
+# To get the absolute path, go the darknet folder and type
+pwd .
+```
+
+- Install **open data cam**
+
+```bash
+cd <path/to/open-data-cam>
+npm install
+npm run build
+```
+
+- Config **open data cam** to run on boot
+
+```bash
+# install pm2
+npm install pm2 -g |
+
+# go to opendatacam folder
+cd <path/to/open-data-cam>
+# launch pm2 at startup
+# this command gives you instructions to configure pm2 to
+# start at ubuntu startup, follow them
+sudo pm2 startup
+
+# Once pm2 is configured to start at startup
+# Configure pm2 to start the Open Traffic Cam app
+sudo pm2 start npm --name "open-data-cam" -- start
+sudo pm2 save
+```
+
+## How to create / update the docker image
+
+### Compile Opencv on jetson (this takes 1h+)
+
+
+Need this because darknet needs to be compiled with the same version as the one running inside the docker file
+
+```bash
+# Optional: put jetson in high performance mode to speed up things
+sudo nvpmodel -m 0
+sudo jetson_clocks
+
+# Install dependencies
+sudo apt-get install libcurl4 cmake
+sudo apt-get install qt5-default
+
+# Clone https://github.com/jetsonhacks/buildOpenCVTX2
+git clone https://github.com/jetsonhacks/buildOpenCVTX2
+cd buildOpenCVTX2
+./buildAndPackageOpenCV.sh
+```
+
+
+
+```bash
+# Remove all old opencv stuffs installed by JetPack
+sudo apt-get purge libopencv
+
+
+
+# Verify opencv version
+pkg-config --modversion opencv
+```
+
+### Create the docker image
+
+// TODO pull necessary files, darknet-docker script, Dockerfile
+
+// TODO copy darknet folder inside working folder 
+
+// TODO recompile darknet with correct opencv version
+
+
 
 
 
@@ -400,19 +581,16 @@ The install script for autmatic installation
 
 To debug the app log onto the jetson board and inspect the logs from pm2 or stop the pm2 service (`sudo pm2 stop <pid>`) and start the app by using `sudo npm start` to see the console output directly.
 
-- **Error**: `please specify the path to the raw detections file`
-
-  Make sure that `ffmpeg` is installed and is above version `2.8.11`
-
 - **Error**: `Could *not* find a valid build in the '.next' directory! Try building your app with '*next* build' before starting the server`
 
   Run `npm build` before starting the app
 
 - Could not find darknet. Be sure to `make` darknet without `sudo` otherwise it will abort mid installation.
 
-- **Error**: `cannot open shared object file: No such file or directory`
+- **Error**: `OpenCV Error: Unspecified error (GStreamer: unable to start pipeline
+) in cvCaptureFromCAM_GStreamer`
 
-  Try reinstalling the liblo package.
+  The webcam isn't detected. Try to plug out / in
 
 - **Error**: `Error: Cannot stop process that is not running.`
 
