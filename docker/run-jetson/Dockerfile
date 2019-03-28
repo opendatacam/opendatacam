@@ -29,7 +29,7 @@ RUN apt-get install -y \
 
 RUN apt-get install -y python-dev python-numpy python-py python-pytest -y
 RUN apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
-# RUN apt-get install -y ffmpeg
+RUN apt-get install -y ffmpeg
 
 COPY darknet/ darknet/
 #COPY deviceQuery /darknet
@@ -37,7 +37,6 @@ COPY darknet/ darknet/
 #COPY OpenCV-3.4.0-aarch64-libs.deb /darknet
 #COPY OpenCV-3.4.0-aarch64-python.deb /darknet
 
-# This installs precompiled opencv
 ADD opencv-3.4.1.tgz /
 
 # Install node.js
@@ -45,18 +44,16 @@ RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 RUN apt-get install -y nodejs
 RUN apt-get install make gcc g++ python
 
-RUN git clone --depth 1 -b docker https://github.com/moovel/lab-opendatacam
+# Technique to rebuild the docker file from here : https://stackoverflow.com/a/49831094/1228937
+# Build using date > marker && docker build .
+# date > marker && sudo docker build -t opendatacam .
+COPY marker /dev/null
 
-RUN rm -rf /tmp/node_modules
-RUN cp lab-opendatacam/package.json /tmp/package.json
-RUN cd /tmp && npm install
-                                                       
-RUN mkdir -p /app && cp -a /tmp/node_modules /app/
+RUN git clone --depth 1 -b docker https://github.com/moovel/lab-opendatacam /lab-opendatacam
 
-RUN cp -a lab-opendatacam/ /app
+WORKDIR /lab-opendatacam
 
-WORKDIR /app
-
+RUN npm install
 RUN npm run build
 
 EXPOSE 8080 8070 8090
