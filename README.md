@@ -222,13 +222,18 @@ Need this because darknet needs to be compiled with the same version as the one 
 sudo nvpmodel -m 0
 sudo jetson_clocks
 
-# Install dependencies
-sudo apt-get install libcurl4 cmake
-sudo apt-get install qt5-default
+# Clone https://github.com/jetsonhacks/buildOpenCVXavier
+git clone https://github.com/jetsonhacks/buildOpenCVXavier
+cd buildOpenCVXavier
 
-# Clone https://github.com/jetsonhacks/buildOpenCVTX2
-git clone https://github.com/jetsonhacks/buildOpenCVTX2
-cd buildOpenCVTX2
+# Edit the ARCH_BIN variable
+vi buildAndPackageOpenCV.sh
+# Set ARCH_BIN=6.2 in buildAndPackageOpenCV.sh for Jetson TX2
+# Set ARCH_BIN=7.2 in buildAndPackageOpenCV.sh for Jetson Xavier
+
+# Specify the right ARCH_BIN makes runtime faster: http://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/
+
+# Then run the build command, on TX2 it takes more than 1 hour
 ./buildAndPackageOpenCV.sh
 ```
 
