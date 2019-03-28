@@ -19,10 +19,10 @@ else
     DOCKER_VOLUMES+=`find /etc -name *cuda* 2> /dev/null | perl -pe 's/(.*)/-v $1:$1:ro /'`
     DOCKER_VOLUMES+=`find /etc -name *cudnn* 2> /dev/null | perl -pe 's/(.*)/-v $1:$1:ro /'`
     DOCKER_VOLUMES+=`find /etc -name nv* 2> /dev/null | perl -pe 's/(.*)/-v $1:$1:ro /'`
-    DOCKER_VOLUMES+='-v /usr/local/cuda-9.0:/usr/local/cuda-9.0:ro '
+    DOCKER_VOLUMES+='-v /usr/local/cuda-10.0:/usr/local/cuda-10.0:ro '
     DOCKER_VOLUMES+='-v /usr/local/cuda:/usr/local/cuda:ro '
-    DOCKER_VOLUMES+='-v /var/cuda-repo-9-0-local:/var/cuda-repo-9-0-local:ro '
-    DOCKER_VOLUMES+='-v /var/nv-tensorrt-repo-ga-cuda9.0-trt3.0.4-20180208:/var/nv-tensorrt-repo-ga-cuda9.0-trt3.0.4-20180208:ro '
+    DOCKER_VOLUMES+='-v /var/cuda-repo-10-0-local:/var/cuda-repo-10-0-local:ro '
+    # DOCKER_VOLUMES+='-v /var/nv-tensorrt-repo-ga-cuda10.0-trt3.0.4-20180208:/var/nv-tensorrt-repo-ga-cuda9.0-trt3.0.4-20180208:ro '
     DOCKER_VOLUMES+='-v /var/nvidia:/var/nvidia:ro '
     DOCKER_VOLUMES+='-v /etc/nvidia:/etc/nvidia:ro '
     DOCKER_VOLUMES+='-v /etc/alternatives:/etc/alternatives:ro '

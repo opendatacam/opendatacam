@@ -74,6 +74,10 @@ TODO
 
 ## How to run opendatacam without docker
 
+Dependencies: 
+
+- opencv 3.4.3 with Gstreamer support
+
 ### 1. Install Darknet (Neural network framework running YOLO)
 
 #### Get the source files
