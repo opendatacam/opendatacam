@@ -306,6 +306,10 @@ sudo ./darknet-docker.sh run --rm -it opendatacam
 ```
 
 
+Doc for push and pull docker file to docker hub
+https://ropenscilabs.github.io/r-docker-tutorial/04-Dockerhub.html
+
+
 // TODO copy darknet folder inside working folder 
 
 // TODO recompile darknet with correct opencv version
