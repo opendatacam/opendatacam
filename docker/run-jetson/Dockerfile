@@ -56,6 +56,9 @@ ADD opencv-3.4.3.tar.gz /
 
 COPY video-stuttgart-10-fps-sd.mp4 darknet/
 
+# One time this worked to make the webcam access, while running it in the interactive shell
+# RUN sudo rm -rf ${HOME}/.cache/*
+
 # Install node.js
 # RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 # RUN apt-get install -y nodejs
