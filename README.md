@@ -100,6 +100,11 @@ GPU=1
 CUDNN=1
 OPENCV=1
 
+# With sed
+#sed -i s/GPU=0/GPU=1/g Makefile
+#sed -i s/CUDA=0/CUDA=1/g Makefile
+#sed -i s/OPENCV=0/OPENCV=1/g Makefile
+
 # Uncomment the following line
 # For Jetson Tx2 or Drive-PX2 uncomment
 ARCH= -gencode arch=compute_62,code=[sm_62,compute_62]
@@ -270,6 +275,33 @@ pkg-config --modversion opencv
 
 ```bash
 # Create a docker folder
+```
+
+```bash
+# Create the opencv compiled tar package
+# Go to opencv/build
+
+# Untar
+TODO
+# Move to directory untar
+cp OpenCV
+
+# Tar the content in opencv-3.4.3.tar.gz
+tar -czvf opencv-3.4.3.tar.gz .
+
+# move it to docker folder
+```
+
+```bash
+# Build image
+sudo docker build -t opendatacam .
+
+# Run image interactively while giving access to CUDA stuff
+sudo ./darknet-docker.sh run --rm -it opendatacam
+
+# Test darknet
+./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 0 -json_port 8090 -ext_output -dont_show
+./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights video-stuttgart-10-fps-sd.mp4 -json_port 8090 -ext_output -dont_show
 ```
 
 

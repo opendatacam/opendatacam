@@ -23,22 +23,38 @@ RUN apt-get update
 #     libwayland-client0 \
 #     libwayland-egl1-mesa \
 #     libwayland-cursor0 \
+#     qt5-default \
 #     cmake \
 #     pkg-config
+
+RUN apt-get install -y libtbb-dev
+RUN apt-get install -y qt5-default
+
 
 # RUN apt-get install -y python-dev python-numpy python-py python-pytest -y
 # RUN apt-get install -y libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
 # RUN apt-get install -y ffmpeg
 
+RUN apt-get install -y libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
+
+RUN apt-get install -y libv4l-dev
+
+
 COPY darknet/ darknet/
 #COPY deviceQuery /darknet
-#COPY OpenCV-3.4.0-aarch64-dev.deb /darknet
-#COPY OpenCV-3.4.0-aarch64-libs.deb /darknet
-#COPY OpenCV-3.4.0-aarch64-python.deb /darknet
+# COPY OpenCV-3.4.3-aarch64-dev.deb /
+# COPY OpenCV-3.4.3-aarch64-libs.deb /
+# COPY OpenCV-3.4.3-aarch64-python.deb /
 
+# RUN dpkg -i OpenCV-3.4.3-aarch64-dev.deb
+# RUN apt-get install -f
+# RUN dpkg -i OpenCV-3.4.3-aarch64-libs.deb
+# RUN dpkg -i OpenCV-3.4.3-aarch64-python.deb
 # TODO HERE , opencv doesn't seems to be installed, run docker with interactive mode and debug, maybe install from .deb files
 
-ADD OpenCV-3.4.3-aarch64.tar.gz /
+ADD opencv-3.4.3.tar.gz /
+
+COPY video-stuttgart-10-fps-sd.mp4 darknet/
 
 # Install node.js
 # RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
