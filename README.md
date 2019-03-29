@@ -300,20 +300,31 @@ sudo docker build -t opendatacam .
 sudo ./darknet-docker.sh run --rm -it opendatacam
 
 # Test darknet
-./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 0 -json_port 8090 -ext_output -dont_show
-./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights video-stuttgart-10-fps-sd.mp4 -json_port 8090 -ext_output -dont_show
-./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink" -ext_output -dont_show
+./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 0 -ext_output -dont_show -json_port 8070 -mjpeg_port 8090
+./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights video-stuttgart-10-fps-sd.mp4 -ext_output -dont_show -json_port 8070 -mjpeg_port 8090
+./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink" -ext_output -dont_show -json_port 8070 -mjpeg_port 8090
 ```
 
 
 Doc for push and pull docker file to docker hub
 https://ropenscilabs.github.io/r-docker-tutorial/04-Dockerhub.html
 
+```bash
+# Pull and run interactively the docker image
+
+sudo ./darknet-docker.sh run --rm -it tdurand/opendatacam:v0.0.1
+```
+
+
 
 // TODO copy darknet folder inside working folder 
 
 // TODO recompile darknet with correct opencv version
 
+
+Xavier / TX2 
+
+A tx2 compiled image works on xavier but doesn't have the best performance possible, will need to have opendatacam - tx2 opendatacam - xavier images
 
 
 
