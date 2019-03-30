@@ -275,6 +275,11 @@ pkg-config --modversion opencv
 
 ```bash
 # Create a docker folder
+
+# Put darknet in docker folder
+# Put opencv.tar.gz
+
+# then run build image
 ```
 
 ```bash
@@ -313,6 +318,11 @@ https://ropenscilabs.github.io/r-docker-tutorial/04-Dockerhub.html
 # Pull and run interactively the docker image
 
 sudo ./darknet-docker.sh run --rm -it tdurand/opendatacam:v0.0.1
+
+# Create and push one
+sudo docker login --username=tdurand
+sudo docker images
+sudo docker tag <yourimageID> tdurand/opendatacam:v0.0.1
 ```
 
 
@@ -326,6 +336,10 @@ Xavier / TX2
 
 A tx2 compiled image works on xavier but doesn't have the best performance possible, will need to have opendatacam - tx2 opendatacam - xavier images
 
+
+NOTE Troubleshouting docker
+
+"nvbuf_utils: Could not get EGL display connection" doesn't mean there is an error, it's just it does not start X, if stuck here means something prevent Opencv to read the webcam... but doesn't mean it doen't have access to the webcam... 
 
 
 
