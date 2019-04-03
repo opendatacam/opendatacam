@@ -56,21 +56,27 @@ It is very alpha and we do not provide any guarantee that this will work for you
 
 TODO
 
-### Install docker on jetson
+### Run opendatacam docker image
 
-*TODO Florian verify this on a freshly flashed jetson*
+```bash
+# Get the darknet-docker script (TODO @tdurand remove v2 when releasing)
+wget https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/darknet-docker.sh
 
-Docker comes preinstalled on Ubuntu with Jetpack 4.2, if it is not installed, please follow this guide: https://docs.docker.com/install/linux/docker-ce/ubuntu/
+# Chmod to give exec permissions
+chmod 777 darknet-docker.sh
 
-To verify if docker is installed, type this command:
+# Pull and run interactively the docker image
+sudo ./darknet-docker.sh run --rm -it tdurand/opendatacam:v0.0.1
 
+# Create and push one
+sudo docker login --username=tdurand
+sudo docker images
+sudo docker tag <yourimageID> tdurand/opendatacam:v0.0.1
 ```
-docker --version
-```
 
-### Run opendatacam image
+NOTE Troubleshooting docker
 
-TODO
+"nvbuf_utils: Could not get EGL display connection" doesn't mean there is an error, it's just it does not start X, if stuck here means something prevent Opencv to read the webcam... but doesn't mean it doen't have access to the webcam... 
 
 ## How to run opendatacam without docker
 
@@ -222,7 +228,118 @@ sudo pm2 save
 
 ## How to create / update the docker image
 
-### Compile Opencv on jetson (this takes 1h+)
+In order to build the docker image, you need to have:
+
+- The same Opencv version on host device than the one you will include in docker (for darknet compilation)
+- Compiled darknet on host device
+- Build docker image on the same architecture as the target device that will use the docker image. (ie: build docker image for Jetson TX2 on a Jetson TX2)
+
+
+*A docker image for TX2 would work on Xavier but wouldn't have the best performance possible, that is why we need several docker image for each architecture ([More on this](http://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/))*
+
+### 1. Install Opencv 3.4.3:
+
+You can either:
+
+- Use pre-built binaries for your host device (see links below)
+- Compile your own (see below section on how to compile) 
+
+
+Then follow this to install it:
+
+```bash
+# Remove all old opencv stuffs installed by JetPack
+sudo apt-get purge libopencv*
+
+# Download .deb files
+
+# For Jetson TX2
+wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-tx2-3.4.3/OpenCV-3.4.3-aarch64-libs.deb
+wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-tx2-3.4.3/OpenCV-3.4.3-aarch64-dev.deb
+wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-tx2-3.4.3/OpenCV-3.4.3-aarch64-python.deb
+
+# For Jetson Xavier
+# TODO compile binaries specific for xavier architecture
+
+# Install .deb files
+# For example: $ sudo dpkg -i OpenCV-3.4.3-1-g75a2577-aarch64-libs.deb
+sudo dpkg -i OpenCV-<OpenCV Version info>-aarch64-libs.deb
+sudo apt-get install -f
+sudo dpkg -i OpenCV-<OpenCV Version info>-aarch64-dev.deb
+sudo dpkg -i OpenCV-<OpenCV Version info>-aarch64-python.deb
+
+# Verify opencv version
+pkg-config --modversion opencv
+```
+
+### 2. Compile Darknet with Opencv 3.4.3:
+
+- Follow the "1. Install Darknet (Neural network framework running YOLO)" guide after completing "1. Install Opencv 3.4.3"
+
+### 3. Create the docker image
+
+```bash
+# Create a docker folder to gather all dependencies
+mkdir docker
+cd docker
+
+# Copy previously compiled darknet in docker folder
+cp -R <pathtodarknet> .
+
+# Download opencv-3.4.3.tar.gz
+# This is the pre-installed version of opencv to include in the docker container
+# If you compiled Opencv yourself, you'll find how to create the tar file in the section explaning how to compile opencv
+
+# For Jetson TX2:
+wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-tx2-3.4.3/opencv-3.4.3.tar.gz
+
+# For Jetson Xavier:
+# TODO
+
+# Download the Dockerfile
+wget https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/Dockerfile
+
+# Build image
+sudo docker build -t opendatacam .
+```
+
+### 4. Try the docker image
+
+```bash
+# Get the darknet-docker script (TODO @tdurand remove v2 when releasing)
+wget https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/darknet-docker.sh
+
+# Chmod to give exec permissions
+chmod 777 darknet-docker.sh
+
+# Run image interactively while giving access to CUDA stuff
+sudo ./darknet-docker.sh run --rm -it opendatacam
+
+# Test darknet
+./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 0 -ext_output -dont_show -json_port 8070 -mjpeg_port 8090
+./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights video-stuttgart-10-fps-sd.mp4 -ext_output -dont_show -json_port 8070 -mjpeg_port 8090
+./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink" -ext_output -dont_show -json_port 8070 -mjpeg_port 8090
+```
+
+### 5. Publish the docker image
+
+```bash
+# Log into the Docker Hub
+docker login --username=yourhubusername
+# Check the image ID using
+docker images
+# You will see something like:
+# REPOSITORY              TAG       IMAGE ID         CREATED           SIZE
+# opendatacam             latest    023ab91c6291     3 minutes ago     1.975 GB
+
+# Tag your image
+docker tag 023ab91c6291 yourhubusername/opendatacam:v2.0.1
+
+# Push image
+docker push yourhubusername/opendatacam
+```
+
+### (Optional) Compile Opencv on jetson (this takes 1h+)
 
 *Compile*
 
@@ -233,7 +350,8 @@ Need this because darknet needs to be compiled with the same version as the one 
 sudo nvpmodel -m 0
 sudo jetson_clocks
 
-# Clone https://github.com/jetsonhacks/buildOpenCVXavier
+# Clone https://github.com/jetsonhacks/buildOpenCVXavier 
+# Same repo for xavier or tx2 since jetpack 4.2
 git clone https://github.com/jetsonhacks/buildOpenCVXavier
 cd buildOpenCVXavier
 
@@ -246,102 +364,30 @@ vi buildAndPackageOpenCV.sh
 
 # Then run the build command, on TX2 it takes more than 1 hour
 ./buildAndPackageOpenCV.sh
-```
 
-*Install*
-
-```bash
-# Remove all old opencv stuffs installed by JetPack
-sudo apt-get purge libopencv*
-
-# Go to ~/opencv/build
+# The binary files will be in ~/opencv/build
 cd ~/opencv/build
-
-# Install .deb files
-sudo dpkg -i OpenCV-<OpenCV Version info>-aarch64-libs.deb
-# For example: $ sudo dpkg -i OpenCV-3.4.3-1-g75a2577-aarch64-libs.deb
-sudo apt-get install -f
-sudo dpkg -i OpenCV-<OpenCV Version info>-aarch64-dev.deb
-sudo dpkg -i OpenCV-<OpenCV Version info>-aarch64-python.deb
-
-# Verify opencv version
-pkg-config --modversion opencv
 ```
 
-
-### Create the docker image
-
-// TODO pull necessary files, darknet-docker script, Dockerfile
+There is one extra step to do to prepare the opencv-3.4.3.tar.gz file to include in the docker container. The one built before nests a folder inside and we want to remove it
 
 ```bash
-# Create a docker folder
+# TODO @tdurand FINISH THIS PART
 
-# Put darknet in docker folder
-# Put opencv.tar.gz
-
-# then run build image
-```
-
-```bash
 # Create the opencv compiled tar package
+
 # Go to opencv/build
+cd ~/opencv/build
 
 # Untar
 TODO
+
 # Move to directory untar
 cp OpenCV
 
 # Tar the content in opencv-3.4.3.tar.gz
 tar -czvf opencv-3.4.3.tar.gz .
-
-# move it to docker folder
 ```
-
-```bash
-# Build image
-sudo docker build -t opendatacam .
-
-# Run image interactively while giving access to CUDA stuff
-sudo ./darknet-docker.sh run --rm -it opendatacam
-
-# Test darknet
-./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 0 -ext_output -dont_show -json_port 8070 -mjpeg_port 8090
-./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights video-stuttgart-10-fps-sd.mp4 -ext_output -dont_show -json_port 8070 -mjpeg_port 8090
-./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink" -ext_output -dont_show -json_port 8070 -mjpeg_port 8090
-```
-
-
-Doc for push and pull docker file to docker hub
-https://ropenscilabs.github.io/r-docker-tutorial/04-Dockerhub.html
-
-```bash
-# Pull and run interactively the docker image
-
-sudo ./darknet-docker.sh run --rm -it tdurand/opendatacam:v0.0.1
-
-# Create and push one
-sudo docker login --username=tdurand
-sudo docker images
-sudo docker tag <yourimageID> tdurand/opendatacam:v0.0.1
-```
-
-
-
-// TODO copy darknet folder inside working folder 
-
-// TODO recompile darknet with correct opencv version
-
-
-Xavier / TX2 
-
-A tx2 compiled image works on xavier but doesn't have the best performance possible, will need to have opendatacam - tx2 opendatacam - xavier images
-
-
-NOTE Troubleshouting docker
-
-"nvbuf_utils: Could not get EGL display connection" doesn't mean there is an error, it's just it does not start X, if stuck here means something prevent Opencv to read the webcam... but doesn't mean it doen't have access to the webcam... 
-
-
 
 ## 💾 Exports documentation
 
