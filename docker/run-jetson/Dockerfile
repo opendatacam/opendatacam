@@ -1,8 +1,8 @@
 FROM arm64v8/ubuntu:18.04
 
-RUN apt-get update && apt-get install -y apt-utils bzip2 curl wget git sudo unp cmake && apt-get clean && rm -rf /var/cache/apt
-RUN apt-get -y autoremove && apt-get -y autoclean
-RUN rm -rf /var/cache/apt
+# RUN apt-get update && apt-get install -y apt-utils bzip2 curl wget git sudo unp cmake && apt-get clean && rm -rf /var/cache/apt
+# RUN apt-get -y autoremove && apt-get -y autoclean
+# RUN rm -rf /var/cache/apt
 
 RUN apt-get update
 # RUN apt-get install -y \
@@ -59,26 +59,37 @@ ADD opencv-3.4.3.tar.gz /
 # One time this worked to make the webcam access, while running it in the interactive shell
 # RUN sudo rm -rf ${HOME}/.cache/*
 
-# Install node.js
-# RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-# RUN apt-get install -y nodejs
-# RUN apt-get install make gcc python
-# RUN apt-get install make gcc g++ python
+# Install Mongodb
+# https://github.com/dockerfile/mongodb#run-mongod-w-persistentshared-directory
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4 && \
+    echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+RUN apt-get update && apt-get install -y openssl libcurl3 mongodb-org
+VOLUME ["/data/db"]
+EXPOSE 27017
 
-# TODO HERE , buffertool for node needs some dependencies and fails on npm install, missing stuff
+# Install node.js
+RUN apt-get install -y libcurl4 curl
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
+RUN apt-get install -y nodejs
 
 # Technique to rebuild the docker file from here : https://stackoverflow.com/a/49831094/1228937
 # Build using date > marker && docker build .
 # date > marker && sudo docker build -t opendatacam .
 # COPY marker /dev/null
 
-# RUN git clone --depth 1 -b v2 https://github.com/moovel/lab-opendatacam /lab-opendatacam
+RUN apt-get install -y git
 
-# WORKDIR /lab-opendatacam
+RUN git clone --depth 1 -b v2 https://github.com/moovel/lab-opendatacam /lab-opendatacam
 
-# RUN npm install
-# RUN npm run build
+WORKDIR /lab-opendatacam
 
-# EXPOSE 8080 8070 8090
+RUN npm install
+RUN npm run build
 
-# CMD ["npm", "start"]
+EXPOSE 8080 8070 8090
+
+# Because we want to run mongodb and the node.js app
+# See https://docs.docker.com/config/containers/multi-service_container/
+COPY startopendatacam.sh startopendatacam.sh
+CMD ./startopendatacam.sh
