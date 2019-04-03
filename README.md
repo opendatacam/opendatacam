@@ -232,7 +232,7 @@ In order to build the docker image, you need to have:
 
 *A docker image for TX2 would work on Xavier but wouldn't have the best performance possible, that is why we need several docker image for each architecture ([More on this](http://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/))*
 
-### 1. Install Opencv 3.4.3:
+### 1. Install Opencv 3.4.3 (maybe move this to previous part):
 
 You can either:
 
@@ -257,11 +257,10 @@ wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-tx2-3.4.3/OpenCV-3.4.3-aa
 # TODO compile binaries specific for xavier architecture
 
 # Install .deb files
-# For example: $ sudo dpkg -i OpenCV-3.4.3-1-g75a2577-aarch64-libs.deb
-sudo dpkg -i OpenCV-<OpenCV Version info>-aarch64-libs.deb
+sudo dpkg -i OpenCV-3.4.3-aarch64-libs.deb
 sudo apt-get install -f
-sudo dpkg -i OpenCV-<OpenCV Version info>-aarch64-dev.deb
-sudo dpkg -i OpenCV-<OpenCV Version info>-aarch64-python.deb
+sudo dpkg -i OpenCV-3.4.3-aarch64-dev.deb
+sudo dpkg -i OpenCV-3.4.3-aarch64-python.deb
 
 # Verify opencv version
 pkg-config --modversion opencv

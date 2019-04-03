@@ -54,7 +54,7 @@ COPY darknet/ darknet/
 
 ADD opencv-3.4.3.tar.gz /
 
-COPY video-stuttgart-10-fps-sd.mp4 darknet/
+#COPY video-stuttgart-10-fps-sd.mp4 darknet/
 
 # One time this worked to make the webcam access, while running it in the interactive shell
 # RUN sudo rm -rf ${HOME}/.cache/*
