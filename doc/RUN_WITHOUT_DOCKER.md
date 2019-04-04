@@ -41,7 +41,7 @@ pkg-config --modversion opencv
 ```bash
 #TODO Change to final fork url, the only change from https://github.com/alexeyab/darknet is : https://github.com/tdurand/darknet/pull/1/files
 
-git clone --depth 1 https://github.com/tdurand/darknet
+git clone --depth 1 -b opendatacam https://github.com/tdurand/darknet
 ```
 
 #### Modify the Makefile before compiling
@@ -102,6 +102,15 @@ wget https://pjreddie.com/media/files/yolo-voc.weights --no-check-certificate
 ```
 
 *Direct link to weight file: [yolo-voc.weights](https://pjreddie.com/media/files/yolo-voc.weights)*
+
+#### (Optional) Test darknet
+
+```bash
+# Go to darknet folder
+cd darknet 
+# Run darknet (yolo) on webcam
+./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink" -ext_output -dont_show
+```
 
 ### 3. Install node.js, mongodb
 

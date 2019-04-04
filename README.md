@@ -41,19 +41,19 @@ TODO add video
 If your jetson does not have jetpack 4.2 *(CUDA 10, TensorRT 5, cuDNN 7.3, Ubuntu 18.04)*, [follow this guide](https://github.com/moovel/lab-opendatacam/blob/v2/doc/FLASH_JETSON.md)
 
 
-### 2. Install and run Opendatacam:
+### 2. Install and start Opendatacam:
+
+Open a terminal or ssh to you jetson and run this command:
 
 ```bash
-# Get the darknet-docker script (TODO @tdurand remove v2 when releasing)
-wget https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/darknet-docker.sh
-
-# Chmod to give exec permissions
-chmod 777 darknet-docker.sh
-
-# Pull and run interactively the docker image
-sudo ./darknet-docker.sh run --rm -it tdurand/opendatacam:v0.0.1
-
+sudo wget -O - https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/run-opendatacam.sh | bash
 ```
+
+### 3. Run Opendatacam 🖖
+
+Open your browser at http://<IPOFJETSON>:8080
+
+*If you are running with the jetson connected to a screen: http://localhost:8080*
 
 ## ️️⚙️ Opendatacam settings
 
@@ -135,6 +135,24 @@ TODO update
 
 [Edit schema](https://docs.google.com/drawings/d/1GCYcnQeGTiifmr3Hc77x6RjCs5RZhMvgIQZZP_Yzbs0/edit?usp=sharing)
 
+### Docker useful commands
+
+```
+# List containers running
+sudo docker container list
+
+# See logs
+sudo docker logs <containerID>
+
+# See stats ( CPU , memory usage ...)
+sudo docker stats <containerID>
+
+# Stop container
+sudo docker stop <containerID>
+
+# Clear all docker container, images ...
+sudo docker system prune -a
+```
 
 ### Miscellaneous dev tips
 

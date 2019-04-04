@@ -6,12 +6,15 @@
 # Maybe can use pm2 inside a docker container
 
 # Start the first process
-mongod
+mongod &
 status=$?
 if [ $status -ne 0 ]; then
   echo "Failed to start mongod: $status"
   exit $status
 fi
+
+# Sleep 5s to let mondod some time to initialize
+sleep 5
 
 # Start the second process
 npm run start

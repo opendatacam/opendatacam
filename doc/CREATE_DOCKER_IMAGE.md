@@ -63,10 +63,7 @@ chmod 777 darknet-docker.sh
 # Run image interactively while giving access to CUDA stuff
 sudo ./darknet-docker.sh run --rm -it opendatacam
 
-# Test darknet
-./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 0 -ext_output -dont_show -json_port 8070 -mjpeg_port 8090
-./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights video-stuttgart-10-fps-sd.mp4 -ext_output -dont_show -json_port 8070 -mjpeg_port 8090
-./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink" -ext_output -dont_show -json_port 8070 -mjpeg_port 8090
+# Open browser at http://<IP of Jetson>:8080
 ```
 
 ### 5. Publish the docker image

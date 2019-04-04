@@ -1,11 +1,27 @@
 FROM arm64v8/ubuntu:18.04
 
 ## Install some dependencies
-RUN apt-get update
-RUN apt-get install -y libtbb-dev
-RUN apt-get install -y qt5-default
-RUN apt-get install -y libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools gstreamer1.0-x gstreamer1.0-alsa gstreamer1.0-gl gstreamer1.0-gtk3 gstreamer1.0-qt5 gstreamer1.0-pulseaudio
-RUN apt-get install -y libv4l-dev
+RUN apt-get update && apt-get install -y \
+      libtbb-dev \
+      qt5-default \
+      libgstreamer1.0-0 \
+      gstreamer1.0-plugins-base \
+      gstreamer1.0-plugins-good \
+      gstreamer1.0-plugins-bad \
+      gstreamer1.0-plugins-ugly \
+      gstreamer1.0-libav \
+      gstreamer1.0-doc \
+      gstreamer1.0-tools \
+      gstreamer1.0-x \
+      gstreamer1.0-alsa \
+      gstreamer1.0-gl \
+      gstreamer1.0-gtk3 \
+      gstreamer1.0-qt5 \
+      gstreamer1.0-pulseaudio \
+      libv4l-dev \
+      libcurl4 \ 
+      curl \
+      git
 
 # Install pre-compiled darknet on docker
 COPY darknet/ darknet/
@@ -14,11 +30,8 @@ COPY darknet/ darknet/
 ADD opencv-3.4.3.tar.gz /
 
 # Install node.js
-RUN apt-get install -y libcurl4 curl
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 RUN apt-get install -y nodejs
-
-RUN apt-get install -y git
 
 # Technique to rebuild the docker file from here : https://stackoverflow.com/a/49831094/1228937
 # Build using date > marker && docker build .
@@ -46,4 +59,5 @@ EXPOSE 8080 8070 8090 27017
 # # Because we want to run mongodb and the node.js app
 # # See https://docs.docker.com/config/containers/multi-service_container/
 COPY docker-start-mongo-and-opendatacam.sh docker-start-mongo-and-opendatacam.sh
+RUN chmod 777 docker-start-mongo-and-opendatacam.sh
 CMD ./docker-start-mongo-and-opendatacam.sh
