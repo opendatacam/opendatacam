@@ -1,4 +1,4 @@
-# Open traffic cam (with YOLO)
+# Open data cam (with YOLO)
 
 This project is offline lightweight DIY solution to monitor urban landscape. After installing this software on the specified hardware (Nvidia Jetson board + Logitech webcam), you will be able to count cars, pedestrians, motorbikes from your webcam live stream.
 
@@ -8,30 +8,12 @@ It is very alpha and we do not provide any guarantee that this will work for you
 
 ### Table of Contents
 
-- [Hardware pre-requisite](#-hardware-pre-requisite)
-- [Exports documentation](#-exports-documentation)
-- [System overview](#-system-overview)
-- [Step by Step install guide](#-step-by-step-install-guide)
-  - [Flash Jetson Board:](#️flash-jetson-board)
-  - [Prepare Jetson Board](#prepare-jetson-board)
-  - [Configure Ubuntu to turn the jetson into a wifi access point](#configure-ubuntu-to-turn-the-jetson-into-a-wifi-access-point)
-  - [Configure jetson to start in overclocking mode:](#configure-jetson-to-start-in-overclocking-mode)
-  - [Install Darknet-net:](#install-darknet-net)
-  - [Install the open-data-cam node app](#install-the-open-data-cam-node-app)
-  - [Restart the jetson board and open http://IP-OF-THE-JETSON-BOARD:8080/](#-restart-the-jetson-board-and-open-httpip-of-the-jetson-board8080)
-  - [Connect you device to the jetson](#connect-you-device-to-the-jetson)
-  - [You are done](#you-are-done-)
-  - [Automatic installation (experimental)](#️automatic-installation-experimental)
-- [Troubleshoothing](#troubleshoothing)
-- [Run open data cam on a video file instead of the webcam feed:](#-run-open-data-cam-on-a-video-file-instead-of-the-webcam-feed)
-- [Development notes](#-development-notes)
-  - [Technical architecture](#technical-architecture)
-  - [Miscellaneous dev tips](#miscellaneous-dev-tips)
+TODO
 
 ## 💻 Hardware pre-requisite
 
-- Nvidia Jetson TX2
-- Webcam Logitech C222 (or any usb webcam compatible with Ubuntu 16.04)
+- Nvidia Jetson TX2 / Xavier
+- Webcam Logitech C222 (or any usb webcam compatible with Ubuntu 18.04)
 - A smartphone / tablet / laptop that you will use to operate the system
 
 ## Install steps
@@ -56,7 +38,7 @@ It is very alpha and we do not provide any guarantee that this will work for you
 
 TODO
 
-### Run opendatacam docker image
+### Run Opendatacam docker image
 
 ```bash
 # Get the darknet-docker script (TODO @tdurand remove v2 when releasing)
@@ -75,313 +57,11 @@ NOTE Troubleshooting docker
 
 ## How to run opendatacam without docker
 
-Dependencies: 
-
-- opencv 3.4.3 with Gstreamer support
-
-### 1. Install Darknet (Neural network framework running YOLO)
-
-#### Get the source files
-
-```bash
-#TODO Change to final fork url, the only change from https://github.com/alexeyab/darknet is : https://github.com/tdurand/darknet/pull/1/files
-
-git clone --depth 1 https://github.com/tdurand/darknet
-```
-
-#### Modify the Makefile before compiling
-
-Open the `Makefile` in the darknet folder and make these changes:
-
-*For Jetson TX2*
-
-```Makefile
-# Set these variable to 1:
-GPU=1
-CUDNN=1
-OPENCV=1
-
-# With sed
-#sed -i s/GPU=0/GPU=1/g Makefile
-#sed -i s/CUDA=0/CUDA=1/g Makefile
-#sed -i s/OPENCV=0/OPENCV=1/g Makefile
-
-# Uncomment the following line
-# For Jetson Tx2 or Drive-PX2 uncomment
-ARCH= -gencode arch=compute_62,code=[sm_62,compute_62]
-```
-
-*For Jetson Xavier*
-
-```Makefile
-# Set these variable to 1:
-GPU=1
-CUDNN=1
-CUDNN_HALF=1
-OPENCV=1
-
-# Uncomment the following line
-# Jetson XAVIER
-ARCH= -gencode arch=compute_72,code=[sm_72,compute_72]
-```
-
-#### Compile darknet
-
-```bash
-# Go to darknet folder
-cd darknet 
-# Optional: put jetson in performance mode to speed up things
-sudo nvpmodel -m 0
-sudo jetson_clocks
-# Compile
-make
-```
-
-#### Download weight file
-
-The .weights file needs to be in the root of the `/darknet` folder
-
-```bash
-cd darknet #if you are not already in the darknet folder
-wget https://pjreddie.com/media/files/yolo-voc.weights --no-check-certificate
-```
-
-*Direct link to weight file: [yolo-voc.weights](https://pjreddie.com/media/files/yolo-voc.weights)*
-
-### 2. Install node.js, mongodb
-
-```bash
-# Install node.js
-sudo apt-get install curl
-curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
-sudo apt-get install -y nodejs
-
-# Install mongodb
-# Detailed doc: https://computingforgeeks.com/how-to-install-latest-mongodb-on-ubuntu-18-04-ubuntu-16-04/
-# NB: at time of writing this guide, we install the mongodb package for ubuntu 16.04 as the arm64 version of it isn't available for 18.04
-sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
-echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
-sudo apt-get update
-sudo apt-get install -y openssl libcurl3 mongodb-org
-
-# Start service
-sudo systemctl start mongod
-
-# Enable service on boot
-sudo systemctl enable mongod
-```
-
-### 3. Install opendatacam
-
-- Download source
-
-```bash
-# TODO Remove branch v2 once released
-git clone --depth 1 -b v2 https://github.com/moovel/lab-opendatacam.git
-cd lab-opendatacam
-```
-
-- Specify **ABSOLUTE** `PATH_TO_YOLO_DARKNET` path in `lab-open-data-cam/config.json` (open data cam repo)
-
-```json
-{
-  "PATH_TO_YOLO_DARKNET" : "/home/nvidia/darknet"
-}
-```
-
-```bash
-# To get the absolute path, go the darknet folder and type
-pwd .
-```
-
-- Install **open data cam**
-
-```bash
-cd <path/to/open-data-cam>
-npm install
-npm run build
-```
-
-- Config **open data cam** to run on boot
-
-```bash
-# install pm2
-npm install pm2 -g |
-
-# go to opendatacam folder
-cd <path/to/open-data-cam>
-# launch pm2 at startup
-# this command gives you instructions to configure pm2 to
-# start at ubuntu startup, follow them
-sudo pm2 startup
-
-# Once pm2 is configured to start at startup
-# Configure pm2 to start the Open Traffic Cam app
-sudo pm2 start npm --name "open-data-cam" -- start
-sudo pm2 save
-```
+Link to RUN_WITHOUT_DOCKER.md
 
 ## How to create / update the docker image
 
-In order to build the docker image, you need to have:
-
-- The same Opencv version on host device than the one you will include in docker (for darknet compilation)
-- Compiled darknet on host device
-- Build docker image on the same architecture as the target device that will use the docker image. (ie: build docker image for Jetson TX2 on a Jetson TX2)
-
-
-*A docker image for TX2 would work on Xavier but wouldn't have the best performance possible, that is why we need several docker image for each architecture ([More on this](http://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/))*
-
-### 1. Install Opencv 3.4.3 (maybe move this to previous part):
-
-You can either:
-
-- Use pre-built binaries for your host device (see links below)
-- Compile your own (see below section on how to compile) 
-
-
-Then follow this to install it:
-
-```bash
-# Remove all old opencv stuffs installed by JetPack
-sudo apt-get purge libopencv*
-
-# Download .deb files
-
-# For Jetson TX2
-wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-tx2-3.4.3/OpenCV-3.4.3-aarch64-libs.deb
-wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-tx2-3.4.3/OpenCV-3.4.3-aarch64-dev.deb
-wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-tx2-3.4.3/OpenCV-3.4.3-aarch64-python.deb
-
-# For Jetson Xavier
-# TODO compile binaries specific for xavier architecture
-
-# Install .deb files
-sudo dpkg -i OpenCV-3.4.3-aarch64-libs.deb
-sudo apt-get install -f
-sudo dpkg -i OpenCV-3.4.3-aarch64-dev.deb
-sudo dpkg -i OpenCV-3.4.3-aarch64-python.deb
-
-# Verify opencv version
-pkg-config --modversion opencv
-```
-
-### 2. Compile Darknet with Opencv 3.4.3:
-
-- Follow the "1. Install Darknet (Neural network framework running YOLO)" guide after completing "1. Install Opencv 3.4.3"
-
-### 3. Create the docker image
-
-```bash
-# Create a docker folder to gather all dependencies
-mkdir docker
-cd docker
-
-# Copy previously compiled darknet in docker folder
-cp -R <pathtodarknet> .
-
-# Download opencv-3.4.3.tar.gz
-# This is the pre-installed version of opencv to include in the docker container
-# If you compiled Opencv yourself, you'll find how to create the tar file in the section explaning how to compile opencv
-
-# For Jetson TX2:
-wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-tx2-3.4.3/opencv-3.4.3.tar.gz
-
-# For Jetson Xavier:
-# TODO
-
-# Download the Dockerfile
-wget https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/Dockerfile
-
-# Build image
-sudo docker build -t opendatacam .
-```
-
-### 4. Try the docker image
-
-```bash
-# Get the darknet-docker script (TODO @tdurand remove v2 when releasing)
-wget https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/darknet-docker.sh
-
-# Chmod to give exec permissions
-chmod 777 darknet-docker.sh
-
-# Run image interactively while giving access to CUDA stuff
-sudo ./darknet-docker.sh run --rm -it opendatacam
-
-# Test darknet
-./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 0 -ext_output -dont_show -json_port 8070 -mjpeg_port 8090
-./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights video-stuttgart-10-fps-sd.mp4 -ext_output -dont_show -json_port 8070 -mjpeg_port 8090
-./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink" -ext_output -dont_show -json_port 8070 -mjpeg_port 8090
-```
-
-### 5. Publish the docker image
-
-```bash
-# Log into the Docker Hub
-docker login --username=yourhubusername
-# Check the image ID using
-docker images
-# You will see something like:
-# REPOSITORY              TAG       IMAGE ID         CREATED           SIZE
-# opendatacam             latest    023ab91c6291     3 minutes ago     1.975 GB
-
-# Tag your image
-docker tag 023ab91c6291 yourhubusername/opendatacam:v2.0.1
-
-# Push image
-docker push yourhubusername/opendatacam
-```
-
-### (Optional) Compile Opencv on jetson (this takes 1h+)
-
-*Compile*
-
-Need this because darknet needs to be compiled with the same version as the one running inside the docker file
-
-```bash
-# Optional: put jetson in high performance mode to speed up things
-sudo nvpmodel -m 0
-sudo jetson_clocks
-
-# Clone https://github.com/jetsonhacks/buildOpenCVXavier 
-# Same repo for xavier or tx2 since jetpack 4.2
-git clone https://github.com/jetsonhacks/buildOpenCVXavier
-cd buildOpenCVXavier
-
-# Edit the ARCH_BIN variable
-vi buildAndPackageOpenCV.sh
-# Set ARCH_BIN=6.2 in buildAndPackageOpenCV.sh for Jetson TX2
-# Set ARCH_BIN=7.2 in buildAndPackageOpenCV.sh for Jetson Xavier
-
-# Specify the right ARCH_BIN makes runtime faster: http://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/
-
-# Then run the build command, on TX2 it takes more than 1 hour
-./buildAndPackageOpenCV.sh
-
-# The binary files will be in ~/opencv/build
-cd ~/opencv/build
-```
-
-There is one extra step to do to prepare the opencv-3.4.3.tar.gz file to include in the docker container. The one built before nests a folder inside and we want to remove it
-
-```bash
-# TODO @tdurand FINISH THIS PART
-
-# Create the opencv compiled tar package
-
-# Go to opencv/build
-cd ~/opencv/build
-
-# Untar
-TODO
-
-# Move to directory untar
-cp OpenCV
-
-# Tar the content in opencv-3.4.3.tar.gz
-tar -czvf opencv-3.4.3.tar.gz .
-```
+Link to CREATE_DOCKER_IMAGE.md
 
 ## 💾 Exports documentation
 
@@ -438,273 +118,11 @@ This export gives you the raw data of all objects tracked with frame timestamps 
 }
 ```
 
-## ⚙ System overview
 
-See [technical architecture](#technical-architecture) for a more detailed overview
-
-![open traffic cam architecture](https://user-images.githubusercontent.com/533590/33759265-044eb90e-dc02-11e7-9533-9588f7f5c4a2.png)
-
-[Edit schema](https://docs.google.com/drawings/d/1Pw3rsHGyj_owZUScRwBnZKb1IltA3f0R8yCmcdEbnr8/edit?usp=sharing)
-
-## 🛠 Step by Step install guide
-
-> NOTE: lots of those steps needs to be automated by integrating them in a docker image or something similar, for now need to follow the full procedure
-
-### ⚡️Flash Jetson Board:
-
-- Download [JetPack](https://developer.nvidia.com/embedded/downloads#?search=jetpack%203.1) to Flash your Jetson board with the linux base image and needed dependencies
-- Follow the [install guide](http://docs.nvidia.com/jetpack-l4t/3.1/index.html#developertools/mobile/jetpack/l4t/3.1/jetpack_l4t_install.htm) provided by NVIDIA
-
-> NOTE: You also can find a detailed video tutorial for flashing the Jetson board [here](https://www.youtube.com/watch?v=D7lkth34rgM).
-
-### 🛩Prepare Jetson Board
-
-- Update packages
-
-  ```bash
-  sudo apt-get update
-  ```
-
-- Install **cURL**
-
-  ```bash
-  sudo apt-get install curl
-  ```
-
-- install **git-core**
-
-  ```bash
-  sudo apt-get install git-core
-  ```
-
-- Install **nodejs** (v8):
-
-  ```bash
-  curl -sL https://deb.nodesource.com/setup_8.x | sudo -E bash -
-  sudo apt-get install -y nodejs
-  sudo apt-get install -y build-essential
-  ```
-
-- Install **ffmpeg** (v3)
-
-  ```bash
-  sudo add-apt-repository ppa:jonathonf/ffmpeg-3
-  # sudo add-apt-repository ppa:jonathonf/tesseract (ubuntu 14.04 only!!)
-  sudo apt update && sudo apt upgrade
-  sudo apt-get install ffmpeg
-  ```
-
-- Optional: Install **nano**
-
-  ```bash
-  sudo apt-get install nano
-  ```
-
-### 📡Configure Ubuntu to turn the jetson into a wifi access point
-
-- enable SSID broadcast
-
-  add the following line to `/etc/modprobe.d/bcmdhd.conf`
-
-  ```bash
-  options bcmdhd op_mode=2
-  ```
-
-  further infos: [here](https://devtalk.nvidia.com/default/topic/910608/jetson-tx1/setting-up-wifi-access-point-on-tx1/post/4786912/#4786912)
-
-- Configure hotspot via UI
-
-  **follow this guide: <https://askubuntu.com/a/762885>**
-
-- Define Address range for the hotspot network
-
-  - Go to the file named after your Hotspot SSID in `/etc/NetworkManager/system-connections`
-
-    ```bash
-    cd /etc/NetworkManager/system-connections
-    sudo nano <YOUR-HOTSPOT-SSID-NAME>
-    ```
-
-  - Add the following line to this file:
-
-    ```
-    [ipv4]
-    dns-search=
-    method=shared
-    address1=192.168.2.1/24,192.168.2.1 <--- this line
-    ```
-
-  - Restart the network-manager
-
-    ```bash
-    sudo service network-manager restart
-    ```
-
-### 🚀Configure jetson to start in overclocking mode:
-
-- Add the following line to `/etc/rc.local` before `exit 0`:
-
-  ```bash
-  #Maximize performances
-  ( sleep 60 && /home/ubuntu/jetson_clocks.sh )&
-  ```
-
-- Enable `rc.local.service`
-
-  ```bash
-  chmod 755 /etc/init.d/rc.local
-  sudo systemctl enable rc-local.service
-  ```
-
-### 👁Install Darknet-net:
-
-**IMPORTANT** Make sure that **openCV** (v2) and **CUDA** will be installed via JetPack (post installation step)
-if not: (fallback :openCV 2: [install script](https://gist.github.com/jayant-yadav/809723151f2f72a93b2ee1040c337427#file-opencv_install-sh), CUDA: no easy way yet)
-
-- Install **libwsclient**:
-
-  ```bash
-  git clone https://github.com/PTS93/libwsclient
-  cd libwsclient
-  ./autogen.sh
-  ./configure && make && sudo make install
-  ```
-
-- Install **liblo**:
-
-  ```bash
-  wget https://github.com/radarsat1/liblo/releases/download/0.29/liblo-0.29.tar.gz --no-check-certificate
-  tar xvfz liblo-0.29.tar.gz
-  cd liblo-0.29
-  ./configure && make && sudo make install
-  ```
-
-- Install **json-c**:
-
-  ```bash
-  git clone https://github.com/json-c/json-c.git
-  cd json-c
-  sh autogen.sh
-  ./configure && make && make check && sudo make install
-  ```
-
-- Install **darknet-net**:
-
-  ```bash
-  git clone https://github.com/meso-unimpressed/darknet-net.git
-  ```
-
-- Download **weight files**:
-
-  link: [yolo.weight-files](https://pjreddie.com/media/files/yolo-voc.weights)
-
-  Copy `yolo-voc.weights` to `darknet-net` repository path (root level)
-
-  e.g.:
-
-  ```
-  darknet-net
-    |-cfg
-    |-data
-    |-examples
-    |-include
-    |-python
-    |-scripts
-    |-src
-    |# ... other files
-    |yolo-voc.weights <--- Weight file should be in the root directory
-  ```
-
-  ```bash
-  wget https://pjreddie.com/media/files/yolo-voc.weights --no-check-certificate
-  ```
-
-- Make **darknet-net**
-
-  ```bash
-  cd darknet-net
-  make
-  ```
-
-### 🎥Install the open-data-cam node app
-
-- Install **pm2** and **next** globally
-
-  ```bash
-  sudo npm i -g pm2
-  sudo npm i -g next
-  ```
-
-- Clone **open_data_cam** repo:
-
-  ```bash
-  git clone https://github.com/moovel/lab-open-data-cam.git
-  ```
-
-- Specify **ABSOLUTE** `PATH_TO_YOLO_DARKNET` path in `lab-open-data-cam/config.json` (open data cam repo)
-
-  e.g.:
-
-  ```Json
-  {
-  	"PATH_TO_YOLO_DARKNET" : "/home/nvidia/darknet-net"
-  }
-  ```
-
-- Install **open data cam**
-
-  ```bash
-  cd <path/to/open-data-cam>
-  npm install
-  npm run build
-  ```
-
-- Run **open data cam** on boot
-
-  ```bash
-  cd <path/to/open-data-cam>
-  # launch pm2 at startup
-  # this command gives you instructions to configure pm2 to
-  # start at ubuntu startup, follow them
-  sudo pm2 startup
-
-  # Once pm2 is configured to start at startup
-  # Configure pm2 to start the Open Traffic Cam app
-  sudo pm2 start npm --name "open-data-cam" -- start
-  sudo pm2 save
-  ```
-
-### 🏁 Restart the jetson board and open `http://IP-OF-THE-JETSON-BOARD:8080/`
-
-### Connect you device to the jetson
-
-> 💡 We should maybe set up a "captive portal" to avoid people needing to enter the ip of the jetson, didn't try yet 💡
-
-When the jetson is started you should have a wifi "YOUR-HOTSPOT-NAME" available.
-
-- Connect you device to the jetson wifi
-- Open you browser and open http://IPOFTHEJETSON:8080
-- In our case, IPOFJETSON is: http://192.168.2.1:8080
-
-### You are done 👌
-
-> 🚨 This alpha version of december is really alpha and you might need to restart ubuntu a lot as it doesn't clean up process well when you switch between the counting and the webcam view 🚨
-
-You should be able to monitor the jetson from the UI we've build and count 🚗 🏍 🚚 !
-
-### ‼️Automatic installation (experimental)
-
-The install script for autmatic installation
-
-> Setting up the access point is not automated yet! **follow this guide: https://askubuntu.com/a/762885 ** to set up the hotspot.
-
-- run the `install.sh` script directly from GitHub
-
-  ```bash
-  wget -O - https://raw.githubusercontent.com/moovel/lab-opendatacam/master/install/install.sh | bash
-  ```
 
 ## Troubleshoothing
+
+TODO UPDATE this
 
 To debug the app log onto the jetson board and inspect the logs from pm2 or stop the pm2 service (`sudo pm2 stop <pid>`) and start the app by using `sudo npm start` to see the console output directly.
 
@@ -729,6 +147,8 @@ To debug the app log onto the jetson board and inspect the logs from pm2 or stop
   ```
 
 ## 🗃 Run open data cam on a video file instead of the webcam feed:
+
+TODO update
 
 It is possible to run Open Data Cam on a video file instead of the webcam feed.
 
@@ -852,6 +272,8 @@ In order to track all the classes (default value), you need to set it to:
 
 ### Technical architecture
 
+TODO update
+
 ![technical architecture open traffic cam](https://user-images.githubusercontent.com/533590/33723806-ed836ace-db6d-11e7-9d7b-12b79e3bcbed.jpg)
 
 [Edit schema](https://docs.google.com/drawings/d/1GCYcnQeGTiifmr3Hc77x6RjCs5RZhMvgIQZZP_Yzbs0/edit?usp=sharing)
@@ -866,9 +288,3 @@ In order to track all the classes (default value), you need to set it to:
 
 `ssh nvidia@192.168.1.222`
 
-#### Install it and run:
-
-```bash
-yarn install
-yarn run dev
-```
