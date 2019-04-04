@@ -110,6 +110,22 @@ To debug the app log onto the jetson board and inspect the logs from pm2 or stop
 
 ## 🛠 Development notes
 
+### Run simulation mode
+
+Simulation mode is useful to work on the UI and node.js feature deployment without having to run the neural network / the webcam.
+
+```bash
+# Clone repo
+git@github.com:moovel/lab-opendatacam.git
+# Switch to v2 branch
+git checkout v2
+# Install dependencies
+npm i
+# Run in dev mode
+npm run dev
+# Open browser on http://localhost:8080/
+```
+
 ### Technical architecture
 
 TODO update
@@ -117,6 +133,7 @@ TODO update
 ![technical architecture open traffic cam](https://user-images.githubusercontent.com/533590/33723806-ed836ace-db6d-11e7-9d7b-12b79e3bcbed.jpg)
 
 [Edit schema](https://docs.google.com/drawings/d/1GCYcnQeGTiifmr3Hc77x6RjCs5RZhMvgIQZZP_Yzbs0/edit?usp=sharing)
+
 
 ### Miscellaneous dev tips
 
