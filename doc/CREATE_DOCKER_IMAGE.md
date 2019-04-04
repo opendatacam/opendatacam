@@ -44,6 +44,9 @@ wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-tx2-3.4.3/opencv-3.4.3.ta
 # Download the Dockerfile
 wget https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/Dockerfile
 
+# Download a script to include in the docker container
+wget https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/docker-start-mongo-and-opendatacam.sh
+
 # Build image
 sudo docker build -t opendatacam .
 ```

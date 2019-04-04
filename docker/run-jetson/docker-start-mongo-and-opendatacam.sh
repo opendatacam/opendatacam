@@ -1,6 +1,9 @@
 #!/bin/bash
 
+# THIS RUNS INSIDE THE DOCKER CONTAINER (it is copied to the docker container at build time)
 # Using: https://docs.docker.com/config/containers/multi-service_container/
+# systemd isn't available on ubuntu inside docker
+# Maybe can use pm2 inside a docker container
 
 # Start the first process
 mongod

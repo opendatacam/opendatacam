@@ -45,5 +45,5 @@ EXPOSE 8080 8070 8090 27017
 
 # # Because we want to run mongodb and the node.js app
 # # See https://docs.docker.com/config/containers/multi-service_container/
-COPY startopendatacam.sh startopendatacam.sh
-CMD ./startopendatacam.sh
+COPY docker-start-mongo-and-opendatacam.sh docker-start-mongo-and-opendatacam.sh
+CMD ./docker-start-mongo-and-opendatacam.sh

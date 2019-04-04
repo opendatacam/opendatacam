@@ -52,11 +52,12 @@ chmod 777 darknet-docker.sh
 
 # Pull and run interactively the docker image
 sudo ./darknet-docker.sh run --rm -it tdurand/opendatacam:v0.0.1
+
 ```
 
 ## ️️⚙️ Opendatacam settings
 
-TODO document config.json file
+TODO document config.json file and mount config file at runtime in docker container: https://www.thepolyglotdeveloper.com/2018/06/mapping-volumes-passing-environment-variables-containerized-docker-applications/
 
 [Config doc](https://github.com/moovel/lab-opendatacam/blob/v2/doc/CONFIG.md)
 
