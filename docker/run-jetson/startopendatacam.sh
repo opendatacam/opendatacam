@@ -3,7 +3,7 @@
 # Using: https://docs.docker.com/config/containers/multi-service_container/
 
 # Start the first process
-mongod -D
+mongod
 status=$?
 if [ $status -ne 0 ]; then
   echo "Failed to start mongod: $status"
@@ -11,7 +11,7 @@ if [ $status -ne 0 ]; then
 fi
 
 # Start the second process
-npm run start -D
+npm run start
 status=$?
 if [ $status -ne 0 ]; then
   echo "Failed to start npm run start: $status"
