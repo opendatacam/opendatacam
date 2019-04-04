@@ -10,7 +10,21 @@ It is very alpha and we do not provide any guarantee that this will work for you
 
 ### Table of Contents
 
-TODO
+  * [💻 Hardware pre-requisite](#---hardware-pre-requisite)
+  * [🎬 Get Started, quick setup](#---get-started--quick-setup)
+    + [1. Flash Jetson board ⚡️ ️(optional)️:](#1-flash-jetson-board------optional---)
+    + [2. Install and run Opendatacam:](#2-install-and-run-opendatacam-)
+  * [⚙️ Customize Opendatacam](#customize-opendatacam)
+  * [💾 Exports documentation and API](#---exports-documentation-and-api)
+  * [🎛 Advanced uses](#---advanced-uses)
+    + [How to run opendatacam without docker](#how-to-run-opendatacam-without-docker)
+    + [How to create / update the docker image](#how-to-create---update-the-docker-image)
+  * [Troubleshoothing](#troubleshoothing)
+  * [🛠 Development notes](#---development-notes)
+    + [Technical architecture](#technical-architecture)
+    + [Miscellaneous dev tips](#miscellaneous-dev-tips)
+      - [Mount jetson filesystem as local filesystem on mac for dev](#mount-jetson-filesystem-as-local-filesystem-on-mac-for-dev)
+      - [SSH jetson](#ssh-jetson)
 
 ## 💻 Hardware pre-requisite
 
@@ -22,13 +36,12 @@ TODO
 
 TODO add video
 
-### ⚡️Flash Jetson board (optional):
+### 1. Flash Jetson board to jetpack 4.2+ ⚡️ ️(optional)️:
 
-*We support jetpack version 4.2+*
+If your jetson does not have jetpack 4.2 *(CUDA 10, TensorRT 5, cuDNN 7.3, Ubuntu 18.04)*, [follow this guide](https://github.com/moovel/lab-opendatacam/blob/v2/doc/FLASH_JETSON.md)
 
-If your jetson do not have jetpack 4.2, [follow this guide](https://github.com/moovel/lab-opendatacam/blob/v2/doc/FLASH_JETSON.md)
 
-### Install and run Opendatacam:
+### 2. Install and run Opendatacam:
 
 ```bash
 # Get the darknet-docker script (TODO @tdurand remove v2 when releasing)
@@ -41,17 +54,19 @@ chmod 777 darknet-docker.sh
 sudo ./darknet-docker.sh run --rm -it tdurand/opendatacam:v0.0.1
 ```
 
-### Customize Opendatacam with config.json
+## ️️⚙️ Opendatacam settings
 
-TODO 
+TODO document config.json file
 
 [Config doc](https://github.com/moovel/lab-opendatacam/blob/v2/doc/CONFIG.md)
 
 
 ## 💾 Exports documentation and API
 
-TODO See how we document this see v1 docs 
+TODO See how we organize this 
 
+
+see v1 docs:
 [https://github.com/moovel/lab-opendatacam#-exports-documentation](https://github.com/moovel/lab-opendatacam#-exports-documentation)
 
 
