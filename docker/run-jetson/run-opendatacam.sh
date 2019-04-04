@@ -4,7 +4,7 @@ wget https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jets
 # Chmod to give exec permissions
 chmod 777 darknet-docker.sh
 
-# Pull, install and run opendatacam container when docker starts (on boot)
+# Pull, install and run opendatacam container when docker starts (on boot with --restart unless-stopped, -d is for detached mode)
 sudo ./darknet-docker.sh run -d --restart unless-stopped tdurand/opendatacam:v2.0.0-beta.1-tx2
 
 # Message that docker container has been started and opendatacam will be available shorty on <IP>

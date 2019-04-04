@@ -6,22 +6,30 @@ Behind the scenes, it feeds the webcam stream to a neural network (YOLO darknet)
 
 It is very alpha and we do not provide any guarantee that this will work for your use case, but we conceived it as a starting point from where you can build-on & improve.
 
+[See Demo Video (60s)](https://www.youtube.com/watch?v=NwXrXHHGSgk)
+
 [![Demo open data cam](https://img.youtube.com/vi/A-TvSjAU1pk/0.jpg)](https://www.youtube.com/watch?v=A-TvSjAU1pk)
 
 ### Table of Contents
 
-  * [Hardware pre-requisite](#-hardware-pre-requisite)
-  * [Get Started, quick setup](#-get-started--quick-setup)
-    + [1. Flash Jetson board ️(optional)️:](#1-flash-jetson-board------optional---)
-    + [2. Install and run Opendatacam:](#2-install-and-run-opendatacam-)
-  * [Customize Opendatacam](#customize-opendatacam)
-  * [Exports documentation and API](#-exports-documentation-and-api)
+- [Open data cam 2.0.0-beta.1](#open-data-cam-200-beta1)
+    + [Table of Contents](#table-of-contents)
+  * [Hardware pre-requisite](#---hardware-pre-requisite)
+  * [Get Started, quick setup](#---get-started--quick-setup)
+    + [1. Flash Jetson board to jetpack 4.2+ ⚡️ ️(optional)️:](#1-flash-jetson-board-to-jetpack-42-------optional---)
+    + [2. Install and start Opendatacam (3 min 🚀):](#2-install-and-start-opendatacam--3-min-----)
+    + [3. Run Opendatacam 🖖](#3-run-opendatacam---)
+    + [(optional) Upgrade / Stop Opendatacam:](#-optional--upgrade---stop-opendatacam-)
+  * [Opendatacam settings](#-----opendatacam-settings)
+  * [Exports documentation and API](#---exports-documentation-and-api)
   * [Advanced uses](#---advanced-uses)
     + [How to run opendatacam without docker](#how-to-run-opendatacam-without-docker)
     + [How to create / update the docker image](#how-to-create---update-the-docker-image)
   * [Troubleshoothing](#troubleshoothing)
-  * [Development notes](#-development-notes)
+  * [Development notes](#---development-notes)
+    + [Run simulation mode](#run-simulation-mode)
     + [Technical architecture](#technical-architecture)
+    + [Docker useful commands](#docker-useful-commands)
     + [Miscellaneous dev tips](#miscellaneous-dev-tips)
       - [Mount jetson filesystem as local filesystem on mac for dev](#mount-jetson-filesystem-as-local-filesystem-on-mac-for-dev)
       - [SSH jetson](#ssh-jetson)
@@ -34,14 +42,17 @@ It is very alpha and we do not provide any guarantee that this will work for you
 
 ## 🎬 Get Started, quick setup
 
-TODO add video
+[See Install Tutorial (30s)](https://www.youtube.com/watch?v=NwXrXHHGSgk)
+
+[![Install open data cam](https://img.youtube.com/vi/NwXrXHHGSgk/0.jpg)](https://www.youtube.com/watch?v=NwXrXHHGSgk)
+
 
 ### 1. Flash Jetson board to jetpack 4.2+ ⚡️ ️(optional)️:
 
 If your jetson does not have jetpack 4.2 *(CUDA 10, TensorRT 5, cuDNN 7.3, Ubuntu 18.04)*, [follow this guide](https://github.com/moovel/lab-opendatacam/blob/v2/doc/FLASH_JETSON.md)
 
 
-### 2. Install and start Opendatacam:
+### 2. Install and start Opendatacam (3 min 🚀):
 
 Open a terminal or ssh to you jetson and run this command:
 
@@ -54,6 +65,21 @@ sudo wget -O - https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docke
 Open your browser at http://<IPOFJETSON>:8080
 
 *If you are running with the jetson connected to a screen: http://localhost:8080*
+
+### (optional) Upgrade / Stop Opendatacam:
+
+```bash
+## Stop opendatacam docker container
+
+# List containers
+sudo docker container list
+
+# Stop container (get id from previous command)
+sudo docker stop <containerID>
+
+# Then you can run the install command to install & run the latest version
+sudo wget -O - https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/run-opendatacam.sh | bash
+```
 
 ## ️️⚙️ Opendatacam settings
 
