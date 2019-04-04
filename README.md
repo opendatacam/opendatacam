@@ -10,17 +10,17 @@ It is very alpha and we do not provide any guarantee that this will work for you
 
 ### Table of Contents
 
-  * [Hardware pre-requisite](#---hardware-pre-requisite)
-  * [Get Started, quick setup](#---get-started--quick-setup)
+  * [Hardware pre-requisite](#-hardware-pre-requisite)
+  * [Get Started, quick setup](#-get-started--quick-setup)
     + [1. Flash Jetson board ️(optional)️:](#1-flash-jetson-board------optional---)
     + [2. Install and run Opendatacam:](#2-install-and-run-opendatacam-)
   * [Customize Opendatacam](#customize-opendatacam)
-  * [Exports documentation and API](#---exports-documentation-and-api)
+  * [Exports documentation and API](#-exports-documentation-and-api)
   * [Advanced uses](#---advanced-uses)
     + [How to run opendatacam without docker](#how-to-run-opendatacam-without-docker)
     + [How to create / update the docker image](#how-to-create---update-the-docker-image)
   * [Troubleshoothing](#troubleshoothing)
-  * [Development notes](#---development-notes)
+  * [Development notes](#-development-notes)
     + [Technical architecture](#technical-architecture)
     + [Miscellaneous dev tips](#miscellaneous-dev-tips)
       - [Mount jetson filesystem as local filesystem on mac for dev](#mount-jetson-filesystem-as-local-filesystem-on-mac-for-dev)
