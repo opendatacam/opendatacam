@@ -70,18 +70,18 @@ sudo ./darknet-docker.sh run --rm -it opendatacam
 
 ```bash
 # Log into the Docker Hub
-docker login --username=yourhubusername
+sudo docker login --username=yourhubusername
 # Check the image ID using
-docker images
+sudo docker images
 # You will see something like:
 # REPOSITORY              TAG       IMAGE ID         CREATED           SIZE
 # opendatacam             latest    023ab91c6291     3 minutes ago     1.975 GB
 
 # Tag your image
-docker tag 023ab91c6291 yourhubusername/opendatacam:v2.0.1
+sudo docker tag 023ab91c6291 yourhubusername/opendatacam:v2.0.1
 
 # Push image
-docker push yourhubusername/opendatacam
+sudo docker push yourhubusername/opendatacam
 ```
 
 ### (Optional) Compile Opencv on jetson (this takes 1h+)
