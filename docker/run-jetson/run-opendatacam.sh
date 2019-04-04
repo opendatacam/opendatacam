@@ -6,3 +6,8 @@ chmod 777 darknet-docker.sh
 
 # Pull, install and run opendatacam container when docker starts (on boot)
 sudo ./darknet-docker.sh run -d --restart unless-stopped tdurand/opendatacam:v2.0.0-beta.1-tx2
+
+# Message that docker container has been started and opendatacam will be available shorty on <IP>
+echo "Opendatacam docker container started successfully, it might take up to 1 min to start the node app"
+echo "Open browser at http://<IP_OF_JETSON>:8080 or http://localhost:8080"
+
