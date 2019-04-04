@@ -1,4 +1,4 @@
-# Open data cam v2 beta (with YOLO)
+# Open data cam 2.0.0-beta.1
 
 This project is offline lightweight DIY solution to monitor urban landscape. After installing this software on the specified hardware (Nvidia Jetson board + Logitech webcam), you will be able to count cars, pedestrians, motorbikes from your webcam live stream.
 
@@ -6,7 +6,7 @@ Behind the scenes, it feeds the webcam stream to a neural network (YOLO darknet)
 
 It is very alpha and we do not provide any guarantee that this will work for your use case, but we conceived it as a starting point from where you can build-on & improve.
 
-<TODO insert demo video>
+[![Demo open data cam](https://img.youtube.com/vi/A-TvSjAU1pk/0.jpg)](https://www.youtube.com/watch?v=A-TvSjAU1pk)
 
 ### Table of Contents
 
