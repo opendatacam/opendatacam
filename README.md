@@ -42,14 +42,11 @@ It is very alpha and we do not provide any guarantee that this will work for you
 
 ## 🎬 Get Started, quick setup
 
-[See Install Tutorial (30s)](https://www.youtube.com/watch?v=NwXrXHHGSgk)
+### 1. Flash Jetson board to jetpack 4.2+ ⚡️ ️(if not installed)️:
 
-[![Install open data cam](https://img.youtube.com/vi/NwXrXHHGSgk/0.jpg)](https://www.youtube.com/watch?v=NwXrXHHGSgk)
+If your jetson does not have jetpack 4.2 *(CUDA 10, TensorRT 5, cuDNN 7.3, Ubuntu 18.04)*
 
-
-### 1. Flash Jetson board to jetpack 4.2+ ⚡️ ️(optional)️:
-
-If your jetson does not have jetpack 4.2 *(CUDA 10, TensorRT 5, cuDNN 7.3, Ubuntu 18.04)*, [follow this guide](https://github.com/moovel/lab-opendatacam/blob/v2/doc/FLASH_JETSON.md)
+[Follow this guide to flash your jetson](https://github.com/moovel/lab-opendatacam/blob/v2/doc/FLASH_JETSON.md)
 
 
 ### 2. Install and start Opendatacam (3 min 🚀):
@@ -59,6 +56,10 @@ Open a terminal or ssh to you jetson and run this command:
 ```bash
 sudo wget -O - https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/run-opendatacam.sh | bash
 ```
+
+[See Install Tutorial (30s)](https://www.youtube.com/watch?v=NwXrXHHGSgk)
+
+[![Install open data cam](https://img.youtube.com/vi/NwXrXHHGSgk/0.jpg)](https://www.youtube.com/watch?v=NwXrXHHGSgk)
 
 ### 3. Run Opendatacam 🖖
 
