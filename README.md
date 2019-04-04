@@ -67,7 +67,7 @@ Open your browser at http://<IPOFJETSON>:8080
 
 *If you are running with the jetson connected to a screen: http://localhost:8080*
 
-### (optional) Upgrade / Stop Opendatacam:
+_How to upgrade / stop Opendatacam_
 
 ```bash
 ## Stop opendatacam docker container
