@@ -51,7 +51,7 @@ If your jetson does not have jetpack 4.2 *(CUDA 10, TensorRT 5, cuDNN 7.3, Ubunt
 
 ### 2. Install and start Opendatacam (3 min 🚀):
 
-Open a terminal or ssh to you jetson and run this command:
+Open a terminal or ssh to you jetson and run this command (make sure your webcam is connected):
 
 ```bash
 sudo wget -O - https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/run-opendatacam.sh | bash
@@ -67,7 +67,16 @@ Open your browser at http://<IPOFJETSON>:8080
 
 *If you are running with the jetson connected to a screen: http://localhost:8080*
 
-**How to upgrade / stop Opendatacam**
+**How to show logs Opendatacam**
+
+```bash
+# List containers
+sudo docker container list
+
+sudo docker logs <containerID>
+```
+
+**How to upgrade / stop / restart Opendatacam**
 
 ```bash
 ## Stop opendatacam docker container
@@ -81,6 +90,7 @@ sudo docker stop <containerID>
 # Then you can run the install command to install & run the latest version
 sudo wget -O - https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/run-opendatacam.sh | bash
 ```
+
 
 ## ️️⚙️ Opendatacam settings
 
@@ -139,6 +149,12 @@ To debug the app log onto the jetson board and inspect the logs from pm2 or stop
 ## 🛠 Development notes
 
 ### Run simulation mode
+
+Dependencies:
+
+- Mongodb: https://docs.mongodb.com/manual/installation/#mongodb-community-edition
+
+- Node-gyp: https://github.com/nodejs/node-gyp , should be installed with npm i but if you have errors look into this
 
 Simulation mode is useful to work on the UI and node.js feature deployment without having to run the neural network / the webcam.
 
