@@ -30,6 +30,7 @@ module.exports = {
     // Comment the following lines to run on a file directly
     // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink" -ext_output -dont_show
     // YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-c','0', '-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{ // Without gstreamer
+    // YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/coco.data', 'cfg/yolov3-tiny.cfg', 'yolov3-tiny.weights','-c', '0', '-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{
     YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights',"v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink", '-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{
       max: 1,
       cwd: config.PATH_TO_YOLO_DARKNET,
