@@ -4,7 +4,8 @@
   "scripts": {
     "dev": "node server.js",
     "build": "next build",
-    "start": "PORT=8080 NODE_ENV=production node server.js"
+    "start": "PORT=8080 NODE_ENV=production node server.js",
+    "generateapidoc": "apidoc -i . -e node_modules/ -o apidoc/"
   },
   "dependencies": {
     "@zeit/next-css": "^1.0.1",
@@ -33,6 +34,7 @@
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",
     "request": "^2.88.0",
+    "serve-static": "^1.13.2",
     "server-sent-events": "^1.0.1",
     "uuid": "^3.3.2"
   },
@@ -40,6 +42,7 @@
     "tailwindcss": "^0.7.4",
     "postcss-easy-import": "^3.0.0",
     "cssnano": "^4.1.10",
-    "autoprefixer": "^9.4.10"
+    "autoprefixer": "^9.4.10",
+    "apidoc": "^0.17.7"
   }
 }

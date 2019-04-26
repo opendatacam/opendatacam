@@ -24,7 +24,7 @@ class WebcamStream extends Component {
         <img
            width={this.props.resolution.w}
            height={this.props.resolution.h}
-           src="/webcamstream"
+           src="/webcam/stream"
          />
         <style jsx>{`
           {/* @media (min-aspect-ratio: 16/9) {

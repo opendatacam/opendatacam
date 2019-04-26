@@ -97,6 +97,9 @@ class Menu extends Component {
               </button>
             </div>
           </div>
+          <a target="_blank" href="/api/doc">
+            <h4 className="mb-2">API Documentation</h4>
+          </a>
         </div>
         <style jsx>{`
           .menu {

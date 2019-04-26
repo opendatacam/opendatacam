@@ -1,4 +1,5 @@
 const express = require('express')();
+const serveStatic = require('serve-static')
 const csv = require('csv-express');
 const bodyParser = require('body-parser');
 const http = require('http');
@@ -91,18 +92,45 @@ app.prepare()
     return app.render(req, res, '/', query)
   })
 
-  // Proxy MJPEG stream from darknet to avoid freezing issues
-  express.get('/webcamstream', (req, res) => {
+  /**
+   * @api {get} /webcam/stream Stream (MJPEG)
+   * @apiName Stream
+   * @apiGroup Webcam
+   *
+   * @apiDescription Limitation: Only available after YOLO has started
+   * 
+   * This endpoint streams the webcam as a MJPEG stream. (streams the sequence of JPEG frames over HTTP).
+   * The TCP connection is not closed as long as the client wants to receive new frames and the server wants to provide new frames
+   * Only support one client at a time, if another one connect, the first HTTP connection is closed
+   * 
+   * More on MJPEG over HTTP: https://en.wikipedia.org/wiki/Motion_JPEG#M-JPEG_over_HTTP 
+   *
+  */
+  express.get('/webcam/stream', (req, res) => {
     const urlData = getURLData(req);
+    // Proxy MJPEG stream from darknet to avoid freezing issues
     return new MjpegProxy(`http://${urlData.address}:8090`).proxyRequest(req, res);
   });
 
-  express.get('/console',  (req, res) => {
-    res.send(stdoutBuffer);
+  /**
+   * @api {get} /webcam/resolution Resolution
+   * @apiName Resolution
+   * @apiGroup Webcam
+   *
+   * @apiDescription Limitation: Only available after YOLO has started
+   * 
+   * @apiSuccessExample Success Response:
+   *     {
+   *       "w": 1280,
+   *       "h": 720
+   *     }
+  */
+  express.get('/webcam/resolution',  (req, res) => {
+    res.json(videoResolution);
   })
 
-  express.get('/videoresolution',  (req, res) => {
-    res.json(videoResolution);
+  express.get('/console',  (req, res) => {
+    res.send(stdoutBuffer);
   })
 
   express.post('/counter/areas', (req, res) => {
@@ -153,10 +181,14 @@ app.prepare()
     });
   })
 
+  express.use("/api/doc", serveStatic('apidoc'))
+
   // Global next.js handler
   express.get('*', (req, res) => {
     return handle(req, res)
   })
+
+  
 
   server.listen(port, (err) => {
     if (err) throw err
