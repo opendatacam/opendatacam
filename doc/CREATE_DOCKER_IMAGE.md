@@ -35,6 +35,9 @@ cp -R <pathtodarknet> .
 # This is the pre-installed version of opencv to include in the docker container
 # If you compiled Opencv yourself, you'll find how to create the tar file in the section explaning how to compile opencv
 
+# For Jetson Nano:
+wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-nano-3.4.3/opencv-3.4.3.tar.gz
+
 # For Jetson TX2:
 wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-tx2-3.4.3/opencv-3.4.3.tar.gz
 
@@ -78,13 +81,16 @@ sudo docker images
 # opendatacam             latest    023ab91c6291     3 minutes ago     1.975 GB
 
 # Tag your image
-sudo docker tag 023ab91c6291 yourhubusername/opendatacam:v2.0.1
+sudo docker tag 023ab91c6291 yourhubusername/opendatacam:v2.0.0-beta.1-tx2
+
+# Or for nano : v2.0.0-beta.1-nano
+# Or for xavier : v2.0.0-beta.1-xavier
 
 # Push image
 sudo docker push yourhubusername/opendatacam
 ```
 
-### (Optional) Compile Opencv on jetson (this takes 1h+)
+### (Optional) Compile Opencv on jetson (this takes 1-2h)
 
 *Compile*
 
@@ -94,6 +100,9 @@ Need this because darknet needs to be compiled with the same version as the one 
 # Optional: put jetson in high performance mode to speed up things
 sudo nvpmodel -m 0
 sudo jetson_clocks
+
+# For jetson nano, adding a swap partition of 6GB is essential
+# Follow this article https://www.jetsonhacks.com/2019/04/14/jetson-nano-use-more-memory/
 
 # Clone https://github.com/jetsonhacks/buildOpenCVXavier 
 # Same repo for xavier or tx2 or nano since jetpack 4.2
@@ -120,19 +129,19 @@ cd ~/opencv/build
 There is one extra step to do to prepare the opencv-3.4.3.tar.gz file to include in the docker container. The one built before nests a folder inside and we want to remove it
 
 ```bash
-# TODO @tdurand FINISH THIS PART
-
 # Create the opencv compiled tar package
 
 # Go to opencv/build
 cd ~/opencv/build
 
-# Untar
-TODO
+# Untar the default OpenCV-3.4.3-aarch64.tar.gz
+tar -xvzf OpenCV-3.4.3-aarch64.tar.gz
 
 # Move to directory untar
-cp OpenCV
+cp OpenCV-3.4.3-aarch64
 
 # Tar the content in opencv-3.4.3.tar.gz
 tar -czvf opencv-3.4.3.tar.gz .
+
+# The result opencv-3.4.3.tar.gz is the archive you need to include in the docker image to install opencv
 ```
