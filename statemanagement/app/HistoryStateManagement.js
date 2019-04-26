@@ -19,7 +19,7 @@ export function fetchHistory() {
       type: FETCH_HISTORY_START
     });
 
-    axios.get('/recording/history').then((response) => {
+    axios.get('/recordings').then((response) => {
       dispatch(fetchHistorySuccess(response.data));
     }, () => {
       dispatch(fetchHistoryError());

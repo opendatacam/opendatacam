@@ -42,7 +42,7 @@ class Recording extends PureComponent {
           <div className="flex flex-col rounded bg-white text-black p-4">
             <div className="flex items-end justify-between">
               <h3 className="mr-3">Counter</h3>
-              <a className="btn-text" href={`/recording/${this.props.id}/counterhistory`} target="_blank">Download data</a>
+              <a className="btn-text" href={`/recording/${this.props.id}/counter`} target="_blank">Download data</a>
             </div>
             <div className="mt-4 flex flex-no-wrap">
               {this.props.countingAreas && this.props.countingAreas.entrySeq().map(([countingAreaId, countingAreaData], index) =>
@@ -73,7 +73,7 @@ class Recording extends PureComponent {
           <div className="flex flex-col rounded bg-white text-black p-4 ml-4">
             <div className="flex items-end justify-between">
               <h3 className="mr-3">Pathfinder</h3>
-              <a className="btn-text" href={`/recording/${this.props.id}/trackerhistory`} target="_blank">Download data</a>
+              <a className="btn-text" href={`/recording/${this.props.id}/tracker`} target="_blank">Download data</a>
             </div>
             <div className="mt-6 rounded relative">
               <div className="text-white absolute" style={{ bottom: 10, left : 10}}>

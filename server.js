@@ -119,7 +119,7 @@ app.prepare()
    *
    * @apiDescription Limitation: Only available after YOLO has started
    * 
-   * @apiSuccessExample Success Response:
+   * @apiSuccessExample {json} Success Response:
    *     {
    *       "w": 1280,
    *       "h": 720
@@ -129,37 +129,282 @@ app.prepare()
     res.json(videoResolution);
   })
 
+  /**
+   * @api {get} /console Console
+   * @apiName Console
+   * @apiGroup Helper
+   *
+   * @apiDescription Send the last 3000 characters of the server **stoud**
+   * 
+   * @apiSuccessExample Response
+   *    Ready on http://localhost:8080 > Ready on http://192.168.0.195:8080
+  */
   express.get('/console',  (req, res) => {
     res.send(stdoutBuffer);
   })
 
+  /**
+   * @api {post} /counter/areas Register areas
+   * @apiName Register areas
+   * @apiGroup Counter
+   *
+   * @apiDescription Send counter areas definition to server
+   * 
+   * It will replace all current counter areas (doesn't update a specific one)
+   * 
+   * If you want to remove all counter areas, send an empty object
+   * 
+   * @apiParam {Object} point1 First point of the counter line definition
+   * @apiParam {Object} point2 Second point of the counter line definition
+   * @apiParam {Object} refResolution Resolution of client side canvas where the line is drawn
+   * 
+   * @apiParamExample {json} Request Example:
+   *     {
+            "countingAreas": {
+              "5287124a-4598-44e7-abaf-394018a7278b": {
+                "color": "yellow",
+                "location": {
+                  "point1": {
+                    "x": 221,
+                    "y": 588
+                  },
+                  "point2": {
+                    "x": 673,
+                    "y": 546
+                  },
+                  "refResolution": {
+                    "w": 1280,
+                    "h": 666
+                  }
+                },
+                "name": "Counter line 1"
+              }
+            }
+          }
+  * @apiSuccessExample Success-Response:
+  *   HTTP/1.1 200 OK
+  */
   express.post('/counter/areas', (req, res) => {
     Opendatacam.registerCountingAreas(req.body.countingAreas)
     res.sendStatus(200)
   });
 
   // Maybe Remove the need for dependency with direct express implem: https://github.com/expressjs/compression#server-sent-events
+  /**
+   * @api {get} /tracker/sse Tracker data
+   * @apiName Data
+   * @apiGroup Tracker
+   *
+   * @apiDescription From the browser, you can open a SSE (Server side event) connection to get data from Opendatacan on each frame.
+   * 
+   * **How to open an SSE connexion**
+   * 
+   * ```let eventSource = new EventSource("/tracker/sse")```
+   * 
+   * **How to get data on each frame**
+   * 
+   * ```eventSource.onmessage = (msg) => { let message = JSON.parse(msg.data); }```
+   * 
+   * Then it works like websocket but only the server can push data.
+   * 
+   * *Limitation: Only support one client at a time, if another one connect, the first SSE connection is closed*
+   * 
+   * More doc on server side event, read [What are SSE : Server Side Events](https://medium.com/axiomzenteam/websockets-http-2-and-sse-5c24ae4d9d96)
+   * 
+   * @apiSuccessExample {json} Frame example (once parsed to JSON):
+   *  {
+        "trackerDataForLastFrame": {
+          "frameIndex": 4646,
+          "data": [
+            {
+              "id": 5,
+              "x": 340,
+              "y": 237,
+              "w": 60,
+              "h": 45,
+              "bearing": 103,
+              "name": "car",
+              "countingDeltas": {
+                "94afa4f8-1d24-4011-a481-ad3036e959b4": 349.8589833356673
+              }
+            },
+            {
+              "id": 6,
+              "x": 449,
+              "y": 306,
+              "w": 95,
+              "h": 72,
+              "bearing": 219,
+              "name": "car",
+              "countingDeltas": {
+                "94afa4f8-1d24-4011-a481-ad3036e959b4": 273.532278392382
+              }
+            }
+          ]
+        },
+        "counterSummary": {
+          "94afa4f8-1d24-4011-a481-ad3036e959b4": {
+            "car": 43,
+            "_total": 43
+          }
+        },
+        "trackerSummary": {
+          "totalItemsTracked": 222
+        },
+        "videoResolution": {
+          "w": 1280,
+          "h": 720
+        },
+        "appState": {
+          "yoloStatus": {
+            "isStarting": true,
+            "isStarted": false
+          },
+          "isListeningToYOLO": true,
+          "recordingStatus": {
+            "isRecording": true,
+            "currentFPS": 13,
+            "recordingId": "5cc3400252340f451cd7397a",
+            "dateStarted": "2019-04-26T17:29:38.190Z"
+          }
+        }
+      }
+   * 
+  */
   express.get('/tracker/sse', sse, function(req, res) {
     Opendatacam.startStreamingData(res.sse);
   });
 
+
+  /**
+   * @api {get} /recording/start Start recording
+   * @apiName Start
+   * @apiGroup Recording
+   *
+   * @apiDescription Start recording (persisting tracker data and counting data to db) 
+   * 
+   * @apiSuccessExample Success-Response:
+   *   HTTP/1.1 200 OK
+  */
   express.get('/recording/start', (req, res) => {
     Opendatacam.startRecording();
     res.sendStatus(200)
   });
 
+  /**
+   * @api {get} /recording/stop Stop recording
+   * @apiName Stop
+   * @apiGroup Recording
+   *
+   * @apiDescription Stop recording
+   * 
+   * @apiSuccessExample Success-Response:
+   *   HTTP/1.1 200 OK
+  */
   express.get('/recording/stop', (req, res) => {
     Opendatacam.stopRecording();
     res.sendStatus(200)
   });
 
-  express.get('/recording/history', (req, res) => {
+  
+  /**
+   * @api {get} /recordings List
+   * @apiName List all recording
+   * @apiGroup Recordings
+   *
+   * @apiDescription Get list of all recording (TODO implement pagination)
+   * 
+   * @apiSuccessExample {json} Success Response:
+   *     [
+          {
+            "_id": "5cc3400252340f451cd7397a",
+            "dateStart": "2019-04-26T17:29:38.190Z",
+            "dateEnd": "2019-04-26T17:32:14.563Z",
+            "areas": {
+              "94afa4f8-1d24-4011-a481-ad3036e959b4": {
+                "color": "yellow",
+                "location": {
+                  "point1": {
+                    "x": 241,
+                    "y": 549
+                  },
+                  "point2": {
+                    "x": 820,
+                    "y": 513
+                  },
+                  "refResolution": {
+                    "w": 1280,
+                    "h": 666
+                  }
+                },
+                "name": "test",
+                "computed": {
+                  "a": 0.06721747654390149,
+                  "b": -609.7129253605938,
+                  "xBounds": {
+                    "xMin": 241,
+                    "xMax": 820
+                  }
+                }
+              }
+            },
+            "counterSummary": {
+              "94afa4f8-1d24-4011-a481-ad3036e959b4": {
+                "car": 111,
+                "_total": 111
+              }
+            },
+            "trackerSummary": {
+              "totalItemsTracked": 566
+            }
+          }
+        ]
+  */
+  express.get('/recordings', (req, res) => {
     DBManager.getRecordings().then((recordings) => {
       res.json(recordings)
     });
   });
 
-  express.get('/recording/:id/trackerhistory', (req, res) => {
+  /**
+   * @api {get} /recording/:id/tracker Tracker data
+   * @apiName Tracker data
+   * @apiGroup Recording
+   *
+   * @apiDescription Get tracker data for a specific recording **(can be very large as it returns all the data for each frame)**
+   * 
+   * @apiParam {String} id Recording id (_id field of /recordings)
+   * 
+   * @apiSuccessExample {json} Success Response:
+   *     [
+   *      {
+            "_id": "5cc3400252340f451cd7397c",
+            "recordingId": "5cc3400252340f451cd7397a",
+            "timestamp": "2019-04-26T17:29:38.301Z",
+            "objects": [
+              {
+                "id": 5,
+                "x": 351,
+                "y": 244,
+                "w": 68,
+                "h": 51,
+                "bearing": 350,
+                "name": "car"
+              },
+              {
+                "id": 6,
+                "x": 450,
+                "y": 292,
+                "w": 78,
+                "h": 67,
+                "bearing": 28,
+                "name": "car"
+              }
+            ]
+          }
+        ]
+  */
+  express.get('/recording/:id/tracker', (req, res) => {
     DBManager.getTrackerHistoryOfRecording(req.params.id).then((trackerData) => {
       res.json(trackerData);
       // res.setHeader('Content-disposition', 'attachment; filename= trackerData.json');
@@ -170,7 +415,79 @@ app.prepare()
     });
   })
 
-  express.get('/recording/:id/counterhistory', (req, res) => {
+  /**
+   * @api {get} /recording/:id/counter Counter data
+   * @apiName Counter data
+   * @apiGroup Recording
+   *
+   * @apiDescription Get counter data for a specific recording
+   * 
+   * @apiParam {String} id Recording id (_id field of /recordings)
+   * 
+   * @apiSuccessExample {json} Success Response:
+   *     [
+          {
+            "_id": "5cc3400252340f451cd7397a",
+            "dateStart": "2019-04-26T17:29:38.190Z",
+            "dateEnd": "2019-04-26T17:32:14.563Z",
+            "areas": {
+              "94afa4f8-1d24-4011-a481-ad3036e959b4": {
+                "color": "yellow",
+                "location": {
+                  "point1": {
+                    "x": 241,
+                    "y": 549
+                  },
+                  "point2": {
+                    "x": 820,
+                    "y": 513
+                  },
+                  "refResolution": {
+                    "w": 1280,
+                    "h": 666
+                  }
+                },
+                "name": "test",
+                "computed": {
+                  "a": 0.06721747654390149,
+                  "b": -609.7129253605938,
+                  "xBounds": {
+                    "xMin": 241,
+                    "xMax": 820
+                  }
+                }
+              }
+            },
+            "counterSummary": {
+              "94afa4f8-1d24-4011-a481-ad3036e959b4": {
+                "car": 111,
+                "_total": 111
+              }
+            },
+            "trackerSummary": {
+              "totalItemsTracked": 566
+            },
+            "counterHistory": [
+              [
+                {
+                  "timestamp": "2019-04-26T17:29:38.811Z",
+                  "area": "94afa4f8-1d24-4011-a481-ad3036e959b4",
+                  "name": "car",
+                  "id": 1021
+                }
+              ],
+              [
+                {
+                  "timestamp": "2019-04-26T17:29:40.338Z",
+                  "area": "94afa4f8-1d24-4011-a481-ad3036e959b4",
+                  "name": "car",
+                  "id": 1030
+                }
+              ]
+          }
+        ]
+  */
+  express.get('/recording/:id/counter', (req, res) => {
     DBManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
       res.json(counterData);
       // res.setHeader('Content-disposition', 'attachment; filename= trackerData.json');

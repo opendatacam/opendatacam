@@ -96,14 +96,17 @@ sudo nvpmodel -m 0
 sudo jetson_clocks
 
 # Clone https://github.com/jetsonhacks/buildOpenCVXavier 
-# Same repo for xavier or tx2 since jetpack 4.2
+# Same repo for xavier or tx2 or nano since jetpack 4.2
+# For jetson nano there is missing dependency, here is the fixed repo: https://github.com/tdurand/buildOpenCVXavier/pull/1/files
 git clone https://github.com/jetsonhacks/buildOpenCVXavier
 cd buildOpenCVXavier
 
 # Edit the ARCH_BIN variable
 vi buildAndPackageOpenCV.sh
+# Set ARCH_BIN=5.3 in buildAndPackageOpenCV.sh for Jetson Nano
 # Set ARCH_BIN=6.2 in buildAndPackageOpenCV.sh for Jetson TX2
 # Set ARCH_BIN=7.2 in buildAndPackageOpenCV.sh for Jetson Xavier
+
 
 # Specify the right ARCH_BIN makes runtime faster: http://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/
 
