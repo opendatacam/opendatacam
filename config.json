@@ -1,5 +1,12 @@
 {
   "PATH_TO_YOLO_DARKNET" : "/darknet",
   "VALID_CLASSES": ["*"],
-  "DISPLAY_CLASSES": ["bicycle", "car", "bus", "motorbike", "truck", "person"]
+  "DISPLAY_CLASSES": [
+    { "class": "bicycle", "icon": "1F6B2.svg"},
+    { "class": "person", "icon": "1F6B6.svg"},
+    { "class": "truck", "icon": "1F69B.svg"},
+    { "class": "motorbike", "icon": "1F6F5.svg"},
+    { "class": "car", "icon": "1F697.svg"},
+    { "class": "bus", "icon": "1F683.svg"}
+  ]
 }

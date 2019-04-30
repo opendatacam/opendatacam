@@ -123,3 +123,26 @@ In order to track all the classes (default value), you need to set it to:
 ```
 
 *Extra note: the tracking algorithm might work better by allowing all the classes, in our test we saw that for some classes like Bike/Motorbike, YOLO had a hard time distinguishing them well, and was switching between classes across frames for the same object. By keeping all the detections and ignoring the class switch while tracking we saw that we can avoid losing some objects, this is [discussed here](https://github.com/moovel/lab-opendatacam/issues/51#issuecomment-418019606)*
+
+### Display custom classes
+
+By default we are displaying the mobility classes: 
+
+![Display classes](https://user-images.githubusercontent.com/533590/56987855-f0101c00-6b64-11e9-8bf4-afd83a53f991.png)
+
+If you want to customize it you should modify the `DISPLAY_CLASSES` config.  
+
+```json
+"DISPLAY_CLASSES": [
+  { "class": "bicycle", "icon": "1F6B2.svg"},
+  { "class": "person", "icon": "1F6B6.svg"},
+  { "class": "truck", "icon": "1F69B.svg"},
+  { "class": "motorbike", "icon": "1F6F5.svg"},
+  { "class": "car", "icon": "1F697.svg"},
+  { "class": "bus", "icon": "1F683.svg"}
+]
+```
+
+You can associate any icon that are in the `/static/icons/openmojis` folder. (they are from https://openmoji.org/)
+
+

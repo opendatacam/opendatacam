@@ -76,3 +76,7 @@ body.theme-dark {
     --color-inverse: #fff;
     --color-inverse-soft: #F3F3F3;
 }
+
+.svg-openmoji * {
+    stroke: currentColor !important;
+}

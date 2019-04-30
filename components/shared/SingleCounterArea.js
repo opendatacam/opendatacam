@@ -5,6 +5,8 @@ import { CIRCLE_RADIUS, POPOVER_HEIGHT, POPOVER_WIDTH, POPOVER_ARROW_SIZE } from
 import { COLORS } from '../../utils/colors';
 
 import { DISPLAY_CLASSES } from '../../config.json';
+import SVG from 'react-inlinesvg';
+import OpenMoji from './OpenMoji';
 
 class SingleCounterArea extends Component {
 
@@ -58,10 +60,13 @@ class SingleCounterArea extends Component {
               </h4>
               <div className="area-popover-content">
                 {/* TODO LIMIT to 6 ?, put on it's own component to reuse in dashboard */}
-                {DISPLAY_CLASSES.map((counterClass) =>
-                  <div className="area-popover-item mb-2" key={counterClass}>
-                    <div className="area-popover-count mr-2">{this.props.counterData.get(counterClass) || 0}</div>
-                    <img className="area-popover-icon" src={`/static/icons/counter/${counterClass}.svg`} />
+                {DISPLAY_CLASSES.slice(0, Math.min(DISPLAY_CLASSES.length, 6)).map((counterClass) =>
+                  <div className="area-popover-item mb-1" key={counterClass.class}>
+                    <div className="area-popover-count mr-2">{this.props.counterData.get(counterClass.class) || 0}</div>
+                    <OpenMoji 
+                      icon={counterClass.icon}
+                      class={counterClass.class}
+                    />
                   </div>
                 )}
               </div>

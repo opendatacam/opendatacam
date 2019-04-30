@@ -30,6 +30,7 @@
     "raf": "^3.4.1",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
+    "react-inlinesvg": "^0.8.4",
     "react-redux": "^6.0.0",
     "redux": "^4.0.1",
     "redux-thunk": "^2.3.0",

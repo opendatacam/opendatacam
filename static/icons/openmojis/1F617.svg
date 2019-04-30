@@ -1,0 +1,8 @@
+<svg version="1.1" id="emoji" xmlns="http://www.w3.org/2000/svg" x="0" y="0" viewBox="0 0 72 72" enable-background="new 0 0 72 72" xml:space="preserve">
+  <g id="line">
+    <path fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" d="M34.8361,42.1175c0,0,10.5248,3.1956,0,5.5637c0,0,10.4577,2.9883,0,4.9125"/>
+    <circle cx="25.6105" cy="32.6037" r="2.6038"/>
+    <circle cx="42.8605" cy="32.6037" r="2.6038"/>
+    <ellipse fill="none" stroke="#000000" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" cx="34.4208" cy="36.0252" rx="23.0001" ry="23.0001"/>
+  </g>
+</svg>

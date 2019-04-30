@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import dayjs from 'dayjs';
 import { DISPLAY_CLASSES } from '../../config.json';
 import { COLORS } from '../../utils/colors';
+import OpenMoji from '../shared/OpenMoji.js';
 
 class Recording extends PureComponent {
 
@@ -56,13 +57,16 @@ class Recording extends PureComponent {
                   </div>
                   <div className="flex flex-wrap mt-5 w-64">
                     {/* TODO LIMIT to 6 ?, put on its own component to reuse in popover */}
-                    {DISPLAY_CLASSES.map((counterClass) =>
+                    {DISPLAY_CLASSES.slice(0, Math.min(DISPLAY_CLASSES.length, 6)).map((counterClass) =>
                       <div 
-                        className="flex w-16 m-2 items-center justify-center" 
-                        key={counterClass}
+                        className="flex w-16 m-1 items-center justify-center" 
+                        key={counterClass.class}
                       >
-                        <h4 className="mr-2">{this.props.counterData && this.props.counterData.getIn([countingAreaId, counterClass]) || 0}</h4>
-                        <img src={`/static/icons/counter/transparent/${counterClass}.svg`} />
+                        <h4 className="mr-2">{this.props.counterData && this.props.counterData.getIn([countingAreaId, counterClass.class]) || 0}</h4>
+                        <OpenMoji 
+                          icon={counterClass.icon}
+                          class={counterClass.class}
+                        />
                       </div>
                     )}
                   </div>
