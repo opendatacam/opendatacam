@@ -73,7 +73,7 @@ sudo ./darknet-docker.sh run --rm -it opendatacam
 
 ```bash
 # Log into the Docker Hub
-sudo docker login --username=yourhubusername
+sudo docker login --username=opendatacam
 # Check the image ID using
 sudo docker images
 # You will see something like:
@@ -81,7 +81,7 @@ sudo docker images
 # opendatacam             latest    023ab91c6291     3 minutes ago     1.975 GB
 
 # Tag your image
-sudo docker tag 023ab91c6291 yourhubusername/opendatacam:v2.0.0-beta.1-tx2
+sudo docker tag 023ab91c6291 opendatacam/opendatacam:v2.0.0-beta.1-tx2
 
 # Or for nano : v2.0.0-beta.1-nano
 # Or for xavier : v2.0.0-beta.1-xavier
