@@ -145,4 +145,18 @@ If you want to customize it you should modify the `DISPLAY_CLASSES` config.
 
 You can associate any icon that are in the `/static/icons/openmojis` folder. (they are from https://openmoji.org/)
 
+For example:
+
+```json
+"DISPLAY_CLASSES": [
+    { "class": "dog", "icon": "1F415.svg"},
+    { "class": "cat", "icon": "1F431.svg"}
+  ]
+```
+
+![Display classes custom](https://user-images.githubusercontent.com/533590/56992341-3028cc00-6b70-11e9-8fd8-d7e405fe4d54.png)
+
+
+*LIMITATION: You can display a maximum of 6 classes, if you add more, it will just display the first 6 classes*
+
 
