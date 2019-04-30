@@ -143,7 +143,7 @@ If you want to customize it you should modify the `DISPLAY_CLASSES` config.
 ]
 ```
 
-You can associate any icon that are in the `/static/icons/openmojis` folder. (they are from https://openmoji.org/)
+You can associate any icon that are in the `/static/icons/openmojis` folder. (they are from https://openmoji.org/, you can search the unicode icon name directly there)
 
 For example:
 
