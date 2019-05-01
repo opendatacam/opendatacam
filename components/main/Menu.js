@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { hideMenu, setUserSetting } from '../../statemanagement/app/AppStateManagement';
 import Toggle from '../shared/Toggle';
+import SVG from 'react-inlinesvg';
 
 class Menu extends Component {
 
@@ -45,10 +46,15 @@ class Menu extends Component {
           className="menu text-inverse bg-default p-5 shadow"
         >
           <button
-            className="btn btn-default btn-close flex items-center shadow rounded"
+            className="btn btn-default btn-close p-0 flex items-center shadow rounded"
             onClick={() => this.props.dispatch(hideMenu())}
           >
-            <img className="icon w-5 h-5" src="/static/icons/icon-close.svg" />
+            <SVG 
+              className="w-12 h-12 svg-icon flex items-center" 
+              cacheGetRequests={true}
+              src={`/static/icons/ui/close.svg`} 
+              aria-label="icon close"
+            />
           </button>
           <h3 className="mb-4">Open data cam</h3>
           <Toggle 
@@ -121,8 +127,7 @@ class Menu extends Component {
 
           .btn-close {
             position: absolute;
-            left: -80px;
-            height: 3rem;
+            left: -70px;
           }
         `}</style>
       </React.Fragment>

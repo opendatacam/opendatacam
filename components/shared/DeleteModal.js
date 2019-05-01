@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import CanvasEngine from '../canvas/CanvasEngine';
-import { MODE, CIRCLE_DELETE_RADIUS, CANVAS_RENDERING_MODE } from '../../utils/constants';
+import { CIRCLE_DELETE_RADIUS, CANVAS_RENDERING_MODE } from '../../utils/constants';
 import { COLORS } from '../../utils/colors';
-import { EDITOR_MODE } from '../../statemanagement/app/CounterStateManagement';
+import SVG from 'react-inlinesvg';
 
 class DeleteModal extends Component {
 
@@ -39,7 +39,12 @@ class DeleteModal extends Component {
                 backgroundColor: COLORS[countingArea.get('color')]
             }}
           >
-            <img className="icon" src="/static/icons/icon-delete.svg" />
+            <SVG 
+              className="w-8 h-8 svg-icon flex items-center" 
+              cacheGetRequests={true}
+              src={`/static/icons/ui/delete.svg`} 
+              aria-label="icon close"
+            />
           </div>
         )}
         
@@ -64,8 +69,6 @@ class DeleteModal extends Component {
             line-height: ${CIRCLE_DELETE_RADIUS}px;
             font-size: 16px;
             font-weight: bold;
-            padding-left: 5px;
-            padding-right: 5px;
             color: black;
             text-align: center;
             cursor: pointer;

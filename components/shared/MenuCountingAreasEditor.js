@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
+import SVG from 'react-inlinesvg';
 
 import { selectCountingArea, deleteCountingArea, addCountingArea, setMode, EDITOR_MODE } from '../../statemanagement/app/CounterStateManagement'
 
@@ -22,29 +23,43 @@ class MenuCountingAreasEditor extends Component {
         {this.props.mode !== EDITOR_MODE.DELETE &&
           <>
             <button
-              className="btn btn-default inline-flex items-center rounded-l shadow"
+              className="btn btn-default p-0 rounded-l shadow"
               onClick={() => this.handleDelete()}
             >
-              <img className="icon" src="/static/icons/icon-delete.svg" className="w-5" />
+              <SVG 
+                className="w-12 h-12 svg-icon flex items-center" 
+                cacheGetRequests={true}
+                src={`/static/icons/ui/delete.svg`} 
+                aria-label="icon delete"
+              />
             </button>
             <button
-              className="btn btn-default inline-flex items-center rounded-r shadow btn-default--active"
+              className="btn btn-default p-0 rounded-r shadow btn-default--active"
             >
-              <img className="icon" src="/static/icons/icon-addline-blue.svg" className="w-7" />
+              <SVG 
+                className="w-12 h-12 svg-icon flex items-center" 
+                cacheGetRequests={true}
+                src={`/static/icons/ui/addline.svg`} 
+                aria-label="icon edit"
+              />
             </button>
           </>
         }
         {this.props.mode === EDITOR_MODE.DELETE &&
           <button
-            className="btn btn-default inline-flex items-center shadow rounded"
+            className="btn btn-default p-0 rounded shadow"
             onClick={() => this.props.dispatch(setMode(EDITOR_MODE.EDIT))}
           >
-            <img className="icon" src="/static/icons/icon-close.svg" />
+            <SVG 
+              className="w-12 h-12 svg-icon flex items-center" 
+              cacheGetRequests={true}
+              src={`/static/icons/ui/close.svg`} 
+              aria-label="icon edit"
+            />
           </button>
         }
         <style jsx>{`
-          .menu-active-areas{
-            height: 3rem;
+          .menu-active-areas {
             display: flex;
             position: fixed;
             bottom: 1.5rem;

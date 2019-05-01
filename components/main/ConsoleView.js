@@ -42,7 +42,7 @@ class ConsoleView extends Component {
 
   render () {
     return (
-        <div className="console-view bg-black">
+        <div className="console-view bg-default-soft">
           <div className="w-full h-full p-5">
             <textarea 
               className="w-full h-full"

@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import CanvasEngine from '../canvas/CanvasEngine';
 import { CANVAS_RENDERING_MODE } from '../../utils/constants';
+import SVG from 'react-inlinesvg';
 
 class AskNameModal extends Component {
 
@@ -55,10 +56,15 @@ class AskNameModal extends Component {
             value="OK"
           />
           <button
-            className="btn btn-default rounded-r inline-flex items-center"
+            className="btn btn-default p-0 rounded-r"
             onClick={() => this.props.cancel()}
           >
-            <img src="/static/icons/icon-close.svg" className="w-4 h-4" />
+            <SVG 
+              className="w-10 h-10 svg-icon flex items-center" 
+              cacheGetRequests={true}
+              src={`/static/icons/ui/close.svg`} 
+              aria-label="icon close"
+            />
           </button>
         </form>
         <CanvasEngine mode={CANVAS_RENDERING_MODE.COUNTING_AREAS} />

@@ -9,7 +9,7 @@
     <g id="Design" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-536.000000, -1606.000000)">
         <g id="Group-6" transform="translate(536.000000, 1606.000000)">
             <g id="Rectangle-2">
-                <use fill="#000000" fill-rule="evenodd" xlink:href="#path-1"></use>
+                <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
                 <rect stroke="#FFFFFF" stroke-width="3" x="1.5" y="1.5" width="49" height="47" rx="23.5"></rect>
             </g>
             <rect id="Rectangle-2" fill="#FF0000" x="7" y="7" width="38" height="36" rx="18"></rect>
