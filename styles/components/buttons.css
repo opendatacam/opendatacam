@@ -39,3 +39,17 @@
 .btn-text:hover {
     @apply text-grey-darker;
 }
+
+.btn-light {
+    @apply bg-white text-black;
+}
+
+.btn-light:hover {
+    @apply bg-grey-lightest text-primary;
+    /* text-shadow: 1px 0 0 currentColor; */
+}
+
+.btn-light--active {
+    @apply bg-grey-lightest text-primary;
+    /* text-shadow: 1px 0 0 currentColor; */
+}

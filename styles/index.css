@@ -66,17 +66,30 @@
 body {
     --color-default: #fff;
     --color-default-soft: #F3F3F3;
-    --color-inverse: #22292f;
-    --color-inverse-soft: #2F2F2F;
+    --color-inverse: #000000;
+    --color-inverse-soft: #303030;
 }
 
 body.theme-dark {
-    --color-default: #22292f;
-    --color-default-soft: #2F2F2F;
+    --color-default: #000000;
+    --color-default-soft: #303030;
     --color-inverse: #fff;
     --color-inverse-soft: #F3F3F3;
 }
 
 .svg-openmoji * {
     stroke: currentColor !important;
+}
+
+
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 5px;
+    height: 5px;
+}
+  
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }

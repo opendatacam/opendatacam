@@ -21,7 +21,7 @@ class DataView extends Component {
 
   render () {
     return (
-        <div className="data-view bg-black">
+        <div className="data-view bg-default-soft">
           {this.props.recordingStatus.get('isRecording') &&
             <Recording 
               id={this.props.recordingStatus.get('recordingId')} 

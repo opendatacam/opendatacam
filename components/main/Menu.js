@@ -39,10 +39,10 @@ class Menu extends Component {
 
   render() {
     return (
-      <>
+      <React.Fragment>
         <div
           ref={node => this.node = node}
-          className="menu text-default bg-black p-5"
+          className="menu text-inverse bg-default p-5 shadow"
         >
           <button
             className="btn btn-default btn-close flex items-center shadow rounded"
@@ -67,7 +67,15 @@ class Menu extends Component {
             label="Dark mode"
             description="Turn dark UI elements on"
             enabled={this.props.userSettings.get('darkMode')}
-            onChange={(value) => this.props.dispatch(setUserSetting('darkMode', value))}
+            onChange={(darkMode) => {
+              if(darkMode) {
+                document.getElementsByTagName("body")[0].className = 'theme-dark';
+              } else {
+                document.getElementsByTagName("body")[0].className = '';
+              }
+              
+              this.props.dispatch(setUserSetting('darkMode', darkMode))
+            }}
           />
           <div className="mb-4 mt-4 flex items-center justify-between">
             <div className="mr-3">
@@ -76,17 +84,7 @@ class Menu extends Component {
             </div>
             <div className="flex">
               <button 
-                className='btn btn-default py-1 px-3 rounded-l border border-default-soft border-solid flex items-center text-xl font-bold'
-                onClick={() => 
-                  this.props.dispatch(setUserSetting('dimmerOpacity', 
-                    Math.min(this.props.userSettings.get('dimmerOpacity') + 0.1, 1)
-                  ))
-                }
-              >
-                +
-              </button>
-              <button 
-                className='btn btn-default py-1 px-3 rounded-r border border-default-soft border-solid flex items-center text-xl font-bold'
+                className='btn btn-light py-1 px-3 rounded-l border border-grey-lightest border-solid flex items-center text-xl font-bold shadow'
                 onClick={() => 
                   this.props.dispatch(setUserSetting('dimmerOpacity', 
                     Math.max(this.props.userSettings.get('dimmerOpacity') - 0.1, 0)
@@ -94,6 +92,16 @@ class Menu extends Component {
                 }
               >
                 -
+              </button>
+              <button 
+                className='btn btn-light py-1 px-3 rounded-r border border-grey-lightest border-solid flex items-center text-xl font-bold shadow'
+                onClick={() => 
+                  this.props.dispatch(setUserSetting('dimmerOpacity', 
+                    Math.min(this.props.userSettings.get('dimmerOpacity') + 0.1, 1)
+                  ))
+                }
+              >
+                +
               </button>
             </div>
           </div>
@@ -117,7 +125,7 @@ class Menu extends Component {
             height: 3rem;
           }
         `}</style>
-      </>
+      </React.Fragment>
     )
   }
 }

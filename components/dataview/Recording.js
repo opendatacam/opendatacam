@@ -33,14 +33,14 @@ class Recording extends PureComponent {
   render() {
     return (
       <div className="recording pl-8 w-full mb-10">
-        <div className="text-white flex">
+        <div className="text-inverse flex">
           <div>{dayjs(this.props.dateStart).format('MMM DD, YYYY')}</div>
           <div className="ml-10">
             {dayjs(this.props.dateStart).format('hh:mm a')} - {this.renderDateEnd(this.props.dateEnd, this.props.active)}
           </div>
         </div>
-        <div className="flex flex-no-wrap overflow-x-auto mt-5">
-          <div className="flex flex-col rounded bg-white text-black p-4">
+        <div className="flex flex-no-wrap overflow-x-scroll pb-2 mt-5 pl-1">
+          <div className="flex flex-col rounded bg-white text-black p-4 shadow">
             <div className="flex items-end justify-between">
               <h3 className="mr-3">Counter</h3>
               <a className="btn-text" href={`/recording/${this.props.id}/counter`} target="_blank">Download data</a>
@@ -74,7 +74,7 @@ class Recording extends PureComponent {
               )}
             </div>
           </div>
-          <div className="flex flex-col rounded bg-white text-black p-4 ml-4">
+          <div className="flex flex-col rounded bg-white text-black p-4 ml-4 shadow">
             <div className="flex items-end justify-between">
               <h3 className="mr-3">Pathfinder</h3>
               <a className="btn-text" href={`/recording/${this.props.id}/tracker`} target="_blank">Download data</a>

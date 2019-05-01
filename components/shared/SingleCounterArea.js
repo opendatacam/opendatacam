@@ -49,13 +49,13 @@ class SingleCounterArea extends Component {
       <React.Fragment>
         {this.props.counterData && this.state.showPopover &&
           <div 
-              className="area-popover"
+              className="area-popover bg-default text-inverse"
               style={{
                   top: this.props.area.location.center.y - POPOVER_HEIGHT - CIRCLE_RADIUS / 2 - POPOVER_ARROW_SIZE - 5, 
                   left: this.props.area.location.center.x - POPOVER_WIDTH / 2
               }}
           >
-              <h4 className="area-popover-title text-center py-2">
+              <h4 className="area-popover-title border-b border-default-soft text-center py-2">
                 {this.props.area.name}
               </h4>
               <div className="area-popover-content">
@@ -102,16 +102,12 @@ class SingleCounterArea extends Component {
 
             .area-popover {
               position: absolute;
-              background-color: black;
-              color: white;
               z-index: 3;
               width: ${POPOVER_WIDTH}px;
               height: ${POPOVER_HEIGHT}px;
-              background-color: black;
             }  
 
             .area-popover-title {
-              background-color: #252525;
               width: 100%;
             }
 
@@ -119,7 +115,7 @@ class SingleCounterArea extends Component {
               display: flex;
               flex-wrap: wrap;
               padding: 5px;
-              overflow: scroll;
+              overflow: hidden;
             }
 
             .area-popover-item {
@@ -139,7 +135,7 @@ class SingleCounterArea extends Component {
               position: absolute;
               pointer-events: none;
               border-color: rgba(0, 0, 0, 0);
-              border-top-color: black;
+              border-top-color: var(--color-default);
               border-width: ${POPOVER_ARROW_SIZE}px;
               margin-left: -${POPOVER_ARROW_SIZE}px;
             }

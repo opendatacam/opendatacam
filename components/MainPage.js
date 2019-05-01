@@ -25,6 +25,10 @@ class MainPage extends React.Component {
 
     // TODO See how we handle the YOLO on / off situation
     this.props.dispatch(startListeningToServerData());
+
+    if(this.props.darkMode) {
+      document.getElementsByTagName("body")[0].className = "theme-dark";
+    }
   }
 
   render () {
@@ -81,6 +85,7 @@ export default connect((state) => {
     deviceOrientation: state.viewport.get('deviceOrientation'),
     mode: state.app.get('mode'),
     isListeningToYOLO: state.app.get('isListeningToYOLO'),
-    showMenu: state.app.get('showMenu')
+    showMenu: state.app.get('showMenu'),
+    darkMode: state.app.getIn(['userSettings', 'darkMode'])
   }
 })(MainPage)

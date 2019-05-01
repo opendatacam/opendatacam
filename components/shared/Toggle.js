@@ -18,7 +18,7 @@ class Toggle extends Component {
           <h4 className="mb-2">{this.props.label}</h4>
           <p className="text-xs">{this.props.description}</p>
         </label>
-        <div className="form-switch inline-block align-middle">
+        <div className="form-switch inline-block align-middle shadow">
           <input 
             type="checkbox"
             name={this.state.id}
