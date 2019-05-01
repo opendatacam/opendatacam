@@ -6,7 +6,7 @@ class InstructionsModal extends Component {
 
     return (
       <div className="overlay" onClick={() => this.props.close()}>
-        <div className="modal rounded p-10 shadow">
+        <div className="modal rounded p-10 shadow text-inverse bg-default border-inverse">
           <h3 className="text-center">
             Draw to define the counting zones (crossing vehicles increase counter by 1)
           </h3>
@@ -31,12 +31,10 @@ class InstructionsModal extends Component {
           }
 
           .modal {
-            background-color: white;
             border: 1px solid black;
             width: 300px;
             height: auto;
             padding: 15px;
-            color: black;
             display: flex;
             justify-content: center;
             align-items: center;
