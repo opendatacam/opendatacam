@@ -73,6 +73,20 @@ class DBManager {
     })
   }
 
+  deleteRecording (recordingId) {
+    return new Promise((resolve, reject) => {
+      this.getDB().then(db => {
+        db.collection(RECORDING_COLLECTION).remove({ _id : ObjectID(recordingId)}, (err, r) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve(r)
+          }
+        })
+      })
+    })
+  }
+
   // TODO For larges array like the one we are using, we can't do that, perfs are terrible
   // we need to push trackerEntry in another collection and ref it 
   // Or maybe try to batch update not on every frame

@@ -4,6 +4,8 @@ import dayjs from 'dayjs';
 import { DISPLAY_CLASSES } from '../../config.json';
 import { COLORS } from '../../utils/colors';
 import OpenMoji from '../shared/OpenMoji.js';
+import SVG from 'react-inlinesvg';
+import { deleteRecording } from '../../statemanagement/app/HistoryStateManagement.js';
 
 class Recording extends PureComponent {
 
@@ -33,11 +35,22 @@ class Recording extends PureComponent {
   render() {
     return (
       <div className="recording pl-8 w-full mb-10">
-        <div className="text-inverse flex">
+        <div className="text-inverse flex items-center">
           <div>{dayjs(this.props.dateStart).format('MMM DD, YYYY')}</div>
           <div className="ml-10">
             {dayjs(this.props.dateStart).format('hh:mm a')} - {this.renderDateEnd(this.props.dateEnd, this.props.active)}
           </div>
+          <button
+            className="btn btn-default p-0 ml-2 shadow rounded"
+            onClick={() => this.props.dispatch(deleteRecording(this.props.id))}
+          >
+            <SVG 
+              className="w-6 h-6 svg-icon flex items-center" 
+              cacheGetRequests={true}
+              src={`/static/icons/ui/delete.svg`} 
+              aria-label="icon close"
+            />
+          </button>
         </div>
         <div className="flex flex-no-wrap overflow-x-scroll pb-2 mt-5 pl-1">
           <div className="flex flex-col rounded bg-white text-black p-4 shadow">
@@ -92,4 +105,4 @@ class Recording extends PureComponent {
   }
 }
 
-export default Recording
+export default connect()(Recording)

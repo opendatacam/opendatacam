@@ -21,6 +21,7 @@ const FETCH_HISTORY_SUCCESS = 'History/FETCH_HISTORY_SUCCESS'
 const FETCH_HISTORY_START = 'History/FETCH_HISTORY_START'
 const FETCH_HISTORY_ERROR = 'History/FETCH_HISTORY_ERROR'
 const UPDATE_RECORDINGS_CURSOR = 'History/UPDATE_RECORDINGS_CURSOR'
+const DELETE_RECORDING = 'History/DELETE_RECORDING'
 
 export function fetchHistory(offset = DEFAULT_OFFSET, limit = DEFAULT_LIMIT) {
   return (dispatch, getState) => {
@@ -61,6 +62,16 @@ export function updateRecordingsCursor(data) {
   }
 }
 
+export function deleteRecording(recordingId) {
+  return (dispatch, getState) => {
+    dispatch({
+      type: DELETE_RECORDING,
+      payload: recordingId
+    })
+    axios.delete(`/recording/${recordingId}`)
+  }
+}
+
 // Reducer
 export default function HistoryReducer (state = initialState, action = {}) {
   switch (action.type) {
@@ -76,6 +87,10 @@ export default function HistoryReducer (state = initialState, action = {}) {
                   .set("fetchHistoryError", false)
     case UPDATE_RECORDINGS_CURSOR:
       return state.set('recordingsCursor', fromJS(action.payload))
+    case DELETE_RECORDING:
+      return state.updateIn(['recordingHistory'], recordingHistory => recordingHistory.delete(
+              recordingHistory.findIndex((value) => value.get('_id') === action.payload)
+            ))
     default:
       return state
   }

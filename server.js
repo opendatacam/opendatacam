@@ -436,6 +436,24 @@ app.prepare()
   })
 
   /**
+   * @api {delete} /recording/:id Delete recording
+   * @apiName Delete recording
+   * @apiGroup Recording
+   *
+   * @apiDescription Delete recording
+   * 
+   * @apiParam {String} id Recording id (_id field of /recordings)
+   * 
+   * @apiSuccessExample Success-Response:
+  *   HTTP/1.1 200 OK 
+  */
+ express.delete('/recording/:id', (req, res) => {
+  DBManager.deleteRecording(req.params.id).then((success) => {
+    res.sendStatus(200)
+  });
+})
+
+  /**
    * @api {get} /recording/:id/counter Counter data
    * @apiName Counter data
    * @apiGroup Recording
