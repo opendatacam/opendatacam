@@ -1,26 +1,40 @@
 import { fromJS } from 'immutable'
 import axios from 'axios';
 
+const DEFAULT_LIMIT = 20;
+const DEFAULT_OFFSET = 0;
+
 // Initial state
 const initialState = fromJS({
   recordingHistory: [],
   isFetchingHistory: false,
-  fetchHistoryError: null
+  fetchHistoryError: null,
+  recordingCursor: {
+    limit: DEFAULT_LIMIT, 
+    offset: DEFAULT_OFFSET,
+    total: 0
+  }
 })
 
 // Actions
 const FETCH_HISTORY_SUCCESS = 'History/FETCH_HISTORY_SUCCESS'
 const FETCH_HISTORY_START = 'History/FETCH_HISTORY_START'
 const FETCH_HISTORY_ERROR = 'History/FETCH_HISTORY_ERROR'
+const UPDATE_RECORDINGS_CURSOR = 'History/UPDATE_RECORDINGS_CURSOR'
 
-export function fetchHistory() {
+export function fetchHistory(offset = DEFAULT_OFFSET, limit = DEFAULT_LIMIT) {
   return (dispatch, getState) => {
     dispatch({
       type: FETCH_HISTORY_START
     });
 
-    axios.get('/recordings').then((response) => {
-      dispatch(fetchHistorySuccess(response.data));
+    axios.get(`/recordings?offset=${DEFAULT_OFFSET}&limit=${DEFAULT_LIMIT}`).then((response) => {
+      dispatch(fetchHistorySuccess(response.data.recordings));
+      dispatch(updateRecordingsCursor({
+        total: response.data.total,
+        offset: response.data.offset,
+        limit: response.data.limit
+      }));
     }, () => {
       dispatch(fetchHistoryError());
     });
@@ -40,6 +54,13 @@ export function fetchHistoryError() {
   }
 }
 
+export function updateRecordingsCursor(data) {
+  return {
+    type: UPDATE_RECORDINGS_CURSOR,
+    payload: data
+  }
+}
+
 // Reducer
 export default function HistoryReducer (state = initialState, action = {}) {
   switch (action.type) {
@@ -53,6 +74,8 @@ export default function HistoryReducer (state = initialState, action = {}) {
     case FETCH_HISTORY_ERROR:
       return state.set("isFetchingHistory", false)
                   .set("fetchHistoryError", false)
+    case UPDATE_RECORDINGS_CURSOR:
+      return state.set('recordingCursor', fromJS(action.payload))
     default:
       return state
   }
