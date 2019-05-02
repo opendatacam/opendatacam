@@ -54,6 +54,10 @@ class PathViewEngine {
       return trackedItemScaled;
     })
   }
+
+  resetLastFrameData() {
+    this.lastFrameData = [];
+  }
 }
 
 const PathViewEngineInstance = new PathViewEngine()
