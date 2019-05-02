@@ -127,7 +127,7 @@ class DBManager {
     })
   }
 
-  getRecordings (limit = 30) {
+  getRecordings (limit = 30, offset = 0) {
     return new Promise((resolve, reject) => {
       this.getDB().then(db => {
         db
@@ -136,6 +136,7 @@ class DBManager {
           .project({ counterHistory: 0, trackerHistory: 0 })
           .sort({ dateStart: -1 })
           .limit(limit)
+          .skip(offset)
           .toArray(function (err, docs) {
             if (err) {
               reject(err)
@@ -143,6 +144,22 @@ class DBManager {
               resolve(docs)
             }
           })
+      })
+    })
+  }
+
+  getRecordingsCount () {
+    return new Promise((resolve, reject) => {
+      this.getDB().then(db => {
+        db
+          .collection(RECORDING_COLLECTION)
+          .countDocuments({},(err, res) => {
+            if (err) {
+              reject(err)
+            } else {
+              resolve(res)
+            }
+          });
       })
     })
   }

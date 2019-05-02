@@ -308,62 +308,82 @@ app.prepare()
 
   
   /**
-   * @api {get} /recordings List
-   * @apiName List all recording
+   * @api {get} /recordings?offset=:offset&limit=:limit List
+   * @apiName List recordings
    * @apiGroup Recordings
+   * 
+   * @apiParam {Number} [limit=20] Limit of recordings in the response
+   * @apiParam {Number} [offset=0] Skipped recordings
    *
-   * @apiDescription Get list of all recording (TODO implement pagination)
+   * @apiDescription Get list of all recording ordered by latest date
    * 
    * @apiSuccessExample {json} Success Response:
-   *     [
-          {
-            "_id": "5cc3400252340f451cd7397a",
-            "dateStart": "2019-04-26T17:29:38.190Z",
-            "dateEnd": "2019-04-26T17:32:14.563Z",
-            "areas": {
-              "94afa4f8-1d24-4011-a481-ad3036e959b4": {
-                "color": "yellow",
-                "location": {
-                  "point1": {
-                    "x": 241,
-                    "y": 549
+   *    {
+   *      "offset": 0,
+          "limit": 1,
+          "total": 51,
+          "recordings": [
+            {
+              "_id": "5cc3400252340f451cd7397a",
+              "dateStart": "2019-04-26T17:29:38.190Z",
+              "dateEnd": "2019-04-26T17:32:14.563Z",
+              "areas": {
+                "94afa4f8-1d24-4011-a481-ad3036e959b4": {
+                  "color": "yellow",
+                  "location": {
+                    "point1": {
+                      "x": 241,
+                      "y": 549
+                    },
+                    "point2": {
+                      "x": 820,
+                      "y": 513
+                    },
+                    "refResolution": {
+                      "w": 1280,
+                      "h": 666
+                    }
                   },
-                  "point2": {
-                    "x": 820,
-                    "y": 513
-                  },
-                  "refResolution": {
-                    "w": 1280,
-                    "h": 666
-                  }
-                },
-                "name": "test",
-                "computed": {
-                  "a": 0.06721747654390149,
-                  "b": -609.7129253605938,
-                  "xBounds": {
-                    "xMin": 241,
-                    "xMax": 820
+                  "name": "test",
+                  "computed": {
+                    "a": 0.06721747654390149,
+                    "b": -609.7129253605938,
+                    "xBounds": {
+                      "xMin": 241,
+                      "xMax": 820
+                    }
                   }
                 }
+              },
+              "counterSummary": {
+                "94afa4f8-1d24-4011-a481-ad3036e959b4": {
+                  "car": 111,
+                  "_total": 111
+                }
+              },
+              "trackerSummary": {
+                "totalItemsTracked": 566
               }
-            },
-            "counterSummary": {
-              "94afa4f8-1d24-4011-a481-ad3036e959b4": {
-                "car": 111,
-                "_total": 111
-              }
-            },
-            "trackerSummary": {
-              "totalItemsTracked": 566
             }
-          }
-        ]
+          ]
+   *    }
+   *  
   */
   express.get('/recordings', (req, res) => {
-    DBManager.getRecordings().then((recordings) => {
-      res.json(recordings)
-    });
+    var limit = parseInt(req.query.limit, 10) || 20;
+    var offset = parseInt(req.query.offset, 10) || 0;
+    
+    var recordingPromise = DBManager.getRecordings(limit, offset)
+    var countPromise = DBManager.getRecordingsCount()
+
+    Promise.all([recordingPromise, countPromise]).then((values) => {
+      res.json({
+        offset: offset, 
+        limit: limit,
+        total: values[1],
+        recordings: values[0]
+      })
+    })
   });
 
   /**
