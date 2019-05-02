@@ -164,9 +164,7 @@ To debug the app log onto the jetson board and inspect the logs from pm2 or stop
 
 Simulation mode is useful to work on the UI and node.js feature deployment without having to run the neural network / the webcam.
 
-Dependencies:
-
-- Mongodb installed _(optional, only to record data)_ : https://docs.mongodb.com/manual/installation/#mongodb-community-edition
+**Dependency:** Mongodb installed _(optional, only to record data)_ : https://docs.mongodb.com/manual/installation/#mongodb-community-edition_
 
 ```bash
 # Clone repo
