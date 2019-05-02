@@ -166,7 +166,7 @@ Simulation mode is useful to work on the UI and node.js feature deployment witho
 
 Dependencies:
 
-- Mongodb _(optional, only to record data)_ : https://docs.mongodb.com/manual/installation/#mongodb-community-edition
+- Mongodb installed _(optional, only to record data)_ : https://docs.mongodb.com/manual/installation/#mongodb-community-edition
 
 ```bash
 # Clone repo
@@ -180,9 +180,7 @@ npm run dev
 # Open browser on http://localhost:8080/
 ```
 
-If you have an error while doing `npm i`
-
-- Node-gyp: https://github.com/nodejs/node-gyp (should be installed with npm i but if you have errors look into this
+If you have an error while doing `npm install` it is probably a problem with node-gyp, you need to install additional dependencies depending on your platform: https://github.com/nodejs/node-gyp#on-unix
 
 
 ### Technical architecture
