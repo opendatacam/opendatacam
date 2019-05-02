@@ -21,6 +21,7 @@ class PathViewEngine {
   drawLine(context, line, color = 'green') {
     context.strokeStyle = color;
     context.lineWidth = 5;
+    context.lineCap = "round";
     context.beginPath();
     context.moveTo(line.pointA.x, line.pointA.y);
     context.lineTo(line.pointB.x, line.pointB.y);
