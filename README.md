@@ -162,13 +162,11 @@ To debug the app log onto the jetson board and inspect the logs from pm2 or stop
 
 ### Run simulation mode
 
+Simulation mode is useful to work on the UI and node.js feature deployment without having to run the neural network / the webcam.
+
 Dependencies:
 
-- Mongodb: https://docs.mongodb.com/manual/installation/#mongodb-community-edition
-
-- Node-gyp: https://github.com/nodejs/node-gyp , should be installed with npm i but if you have errors look into this
-
-Simulation mode is useful to work on the UI and node.js feature deployment without having to run the neural network / the webcam.
+- Mongodb _(optional, only to record data)_ : https://docs.mongodb.com/manual/installation/#mongodb-community-edition
 
 ```bash
 # Clone repo
@@ -181,6 +179,11 @@ npm i
 npm run dev
 # Open browser on http://localhost:8080/
 ```
+
+If you have an error while doing `npm i`
+
+- Node-gyp: https://github.com/nodejs/node-gyp (should be installed with npm i but if you have errors look into this
+
 
 ### Technical architecture
 
