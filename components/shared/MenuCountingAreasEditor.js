@@ -19,7 +19,7 @@ class MenuCountingAreasEditor extends Component {
   render () {
 
     return (
-      <div className="menu-active-areas">
+      <div className="menu-active-areas flex fixed pin-b pin-l mb-2 ml-2">
         {this.props.mode !== EDITOR_MODE.DELETE &&
           <>
             <button
@@ -60,10 +60,6 @@ class MenuCountingAreasEditor extends Component {
         }
         <style jsx>{`
           .menu-active-areas {
-            display: flex;
-            position: fixed;
-            bottom: 1.5rem;
-            left: 1.5rem;
             z-index: 5;
           }
         `}</style>

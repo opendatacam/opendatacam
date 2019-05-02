@@ -60,21 +60,8 @@ class PathView extends Component {
         }
         {!this.props.hidden &&
           <div className="flex fixed pin-b pin-l mb-2 ml-2">
-            <a
-              id="downloadFrame"
-              ref={(el) => { this.downloadBtn = el }}
-              className="btn btn-default p-0 rounded-l shadow cursor-pointer"
-              onClick={() => this.downloadFrame()}
-            >
-              <SVG 
-                className="w-12 h-12 svg-icon flex items-center" 
-                cacheGetRequests={true}
-                src={`/static/icons/ui/download.svg`} 
-                aria-label="icon take screenshot"
-              />
-            </a>
             <button
-              className="btn btn-default p-0 rounded-r shadow"
+              className="btn btn-default p-0 rounded-l shadow"
               onClick={() => this.clearCanvas()}
             >
               <SVG 
@@ -84,6 +71,19 @@ class PathView extends Component {
                 aria-label="icon delete"
               />
             </button>
+            <a
+              id="downloadFrame"
+              ref={(el) => { this.downloadBtn = el }}
+              className="btn btn-default p-0 rounded-r shadow cursor-pointer"
+              onClick={() => this.downloadFrame()}
+            >
+              <SVG 
+                className="w-12 h-12 svg-icon flex items-center" 
+                cacheGetRequests={true}
+                src={`/static/icons/ui/download.svg`} 
+                aria-label="icon take screenshot"
+              />
+            </a>
           </div>
         }
       </>

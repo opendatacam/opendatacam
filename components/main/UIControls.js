@@ -18,13 +18,26 @@ class UIControls extends Component {
 
   render () {
 
+    if(this.props.recordingStatus.isRecording) {
+      var diff = Math.abs(new Date(this.props.recordingStatus.dateStarted) - new Date());
+      var seconds = Math.floor(diff/1000) % 60;
+      var minutes = Math.floor((diff/1000)/60);
+    }
+
     return (
       <React.Fragment>
         <div className="nav">
           {this.props.recordingStatus.isRecording &&
-            <div className="recording-status text-sm py-1">Recording ...  | {this.props.recordingStatus.currentFPS} FPS</div>
+            <div className="recording-bar"></div>
           }
+          <div className="recording-status">
+            {this.props.recordingStatus.isRecording &&
+              <div className="time text-lg mb-1 font-bold">{minutes.toString().padStart(2, '0')}:{seconds.toString().padStart(2, '0')}</div>
+            }
+            <div className="fps">{this.props.recordingStatus.currentFPS} FPS</div>
+          </div>
           <div className="flex">
+            
             <div className="nav-left mt-2 ml-2 shadow flex">
               <button 
                 className={`btn btn-default rounded-l ${this.props.mode === MODE.LIVEVIEW ? 'btn-default--active' : ''}`}
@@ -58,7 +71,7 @@ class UIControls extends Component {
                 Console
               </button>
               <button 
-                className={`btn btn-default shadow ml-2 py-0 px-3 rounded border border-default-soft border-solid ${this.props.mode === MODE.CONSOLEVIEW ? 'btn-default--active' : ''}`}
+                className={`btn btn-default shadow ml-2 py-0 px-3 rounded border border-default-soft border-solid`}
                 onClick={() => this.props.dispatch(showMenu())}
               >
                 <SVG 
@@ -85,12 +98,22 @@ class UIControls extends Component {
             right: 0;
           }
 
-          .recording-status {
-            background-color: #e3342f;
+          .recording-bar {
+            background-color: #FF0000;
             text-align: center;
-            color: white;
             width: 100%;
             z-index: 3;
+            height: 5px;
+          }
+
+          .recording-status {
+            position: absolute;
+            transform: translateX(-50%);
+            margin-left: 50%;
+            text-align: center;
+            color: #FF0000;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            top: 15px;
           }
         `}</style>
       </React.Fragment>

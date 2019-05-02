@@ -89,7 +89,7 @@ class Recording extends PureComponent {
           </div>
           <div className="flex flex-col rounded bg-white text-black p-4 ml-4 shadow">
             <div className="flex items-end justify-between">
-              <h3 className="mr-3">Pathfinder</h3>
+              <h3 className="mr-3">Tracker</h3>
               <a className="btn-text" href={`/recording/${this.props.id}/tracker`} target="_blank">Download data</a>
             </div>
             <div className="mt-6 rounded relative">
