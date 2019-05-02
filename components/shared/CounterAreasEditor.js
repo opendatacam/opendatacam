@@ -197,6 +197,7 @@ class CounterAreasEditor extends Component {
             right: 0;
             left: 0;
             bottom: 0;
+            z-index: 2;
           }
 
           {/* @media (min-aspect-ratio: 16/9) {
