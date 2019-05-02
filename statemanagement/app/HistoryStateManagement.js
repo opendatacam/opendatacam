@@ -9,7 +9,7 @@ const initialState = fromJS({
   recordingHistory: [],
   isFetchingHistory: false,
   fetchHistoryError: null,
-  recordingCursor: {
+  recordingsCursor: {
     limit: DEFAULT_LIMIT, 
     offset: DEFAULT_OFFSET,
     total: 0
@@ -28,7 +28,7 @@ export function fetchHistory(offset = DEFAULT_OFFSET, limit = DEFAULT_LIMIT) {
       type: FETCH_HISTORY_START
     });
 
-    axios.get(`/recordings?offset=${DEFAULT_OFFSET}&limit=${DEFAULT_LIMIT}`).then((response) => {
+    axios.get(`/recordings?offset=${offset}&limit=${limit}`).then((response) => {
       dispatch(fetchHistorySuccess(response.data.recordings));
       dispatch(updateRecordingsCursor({
         total: response.data.total,
@@ -75,7 +75,7 @@ export default function HistoryReducer (state = initialState, action = {}) {
       return state.set("isFetchingHistory", false)
                   .set("fetchHistoryError", false)
     case UPDATE_RECORDINGS_CURSOR:
-      return state.set('recordingCursor', fromJS(action.payload))
+      return state.set('recordingsCursor', fromJS(action.payload))
     default:
       return state
   }
