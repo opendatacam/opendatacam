@@ -14,7 +14,10 @@ class CanvasEngine extends PureComponent {
     this.lastFrameDrawn = -1
 
     this.loopUpdateCanvas = this.loopUpdateCanvas.bind(this)
+    this.clearCanvas = this.clearCanvas.bind(this)
     this.rafHandle = null;
+
+    this.PathViewEngine = new PathViewEngine();
   }
 
   componentDidMount () {
@@ -23,18 +26,22 @@ class CanvasEngine extends PureComponent {
 
   componentDidUpdate(prevProps) {
     if (this.props.canvasResolution !== prevProps.canvasResolution) {
-      PathViewEngine.resetLastFrameData();
+      this.PathViewEngine.resetLastFrameData();
       this.clearCanvas()
     }
   }
 
   clearCanvas () {
+    console.log('clearCanvas')
     this.canvasContext.clearRect(
       0,
       0,
-      this.props.canvasResolution.get('w'),
-      this.props.canvasResolution.get('h')
+      this.props.fixedResolution && this.props.fixedResolution.w || this.props.canvasResolution.get('w'),
+      this.props.fixedResolution && this.props.fixedResolution.h || this.props.canvasResolution.get('h')
     )
+    if(this.props.mode === CANVAS_RENDERING_MODE.PATHVIEW) {
+      this.PathViewEngine.resetLastFrameData();
+    }
   }
 
   loopUpdateCanvas () {
@@ -91,10 +98,11 @@ class CanvasEngine extends PureComponent {
       }
 
       if(this.props.mode === CANVAS_RENDERING_MODE.PATHVIEW) {
-        PathViewEngine.drawPaths(
+
+        this.PathViewEngine.drawPaths(
           this.canvasContext,
           this.props.trackerData.data,
-          this.props.canvasResolution.toJS(),
+          this.props.fixedResolution || this.props.canvasResolution.toJS(),
           this.props.originalResolution
         )
       }
@@ -121,10 +129,16 @@ class CanvasEngine extends PureComponent {
             this.canvasEl = el
             if (this.canvasEl) {
               this.canvasContext = el.getContext('2d')
+              if (this.props.onDomReady) {
+                this.props.onDomReady(this.canvasEl)
+              }
+              if (this.props.registerClearCanvas) {
+                this.props.registerClearCanvas(this.clearCanvas)
+              }
             }
           }}
-          width={this.props.canvasResolution.get('w')}
-          height={this.props.canvasResolution.get('h')}
+          width={this.props.fixedResolution && this.props.fixedResolution.w || this.props.canvasResolution.get('w')}
+          height={this.props.fixedResolution && this.props.fixedResolution.h || this.props.canvasResolution.get('h')}
           className='canvas'
         />
         <style jsx>{`

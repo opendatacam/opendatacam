@@ -61,6 +61,4 @@ class PathViewEngine {
   }
 }
 
-const PathViewEngineInstance = new PathViewEngine()
-
-export default PathViewEngineInstance
+export default PathViewEngine
