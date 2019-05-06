@@ -166,7 +166,14 @@ npm install
 npm run build
 ```
 
-- Config **open data cam** to run on boot
+- Run **open data cam**
+
+```bash
+cd <path/to/open-data-cam>
+npm run start
+```
+
+- (optional) Config **open data cam** to run on boot
 
 ```bash
 # install pm2
