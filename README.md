@@ -53,6 +53,14 @@ If your jetson does not have jetpack 4.2 *(CUDA 10, TensorRT 5, cuDNN 7.3, Ubunt
 
 Open a terminal or ssh to you jetson and run this command (make sure your webcam is connected):
 
+
+# https://unix.stackexchange.com/questions/306007/how-to-pass-argument-to-script-which-is-input-to-bash
+
+```bash
+sudo wget -O - https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/run-opendatacam.sh | bash -s PLATFORM=nano
+```
+
+
 **For Jetson Nano:**
 
 ```bash

@@ -3,6 +3,7 @@
 .next/
 node_modules/
 *.ffm
+*.bak
 prototype/video
 history.db
 static/trackerHistory.json

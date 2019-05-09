@@ -1,10 +1,12 @@
 #!/bin/bash
 
 # This script is meant to serve as a placeholder until nvidia-docker is
-# available on the Jetson TX2. Its recommended usage is the equivalent to a
+# available on the Jetson platform. Its recommended usage is the equivalent to a
 # vanilla `docker run` command with no spaces between `docker` and `run`:
 #
-# ./darknet-docker run --rm -it somedockerimage
+# It does mount all the necessary dependencies for GPU usage from the docker image, like CUDA, CUDNN
+#
+# ./run-docker run --rm -it somedockerimage to run interactively
 #
 
 # Reference: strace -v -f /darknet/darknet detector test cfg/voc.data cfg/tiny-yolo-voc.cfg tiny-yolo-voc.weights data/dog.jpg 2>&1 | grep etc
