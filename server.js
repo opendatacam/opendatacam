@@ -13,6 +13,7 @@ const getURLData = require('./server/utils/urlHelper').getURLData;
 const DBManager = require('./server/db/DBManager')
 const MjpegProxy = require('mjpeg-proxy').MjpegProxy;
 const intercept = require("intercept-stdout");
+const config = require('./config.json');
 
 const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not running on the Jetson
 // const SIMULATION_MODE = true;
@@ -21,6 +22,9 @@ const port = parseInt(process.env.PORT, 10) || 8080
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
+
+console.log('Loading config')
+console.log(config);
 
 // Init processes
 YOLO.init(SIMULATION_MODE);

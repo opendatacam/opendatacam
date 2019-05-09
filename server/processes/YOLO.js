@@ -25,41 +25,14 @@ module.exports = {
 
     YOLO.simulationMode = simulationMode;
 
-    // On webcam
-    // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 1 -address "ws://localhost" -port 8080
-    // Comment the following lines to run on a file directly
-    // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink" -ext_output -dont_show
-    // YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-c','0', '-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{ // Without gstreamer
-    // YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/coco.data', 'cfg/yolov3-tiny.cfg', 'yolov3-tiny.weights','-c', '0', '-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{
-    YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights',"v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink", '-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{
+    var yoloParams = config.NEURAL_NETWORK_PARAMS[config.NEURAL_NETWORK];
+    var videoParams = config.VIDEO_INPUTS_PARAMS[config.VIDEO_INPUT];
+
+    YOLO.process = new (forever.Monitor)(['./darknet','detector','demo', yoloParams.data , yoloParams.cfg, yoloParams.weights, videoParams, '-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{
       max: 1,
       cwd: config.PATH_TO_YOLO_DARKNET,
       killTree: true
     });
-
-    // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -c 0 -ext_output -dont_show -json_port 8070 -mjpeg_port 8090
-
-    // On file
-    // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights -filename YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4 -address "ws://localhost" -port 8080
-    // YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4 -> relative to darknet directory (set up in config.json), if outside this directory do:
-    // ../file.mp4 or ../videos/file.mp4
-    
-    // Uncomment the following lines to run on a file directly
-
-    // YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','-filename', 'YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4', '-address','ws://localhost','-port','8080'],{
-    //   max: 1,
-    //   cwd: config.PATH_TO_YOLO_DARKNET,
-    //   killTree: true
-    // });
-
-    // With new darknet implem, no -filename flag
-    // ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights video-stuttgart.mp4 -ext_output -dont_show
-
-    // YOLO.process = new (forever.Monitor)(['./darknet','detector','demo','cfg/voc.data','cfg/yolo-voc.cfg','yolo-voc.weights','video-stuttgart-10-fps-sd.mp4','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{
-    //   max: 1,
-    //   cwd: config.PATH_TO_YOLO_DARKNET,
-    //   killTree: true
-    // });
 
     YOLO.process.on("start", () => {
       console.log('Process YOLO started');

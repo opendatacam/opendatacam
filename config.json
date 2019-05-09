@@ -1,5 +1,7 @@
 {
   "PATH_TO_YOLO_DARKNET" : "/darknet",
+  "VIDEO_INPUT": "raspberrycam",
+  "NEURAL_NETWORK": "yolov3-tiny",
   "VALID_CLASSES": ["*"],
   "DISPLAY_CLASSES": [
     { "class": "bicycle", "icon": "1F6B2.svg"},
@@ -8,5 +10,37 @@
     { "class": "motorbike", "icon": "1F6F5.svg"},
     { "class": "car", "icon": "1F697.svg"},
     { "class": "bus", "icon": "1F68C.svg"}
-  ]
+  ],
+  "VIDEO_INPUTS_PARAMS": {
+    "file": "demo_stuttgart.mp4",
+    "usbcam": "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink",
+    "raspberrycam": "nvarguscamerasrc ! video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12 ! nvvidconv ! video/x-raw, format=BGRx, width=640, height=360 ! videoconvert ! video/x-raw, format=BGR ! appsink"
+  },
+  "NEURAL_NETWORK_PARAMS": {
+    "yolov3": {
+      "data": "cfg/coco.data",
+      "cfg": "cfg/yolov3.cfg",
+      "weights": "yolov3.weights"
+    },
+    "yolov3-tiny": {
+      "data": "cfg/coco.data",
+      "cfg": "cfg/yolov3-tiny.cfg",
+      "weights": "yolov3-tiny.weights"
+    },
+    "yolov2-voc": {
+      "data": "cfg/voc.data",
+      "cfg": "cfg/yolo-voc.cfg",
+      "weights": "yolo-voc.weights"
+    },
+    "yolov3-spp": {
+      "data": "cfg/coco.data",
+      "cfg": "cfg/yolov3-spp.cfg",
+      "weights": "yolov3-spp.weights"
+    },
+    "yolov3-openimages": {
+      "data": "cfg/coco.data",
+      "cfg": "yolov3-openimages.cfg",
+      "weights": "yolov3-openimages.weights"
+    }
+  }
 }
