@@ -33,6 +33,9 @@ else
     DOCKER_VOLUMES+='-v /etc/ld.so.cache:/etc/ld.so.cache:ro '
     DOCKER_VOLUMES+='-v /usr/lib/aarch64-linux-gnu/tegra:/usr/lib/aarch64-linux-gnu/tegra:ro '
     DOCKER_VOLUMES+='-v /usr/lib/aarch64-linux-gnu/tegra-egl:/usr/lib/aarch64-linux-gnu/tegra-egl:ro '
+    # Overwrite the config.json file of the docker image with the one of the local machine
+    # TODO maybe move this on a ./run-opendatacam script that just set this + the mongodb folder
+    DOCKER_VOLUMES+='-v $(pwd)/config.json:/lab-opendatacam/config.json '
     shift
     docker run -p 8080:8080 -p 8090:8090 -p 8070:8070 --privileged $DOCKER_VOLUMES -v /data/db:/data/db $@
 fi

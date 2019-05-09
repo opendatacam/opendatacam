@@ -1,7 +1,7 @@
 {
   "PATH_TO_YOLO_DARKNET" : "/darknet",
-  "VIDEO_INPUT": "TO_REPLACE_VIDEO_INPUT",
-  "NEURAL_NETWORK": "TO_REPLACE_NEURAL_NETWORK",
+  "VIDEO_INPUT": "TO_SPECIFY_VIDEO_INPUT",
+  "NEURAL_NETWORK": "TO_SPECIFY_NEURAL_NETWORK",
   "VIDEO_INPUTS_PARAMS": {
     "file": "demo_stuttgart.mp4",
     "usbcam": "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink",

@@ -3,10 +3,13 @@
 # exit when any command fails
 set -e
 
+# Each opendatacam release should set the correct version here and tag appropriatly on github
 VERSION=v2
-# # PLATFORM in ["nano","xavier","tx2","dockernvidia"]
+# PLATFORM in ["nano","xavier","tx2","dockernvidia"]
 PLATFORM=undefined
+VIDEO_INPUT=undefined
 
+# DEFAULT config for opendatacam depending on platform
 DEFAUT_VIDEO_INPUT_nano=raspberrycam
 DEFAUT_VIDEO_INPUT_tx2=usbcam
 DEFAUT_VIDEO_INPUT_xavier=usbcam
@@ -61,11 +64,20 @@ else
       wget -N https://raw.githubusercontent.com/moovel/lab-opendatacam/$VERSION/config.json
 
       # Replace VIDEO_INPUT and NEURAL_NETWORK with default config for this platform
-      sed -i'.bak' -e 's/TO_FILL_VIDEO_INPUT/$DEFAUT_VIDEO_INPUT_$PLATFORM/g' config.json
-      # sed -i'.bak' -e 's/TO_FILL_NEURAL_NETWORK/yolov3/g' config.json
+
+      # Bash hacks
+      VIDEO_INPUT="DEFAUT_VIDEO_INPUT_$PLATFORM"
+      VIDEO_INPUT=${!VIDEO_INPUT}
+
+      NEURAL_NETWORK="DEFAUT_NEURAL_NETWORK_$PLATFORM"
+      NEURAL_NETWORK=${!NEURAL_NETWORK}
+
+      # Replace in config.json with default params for the current platform
+      sed -i'.bak' -e "s/TO_REPLACE_VIDEO_INPUT/$VIDEO_INPUT/g" config.json
+      sed -i'.bak' -e "s/TO_REPLACE_NEURAL_NETWORK/$NEURAL_NETWORK/g" config.json
 
       # Pull, install and run opendatacam container when docker starts (on boot with --restart unless-stopped, -d is for detached mode)
-      # sudo ./darknet-docker.sh run -d --restart unless-stopped tdurand/opendatacam:v2.0.0-beta.1-nano
+      sudo ./run-docker.sh run -d --restart unless-stopped tdurand/opendatacam:$VERSION
 
       # Message that docker container has been started and opendatacam will be available shorty on <IP>
       echo "Opendatacam docker container started successfully, it might take up to 1 min to start the node app"
