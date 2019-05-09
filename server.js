@@ -23,8 +23,19 @@ const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
-console.log('Loading config')
-console.log(config);
+// Log config loaded
+if(SIMULATION_MODE) {
+  console.log('-----------------------------------')
+  console.log('-     Opendatacam initialized     -')
+  console.log('- IN SIMULATION MODE              -')
+  console.log('-----------------------------------')
+} else {
+  console.log('-----------------------------------')
+  console.log('-     Opendatacam initialized     -')
+  console.log('- Config loaded:                  -')
+  console.log(JSON.stringify(config, null, 2));
+  console.log('-----------------------------------')
+}
 
 // Init processes
 YOLO.init(SIMULATION_MODE);

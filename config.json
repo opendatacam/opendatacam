@@ -1,16 +1,7 @@
 {
   "PATH_TO_YOLO_DARKNET" : "/darknet",
-  "VIDEO_INPUT": "raspberrycam",
+  "VIDEO_INPUT": "usbcam",
   "NEURAL_NETWORK": "yolov3-tiny",
-  "VALID_CLASSES": ["*"],
-  "DISPLAY_CLASSES": [
-    { "class": "bicycle", "icon": "1F6B2.svg"},
-    { "class": "person", "icon": "1F6B6.svg"},
-    { "class": "truck", "icon": "1F69B.svg"},
-    { "class": "motorbike", "icon": "1F6F5.svg"},
-    { "class": "car", "icon": "1F697.svg"},
-    { "class": "bus", "icon": "1F68C.svg"}
-  ],
   "VIDEO_INPUTS_PARAMS": {
     "file": "demo_stuttgart.mp4",
     "usbcam": "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink",
@@ -42,5 +33,14 @@
       "cfg": "yolov3-openimages.cfg",
       "weights": "yolov3-openimages.weights"
     }
-  }
+  },
+  "VALID_CLASSES": ["*"],
+  "DISPLAY_CLASSES": [
+    { "class": "bicycle", "icon": "1F6B2.svg"},
+    { "class": "person", "icon": "1F6B6.svg"},
+    { "class": "truck", "icon": "1F69B.svg"},
+    { "class": "motorbike", "icon": "1F6F5.svg"},
+    { "class": "car", "icon": "1F697.svg"},
+    { "class": "bus", "icon": "1F68C.svg"}
+  ]
 }
