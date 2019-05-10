@@ -18,9 +18,6 @@ DEFAUT_NEURAL_NETWORK_nano=yolov3-tiny
 DEFAUT_NEURAL_NETWORK_tx2=yolov2-voc
 DEFAUT_NEURAL_NETWORK_xavier=yolov3
 
-
-# animals_moo=cow; sound=moo; i="animals_$sound"; echo "${!i}"
-
 echo "Installing opendatacam docker image"
 
 display_usage() {
