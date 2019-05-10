@@ -1,3 +1,5 @@
+# INSTALL IS BROKEN FOR v2 beta... check status [https://github.com/moovel/lab-opendatacam/issues/70](https://github.com/moovel/lab-opendatacam/issues/70)
+
 # Open data cam 2.0.0-beta.1
 
 This project is offline lightweight DIY solution to monitor urban landscape. After installing this software on the specified hardware (Nvidia Jetson board + Logitech webcam), you will be able to count cars, pedestrians, motorbikes from your webcam live stream.
@@ -51,31 +53,21 @@ If your jetson does not have jetpack 4.2 *(CUDA 10, TensorRT 5, cuDNN 7.3, Ubunt
 
 ### 2. Install and start Opendatacam (3 min 🚀):
 
-Open a terminal or ssh to you jetson and run this command (make sure your webcam is connected):
+Open a terminal or ssh to you jetson and run these command (make sure your webcam is connected):
 
-
-# https://unix.stackexchange.com/questions/306007/how-to-pass-argument-to-script-which-is-input-to-bash
-
-```bash
-sudo wget -O - https://raw.githubusercontent.com/moovel/lab-opendatacam/v2.0.0-beta.2/docker/run-jetson/install-opendatacam.sh | bash -s PLATFORM=nano
 ```
+wget https://raw.githubusercontent.com/moovel/lab-opendatacam/v2.0.0-beta.2/docker/run-jetson/install-opendatacam.sh
+chmod 777 install-opendatacam.sh
 
+# For jetson nano
+sudo ./install-opendatacam.sh --platform nano
 
-**For Jetson Nano:**
+# For jetson tx2
+# NOT AVAILABLE YET
 
-```bash
-sudo wget -O - https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/run-opendatacam-nano.sh | bash
+# For jetson xavier
+# NOT AVAILABLE YET
 ```
-
-**For Jetson TX2:**
-
-```bash
-sudo wget -O - https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/run-opendatacam-tx2.sh | bash
-```
-
-**For Jetson Xavier:**
-
-TODO
 
 [See Install Tutorial (30s)](https://www.youtube.com/watch?v=NwXrXHHGSgk)
 
