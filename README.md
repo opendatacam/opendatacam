@@ -57,7 +57,7 @@ Open a terminal or ssh to you jetson and run this command (make sure your webcam
 # https://unix.stackexchange.com/questions/306007/how-to-pass-argument-to-script-which-is-input-to-bash
 
 ```bash
-sudo wget -O - https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/run-opendatacam.sh | bash -s PLATFORM=nano
+sudo wget -O - https://raw.githubusercontent.com/moovel/lab-opendatacam/v2.0.0-beta.2/docker/run-jetson/install-opendatacam.sh | bash -s PLATFORM=nano
 ```
 
 

@@ -77,7 +77,7 @@ else
       sed -i'.bak' -e "s/TO_REPLACE_NEURAL_NETWORK/$NEURAL_NETWORK/g" config.json
 
       # Pull, install and run opendatacam container when docker starts (on boot with --restart unless-stopped, -d is for detached mode)
-      sudo ./run-docker.sh run -d --restart unless-stopped tdurand/opendatacam:$VERSION
+      sudo ./run-docker.sh run -d --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM
 
       # Message that docker container has been started and opendatacam will be available shorty on <IP>
       echo "Opendatacam docker container started successfully, it might take up to 1 min to start the node app"
