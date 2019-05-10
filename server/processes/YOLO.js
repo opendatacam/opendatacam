@@ -50,12 +50,6 @@ module.exports = {
       console.log(err);
     });
 
-    YOLO.process.on("stderr", (data) => {
-      console.log('Process YOLO stderr');
-      console.log(data)
-      // YOLO.isStarted = false;
-    });
-
     console.log('Process YOLO initialized');
     YOLO.isInitialized = true;
 

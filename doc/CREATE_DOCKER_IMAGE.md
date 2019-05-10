@@ -52,19 +52,25 @@ wget https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jets
 
 # Build image
 sudo docker build -t opendatacam .
+
+# If you are building a second time, use this to pull the latest opendatacam code
+# TODO change this by adding the tag of the version in the Dockerfile
+# Technique to rebuild the docker file from here : https://stackoverflow.com/a/49831094/1228937
+# Build using date > marker && docker build .
+date > marker && sudo docker build -t opendatacam .
 ```
 
 ### 4. Try the docker image
 
 ```bash
 # Get the darknet-docker script (TODO @tdurand remove v2 when releasing)
-wget https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/darknet-docker.sh
+wget https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/run-docker.sh
 
 # Chmod to give exec permissions
-chmod 777 darknet-docker.sh
+chmod 777 run-docker.sh
 
 # Run image interactively while giving access to CUDA stuff
-sudo ./darknet-docker.sh run --rm -it opendatacam
+sudo ./run-docker.sh run --rm -it opendatacam
 
 # Open browser at http://<IP of Jetson>:8080
 ```
