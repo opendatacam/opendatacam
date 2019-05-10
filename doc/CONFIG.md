@@ -1,100 +1,36 @@
-## ⚙️ Config options Opendatacam
+## ⚙️ Customize Opendatacam
 
-### Config file:
+We offer several customization options:
 
-Blablala todo
+- **Video input:** run from a file, change webcam resolution, change camera type (raspberry cam, usb cam...)
 
-### 🗃 Run open data cam on a video file instead of the webcam feed:
+- **Neural network:** change YOLO weights files depending on your hardware capacity, desired FPS (tinyYOLO, full yolov3, yolov3-openimages ...)
 
-*TODO update, this is from v1*
+- **Change display classes:** We default to mobility classes (car, bus, person...), but you can change this
 
-It is possible to run Open Data Cam on a video file instead of the webcam feed.
+### General
 
-Before doing this you should be aware that the neural network (YOLO) will run on all the frames of the video file at ~7-8 FPS (best jetson speed) and do not play the file in real-time. If you want to simulate a real video feed you should drop the framerate of your video down to 7 FPS (or whatever frame rate your jetson board can run YOLO).
+All settings are in a `config.json` file that you will find in the same directory you run the install script.
 
-To switch the Open Data Cam to "video file reading" mode, you should go to the open-data-cam folder on the jetson.
-
-1. `cd <path/to/open-data-cam>`
-
-2. Then open [YOLO.js](https://github.com/moovel/lab-opendatacam/blob/master/server/processes/YOLO.js#L30), and uncomment those lines:
-
-```javascript
-YOLO.process = new forever.Monitor(
-  [
-    "./darknet",
-    "detector",
-    "demo",
-    "cfg/voc.data",
-    "cfg/yolo-voc.cfg",
-    "yolo-voc.weights",
-    "-filename",
-    "YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4",
-    "-address",
-    "ws://localhost",
-    "-port",
-    "8080"
-  ],
-  {
-    max: 1,
-    cwd: config.PATH_TO_YOLO_DARKNET,
-    killTree: true
-  }
-);
-```
-
-3. Copy the video file you want to run open data cam on in the `darknet-net` folder on the Jetson _(if you did auto-install, it is this path: ~/darknet-net)_
+When you modify a setting, you wil need to restart the docker container, you can do so by:
 
 ```
-// For example, your file is `video-street-moovelab.mp4`, you will end up with the following in the darknet-net folder:
+# List containers
+sudo docker container list
 
-darknet-net
-  |-cfg
-  |-data
-  |-examples
-  |-include
-  |-python
-  |-scripts
-  |-src
-  |# ... other files
-  |video-street-moovellab.mp4 <--- Video file
+# Restart container (find id from previous command)
+sudo docker restart <containerID>
 ```
 
-4. Then replace `YOUR_FILE_PATH_RELATIVE_TO_DARK_NET_FOLDER.mp4` placeholder in [YOLO.js](https://github.com/moovel/lab-opendatacam/blob/master/server/processes/YOLO.js#L37) with your file name, in this case `video-street-moovellab.mp4`
+*TODO document what to do if you run without docker*
 
-```javascript
-// In our example you should end up with the following:
+### Run open data cam on a video file instead of the webcam feed:
 
-YOLO.process = new forever.Monitor(
-  [
-    "./darknet",
-    "detector",
-    "demo",
-    "cfg/voc.data",
-    "cfg/yolo-voc.cfg",
-    "yolo-voc.weights",
-    "-filename",
-    "video-street-moovellab.mp4",
-    "-address",
-    "ws://localhost",
-    "-port",
-    "8080"
-  ],
-  {
-    max: 1,
-    cwd: config.PATH_TO_YOLO_DARKNET,
-    killTree: true
-  }
-);
-```
+TODO
 
-5. After doing this you should re-build the Open Data Cam node app.
+### Change neural network weights
 
-```
-npm run build
-```
-
-_You should be able to use any video file that are readable by OpenCV, which is what YOLO implementation use behind the hoods to decode the video stream_
-
+TODO
 
 ### Track only specific classes
 
@@ -111,8 +47,6 @@ For example, here is a way to only track buses and person:
   "VALID_CLASSES": ["bus","car"]
 }
 ```
-
-If you change this config option, you will need to re-build the project by running `npm run build`.
 
 In order to track all the classes (default value), you need to set it to:
 

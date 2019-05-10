@@ -12,21 +12,23 @@ It is very alpha and we do not provide any guarantee that this will work for you
 
 [![Demo open data cam](https://img.youtube.com/vi/A-TvSjAU1pk/0.jpg)](https://www.youtube.com/watch?v=A-TvSjAU1pk)
 
+## Table of content
+
 - [Open data cam 2.0.0-beta.2](#open-data-cam-200-beta2)
-  * [💻 Hardware pre-requisite](#---hardware-pre-requisite)
-  * [🎬 Get Started, quick setup](#---get-started--quick-setup)
-    + [1. Flash Jetson board to jetpack 4.2+ ⚡️ ️(if not installed)️:](#1-flash-jetson-board-to-jetpack-42-------if-not-installed---)
-    + [2. Install and start Opendatacam (3 min 🚀):](#2-install-and-start-opendatacam--3-min-----)
-    + [3. Use Opendatacam 🖖](#3-use-opendatacam---)
-    + [4. Configure your jetson Wifi hotspot 📲](#4-configure-your-jetson-wifi-hotspot---)
-    + [5. Customize Opendatacam ️️⚙️](#5-customize-opendatacam-----)
-    + [6. Docker playbook ️📚](#6-docker-playbook----)
-  * [🔌 API Documentation](#---api-documentation)
-  * [⁉️ Troubleshooting](#---troubleshooting)
-  * [🎛 Advanced uses](#---advanced-uses)
+  * [💻 Hardware pre-requisite](#-hardware-pre-requisite)
+  * [🎬 Get Started, quick setup](#-get-started-quick-setup)
+    + [1. Flash Jetson board to jetpack 4.2+ ⚡️ ️(if not installed)️:](#1-flash-jetson-board-to-jetpack-42-️-️if-not-installed️)
+    + [2. Install and start Opendatacam (3 min 🚀):](#2-install-and-start-opendatacam-3-min-)
+    + [3. Use Opendatacam 🖖](#3-use-opendatacam-)
+    + [4. Configure your jetson Wifi hotspot 📲](#4-configure-your-jetson-wifi-hotspot-)
+    + [5. Customize Opendatacam ️️⚙️](#5-customize-opendatacam-)
+    + [6. Docker playbook ️📚](#6-docker-playbook-)
+  * [🔌 API Documentation](#-api-documentation)
+  * [⁉️ Troubleshooting](#-troubleshooting)
+  * [🎛 Advanced uses](#-advanced-uses)
     + [How to run opendatacam without docker](#how-to-run-opendatacam-without-docker)
-    + [How to create / update the docker image](#how-to-create---update-the-docker-image)
-  * [🛠 Development notes](#---development-notes)
+    + [How to create / update the docker image](#how-to-create--update-the-docker-image)
+  * [🛠 Development notes](#-development-notes)
 
 ## 💻 Hardware pre-requisite
 
@@ -66,7 +68,7 @@ sudo ./install-opendatacam.sh --platform nano
 
 This command will download and start a docker container on the Jetson. After it finishes the docker container starts a webserver on port 8080.
 
-The docker container is started in auto-restart mode, so if you reboot your jetson it will automaticaly start opendatacam on startup. ([Learn more about the specificities of docker on jetson](#6-docker-playbook----))
+The docker container is started in auto-restart mode, so if you reboot your jetson it will automaticaly start opendatacam on startup. ([Learn more about the specificities of docker on jetson](#6-docker-playbook-))
 
 You can also [install opendatacam without docker](#how-to-run-opendatacam-without-docker)
 

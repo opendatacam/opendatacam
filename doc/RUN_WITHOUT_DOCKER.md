@@ -1,4 +1,6 @@
-## How to run opendatacam without docker
+# This might be a bit outdated since v2.0.0-beta.2 , need to update some thing
+
+## How to install opendatacam without docker
 
 ### 1. Install OpenCV 3.4.3 with Gstreamer:
 
