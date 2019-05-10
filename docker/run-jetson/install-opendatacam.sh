@@ -93,6 +93,9 @@ else
       # Message that docker container has been started and opendatacam will be available shorty on <IP>
       echo "Opendatacam docker container installed successfully, it might take up to 1-2 min to start the node app and the webserver"
       
+      # Cancel stop bash script on error (get IP will fail is no wifi dongle / ethernet connexion)
+      set +e
+
       wifiIP=$(ifconfig wlan0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
       ethernetIP=$(ifconfig eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.2')
       
