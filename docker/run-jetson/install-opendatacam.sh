@@ -48,12 +48,15 @@ else
       display_usage
       ;;
     -p|--platform)
-      # TODO Check if existing docker image is running and stop it if it is the case
+      # Stop any current docker container from running
+      echo "Stop any running docker container..."
+      sudo docker stop $(sudo docker ps -a -q)
 
       # Platform is specified 
       PLATFORM=$2
       # TODO verify if PLATFORM is oneOf(nano, xavier, tx2)
-      echo "Installing opendatacam $VERSION for platform: $2"
+      echo "Installing opendatacam $VERSION for platform: $2 ..."
+      echo "Download run script for docker ..."
       # Get the run-docker script
       wget -N https://raw.githubusercontent.com/moovel/lab-opendatacam/$VERSION/docker/run-jetson/run-docker.sh
 
@@ -61,6 +64,7 @@ else
       chmod 777 run-docker.sh
 
       # Get the config file
+      echo "Download config file ..."
       wget -N https://raw.githubusercontent.com/moovel/lab-opendatacam/$VERSION/config.json
 
       # Replace VIDEO_INPUT and NEURAL_NETWORK with default config for this platform
@@ -72,10 +76,15 @@ else
       NEURAL_NETWORK="DEFAUT_NEURAL_NETWORK_$PLATFORM"
       NEURAL_NETWORK=${!NEURAL_NETWORK}
 
+      echo "Replace config file with platform default params ... (you can change those later)"
+      echo "NEURAL_NETWORK : $NEURAL_NETWORK"
+      echo "VIDEO_INPUT : $VIDEO_INPUT"
+
       # Replace in config.json with default params for the current platform
       sed -i'.bak' -e "s/TO_REPLACE_VIDEO_INPUT/$VIDEO_INPUT/g" config.json
       sed -i'.bak' -e "s/TO_REPLACE_NEURAL_NETWORK/$NEURAL_NETWORK/g" config.json
 
+      echo "Download, install and run opendatacam docker container"
       # Pull, install and run opendatacam container when docker starts (on boot with --restart unless-stopped, -d is for detached mode)
       sudo ./run-docker.sh run -d --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM
 
