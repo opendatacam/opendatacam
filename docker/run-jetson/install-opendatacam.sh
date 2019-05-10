@@ -10,7 +10,7 @@ PLATFORM=undefined
 VIDEO_INPUT=undefined
 
 # DEFAULT config for opendatacam depending on platform
-DEFAUT_VIDEO_INPUT_nano=raspberrycam
+DEFAUT_VIDEO_INPUT_nano=usbcam
 DEFAUT_VIDEO_INPUT_tx2=usbcam
 DEFAUT_VIDEO_INPUT_xavier=usbcam
 
