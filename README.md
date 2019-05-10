@@ -99,6 +99,12 @@ sudo docker container list
 # Stop container (get id from previous command)
 sudo docker stop <containerID>
 
+# Start container (get id from previous command)
+sudo docker start <containerID>
+
+# Restart container (after modifying the config.json file for example)
+sudo docker restart <containerID>
+
 # Then you can run the install command to install & run the latest version
 sudo wget -O - https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/run-opendatacam.sh | bash
 ```

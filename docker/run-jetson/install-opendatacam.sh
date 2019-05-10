@@ -64,6 +64,12 @@ else
       echo "Download config file ..."
       wget -N https://raw.githubusercontent.com/moovel/lab-opendatacam/$VERSION/config.json
 
+      # Create the directory to run on files
+      echo "Create the directory to run on files ..."
+      mkdir opendatacam_videos
+      echo "Download demo video ..."
+      # wget https://raw.githubusercontent.com/moovel/lab-opendatacam/$VERSION/config.json
+
       # Replace VIDEO_INPUT and NEURAL_NETWORK with default config for this platform
 
       # Bash hacks
