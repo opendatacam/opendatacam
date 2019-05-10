@@ -80,10 +80,23 @@ else
       sudo ./run-docker.sh run -d --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM
 
       # Message that docker container has been started and opendatacam will be available shorty on <IP>
-      echo "Opendatacam docker container started successfully, it might take up to 1 min to start the node app"
-      echo "Open browser at http://<IP_OF_JETSON>:8080 or http://localhost:8080"
+      echo "Opendatacam docker container installed successfully, it might take up to 1-2 min to start the node app and the webserver"
+      
+      wifiIP=$(ifconfig wlan0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.1')
+      ethernetIP=$(ifconfig eth0 | grep -Eo 'inet (addr:)?([0-9]*\.){3}[0-9]*' | grep -Eo '([0-9]*\.){3}[0-9]*' | grep -v '127.0.0.2')
+      
+      if [ -n "$wifiIP" ]; then
+        echo "WIFI device IP"
+        echo "Opendatacam is available at: http://$wifiIP:8080"
+      fi
+
+      if [ -n "$ethernetIP" ]; then
+        echo "Ethernet device IP"
+        echo "Opendatacam is available at: http://$ethernetIP:8080"
+      fi
+
       echo "Opendatacam will start automaticaly on boot when you restart you jetson"
-      echo "If you want to stop it or update it blabalbalabl"
+      echo "If you want to stop it, please refer to the doc: https://github.com/moovel/lab-opendatacam"
 
       ;;
     *)
@@ -92,24 +105,4 @@ else
       ;;
   esac
 fi
-
-echo "Finished script $0"
-
-
-# "SETTINGS_BY_PLATFORM": {
-#     "nano": {
-#       "VIDEO_INPUT": "raspberrycam",
-#       "NEURAL_NETWORK": "yolov3-tiny"
-#     },
-#     "tx2": {
-#       "VIDEO_INPUT": "usbcam",
-#       "NEURAL_NETWORK": "yolov2-voc"
-#     },
-#     "xavier": {
-#       "VIDEO_INPUT": "usbcam",
-#       "NEURAL_NETWORK": "yolov3"
-#     }
-#   },
-
-
 
