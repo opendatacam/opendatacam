@@ -66,9 +66,9 @@ else
 
       # Create the directory to run on files
       echo "Create the directory to run on files ..."
-      mkdir opendatacam_videos
+      mkdir -p opendatacam_videos
       echo "Download demo video ..."
-      wget https://github.com/moovel/lab-opendatacam/raw/$VERSION/static/demo/demo.mp4 -O opendatacam_videos/demo.mp4
+      wget -N https://github.com/moovel/lab-opendatacam/raw/$VERSION/static/demo/demo.mp4 -O opendatacam_videos/demo.mp4
 
       # Replace VIDEO_INPUT and NEURAL_NETWORK with default config for this platform
       # Bash hacks

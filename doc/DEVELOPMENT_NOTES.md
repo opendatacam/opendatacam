@@ -13,13 +13,13 @@
 git tag --list
 
 # Remove tag on remote
-git push origin :tagname
+git push origin :v2.0.0-beta.2
 
 # Delete local tag
-git tag --delete tagname
+git tag --delete v2.0.0-beta.2
 
 # Tag latest commit
-git tag tagname
+git tag v2.0.0-beta.2
 
 # Push tag
 git push --tags

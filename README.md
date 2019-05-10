@@ -56,16 +56,19 @@ If your jetson does not have jetpack 4.2 *(CUDA 10, TensorRT 5, cuDNN 7.3, Ubunt
 Open a terminal or ssh to you jetson and run these command (make sure your webcam is connected):
 
 ```
-wget https://raw.githubusercontent.com/moovel/lab-opendatacam/v2.0.0-beta.2/docker/run-jetson/install-opendatacam.sh
+# Download install script
+wget -N https://raw.githubusercontent.com/moovel/lab-opendatacam/v2.0.0-beta.2/docker/run-jetson/install-opendatacam.sh
+
+# Give exec permission
 chmod 777 install-opendatacam.sh
 
-# For jetson nano
+# Install command for jetson nano
 sudo ./install-opendatacam.sh --platform nano
 
-# For jetson tx2
+# Install command for jetson tx2
 # NOT AVAILABLE YET
 
-# For jetson xavier
+# Install command for jetson xavier
 # NOT AVAILABLE YET
 ```
 
