@@ -8,6 +8,21 @@ We offer several customization options:
 
 - **Change display classes:** We default to mobility classes (car, bus, person...), but you can change this.
 
+### Table of content
+
+- [General](#general)
+  * [For a non-docker install of opendatacam:](#for-a-non-docker-install-of-opendatacam-)
+- [Run opendatacam on a video file instead of the webcam:](#run-opendatacam-on-a-video-file-instead-of-the-webcam-)
+  * [For a non-docker install of opendatacam:](#for-a-non-docker-install-of-opendatacam--1)
+- [Change neural network weights](#change-neural-network-weights)
+  * [For a docker (standard install) of opendatacam:](#for-a-docker--standard-install--of-opendatacam-)
+  * [For a non-docker install of opendatacam:](#for-a-non-docker-install-of-opendatacam--2)
+- [Track only specific classes](#track-only-specific-classes)
+- [Display custom classes](#display-custom-classes)
+- [Advanced settings](#advanced-settings)
+  * [VIDEO_INPUTS_PARAMS:](#video-inputs-params-)
+- [Limitation with docker setup](#limitation-with-docker-setup)
+
 ### General
 
 All settings are in the [`config.json`](https://github.com/moovel/lab-opendatacam/blob/v2/config.json) file that you will find in the same directory you run the install script.

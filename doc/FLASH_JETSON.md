@@ -1,8 +1,8 @@
 ### ⚡️Flash Jetson Board:
 
-#### Jetson TX2
+*We support only jetpack version 4.2 (more recent versions might also work)*
 
-*We support jetpack version 4.2+*
+#### Jetson TX2
 
 - Since march 2019, Nvidia has released a SDK manager tool to flash jetson, complete doc is available here: https://docs.nvidia.com/sdk-manager/index.html 
 - You need a machine running Ubuntu to install it *(that is not the jetson)*, download link is here: https://developer.nvidia.com/embedded/downloads
@@ -14,6 +14,10 @@
 
 - If you get `LOST CONNEXION to jetson` , try replug-in the usb cable
 
+#### Jetson Nano
+
+TODO, but is similare to above
+
 #### Jetson Xavier
 
-TODO
+TODO, but is the same to above

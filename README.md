@@ -1,5 +1,3 @@
-# INSTALL IS BROKEN FOR v2 beta... check status [https://github.com/moovel/lab-opendatacam/issues/70](https://github.com/moovel/lab-opendatacam/issues/70)
-
 # Open data cam 2.0.0-beta.2
 
 This project is offline lightweight DIY solution to monitor urban landscape. After installing this software on the specified hardware (Nvidia Jetson board + Logitech webcam), you will be able to count cars, pedestrians, motorbikes from your webcam live stream.
@@ -60,7 +58,7 @@ chmod 777 install-opendatacam.sh
 sudo ./install-opendatacam.sh --platform nano
 
 # Install command for jetson tx2
-# NOT AVAILABLE YET
+sudo ./install-opendatacam.sh --platform tx2
 
 # Install command for jetson xavier
 # NOT AVAILABLE YET
