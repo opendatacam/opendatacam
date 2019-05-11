@@ -6,7 +6,6 @@ In order to build the docker image, you need to have:
 - Compiled darknet on host device
 - Build docker image on the same architecture as the target device that will use the docker image. (ie: build docker image for Jetson TX2 on a Jetson TX2)
 
-
 *A docker image for TX2 would work on Xavier but wouldn't have the best performance possible, that is why we need several docker image for each architecture ([More on this](http://arnon.dk/matching-sm-architectures-arch-and-gencode-for-various-nvidia-cards/))*
 
 ### 1. Install Opencv 3.4.3:
@@ -87,7 +86,7 @@ sudo docker images
 # opendatacam             latest    023ab91c6291     3 minutes ago     1.975 GB
 
 # Tag your image
-sudo docker tag 023ab91c6291 opendatacam/opendatacam:v2.0.0-beta.1-tx2
+sudo docker tag 023ab91c6291 opendatacam/opendatacam:v2.0.0-beta.2-nano
 
 # Or for nano : v2.0.0-beta.1-nano
 # Or for xavier : v2.0.0-beta.1-xavier

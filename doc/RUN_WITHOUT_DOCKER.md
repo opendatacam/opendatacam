@@ -1,5 +1,3 @@
-# This might be a bit outdated since v2.0.0-beta.2 , need to update some thing
-
 ## How to install opendatacam without docker
 
 ### 1. Install OpenCV 3.4.3 with Gstreamer:
@@ -17,6 +15,11 @@ Then follow this to install it:
 sudo apt-get purge libopencv*
 
 # Download .deb files
+
+# For Jetson Nano:
+wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-nano-3.4.3/OpenCV-3.4.3-aarch64-libs.deb
+wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-nano-3.4.3/OpenCV-3.4.3-aarch64-dev.deb
+wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-nano-3.4.3/OpenCV-3.4.3-aarch64-python.deb
 
 # For Jetson TX2
 wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-tx2-3.4.3/OpenCV-3.4.3-aarch64-libs.deb
@@ -50,7 +53,7 @@ git clone --depth 1 -b opendatacam https://github.com/tdurand/darknet
 
 Open the `Makefile` in the darknet folder and make these changes:
 
-*For Jetson TX2*
+*For Jetson Nano*
 
 ```Makefile
 # Set these variable to 1:
@@ -58,10 +61,18 @@ GPU=1
 CUDNN=1
 OPENCV=1
 
-# With sed
-#sed -i s/GPU=0/GPU=1/g Makefile
-#sed -i s/CUDA=0/CUDA=1/g Makefile
-#sed -i s/OPENCV=0/OPENCV=1/g Makefile
+# Uncomment the following line
+# For Jetson TX1, Tegra X1, DRIVE CX, DRIVE PX - uncomment:
+ARCH= -gencode arch=compute_53,code=[sm_53,compute_53]
+```
+
+*For Jetson TX2*
+
+```Makefile
+# Set these variable to 1:
+GPU=1
+CUDNN=1
+OPENCV=1
 
 # Uncomment the following line
 # For Jetson Tx2 or Drive-PX2 uncomment
@@ -96,14 +107,18 @@ make
 
 #### Download weight file
 
-The .weights file needs to be in the root of the `/darknet` folder
+The .weights files that need to be in the root of the `/darknet` folder
 
 ```bash
 cd darknet #if you are not already in the darknet folder
-wget https://pjreddie.com/media/files/yolo-voc.weights --no-check-certificate
-```
 
-*Direct link to weight file: [yolo-voc.weights](https://pjreddie.com/media/files/yolo-voc.weights)*
+# YOLOv2-VOC
+wget https://pjreddie.com/media/files/yolo-voc.weights --no-check-certificate
+# YOLOv3-tiny
+wget https://pjreddie.com/media/files/yolov3-tiny.weights --no-check-certificate
+# YOLOv3
+wget https://pjreddie.com/media/files/yolov3.weights --no-check-certificate
+```
 
 #### (Optional) Test darknet
 
@@ -159,6 +174,37 @@ cd lab-opendatacam
 # To get the absolute path, go the darknet folder and type
 pwd .
 ```
+
+- Specify `VIDEO_INPUT` and `NEURAL_NETWORK` in `lab-open-data-cam/config.json` 
+
+*For Jetson Nano*
+
+```json
+{
+  "VIDEO_INPUT": "usbcam",
+  "NEURAL_NETWORK": "yolov3-tiny"
+}
+```
+
+*For Jetson TX2*
+
+```json
+{
+  "VIDEO_INPUT": "usbcam",
+  "NEURAL_NETWORK": "yolov2-voc"
+}
+```
+
+*For Jetson Xavier*
+
+```json
+{
+  "VIDEO_INPUT": "usbcam",
+  "NEURAL_NETWORK": "yolov3"
+}
+```
+
+TODO @tdurand link to CONFIG.md to learn more about those settings
 
 - Install **open data cam**
 
