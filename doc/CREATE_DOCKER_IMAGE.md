@@ -63,7 +63,7 @@ date > marker && sudo docker build -t opendatacam .
 
 ```bash
 # Get the darknet-docker script (TODO @tdurand remove v2 when releasing)
-wget https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/run-docker.sh
+wget -N https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/run-docker.sh
 
 # Chmod to give exec permissions
 chmod 777 run-docker.sh
@@ -88,11 +88,11 @@ sudo docker images
 # Tag your image
 sudo docker tag 023ab91c6291 opendatacam/opendatacam:v2.0.0-beta.2-nano
 
-# Or for nano : v2.0.0-beta.1-nano
-# Or for xavier : v2.0.0-beta.1-xavier
+# Or for nano : v2.0.0-beta.2-nano
+# Or for xavier : v2.0.0-beta.2-xavier
 
 # Push image
-sudo docker push yourhubusername/opendatacam
+sudo docker push opendatacam/opendatacam
 ```
 
 ### (Optional) Compile Opencv on jetson (this takes 1-2h)
