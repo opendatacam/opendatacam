@@ -8,7 +8,7 @@ Depending on your target GPU, you will need to change the CUDA_ARCH_BIN variable
 
 TODO @tdurand improve this
 
-# WIP , make docker image smaller
+### WIP , make docker image smaller 
 
 For now the docker image is very large (12GB)
 
@@ -26,8 +26,8 @@ https://medium.com/techlogs/compiling-opencv-for-cuda-for-yolo-and-other-cnn-lib
 
 ```bash
 # Todo install docker-nvidia ?
-docker run --runtime=nvidia -p 8080:8080 -p 8090:8090 -p 8070:8070 -v /data/db:/data/db -d --restart unless-stopped opendatacam/opendatacam:v2.0.0-beta.2-dockernvidia
-# Open browser at http://<IP of Jetson>:8080
+sudo docker run --runtime=nvidia -p 8080:8080 -p 8090:8090 -p 8070:8070 -v /data/db:/data/db -d --restart unless-stopped opendatacam/opendatacam:v2.0.0-beta.2-dockernvidia
+# Open browser at http://localhost:8080
 ```
 
 ### 2. Build the image
@@ -55,7 +55,7 @@ sudo docker images
 # opendatacam             latest    023ab91c6291     3 minutes ago     1.975 GB
 
 # Tag your image
-sudo docker tag 023ab91c6291 opendatacam/opendatacam:v2.0.0-beta.2-dockernvidia
+sudo docker tag 7ef920844953 opendatacam/opendatacam:v2.0.0-beta.2-dockernvidia
 
 # Or for nano : v2.0.0-beta.2-nano
 # Or for xavier : v2.0.0-beta.2-xavier
