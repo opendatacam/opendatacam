@@ -65,6 +65,9 @@ wget https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-clou
 # Build
 # Takes a really long time the first time as it compile opencv
 sudo docker build -t opendatacam .
+
+# Test the image in interactive mode
+sudo docker run --runtime=nvidia -p 8080:8080 -p 8090:8090 -p 8070:8070 -v /data/db:/data/db --rm -it opendatacam
 ```
 
 ### 3. Publish the docker image
