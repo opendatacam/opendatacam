@@ -269,3 +269,11 @@ sudo pm2 startup
 sudo pm2 start npm --name "open-data-cam" -- start
 sudo pm2 save
 ```
+
+- (optional) Open ports 8080 8090 and 8070 to outside world on cloud deployment machine
+
+```
+sudo ufw allow 8080
+sudo ufw allow 8090
+sudo ufw allow 8070
+```
