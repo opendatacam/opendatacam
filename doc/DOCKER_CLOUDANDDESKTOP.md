@@ -24,11 +24,35 @@ https://medium.com/techlogs/compiling-opencv-for-cuda-for-yolo-and-other-cnn-lib
 
 ### 1. Run the docker image
 
+// Uninstall nvidia drivers : sudo apt-get purge nvidia*
+
+// TODO, docker image is compile for a cuda version (10.1) , need to install driver accordingly
+
+Install nvidia driver, 
+
+- maybe via cuda toolkit: https://developer.nvidia.com/cuda-downloads, you do not need cuda but it is a reliable way to install the nvidia driver with it
+
+- TODO find way to just install latest nvidia driver without cuda stuff
+
+- reboot sudo reboot
+
+- Test install: `nvidia-smi`
+
+Install docker: https://docs.docker.com/install/linux/docker-ce/ubuntu/
+
+Install nvidia-docker : https://github.com/NVIDIA/nvidia-docker#ubuntu-140416041804-debian-jessiestretch
+
+# Test nvidia-smi with the latest official CUDA image
+sudo docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
+
+
 ```bash
 # Todo install docker-nvidia ?
 sudo docker run --runtime=nvidia -p 8080:8080 -p 8090:8090 -p 8070:8070 -v /data/db:/data/db -d --restart unless-stopped opendatacam/opendatacam:v2.0.0-beta.2-dockernvidia
 # Open browser at http://localhost:8080
 ```
+
+TODO working but not the UI.. 
 
 ### 2. Build the image
 
