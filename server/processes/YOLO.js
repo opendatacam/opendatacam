@@ -25,30 +25,32 @@ module.exports = {
 
     YOLO.simulationMode = simulationMode;
 
-    var yoloParams = config.NEURAL_NETWORK_PARAMS[config.NEURAL_NETWORK];
-    var videoParams = config.VIDEO_INPUTS_PARAMS[config.VIDEO_INPUT];
+    if(!YOLO.simulationMode) {
+      var yoloParams = config.NEURAL_NETWORK_PARAMS[config.NEURAL_NETWORK];
+      var videoParams = config.VIDEO_INPUTS_PARAMS[config.VIDEO_INPUT];
 
-    YOLO.process = new (forever.Monitor)(['./darknet','detector','demo', yoloParams.data , yoloParams.cfg, yoloParams.weights, videoParams, '-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{
-      max: 1,
-      cwd: config.PATH_TO_YOLO_DARKNET,
-      killTree: true
-    });
+      YOLO.process = new (forever.Monitor)(['./darknet','detector','demo', yoloParams.data , yoloParams.cfg, yoloParams.weights, videoParams, '-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{
+        max: 1,
+        cwd: config.PATH_TO_YOLO_DARKNET,
+        killTree: true
+      });
 
-    YOLO.process.on("start", () => {
-      console.log('Process YOLO started');
-      YOLO.isStarted = true;
-      YOLO.isStarting = false;
-    });
+      YOLO.process.on("start", () => {
+        console.log('Process YOLO started');
+        YOLO.isStarted = true;
+        YOLO.isStarting = false;
+      });
 
-    YOLO.process.on("stop", () => {
-      console.log('Process YOLO stopped');
-      YOLO.isStarted = false;
-    });
+      YOLO.process.on("stop", () => {
+        console.log('Process YOLO stopped');
+        YOLO.isStarted = false;
+      });
 
-    YOLO.process.on("error", (err) => {
-      console.log('Process YOLO error');
-      console.log(err);
-    });
+      YOLO.process.on("error", (err) => {
+        console.log('Process YOLO error');
+        console.log(err);
+      });
+    }
 
     console.log('Process YOLO initialized');
     YOLO.isInitialized = true;
@@ -140,7 +142,7 @@ module.exports = {
         } else {
           console.log("JSONStream connexion not opened yet");
         }
-      }, 70);
+      }, 34);
 
       function updateJPG() {
         fs.readFile(path.join(__dirname, '../../static/placeholder/frames') + "/" + String(frameNb).padStart(3, '0') + '.jpg', sendJPGData);
