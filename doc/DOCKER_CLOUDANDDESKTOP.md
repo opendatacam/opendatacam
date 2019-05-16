@@ -71,8 +71,8 @@ sudo docker images
 # Tag your image
 sudo docker tag 7ef920844953 opendatacam/opendatacam:v2.0.0-beta.3-dockernvidia
 
-# Or for nano : v2.0.0-beta.2-nano
-# Or for xavier : v2.0.0-beta.2-xavier
+# Untag image (if you made a tipo)
+sudo docker rmi opendatacam/opendatacam:v2.0.0-beta.3-dockernvidia
 
 # Push image
 sudo docker push opendatacam/opendatacam:v2.0.0-beta.3-dockernvidia

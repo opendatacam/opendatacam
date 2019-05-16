@@ -81,6 +81,10 @@ RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75
 RUN apt-get update && apt-get install -y --no-install-recommends openssl libcurl3 mongodb-org
 VOLUME ["/data/db"]
 
+# Technique to rebuild the docker file from here : https://stackoverflow.com/a/49831094/1228937
+# Build using date > marker && docker build .
+# date > marker && sudo docker build -t opendatacam .
+COPY marker /dev/null
 RUN git clone --depth 1 -b v2 https://github.com/moovel/lab-opendatacam /var/local/lab-opendatacam
 
 WORKDIR /var/local/lab-opendatacam
