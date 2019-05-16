@@ -91,8 +91,11 @@ sudo docker tag 023ab91c6291 opendatacam/opendatacam:v2.0.0-beta.2-nano
 # Or for nano : v2.0.0-beta.2-nano
 # Or for xavier : v2.0.0-beta.2-xavier
 
+# Untag image (if you made a tipo)
+sudo docker rmi opendatacam/opendatacam:v2.0.0-beta.2-nano
+
 # Push image
-sudo docker push opendatacam/opendatacam
+sudo docker push opendatacam/opendatacam:v2.0.0-beta.2-nano
 ```
 
 ### (Optional) Compile Opencv on jetson (this takes 1-2h)
