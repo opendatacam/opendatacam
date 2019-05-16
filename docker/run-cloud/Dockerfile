@@ -74,6 +74,13 @@ RUN mkdir /var/local/darknet/opendatacam_videos && wget https://github.com/moove
 RUN curl -sL https://deb.nodesource.com/setup_10.x | bash -
 RUN apt-get install -y nodejs
 
+# Install mongodb
+ENV DEBIAN_FRONTEND noninteractive
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4 && \
+    echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+RUN apt-get update && apt-get install -y --no-install-recommends openssl libcurl3 mongodb-org
+VOLUME ["/data/db"]
+
 RUN git clone --depth 1 -b v2 https://github.com/moovel/lab-opendatacam /var/local/lab-opendatacam
 
 WORKDIR /var/local/lab-opendatacam
@@ -84,13 +91,6 @@ RUN sed -i -e s+TO_REPLACE_NEURAL_NETWORK+yolov3+ config.json
 # Build
 RUN npm install
 RUN npm run build
-
-# Install mongodb
-ENV DEBIAN_FRONTEND noninteractive
-RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4 && \
-    echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.0.list
-RUN apt-get update && apt-get install -y --no-install-recommends openssl libcurl3 mongodb-org
-VOLUME ["/data/db"]
 
 EXPOSE 8080 8070 8090 27017
 
