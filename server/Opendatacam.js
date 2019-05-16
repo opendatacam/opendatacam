@@ -499,17 +499,25 @@ module.exports = {
         console.log('----')
         console.log('----')
         console.log('----')
-        // Clean up as darknet does not send valid JSON
-        // if(msgChunk.charAt(0) === ',' || msgChunk.charAt(0) === '[') {
-        //   console.log('Clean up chunk because of darknet sending invalid json');
-        //   msgChunk = msgChunk.substr(1);
-        // }
 
-        message += msgChunk;
-        let lastChar = message[message.length -1];
-        let isMessageComplete = lastChar === separator;
+        let lastChar = '';
+        let isMessageComplete = false;
 
-        if(isMessageComplete && message.trim().length > 0) {
+        // This ignores the "," message of the stream separating the frame data
+        if(msgChunk.trim().length === 1) {
+          console.log('----')
+          console.log('----')
+          console.log('----')
+          console.log('------- IGNORE CHUNK , most likely a coma')
+          console.log('----')
+          console.log('----')
+        } else {
+          message += msgChunk;
+          lastChar = message[message.length -1];
+          isMessageComplete = lastChar === separator;
+        }
+
+        if(isMessageComplete) {
           try {
             console.log('Message complete, parse it')
             var detectionsOfThisFrame = JSON.parse(message);
