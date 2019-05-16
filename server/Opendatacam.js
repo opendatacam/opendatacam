@@ -520,6 +520,10 @@ module.exports = {
         if(isMessageComplete) {
           try {
             console.log('Message complete, parse it')
+            if(message.charAt(0) === ',') {
+              console.log('First char is a comma, remove it')
+              message = message.substr(1);
+            }
             var detectionsOfThisFrame = JSON.parse(message);
             message = '';
             self.updateWithNewFrame(detectionsOfThisFrame.objects);
