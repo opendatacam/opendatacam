@@ -103,6 +103,26 @@ OPENCV=1
 ARCH= -gencode arch=compute_72,code=[sm_72,compute_72]
 ```
 
+*For Linux machine with desktop/laptop GPU*
+
+Make sure you have CUDA installed:
+
+```
+# Type this command
+nvcc --version
+
+# If it returns Command 'nvcc' not found , you need to install cuda properly: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#package-manager-installation and also add cuda to your PATH with the post install instructions: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#post-installation-actions
+```
+
+
+Make change to Makefile:
+
+```Makefile
+# Set these variable to 1:
+GPU=1
+OPENCV=1
+```
+
 #### Compile darknet
 
 ```bash
