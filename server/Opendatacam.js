@@ -478,20 +478,47 @@ module.exports = {
     console.log('Send request to connect to YOLO JSON Stream')
     self.HTTPRequestListeningToYOLO = http.request(options, function(res) {
       console.log(`statusCode: ${res.statusCode}`)
-      res.on('data', function(chunk) {
-        var msg = chunk.toString();
-        // Clean up as darknet does not send valid JSON
-        if(msg.charAt(0) === ',' || msg.charAt(0) === '[') {
-          msg = msg.substr(1);
-        }
+      var message = ""; // variable that collects chunks
+      var separator = "}"; // consider chunk complete if I see this char
 
-        if(msg.trim().length > 0) {
+      res.on('data', function(chunk) {
+        var msgChunk = chunk.toString();
+        console.log('----')
+        console.log('----')
+        console.log('----')
+        console.log('----')
+        console.log('JSON Message received')
+        console.log('----')
+        console.log('----')
+        console.log('----')
+        console.log(msgChunk);
+        console.log('----')
+        console.log('----')
+        console.log('----')
+        console.log('----')
+        console.log('----')
+        console.log('----')
+        console.log('----')
+        // Clean up as darknet does not send valid JSON
+        // if(msgChunk.charAt(0) === ',' || msgChunk.charAt(0) === '[') {
+        //   console.log('Clean up chunk because of darknet sending invalid json');
+        //   msgChunk = msgChunk.substr(1);
+        // }
+
+        message += msgChunk;
+        let lastChar = message[message.length -1];
+        let isMessageComplete = lastChar === separator;
+
+        if(isMessageComplete && message.trim().length > 0) {
           try {
-            var detectionsOfThisFrame = JSON.parse(msg);
+            console.log('Message complete, parse it')
+            var detectionsOfThisFrame = JSON.parse(message);
+            message = '';
             self.updateWithNewFrame(detectionsOfThisFrame.objects);
           } catch (error) {
-            console.log("Error with msg send by YOLO, not valid JSON")
-            console.log(msg);
+            console.log("Error with message send by YOLO, not valid JSON")
+            message = '';
+            console.log(message);
             console.log(error);
             // res.emit('close');
           }
