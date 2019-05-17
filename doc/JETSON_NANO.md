@@ -11,7 +11,6 @@ https://jkjung-avt.github.io/setting-up-nano/
 
 - Explain Jumper on J48 depending on microSD power or jack
 
-
 ### Run opendatacam container with raspberrypi cam
 
 ### Setup

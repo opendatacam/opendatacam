@@ -18,6 +18,12 @@ npm run dev
 
 If you have an error while doing `npm install` it is probably a problem with node-gyp, you need to install additional dependencies depending on your platform: https://github.com/nodejs/node-gyp#on-unix
 
+# List all cams
+
+```bash
+v4l2-ctl --list-devices
+```
+
 ## Stuff to do with releasing a new version
 
 - Set correct version in package.json
