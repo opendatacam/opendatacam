@@ -22,7 +22,7 @@ On powerbank, run with  `sudo nvpmodel -m 1`
 wget -N https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/setup-raspberrycam-proxy.sh
 wget -N https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/run-raspberrycam-proxy.sh
 # Give run permission
-chmod 777 run-raspberrycam-proxy.sh setup-raspberrycam.sh
+chmod 777 run-raspberrycam-proxy.sh setup-raspberrycam-proxy.sh
 
 # Setup proxy dependencies
 sudo ./setup-raspberrycam-proxy.sh
