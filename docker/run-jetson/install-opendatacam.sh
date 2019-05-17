@@ -47,7 +47,9 @@ else
     -p|--platform)
       # Stop any current docker container from running
       echo "Stop any running docker container..."
+      set +e
       sudo docker stop $(sudo docker ps -a -q)
+      set -e
 
       # Platform is specified 
       PLATFORM=$2
