@@ -31,12 +31,12 @@ cat <(crontab -l) <(echo "@reboot /bin/sh $(pwd)/run-raspberrycam-proxy.sh") | c
 
 # Reboot your nano
 sudo reboot
-
-# Then you need to choose the usbcam-alt options in the config.json (more details on the config documentation TODO @tdurand add link)
-# Open config.json
-# Replace VIDEO_INPUT with "usbcam-alt"
-# NOTE: Under the hood, the important thing is that OpenCV get this gstreamer pipeline in entry: v4l2src device=/dev/video2 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink
 ```
+
+Then you need to choose the usbcam-alt options in the config.json (more details on the config documentation TODO @tdurand add link)
+
+- Open `config.json`
+- Replace `VIDEO_INPUT` param with `"usbcam-alt"` _(NOTE: Under the hood, the important thing is that OpenCV get this gstreamer pipeline in entry: `v4l2src device=/dev/video2 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink`)_
 
 
 ### Why
