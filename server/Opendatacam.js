@@ -559,11 +559,11 @@ module.exports = {
           console.log("Retry connect to YOLO");
           self.listenToYOLO(urlData);
           Opendatacam.HTTPRequestListeningToYOLOMaxRetries--;
-        }, 1000)
+        }, 3000)
       } else {
         YOLO.stop();
         console.log('Something went wrong: ' + e.message);
-        console.log('Too much retries, YOLO took more than 1 min to start, likely an error')
+        console.log('Too much retries, YOLO took more than 3 min to start, likely an error')
         console.log(Opendatacam.HTTPRequestListeningToYOLOMaxRetries)
       }
     });
