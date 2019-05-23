@@ -9,6 +9,9 @@ class InitializingView extends Component {
     this.estimatedDuration = 30;
     this.timeStarted = null;
     this.updateProgress = this.updateProgress.bind(this);
+    this.state = {
+      showConsole: false
+    }
   }
 
   updateProgress() {
@@ -37,12 +40,14 @@ class InitializingView extends Component {
               ref={el => (this.progressBar = el)}
             >
             </div>
-            
           </div>
         </div>
-        {/* <div class="console">
-          <Console />
-        </div> */}
+        <div className="btn" onClick={() => this.setState({showConsole: true})}>Show console</div>
+        {this.state.showConsole &&
+          <div className="console mt-10">
+            <Console />
+          </div>
+        }
         <style jsx>{`
           .initializing-view {
             display: flex;
@@ -52,6 +57,11 @@ class InitializingView extends Component {
             width: 100%;
             height: 100%;
             background-color: black;
+          }
+
+          .console {
+            width: 80%;
+            height: 300px;
           }
 
           .progress-bar {
