@@ -1,55 +1,18 @@
 import React, { Component } from 'react'
 import axios from 'axios';
-import { connect } from 'react-redux';
+import Console from '../shared/Console';
 
 class ConsoleView extends Component {
 
   constructor(props) {
     super(props);
-
-    this.state = {
-      console: ""
-    }
-
-    this.consoleLog = React.createRef();
-  }
-
-  fetchConsoleData() {
-    axios.get('/console').then((response) => {
-      this.setState({ console: response.data })
-    })
-  }
-
-
-  componentDidMount() {
-    this.fetchConsoleData();
-    this.intervalFetchingConsoleData = setInterval(() => {
-      this.fetchConsoleData();
-    }, 1000)
-    
-  }
-
-  componentDidUpdate() {
-    this.consoleLog.current.scrollTop = this.consoleLog.current.scrollHeight;
-  }
-
-
-  componentWillUnmount() {
-    if(this.intervalFetchingConsoleData) {
-      clearInterval(this.intervalFetchingConsoleData)
-    }
   }
 
   render () {
     return (
         <div className="console-view bg-default-soft">
           <div className="w-full h-full p-5">
-            <textarea 
-              className="w-full h-full"
-              ref={this.consoleLog} 
-              value={this.state.console}
-            >
-            </textarea>
+            <Console />
           </div>
           <style jsx>{`
             .console-view {

@@ -62,6 +62,8 @@ if(SIMULATION_MODE) {
 }
 
 var stdoutBuffer = "";
+var stdoutInterval = "";
+var bufferLimit = 3000;
 var unhook_intercept = intercept(function(text) {
   var stdoutText = text.toString();
   // Hacky way to get the video resolution from YOLO
@@ -77,9 +79,11 @@ var unhook_intercept = intercept(function(text) {
     Opendatacam.setVideoResolution(videoResolution);
   }
   stdoutBuffer += stdoutText;
-  // Keep buffer maximum to 3000 characters
-  if(stdoutBuffer.length > 3000) {
-    stdoutBuffer = stdoutBuffer.substring(stdoutBuffer.length - 3000, stdoutBuffer.length);
+  stdoutInterval += stdoutText;
+
+  // Keep buffer maximum to 10000 characters
+  if(stdoutBuffer.length > bufferLimit) {
+    stdoutBuffer = stdoutBuffer.substring(stdoutBuffer.length - bufferLimit, stdoutBuffer.length);
   }
 });
 
@@ -154,8 +158,26 @@ app.prepare()
    * @apiSuccessExample Response
    *    Ready on http://localhost:8080 > Ready on http://192.168.0.195:8080
   */
+
+  var consoleRes = null;
+  var consoleInterval = null;
   express.get('/console',  (req, res) => {
-    res.send(stdoutBuffer);
+    if(consoleRes) {
+      console.log('New client, close previous stream')
+      consoleRes.end();
+      if(consoleInterval) {
+        clearInterval(consoleInterval);
+      }
+    } else {
+      console.log('First request on console stream')
+    }
+    consoleRes = res;
+    consoleRes.write(stdoutBuffer);
+    
+    consoleInterval = setInterval(() => {
+      consoleRes.write(stdoutInterval);
+      stdoutInterval = "";
+    }, 2000)
   })
 
   /**

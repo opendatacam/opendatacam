@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import raf from 'raf';
+import Console from './Console';
 
 class InitializingView extends Component {
 
@@ -36,8 +37,12 @@ class InitializingView extends Component {
               ref={el => (this.progressBar = el)}
             >
             </div>
+            
           </div>
         </div>
+        {/* <div class="console">
+          <Console />
+        </div> */}
         <style jsx>{`
           .initializing-view {
             display: flex;
