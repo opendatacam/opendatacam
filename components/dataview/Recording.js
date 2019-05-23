@@ -55,7 +55,7 @@ class Recording extends PureComponent {
         <div className="flex flex-no-wrap overflow-x-scroll pb-2 mt-5 pl-1">
           <div className="flex flex-col rounded bg-white text-black p-4 shadow">
             <div className="flex items-end justify-between">
-              <h3 className="mr-3">Counter</h3>
+              <h3 className="mr-3 text-xl font-bold">Counter</h3>
               <a className="btn-text" href={`/recording/${this.props.id}/counter`} target="_blank">Download data</a>
             </div>
             <div className="mt-4 flex flex-no-wrap">
@@ -65,7 +65,7 @@ class Recording extends PureComponent {
                   className={`bg-gray-200 mt-2 rounded p-4 ${index === 0 ? '' : 'ml-4' }`}
                 >
                   <div className="flex items-center">
-                    <h4>{countingAreaData.get('name')}</h4>
+                    <h4 className="font-medium">{countingAreaData.get('name')}</h4>
                     <div className="w-4 h-4 ml-2 rounded-full" style={{'backgroundColor': COLORS[countingAreaData.get('color')]}}></div>
                   </div>
                   <div className="flex flex-wrap mt-5 w-64">
@@ -89,12 +89,12 @@ class Recording extends PureComponent {
           </div>
           <div className="flex flex-col rounded bg-white text-black p-4 ml-4 shadow">
             <div className="flex items-end justify-between">
-              <h3 className="mr-3">Tracker</h3>
+              <h3 className="mr-3 text-xl font-bold">Tracker</h3>
               <a className="btn-text" href={`/recording/${this.props.id}/tracker`} target="_blank">Download data</a>
             </div>
             <div className="mt-6 rounded relative">
               <div className="text-white absolute" style={{ bottom: 10, left : 10}}>
-                <h2 className="inline">{this.props.nbPaths}</h2> paths
+                <h2 className="inline text-4xl font-bold">{this.props.nbPaths}</h2> paths
               </div>
               <img src="/static/placeholder/pathview.jpg" />
             </div>

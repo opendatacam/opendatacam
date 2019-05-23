@@ -21,14 +21,14 @@ class BtnRecording extends Component {
         >
           {this.props.recordingStatus.isRecording &&
             <>
-              <img src="/static/icons/ui/stop-recording.svg" />
-              <h3 className="btn-record-label text-default">Stop recording</h3>
+              <img className="inline" src="/static/icons/ui/stop-recording.svg" />
+              <h3 className="btn-record-label text-default text-xl font-bold">Stop recording</h3>
             </>
           }
           {!this.props.recordingStatus.isRecording &&
             <>
-              <img src="/static/icons/ui/start-recording.svg" />
-              <h3 className="btn-record-label text-default">Start recording</h3>
+              <img className="inline" src="/static/icons/ui/start-recording.svg" />
+              <h3 className="btn-record-label text-default text-xl font-bold">Start recording</h3>
             </>
           }
         </div>

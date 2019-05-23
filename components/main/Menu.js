@@ -56,7 +56,7 @@ class Menu extends Component {
               aria-label="icon close"
             />
           </button>
-          <h3 className="mb-4">Open data cam</h3>
+          <h3 className="mb-4 text-xl font-bold">Open data cam</h3>
           <Toggle 
             label="Counter"
             description="Count objects on active areas"

@@ -32,7 +32,7 @@ class InitializingView extends Component {
   render () {
     return (
       <div className="initializing-view pt-48 pb-48 pr-12 pl-12">
-        <h2 className="text-white">Initializing Open Data Cam</h2>
+        <h2 className="text-white text-4xl font-bold">Initializing Open Data Cam</h2>
         <div className="w-1/5 mt-5 h-5 progress-bar rounded overflow-hidden">
           <div className="shadow w-full h-full bg-gray-900">
             <div
