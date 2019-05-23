@@ -1,11 +1,11 @@
-@tailwind base;
+@import "tailwindcss/base";
 
-@tailwind components;
+@import "tailwindcss/components";
 
-/* @import "./components/buttons";
-@import "./components/toggle"; */
+@import "./components/buttons.css";
+@import "./components/toggle.css";
 
-@tailwind utilities;
+@import "tailwindcss/utilities";
  
 body {
     --color-default: #fff;

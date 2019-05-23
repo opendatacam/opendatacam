@@ -33,7 +33,7 @@
 }
 
 .btn-text {
-    @apply text-gray no-underline;
+    @apply text-gray-700 no-underline;
 }
 
 .btn-text:hover {

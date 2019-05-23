@@ -1,6 +1,8 @@
 import { scaleDetection, scalePoint } from '../../../utils/resolution';
 import { COLORS, evaluateCSSVariable } from '../../../utils/colors';
-import { colors } from '../../../tailwind.config';
+import  tailwindConfig from '../../../tailwind.config';
+
+const colors = tailwindConfig.theme.extend.colors;
 
 class LiveViewEngine {
   drawTrackerData (

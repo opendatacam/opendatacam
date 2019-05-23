@@ -59,7 +59,7 @@ class PathView extends Component {
           <BtnRecording />
         }
         {!this.props.hidden &&
-          <div className="flex fixed pin-b pin-l mb-2 ml-2 z-10">
+          <div className="flex fixed bottom-0 left-0 mb-2 ml-2 z-10">
             <button
               className="btn btn-default p-0 rounded-l shadow"
               onClick={() => this.clearCanvas()}

@@ -79,7 +79,7 @@ module.exports = {
       setTimeout(() => {
         // Simulate 5s to start yolo
         this.startYOLOSimulation();
-      }, 10000000000);
+      }, 5000);
     } else {
       if(!YOLO.isStarted) {
         YOLO.process.start();
