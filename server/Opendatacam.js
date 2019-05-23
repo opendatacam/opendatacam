@@ -376,15 +376,15 @@ module.exports = {
     Opendatacam.countedItemsHistory.forEach((countedItem) => {
       if(!counterSummary[countedItem.area]) {
         counterSummary[countedItem.area] = {}
+        counterSummary[countedItem.area]['_total'] = 0;
       }
 
       if(!counterSummary[countedItem.area][countedItem.name]) {
         counterSummary[countedItem.area][countedItem.name] = 1;
-        counterSummary[countedItem.area]['_total'] = 1;
       } else {
         counterSummary[countedItem.area][countedItem.name]++;
-        counterSummary[countedItem.area]['_total']++;
       }
+      counterSummary[countedItem.area]['_total']++;
     })
 
     return counterSummary;
