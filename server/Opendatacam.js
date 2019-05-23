@@ -6,7 +6,8 @@ const fs = require('fs');
 const http = require('http');
 const config = require('../config.json');
 const Recording = require('./model/Recording');
-const DBManager = require('./db/DBManager')
+const DBManager = require('./db/DBManager');
+const Logger = require('./utils/Logger');
 
 
 const initialState = {
@@ -477,40 +478,40 @@ module.exports = {
 
     console.log('Send request to connect to YOLO JSON Stream')
     self.HTTPRequestListeningToYOLO = http.request(options, function(res) {
-      console.log(`statusCode: ${res.statusCode}`)
+      Logger.log(`statusCode: ${res.statusCode}`)
       var message = ""; // variable that collects chunks
       var separator = "}"; // consider chunk complete if I see this char
 
       res.on('data', function(chunk) {
         var msgChunk = chunk.toString();
-        console.log('----')
-        console.log('----')
-        console.log('----')
-        console.log('----')
-        console.log('JSON Message received')
-        console.log('----')
-        console.log('----')
-        console.log('----')
-        console.log(msgChunk);
-        console.log('----')
-        console.log('----')
-        console.log('----')
-        console.log('----')
-        console.log('----')
-        console.log('----')
-        console.log('----')
+        Logger.log('----')
+        Logger.log('----')
+        Logger.log('----')
+        Logger.log('----')
+        Logger.log('JSON Message received')
+        Logger.log('----')
+        Logger.log('----')
+        Logger.log('----')
+        Logger.log(msgChunk);
+        Logger.log('----')
+        Logger.log('----')
+        Logger.log('----')
+        Logger.log('----')
+        Logger.log('----')
+        Logger.log('----')
+        Logger.log('----')
 
         let lastChar = '';
         let isMessageComplete = false;
 
         // This ignores the "," message of the stream separating the frame data
         if(msgChunk.trim().length === 1) {
-          console.log('----')
-          console.log('----')
-          console.log('----')
-          console.log('------- IGNORE CHUNK , most likely a coma')
-          console.log('----')
-          console.log('----')
+          Logger.log('----')
+          Logger.log('----')
+          Logger.log('----')
+          Logger.log('------- IGNORE CHUNK , most likely a coma')
+          Logger.log('----')
+          Logger.log('----')
         } else {
           message += msgChunk;
           lastChar = message[message.length -1];
@@ -519,9 +520,9 @@ module.exports = {
 
         if(isMessageComplete) {
           try {
-            console.log('Message complete, parse it')
+            Logger.log('Message complete, parse it')
             if(message.charAt(0) === ',') {
-              console.log('First char is a comma, remove it')
+              Logger.log('First char is a comma, remove it')
               message = message.substr(1);
             }
             var detectionsOfThisFrame = JSON.parse(message);
@@ -530,8 +531,8 @@ module.exports = {
           } catch (error) {
             console.log("Error with message send by YOLO, not valid JSON")
             message = '';
-            console.log(message);
-            console.log(error);
+            Logger.log(message);
+            Logger.log(error);
             // res.emit('close');
           }
         }
@@ -553,10 +554,10 @@ module.exports = {
         !Opendatacam.isListeningToYOLO &&
         Opendatacam.HTTPRequestListeningToYOLOMaxRetries > 0
       ) {
-        console.log('Will retry in 1s')
+        Logger.log('Will retry in 1s')
         // Retry, YOLO might not have started server just yet
         setTimeout(() => {
-          console.log("Retry connect to YOLO");
+          Logger.log("Retry connect to YOLO");
           self.listenToYOLO(urlData);
           Opendatacam.HTTPRequestListeningToYOLOMaxRetries--;
         }, 3000)
