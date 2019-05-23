@@ -31,8 +31,8 @@ class InitializingView extends Component {
 
   render () {
     return (
-      <div className="initializing-view pt-48 pb-48 pr-12 pl-12">
-        <h2 className="text-white text-4xl font-bold">Initializing Open Data Cam</h2>
+      <div className="initializing-view pt-20 pb-20 pr-12 pl-12">
+        <h2 className="text-white text-3xl font-bold">Initializing Open Data Cam</h2>
         <div className="w-1/5 mt-5 h-5 progress-bar rounded overflow-hidden">
           <div className="shadow w-full h-full bg-gray-900">
             <div
@@ -42,9 +42,16 @@ class InitializingView extends Component {
             </div>
           </div>
         </div>
-        <button className="btn btn-default mt-10" onClick={() => this.setState({showConsole: true})}>
-          Show details
-        </button>
+        {!this.state.showConsole &&
+          <button className="btn btn-default mt-10" onClick={() => this.setState({showConsole: true})}>
+            Show details
+          </button>
+        }
+        {this.state.showConsole &&
+          <button className="btn btn-default mt-10" onClick={() => this.setState({showConsole: false})}>
+            Hide details
+          </button>
+        }
         {this.state.showConsole &&
           <div className="console mt-10">
             <Console />
@@ -62,7 +69,7 @@ class InitializingView extends Component {
           }
 
           .console {
-            width: 80%;
+            width: 100%;
             flex: 1;
           }
 
