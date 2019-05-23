@@ -157,6 +157,9 @@ wget https://pjreddie.com/media/files/yolov3.weights --no-check-certificate
 cd darknet 
 # Run darknet (yolo) on webcam
 ./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink" -ext_output -dont_show
+
+# Run darknet on file
+./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights opendatacam_videos/demo.mp4 -ext_output -dont_show
 ```
 
 ### 3. Install node.js, mongodb
