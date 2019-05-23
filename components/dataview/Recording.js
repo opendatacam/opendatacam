@@ -62,7 +62,7 @@ class Recording extends PureComponent {
               {this.props.countingAreas && this.props.countingAreas.entrySeq().map(([countingAreaId, countingAreaData], index) =>
                 <div 
                   key={countingAreaId} 
-                  className={`bg-grey-lighter mt-2 rounded p-4 ${index === 0 ? '' : 'ml-4' }`}
+                  className={`bg-gray-200 mt-2 rounded p-4 ${index === 0 ? '' : 'ml-4' }`}
                 >
                   <div className="flex items-center">
                     <h4>{countingAreaData.get('name')}</h4>

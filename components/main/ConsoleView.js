@@ -21,7 +21,7 @@ class ConsoleView extends Component {
               position: fixed;
               will-change: transform;
               overflow: scroll;
-              padding-top: 100px;
+              padding-top: 50px;
               top: 0;
               left: 0;
               bottom: 0;

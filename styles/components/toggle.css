@@ -23,5 +23,5 @@
     @apply bg-green shadow-none;
 }
 .form-switch-checkbox:checked + .form-switch-label:before {
-    @apply pin-r;
+    @apply right-0;
 }

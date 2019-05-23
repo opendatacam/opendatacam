@@ -31,10 +31,10 @@ class InitializingView extends Component {
 
   render () {
     return (
-      <div className="initializing-view">
+      <div className="initializing-view pt-48 pb-48 pr-12 pl-12">
         <h2 className="text-white">Initializing Open Data Cam</h2>
         <div className="w-1/5 mt-5 h-5 progress-bar rounded overflow-hidden">
-          <div className="shadow w-full h-full bg-grey-darkest">
+          <div className="shadow w-full h-full bg-gray-900">
             <div
               className="bg-white py-2 progress-bar-content"
               ref={el => (this.progressBar = el)}
@@ -42,7 +42,9 @@ class InitializingView extends Component {
             </div>
           </div>
         </div>
-        <div className="btn" onClick={() => this.setState({showConsole: true})}>Show console</div>
+        <button className="btn btn-default mt-10" onClick={() => this.setState({showConsole: true})}>
+          Show details
+        </button>
         {this.state.showConsole &&
           <div className="console mt-10">
             <Console />
@@ -61,7 +63,7 @@ class InitializingView extends Component {
 
           .console {
             width: 80%;
-            height: 300px;
+            flex: 1;
           }
 
           .progress-bar {

@@ -90,7 +90,7 @@ class Menu extends Component {
             </div>
             <div className="flex">
               <button 
-                className='btn btn-light py-1 px-3 rounded-l border border-grey-lightest border-solid flex items-center text-xl font-bold shadow'
+                className='btn btn-light py-1 px-3 rounded-l border border-gray-100 border-solid flex items-center text-xl font-bold shadow'
                 onClick={() => 
                   this.props.dispatch(setUserSetting('dimmerOpacity', 
                     Math.max(this.props.userSettings.get('dimmerOpacity') - 0.1, 0)
@@ -100,7 +100,7 @@ class Menu extends Component {
                 -
               </button>
               <button 
-                className='btn btn-light py-1 px-3 rounded-r border border-grey-lightest border-solid flex items-center text-xl font-bold shadow'
+                className='btn btn-light py-1 px-3 rounded-r border border-gray-100 border-solid flex items-center text-xl font-bold shadow'
                 onClick={() => 
                   this.props.dispatch(setUserSetting('dimmerOpacity', 
                     Math.min(this.props.userSettings.get('dimmerOpacity') + 0.1, 1)

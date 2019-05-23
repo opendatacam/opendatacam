@@ -33,11 +33,11 @@
 }
 
 .btn-text {
-    @apply text-grey no-underline;
+    @apply text-gray no-underline;
 }
 
 .btn-text:hover {
-    @apply text-grey-darker;
+    @apply text-gray-900;
 }
 
 .btn-light {
@@ -45,11 +45,11 @@
 }
 
 .btn-light:hover {
-    @apply bg-grey-lightest text-primary;
+    @apply bg-gray-100 text-primary;
     /* text-shadow: 1px 0 0 currentColor; */
 }
 
 .btn-light--active {
-    @apply bg-grey-lightest text-primary;
+    @apply bg-gray-100 text-primary;
     /* text-shadow: 1px 0 0 currentColor; */
 }
