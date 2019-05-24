@@ -1,6 +1,6 @@
 import { fromJS } from 'immutable'
 import axios from 'axios';
-import { AVAILABLE_COLORS, DEFAULT_COLOR } from '../../utils/colors';
+import { COUNTER_COLORS } from '../../config.json';
 import uuidv4 from 'uuid/v4'
 import { scalePoint } from '../../utils/resolution';
 
@@ -94,6 +94,9 @@ export function addCountingArea() {
     // TODO Before adding a counting area, verify if selectedCountingArea is complete, otherwise delete it
 
     let newCountingAreaId = uuidv4();
+
+    const AVAILABLE_COLORS = Object.keys(COUNTER_COLORS);
+    const DEFAULT_COLOR = Object.keys(COUNTER_COLORS)[0];
 
     // Get a color unused
     let color = AVAILABLE_COLORS.find((potentialColor) => {

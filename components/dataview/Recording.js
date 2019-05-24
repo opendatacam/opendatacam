@@ -1,11 +1,11 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux';
 import dayjs from 'dayjs';
-import { DISPLAY_CLASSES } from '../../config.json';
-import { COLORS } from '../../utils/colors';
+import { DISPLAY_CLASSES, COUNTER_COLORS } from '../../config.json';
 import OpenMoji from '../shared/OpenMoji.js';
 import SVG from 'react-inlinesvg';
 import { deleteRecording } from '../../statemanagement/app/HistoryStateManagement.js';
+import { getColor } from '../../utils/colors.js';
 
 class Recording extends PureComponent {
 
@@ -70,7 +70,7 @@ class Recording extends PureComponent {
                   >
                     <div className="flex items-center">
                       <h4 className="font-medium">{countingAreaData.get('name')}</h4>
-                      <div className="w-4 h-4 ml-2 rounded-full" style={{'backgroundColor': COLORS[countingAreaData.get('color')]}}></div>
+                      <div className="w-4 h-4 ml-2 rounded-full" style={{'backgroundColor': getColor(countingAreaData.get('color'))}}></div>
                     </div>
                     <div className="flex flex-initial flex-wrap mt-5 w-64">
                       {DISPLAY_CLASSES.slice(0, Math.min(DISPLAY_CLASSES.length, 6)).map((counterClass) =>

@@ -1,15 +1,16 @@
-
-export const COLORS = {
-  yellow: "#FFE700",
-  turquoise: "#A3FFF4",
-  green: '#a0f17f',
-  purple: '#d070f0'
-}
-
-export const AVAILABLE_COLORS = ['yellow', 'turquoise', 'green', 'purple']
-export const DEFAULT_COLOR = 'yellow'
+import { COUNTER_COLORS } from '../config.json';
 
 // TODO memoize this for performance
 export function evaluateCSSVariable(color) {
   return window.getComputedStyle(document.body).getPropertyValue(color.match(/\((.*?)\)/)[1]);
+}
+
+export function getColor(colorLabel) {
+  let color = COUNTER_COLORS[colorLabel];
+  if(color) {
+    return color;
+  } else {
+    // Maybe if colors have been modified and old recording are in DB, we need to render a default color
+    return "#000";
+  }
 }

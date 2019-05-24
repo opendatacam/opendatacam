@@ -2,9 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import SVG from 'react-inlinesvg';
 
-import { selectCountingArea, deleteCountingArea, addCountingArea, setMode, EDITOR_MODE } from '../../statemanagement/app/CounterStateManagement'
-
-import { COLORS, AVAILABLE_COLORS, evaluateCSSVariable } from '../../utils/colors';
+import { deleteCountingArea, setMode, EDITOR_MODE } from '../../statemanagement/app/CounterStateManagement'
 
 class MenuCountingAreasEditor extends Component {
 

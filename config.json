@@ -30,6 +30,13 @@
     "#bcbd22",
     "#17becf"
   ],
+  "COUNTER_COLORS": {
+    "yellow": "#FFE700",
+    "turquoise": "#A3FFF4",
+    "green": "#a0f17f",
+    "purple": "#d070f0",
+    "red": "#AB4435"
+  },
   "NEURAL_NETWORK_PARAMS": {
     "yolov3": {
       "data": "cfg/coco.data",
