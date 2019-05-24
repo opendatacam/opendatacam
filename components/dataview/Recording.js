@@ -66,7 +66,7 @@ class Recording extends PureComponent {
                 {this.props.countingAreas && this.props.countingAreas.entrySeq().map(([countingAreaId, countingAreaData], index) =>
                   <div 
                     key={countingAreaId} 
-                    className={`flex flex-col bg-gray-200 m-2 rounded p-4`}
+                    className={`flex flex-col counter-area bg-gray-200 m-2 rounded p-4`}
                   >
                     <div className="flex items-center">
                       <h4 className="font-medium">{countingAreaData.get('name')}</h4>
@@ -104,6 +104,15 @@ class Recording extends PureComponent {
             </div>
           </div>
         </div>
+        <style jsx>{`
+          {/* Didn't succeed to make this better: https://stackoverflow.com/questions/54384305/dynamic-width-parent-with-flexbox-column-wrapping 
+            Seems cannot have container parent width shrink when some element are wrapping
+          */}
+          .counter-area {
+            max-width: 350px;
+            flex: 1;
+          }
+        `}</style>
       </div>
     )
   }
