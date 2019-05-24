@@ -1,5 +1,5 @@
 import { scaleDetection } from '../../../utils/resolution';
-import { PATHFINDER_COLORS } from '../../config.json';
+import { PATHFINDER_COLORS } from '../../../config.json';
 
 class PathViewEngine {
 

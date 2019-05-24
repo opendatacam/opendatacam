@@ -10,18 +10,7 @@ We offer several customization options:
 
 ### Table of content
 
-- [General](#general)
-  * [For a non-docker install of opendatacam:](#for-a-non-docker-install-of-opendatacam-)
-- [Run opendatacam on a video file instead of the webcam:](#run-opendatacam-on-a-video-file-instead-of-the-webcam-)
-  * [For a non-docker install of opendatacam:](#for-a-non-docker-install-of-opendatacam--1)
-- [Change neural network weights](#change-neural-network-weights)
-  * [For a docker (standard install) of opendatacam:](#for-a-docker--standard-install--of-opendatacam-)
-  * [For a non-docker install of opendatacam:](#for-a-non-docker-install-of-opendatacam--2)
-- [Track only specific classes](#track-only-specific-classes)
-- [Display custom classes](#display-custom-classes)
-- [Advanced settings](#advanced-settings)
-  * [VIDEO_INPUTS_PARAMS:](#video-inputs-params-)
-- [Limitation with docker setup](#limitation-with-docker-setup)
+TODO generate
 
 ### General
 
@@ -192,6 +181,24 @@ For example:
 
 *LIMITATION: You can display a maximum of 6 classes, if you add more, it will just display the first 6 classes*
 
+### Customize pathfinder colors
+
+You can change the `PATHFINDER_COLORS` variable in the `config.json`. The app picks randomly for each new tracked object a color inside it. The colors need to be in HEX format.
+
+```json
+"PATHFINDER_COLORS": [
+  "#1f77b4",
+  "#ff7f0e",
+  "#2ca02c",
+  "#d62728",
+  "#9467bd",
+  "#8c564b",
+  "#e377c2",
+  "#7f7f7f",
+  "#bcbd22",
+  "#17becf"
+]
+```
 
 ### Advanced settings
 
