@@ -24,3 +24,11 @@ export function getAvailableCounterColors() {
 export function getDefaultCounterColor() {
   return Object.keys(window.CONFIG.COUNTER_COLORS[getAvailableCounterColors()[0]]);
 }
+
+export function getPathfinderColors() {
+  return window.CONFIG.PATHFINDER_COLORS;
+}
+
+export function getDisplayClasses() {
+  return window.CONFIG.DISPLAY_CLASSES;
+}

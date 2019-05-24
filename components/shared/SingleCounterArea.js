@@ -3,10 +3,9 @@ import { connect } from 'react-redux';
 
 import { CIRCLE_RADIUS, POPOVER_HEIGHT, POPOVER_WIDTH, POPOVER_ARROW_SIZE } from '../../utils/constants';
 
-import { DISPLAY_CLASSES } from '../../config.json';
 import SVG from 'react-inlinesvg';
 import OpenMoji from './OpenMoji';
-import { getCounterColor } from '../../utils/colors';
+import { getCounterColor, getDisplayClasses } from '../../utils/colors';
 
 class SingleCounterArea extends Component {
 
@@ -18,6 +17,8 @@ class SingleCounterArea extends Component {
     }
 
     this.togglePopover = this.togglePopover.bind(this);
+
+    this.DISPLAY_CLASSES = getDisplayClasses();
   }
 
 
@@ -60,7 +61,7 @@ class SingleCounterArea extends Component {
               </h4>
               <div className="area-popover-content">
                 {/* TODO LIMIT to 6 ?, put on it's own component to reuse in dashboard */}
-                {DISPLAY_CLASSES.slice(0, Math.min(DISPLAY_CLASSES.length, 6)).map((counterClass) =>
+                {this.DISPLAY_CLASSES.slice(0, Math.min(this.DISPLAY_CLASSES.length, 6)).map((counterClass) =>
                   <div className="area-popover-item mb-1" key={counterClass.class}>
                     <div className="area-popover-count mr-2">{this.props.counterData.get(counterClass.class) || 0}</div>
                     <OpenMoji 

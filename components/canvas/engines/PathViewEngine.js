@@ -1,11 +1,11 @@
 import { scaleDetection } from '../../../utils/resolution';
-import { PATHFINDER_COLORS } from '../../../config.json';
+import { getPathfinderColors } from '../../../utils/colors';
 
 class PathViewEngine {
 
   constructor() {
     this.lastFrameData = [];
-    this.pathsColors = PATHFINDER_COLORS;
+    this.pathsColors = getPathfinderColors();
   }
 
   drawLine(context, line, color = 'green') {

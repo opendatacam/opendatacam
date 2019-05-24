@@ -1,16 +1,17 @@
 import React, { PureComponent } from 'react'
 import { connect } from 'react-redux';
 import dayjs from 'dayjs';
-import { DISPLAY_CLASSES } from '../../config.json';
 import OpenMoji from '../shared/OpenMoji.js';
 import SVG from 'react-inlinesvg';
 import { deleteRecording } from '../../statemanagement/app/HistoryStateManagement.js';
-import { getCounterColor } from '../../utils/colors.js';
+import { getCounterColor, getDisplayClasses } from '../../utils/colors.js';
 
 class Recording extends PureComponent {
 
   constructor(props) {
     super(props);
+
+    this.DISPLAY_CLASSES = getDisplayClasses();
   }
 
 
@@ -73,7 +74,7 @@ class Recording extends PureComponent {
                       <div className="w-4 h-4 ml-2 rounded-full" style={{'backgroundColor': getCounterColor(countingAreaData.get('color'))}}></div>
                     </div>
                     <div className="flex flex-initial flex-wrap mt-5 w-64">
-                      {DISPLAY_CLASSES.slice(0, Math.min(DISPLAY_CLASSES.length, 6)).map((counterClass) =>
+                      {this.DISPLAY_CLASSES.slice(0, Math.min(this.DISPLAY_CLASSES.length, 6)).map((counterClass) =>
                         <div 
                           className="flex w-16 m-1 items-center justify-center" 
                           key={counterClass.class}
