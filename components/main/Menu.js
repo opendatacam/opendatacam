@@ -76,12 +76,6 @@ class Menu extends Component {
               description="Turn dark UI elements on"
               enabled={this.props.userSettings.get('darkMode')}
               onChange={(darkMode) => {
-                if (darkMode) {
-                  document.getElementsByTagName("body")[0].className = 'theme-dark';
-                } else {
-                  document.getElementsByTagName("body")[0].className = '';
-                }
-
                 this.props.dispatch(setUserSetting('darkMode', darkMode))
               }}
             />

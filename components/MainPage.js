@@ -16,13 +16,14 @@ import { MODE } from '../utils/constants';
 import UIControls from './main/UIControls';
 import Menu from './main/Menu';
 import InitializingView from './shared/InitializingView';
+import { loadUserSettings } from '../statemanagement/app/UserSettingsStateManagement';
 
 class MainPage extends React.Component {
 
   componentDidMount() {
     this.props.dispatch(initViewportListeners());
     // TODO Handle specifying canvas size + resizing here, copy from beatthetraffic
-
+    this.props.dispatch(loadUserSettings());
     // TODO See how we handle the YOLO on / off situation
     this.props.dispatch(startListeningToServerData());
 
