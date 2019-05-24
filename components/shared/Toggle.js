@@ -15,7 +15,7 @@ class Toggle extends Component {
     return (
       <div className="mb-4 mt-4 flex items-center justify-between">
         <label htmlFor={this.state.id} className="mr-3">
-          <h4 className="mb-2">{this.props.label}</h4>
+          <h4 className="text-xl font-bold">{this.props.label}</h4>
           <p className="text-xs">{this.props.description}</p>
         </label>
         <div className="form-switch inline-block align-middle shadow">
