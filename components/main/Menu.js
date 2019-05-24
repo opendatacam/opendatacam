@@ -71,6 +71,7 @@ class Menu extends Component {
               enabled={this.props.recordingSettings.get('pathfinderEnabled')}
               onChange={(value) => this.props.dispatch(setRecordingSetting('pathfinderEnabled', value))}
             />
+            <div className="mt-16"></div>
             <Toggle
               label="Dark mode"
               description="Turn dark UI elements on"
@@ -107,13 +108,11 @@ class Menu extends Component {
                 </button>
               </div>
             </div>
-            <a target="_blank" href="/api/doc">
-              <h4 className="text-xl font-bold">API Documentation</h4>
-            </a>
           </div>
           <div className="menu-footer bg-gray-800 text-white p-5 w-full">
               <div className="flex flex-col">
                   <a className="" href="#">About</a>
+                  <a className="mt-2" target="_blank" href="/api/doc">API documentation</a>
                   <a className="mt-2" href="https://github.com/moovel/lab-opendatacam" target="_blank">Github</a>
                   <a className="mt-4" href="https://lab.moovel.com" target="_blank">
                     <img src="/static/icons/moovellablogo.svg" />
