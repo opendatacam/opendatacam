@@ -15,8 +15,8 @@ const MjpegProxy = require('mjpeg-proxy').MjpegProxy;
 const intercept = require("intercept-stdout");
 const config = require('./config.json');
 
-const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not running on the Jetson
-// const SIMULATION_MODE = true;
+//const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not running on the Jetson
+const SIMULATION_MODE = true;
 
 const port = parseInt(process.env.PORT, 10) || 8080
 const dev = process.env.NODE_ENV !== 'production'
@@ -102,13 +102,7 @@ app.prepare()
 
     const urlData = getURLData(req);
     Opendatacam.listenToYOLO(urlData);
-
-    // Hacky way to pass params to getInitialProps on SSR
-    // Should hydrate differently
-    let query = req.query;
-    query.countingAreas = Opendatacam.getCountingAreas();
-
-    return app.render(req, res, '/', query)
+    return app.render(req, res, '/')
   })
 
   /**
@@ -225,6 +219,75 @@ app.prepare()
     Opendatacam.registerCountingAreas(req.body.countingAreas)
     res.sendStatus(200)
   });
+
+  /**
+   * @api {get} /counter/areas Get areas
+   * @apiName Get counter areas
+   * @apiGroup Counter
+   *
+   * @apiDescription Get counter areas defined
+   * 
+   * @apiSuccessExample {json} Frame example (once parsed to JSON):
+   *  {
+        "fbb8a65b-03cc-4c95-8d6f-663ac4bd9aa0": {
+          "color": "yellow",
+          "location": {
+            "point1": {
+              "x": 263,
+              "y": 625
+            },
+            "point2": {
+              "x": 472,
+              "y": 615
+            },
+            "refResolution": {
+              "w": 1500,
+              "h": 871
+            }
+          },
+          "name": "test",
+          "computed": {
+            "a": 0.046349957976037706,
+            "b": -527.0496981416069,
+            "xBounds": {
+              "xMin": 224.42666666666668,
+              "xMax": 402.7733333333333
+            }
+          }
+        },
+        "a684ad42-d6fe-4be4-b77b-09b8473cc487": {
+          "color": "turquoise",
+          "location": {
+            "point1": {
+              "x": 532,
+              "y": 647
+            },
+            "point2": {
+              "x": 729,
+              "y": 641
+            },
+            "refResolution": {
+              "w": 1500,
+              "h": 871
+            }
+          },
+          "name": "area 2",
+          "computed": {
+            "a": 0.029503983402006398,
+            "b": -548.2275463758912,
+            "xBounds": {
+              "xMin": 453.97333333333336,
+              "xMax": 622.08
+            }
+          }
+        }
+      }
+   * 
+  */
+
+ express.get('/counter/areas', (req, res) => {
+  res.json(Opendatacam.getCountingAreas());
+})
 
   // Maybe Remove the need for dependency with direct express implem: https://github.com/expressjs/compression#server-sent-events
   /**
@@ -571,6 +634,20 @@ app.prepare()
       //     res.end();
       // })
     });
+  })
+
+  /**
+   * @api {get} /config Config
+   * @apiName Config
+   * @apiGroup Helper
+   *
+   * @apiDescription Get config.json content loaded by Opendatacam
+   * 
+  */
+
+  express.get('/config', (req, res) => {
+    console.log(config);
+    res.json(config);
   })
 
   express.use("/api/doc", serveStatic('apidoc'))

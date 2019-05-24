@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import CanvasEngine from '../canvas/CanvasEngine';
 import { CIRCLE_DELETE_RADIUS, CANVAS_RENDERING_MODE } from '../../utils/constants';
-import { COUNTER_COLORS } from '../../config.json';
 import SVG from 'react-inlinesvg';
-import { getColor } from '../../utils/colors';
+import { getCounterColor } from '../../utils/colors';
 
 class DeleteModal extends Component {
 
@@ -37,7 +36,7 @@ class DeleteModal extends Component {
             style={{
                 top: countingArea.getIn(['location','center','y']) - (CIRCLE_DELETE_RADIUS) / 2, 
                 left: countingArea.getIn(['location','center','x']) - (CIRCLE_DELETE_RADIUS) / 2,
-                backgroundColor: getColor(countingArea.get('color'))
+                backgroundColor: getCounterColor(countingArea.get('color'))
             }}
           >
             <SVG 

@@ -4,13 +4,11 @@ import { connect } from 'react-redux';
 
 import MenuCountingAreasEditor from './MenuCountingAreasEditor'
 
-import { COUNTER_COLORS } from '../../config.json';
-
 import { clearCountingArea, saveCountingAreaLocation, defaultCountingAreaValue, saveCountingAreaName, EDITOR_MODE, deleteCountingArea, computeCountingAreasCenters, addCountingArea, computeDistance, setMode } from '../../statemanagement/app/CounterStateManagement'
 import AskNameModal from './AskNameModal';
 import DeleteModal from './DeleteModal';
 import InstructionsModal from './InstructionsModal'
-import { getColor } from '../../utils/colors';
+import { getCounterColor } from '../../utils/colors';
 
 class CounterAreasEditor extends Component {
 
@@ -38,15 +36,15 @@ class CounterAreasEditor extends Component {
       // defined when we reach here
       this.lines[this.props.selectedCountingArea] = new fabric.Line(points, {
         strokeWidth: 5,
-        fill: getColor(this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])),
-        stroke: getColor(this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])),
+        fill: getCounterColor(this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])),
+        stroke: getCounterColor(this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])),
         originX: 'center',
         originY: 'center'
       });
       this.editorCanvas.add(this.lines[this.props.selectedCountingArea]);
       this.editorCanvas.add(new fabric.Circle({
         radius: 5,
-        fill: getColor(this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])),
+        fill: getCounterColor(this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])),
         top: pointer.y,
         left: pointer.x,
         originX: 'center',
@@ -133,15 +131,15 @@ class CounterAreasEditor extends Component {
         let points = [ data.point1.x, data.point1.y, data.point2.x, data.point2.y ];
         this.lines[id] = new fabric.Line(points, {
           strokeWidth: 5,
-          fill: getColor(color),
-          stroke: getColor(color),
+          fill: getCounterColor(color),
+          stroke: getCounterColor(color),
           originX: 'center',
           originY: 'center'
         });
         this.editorCanvas.add(this.lines[id]);
         this.editorCanvas.add(new fabric.Circle({
           radius: 5,
-          fill: getColor(color),
+          fill: getCounterColor(color),
           top: data.point1.y,
           left: data.point1.x,
           originX: 'center',
@@ -149,7 +147,7 @@ class CounterAreasEditor extends Component {
         }));
         this.editorCanvas.add(new fabric.Circle({
           radius: 5,
-          fill: getColor(color),
+          fill: getCounterColor(color),
           top: data.point2.y,
           left: data.point2.x,
           originX: 'center',

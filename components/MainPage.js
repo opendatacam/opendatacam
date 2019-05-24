@@ -26,6 +26,8 @@ class MainPage extends React.Component {
     this.props.dispatch(loadUserSettings());
     // TODO See how we handle the YOLO on / off situation
     this.props.dispatch(startListeningToServerData());
+    // Make config available on window global
+    window.CONFIG = this.props.config.toJS();
   }
 
   render () {
@@ -85,6 +87,7 @@ export default connect((state) => {
     mode: state.app.get('mode'),
     isListeningToYOLO: state.app.get('isListeningToYOLO'),
     showMenu: state.app.get('showMenu'),
-    recordingSettings: state.app.get('recordingSettings')
+    recordingSettings: state.app.get('recordingSettings'),
+    config: state.app.get('config')
   }
 })(MainPage)

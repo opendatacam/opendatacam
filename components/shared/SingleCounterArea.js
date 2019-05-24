@@ -2,12 +2,11 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 
 import { CIRCLE_RADIUS, POPOVER_HEIGHT, POPOVER_WIDTH, POPOVER_ARROW_SIZE } from '../../utils/constants';
-import { COUNTER_COLORS } from '../../config.json';
 
 import { DISPLAY_CLASSES } from '../../config.json';
 import SVG from 'react-inlinesvg';
 import OpenMoji from './OpenMoji';
-import { getColor } from '../../utils/colors';
+import { getCounterColor } from '../../utils/colors';
 
 class SingleCounterArea extends Component {
 
@@ -79,7 +78,7 @@ class SingleCounterArea extends Component {
             style={{
                 top: this.props.area.location.center.y - CIRCLE_RADIUS / 2, 
                 left: this.props.area.location.center.x - CIRCLE_RADIUS / 2,
-                backgroundColor: getColor(this.props.area.color)
+                backgroundColor: getCounterColor(this.props.area.color)
             }} 
         >
         {this.props.counterData && this.props.counterData.get('_total') || 0}

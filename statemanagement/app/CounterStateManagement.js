@@ -1,8 +1,9 @@
 import { fromJS } from 'immutable'
 import axios from 'axios';
-import { COUNTER_COLORS } from '../../config.json';
 import uuidv4 from 'uuid/v4'
 import { scalePoint } from '../../utils/resolution';
+import { getURLData } from '../../server/utils/urlHelper';
+import { getAvailableCounterColors, getDefaultCounterColor } from '../../utils/colors.js';
 
 // Rename this to CounterEditorStateManagement
 
@@ -95,8 +96,8 @@ export function addCountingArea() {
 
     let newCountingAreaId = uuidv4();
 
-    const AVAILABLE_COLORS = Object.keys(COUNTER_COLORS);
-    const DEFAULT_COLOR = Object.keys(COUNTER_COLORS)[0];
+    const AVAILABLE_COLORS = getAvailableCounterColors();
+    const DEFAULT_COLOR = getDefaultCounterColor();
 
     // Get a color unused
     let color = AVAILABLE_COLORS.find((potentialColor) => {
@@ -153,10 +154,32 @@ export function saveCountingAreaName(id, name) {
   }
 }
 
-export function restoreCountingAreas(countingAreas) {
-  return {
-    type: RESTORE_COUNTING_AREAS,
-    payload: countingAreas
+export function restoreCountingAreas(req) {
+  return (dispatch) => {
+    return new Promise((resolve, reject) => {
+      let urlData = getURLData(req);
+      let session = req && req.session ? req.session : null
+      let url = `${urlData.protocol}://${urlData.address}:${urlData.port}/counter/areas`;
+
+      axios({
+        method: 'get',
+        url: url,
+        credentials: 'same-origin',
+        data: {'session': session}
+      }).then((response) => {
+        dispatch({
+          type: RESTORE_COUNTING_AREAS,
+          payload: response.data
+        })
+        resolve();
+      }, (error) => {
+        console.log(error);
+        reject();
+      }).catch((error) => {
+        console.log(error)
+        reject();
+      });
+    });
   }
 }
 

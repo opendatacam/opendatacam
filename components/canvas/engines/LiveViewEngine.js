@@ -1,6 +1,5 @@
 import { scaleDetection, scalePoint } from '../../../utils/resolution';
-import { evaluateCSSVariable, getColor } from '../../../utils/colors';
-import { COUNTER_COLORS } from '../../../config.json';
+import { evaluateCSSVariable, getCounterColor } from '../../../utils/colors';
 import  tailwindConfig from '../../../tailwind.config';
 
 const colors = tailwindConfig.theme.extend.colors;
@@ -76,8 +75,8 @@ class LiveViewEngine {
     
       if(objectTracked.counted) {
         // counted contain countingareakey : see Opendatacam.js on server side
-        context.strokeStyle = getColor(countingAreas.getIn([objectTracked.counted, 'color']));
-        context.fillStyle = getColor(countingAreas.getIn([objectTracked.counted, 'color']));
+        context.strokeStyle = getCounterColor(countingAreas.getIn([objectTracked.counted, 'color']));
+        context.fillStyle = getCounterColor(countingAreas.getIn([objectTracked.counted, 'color']));
         context.strokeRect(
           x + 5,
           y + 5,
@@ -117,8 +116,8 @@ class LiveViewEngine {
         let color = area.get('color');
         data.point1 = scalePoint(data.point1, canvasResolution, data.refResolution);
         data.point2 = scalePoint(data.point2, canvasResolution, data.refResolution);
-        context.strokeStyle = getColor(color);
-        context.fillStyle = getColor(color);
+        context.strokeStyle = getCounterColor(color);
+        context.fillStyle = getCounterColor(color);
         context.lineWidth = 5; // TODO Have those dynamic depending on canvas resolution
         let edgeCircleRadius = 5;
         // Draw line

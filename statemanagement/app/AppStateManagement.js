@@ -26,7 +26,8 @@ const initialState = fromJS({
   mode: MODE.LIVEVIEW,
   showMenu: false,
   isListeningToServerData: false,
-  eventSourceServerData: null
+  eventSourceServerData: null,
+  config: {}
 })
 
 // Actions
@@ -39,6 +40,7 @@ const SET_RECORDING_SETTING = 'App/SET_RECORDING_SETTING'
 const START_LISTENING_SERVERDATA = 'App/START_LISTENING_SERVERDATA'
 // TODO LATER HANDLE STOP LISTENING ...
 const STOP_LISTENING_SERVERDATA = 'App/STOP_LISTENING_SERVERDATA'
+const LOAD_CONFIG = 'App/LOAD_CONFIG'
 
 export function startRecording() {
   return (dispatch) => {
@@ -53,6 +55,35 @@ export function stopRecording() {
     // Ping webservice to stop storing data on server
     axios.get('/recording/stop');
     dispatch(fetchHistory());
+  }
+}
+
+export function loadConfig(req) {
+  return (dispatch) => {
+    return new Promise((resolve, reject) => {
+      let urlData = getURLData(req);
+      let session = req && req.session ? req.session : null
+      let url = `${urlData.protocol}://${urlData.address}:${urlData.port}/config`;
+
+      axios({
+        method: 'get',
+        url: url,
+        credentials: 'same-origin',
+        data: {'session': session}
+      }).then((response) => {
+        dispatch({
+          type: LOAD_CONFIG,
+          payload: response.data
+        })
+        resolve();
+      }, (error) => {
+        console.log(error);
+        reject();
+      }).catch((error) => {
+        console.log(error)
+        reject();
+      });
+    });
   }
 }
 
@@ -168,6 +199,8 @@ export default function AppReducer (state = initialState, action = {}) {
       return state.set('showMenu', false)
     case SET_RECORDING_SETTING:
         return state.setIn(['recordingSettings', action.payload.recordingSetting], fromJS(action.payload.value))
+    case LOAD_CONFIG:
+      return state.set('config', fromJS(action.payload))
     case UPDATE_APPSTATE: 
       return state.set('yoloStatus', fromJS(action.payload.yoloStatus))
                   .set('isListeningToYOLO', action.payload.isListeningToYOLO)
