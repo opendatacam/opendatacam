@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
-import { hideMenu, setUserSetting } from '../../statemanagement/app/AppStateManagement';
+import { hideMenu, setRecordingSetting } from '../../statemanagement/app/AppStateManagement';
+import { setUserSetting } from '../../statemanagement/app/UserSettingsStateManagement';
 import Toggle from '../shared/Toggle';
 import SVG from 'react-inlinesvg';
 
@@ -61,14 +62,14 @@ class Menu extends Component {
             <Toggle
               label="Counter"
               description="Count objects on active areas"
-              enabled={this.props.userSettings.get('counter')}
-              onChange={(value) => this.props.dispatch(setUserSetting('counter', value))}
+              enabled={this.props.recordingSettings.get('counterEnabled')}
+              onChange={(value) => this.props.dispatch(setRecordingSetting('counterEnabled', value))}
             />
             <Toggle
               label="Pathfinder"
               description="Track paths and positions"
-              enabled={this.props.userSettings.get('pathfinder')}
-              onChange={(value) => this.props.dispatch(setUserSetting('pathfinder', value))}
+              enabled={this.props.recordingSettings.get('pathfinderEnabled')}
+              onChange={(value) => this.props.dispatch(setRecordingSetting('pathfinderEnabled', value))}
             />
             <Toggle
               label="Dark mode"
@@ -157,6 +158,7 @@ class Menu extends Component {
 export default connect((state) => {
   return {
     mode: state.app.get('mode'),
-    userSettings: state.app.get('userSettings')
+    userSettings: state.usersettings,
+    recordingSettings: state.app.get('recordingSettings')
   }
 })(Menu);

@@ -186,6 +186,6 @@ export default connect(state => {
     originalResolution: state.viewport.get('originalResolution').toJS(),
     canvasResolution: state.viewport.get('canvasResolution'),
     countingAreas: state.counter.get('countingAreas'),
-    userSettings: state.app.get('userSettings')
+    userSettings: state.usersettings
   }
 })(CanvasEngine)

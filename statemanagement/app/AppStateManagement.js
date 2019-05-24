@@ -18,15 +18,13 @@ const initialState = fromJS({
     isStarted: false,
     isStarting: true
   },
+  recordingSettings: {
+    counterEnabled: true,
+    pathfinderEnabled: true
+  },
   isListeningToYOLO: false,
   mode: MODE.LIVEVIEW,
   showMenu: false,
-  userSettings: {
-    dimmerOpacity: 0.1,
-    darkMode: false,
-    counter: true,
-    pathfinder: true
-  },
   isListeningToServerData: false,
   eventSourceServerData: null
 })
@@ -37,7 +35,7 @@ const SET_MODE = 'App/SET_MODE'
 const SHOW_MENU = 'App/SHOW_MENU'
 const HIDE_MENU = 'App/HIDE_MENU'
 const UPDATE_APPSTATE = 'App/UPDATE_APPSTATE'
-const SET_USERSETTING = 'App/SET_USERSETTING'
+const SET_RECORDING_SETTING = 'App/SET_RECORDING_SETTING'
 const START_LISTENING_SERVERDATA = 'App/START_LISTENING_SERVERDATA'
 // TODO LATER HANDLE STOP LISTENING ...
 const STOP_LISTENING_SERVERDATA = 'App/STOP_LISTENING_SERVERDATA'
@@ -84,11 +82,11 @@ export function hideMenu() {
   }
 }
 
-export function setUserSetting(setting, value) {
+export function setRecordingSetting(recordingSetting, value) {
   return {
-    type: SET_USERSETTING,
+    type: SET_RECORDING_SETTING,
     payload: {
-      setting,
+      recordingSetting,
       value
     }
   }
@@ -137,8 +135,8 @@ export default function AppReducer (state = initialState, action = {}) {
       return state.set('showMenu', true)
     case HIDE_MENU:
       return state.set('showMenu', false)
-    case SET_USERSETTING:
-      return state.setIn(['userSettings', action.payload.setting], fromJS(action.payload.value))
+    case SET_RECORDING_SETTING:
+        return state.setIn(['recordingSettings', action.payload.recordingSetting], fromJS(action.payload.value))
     case UPDATE_APPSTATE: 
       return state.set('yoloStatus', fromJS(action.payload.yoloStatus))
                   .set('isListeningToYOLO', action.payload.isListeningToYOLO)

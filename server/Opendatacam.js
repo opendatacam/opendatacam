@@ -26,6 +26,12 @@ const initialState = {
     recordingId: null,
     dateStarted: null
   },
+  userSettings: {
+    dimmerOpacity: 0.1,
+    darkMode: false,
+    counter: true,
+    pathfinder: true
+  },
   isListeningToYOLO: false,
   HTTPRequestListeningToYOLO: null,
   HTTPRequestListeningToYOLOMaxRetries: 60
