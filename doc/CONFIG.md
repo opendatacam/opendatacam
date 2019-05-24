@@ -200,6 +200,19 @@ You can change the `PATHFINDER_COLORS` variable in the `config.json`. The app pi
 ]
 ```
 
+For example, with only 2 colors:
+
+
+```json
+"PATHFINDER_COLORS": [
+  "#1f77b4",
+  "#e377c2"
+]
+```
+
+![Demo 2 colors](https://user-images.githubusercontent.com/533590/58332468-ab993880-7e11-11e9-831a-5f958442e015.jpg)
+
+
 ### Advanced settings
 
 #### VIDEO_INPUTS_PARAMS:
