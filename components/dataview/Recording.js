@@ -35,8 +35,8 @@ class Recording extends PureComponent {
   render() {
 
     return (
-      <div className="recording pl-8 w-full mb-10">
-        <div className="text-inverse flex items-center">
+      <div className="flex flex-initial flex-col recording pl-2 mb-10">
+        <div className="text-inverse flex flex-initial items-center pl-6">
           <div>{dayjs(this.props.dateStart).format('MMM DD, YYYY')}</div>
           <div className="ml-10">
             {dayjs(this.props.dateStart).format('hh:mm a')} - {this.renderDateEnd(this.props.dateEnd, this.props.active)}
@@ -55,25 +55,24 @@ class Recording extends PureComponent {
             </button>
           }
         </div>
-        <div className="flex flex-no-wrap overflow-x-scroll pb-2 mt-5 pl-1">
+        <div className="flex flex-initial flex-wrap pb-2 pl-1 m-2">
           {this.props.countingAreas.size > 0 &&
-            <div className="flex flex-col rounded bg-white text-black p-4 shadow mr-4">
+            <div className="flex flex-initial flex-col rounded bg-white text-black shadow m-2 p-4">
               <div className="flex items-end justify-between">
                 <h3 className="mr-3 text-xl font-bold">Counter</h3>
                 <a className="btn-text" href={`/recording/${this.props.id}/counter`} target="_blank">Download data</a>
               </div>
-              <div className="mt-4 flex flex-no-wrap">
+              <div className="mt-4 flex flex-wrap">
                 {this.props.countingAreas && this.props.countingAreas.entrySeq().map(([countingAreaId, countingAreaData], index) =>
                   <div 
                     key={countingAreaId} 
-                    className={`bg-gray-200 mt-2 rounded p-4 ${index === 0 ? '' : 'ml-4' }`}
+                    className={`flex flex-col bg-gray-200 m-2 rounded p-4`}
                   >
                     <div className="flex items-center">
                       <h4 className="font-medium">{countingAreaData.get('name')}</h4>
                       <div className="w-4 h-4 ml-2 rounded-full" style={{'backgroundColor': COLORS[countingAreaData.get('color')]}}></div>
                     </div>
-                    <div className="flex flex-wrap mt-5 w-64">
-                      {/* TODO LIMIT to 6 ?, put on its own component to reuse in popover */}
+                    <div className="flex flex-initial flex-wrap mt-5 w-64">
                       {DISPLAY_CLASSES.slice(0, Math.min(DISPLAY_CLASSES.length, 6)).map((counterClass) =>
                         <div 
                           className="flex w-16 m-1 items-center justify-center" 
@@ -92,7 +91,7 @@ class Recording extends PureComponent {
               </div>
             </div>
           }
-          <div className="flex flex-col rounded bg-white text-black p-4 shadow">
+          <div className="flex flex-initial flex-col rounded bg-white text-black shadow m-2 p-4">
             <div className="flex items-end justify-between">
               <h3 className="mr-3 text-xl font-bold">Tracker</h3>
               <a className="btn-text" href={`/recording/${this.props.id}/tracker`} target="_blank">Download data</a>
