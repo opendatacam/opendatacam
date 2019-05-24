@@ -26,6 +26,7 @@ v4l2-ctl --list-devices
 
 ## Stuff to do with releasing a new version
 
+- Make sure that config.json has the TO_REPLACE_VIDEO_INPUT, TO_REPLACE_VIDEO_INPUT values
 - Set correct version in package.json
 - Set correct VERSION in /docker/run-jetson/install-opendatacam.sh
 - Tag version on github
