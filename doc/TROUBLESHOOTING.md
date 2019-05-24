@@ -12,7 +12,11 @@
     Stop any running docker container...
     "docker stop" requires at least 1 argument.
     ```
-    Happens if the opendatacam is installed after a clean flash. Run `$ sudo docker run hello-world` so that there is a container to stop.   
+    Happens if the opendatacam is installed after a clean flash. Run `$ sudo docker run hello-world` so that there is a container to stop. 
+    
+-   If it happens, that the docker service is not active on startup (which means the container is not starting automatically). Run `$ sudo systemctl enable docker` set the docker service active on starup
+    
+
 
 
 ### OLD v1 FAQ to update
