@@ -26,10 +26,6 @@ class MainPage extends React.Component {
     this.props.dispatch(loadUserSettings());
     // TODO See how we handle the YOLO on / off situation
     this.props.dispatch(startListeningToServerData());
-
-    if(this.props.darkMode) {
-      document.getElementsByTagName("body")[0].className = "theme-dark";
-    }
   }
 
   render () {
@@ -60,7 +56,9 @@ class MainPage extends React.Component {
               <CounterView />
             }
             {/* Need to keep pathview in the DOM as it continuously renders */}
-            <PathView hidden={this.props.mode !== MODE.PATHVIEW} />
+            {this.props.recordingSettings.get('pathfinderEnabled') &&
+              <PathView hidden={this.props.mode !== MODE.PATHVIEW} />
+            }
             <WebcamStream />
           </>
         }
@@ -87,6 +85,6 @@ export default connect((state) => {
     mode: state.app.get('mode'),
     isListeningToYOLO: state.app.get('isListeningToYOLO'),
     showMenu: state.app.get('showMenu'),
-    darkMode: state.app.getIn(['userSettings', 'darkMode'])
+    recordingSettings: state.app.get('recordingSettings')
   }
 })(MainPage)

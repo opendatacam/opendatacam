@@ -2,6 +2,10 @@
     @apply py-2 px-4 font-medium;
 }
 
+.btn--disabled {
+    @apply opacity-75 cursor-not-allowed;
+}
+
 .btn:focus {
     outline: none;
 }

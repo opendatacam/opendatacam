@@ -40,23 +40,27 @@ class UIControls extends Component {
             
             <div className="nav-left mt-2 ml-2 shadow flex">
               <button 
-                className={`btn btn-default rounded-l ${this.props.mode === MODE.LIVEVIEW ? 'btn-default--active' : ''}`}
+                className={`btn btn-default rounded-l ${this.props.mode === MODE.LIVEVIEW ? 'btn-default--active' : ''} ${!this.props.recordingSettings.get('pathfinderEnabled') && !this.props.recordingSettings.get('counterEnabled') ? 'rounded-r': ''}`}
                 onClick={() => this.props.dispatch(setMode(MODE.LIVEVIEW))}
               >
                 Live view
               </button>
-              <button
-                className={`btn btn-default border-r border-l border-default-soft border-solid ${this.props.mode === MODE.COUNTERVIEW ? 'btn-default--active' : ''}`}
-                onClick={() => this.props.dispatch(setMode(MODE.COUNTERVIEW))}
-              >
-                Counter
-              </button>
-              <button
-                className={`btn btn-default rounded-r ${this.props.mode === MODE.PATHVIEW ? 'btn-default--active' : ''}`}
-                onClick={() => this.props.dispatch(setMode(MODE.PATHVIEW))}
-              >
-                Pathfinder
-              </button>
+              {this.props.recordingSettings.get('counterEnabled') &&
+                <button
+                  className={`btn btn-default border-r border-l border-default-soft border-solid ${this.props.mode === MODE.COUNTERVIEW ? 'btn-default--active' : ''} ${this.props.recordingSettings.get('pathfinderEnabled') ? '': 'rounded-r'}`}
+                  onClick={() => this.props.dispatch(setMode(MODE.COUNTERVIEW))}
+                >
+                  Counter
+                </button>
+              }
+              {this.props.recordingSettings.get('pathfinderEnabled') &&
+                <button
+                  className={`btn btn-default rounded-r ${this.props.mode === MODE.PATHVIEW ? 'btn-default--active' : ''}`}
+                  onClick={() => this.props.dispatch(setMode(MODE.PATHVIEW))}
+                >
+                  Pathfinder
+                </button>
+              }
             </div>
             <div className="nav-right mt-2 mr-2 flex">
               <button
@@ -124,6 +128,7 @@ class UIControls extends Component {
 export default connect((state) => {
   return {
     recordingStatus: state.app.get('recordingStatus').toJS(),
+    recordingSettings: state.app.get('recordingSettings'),
     mode: state.app.get('mode')
   }
 })(UIControls);

@@ -27,12 +27,13 @@ class Recording extends PureComponent {
       return dayjs(dateEnd).format('hh:mm a')
     } else {
       return (
-        <span className="text-red font-bold">Ongoing</span>
+        <span className="font-bold" style={{color: "#FF0000"}}>Ongoing</span>
       )
     }
   }
 
   render() {
+
     return (
       <div className="recording pl-8 w-full mb-10">
         <div className="text-inverse flex items-center">
@@ -53,48 +54,50 @@ class Recording extends PureComponent {
           </button>
         </div>
         <div className="flex flex-no-wrap overflow-x-scroll pb-2 mt-5 pl-1">
+          {this.props.countingAreas.size > 0 &&
+            <div className="flex flex-col rounded bg-white text-black p-4 shadow mr-4">
+              <div className="flex items-end justify-between">
+                <h3 className="mr-3 text-xl font-bold">Counter</h3>
+                <a className="btn-text" href={`/recording/${this.props.id}/counter`} target="_blank">Download data</a>
+              </div>
+              <div className="mt-4 flex flex-no-wrap">
+                {this.props.countingAreas && this.props.countingAreas.entrySeq().map(([countingAreaId, countingAreaData], index) =>
+                  <div 
+                    key={countingAreaId} 
+                    className={`bg-gray-200 mt-2 rounded p-4 ${index === 0 ? '' : 'ml-4' }`}
+                  >
+                    <div className="flex items-center">
+                      <h4 className="font-medium">{countingAreaData.get('name')}</h4>
+                      <div className="w-4 h-4 ml-2 rounded-full" style={{'backgroundColor': COLORS[countingAreaData.get('color')]}}></div>
+                    </div>
+                    <div className="flex flex-wrap mt-5 w-64">
+                      {/* TODO LIMIT to 6 ?, put on its own component to reuse in popover */}
+                      {DISPLAY_CLASSES.slice(0, Math.min(DISPLAY_CLASSES.length, 6)).map((counterClass) =>
+                        <div 
+                          className="flex w-16 m-1 items-center justify-center" 
+                          key={counterClass.class}
+                        >
+                          <h4 className="mr-2">{this.props.counterData && this.props.counterData.getIn([countingAreaId, counterClass.class]) || 0}</h4>
+                          <OpenMoji 
+                            icon={counterClass.icon}
+                            class={counterClass.class}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          }
           <div className="flex flex-col rounded bg-white text-black p-4 shadow">
-            <div className="flex items-end justify-between">
-              <h3 className="mr-3 text-xl font-bold">Counter</h3>
-              <a className="btn-text" href={`/recording/${this.props.id}/counter`} target="_blank">Download data</a>
-            </div>
-            <div className="mt-4 flex flex-no-wrap">
-              {this.props.countingAreas && this.props.countingAreas.entrySeq().map(([countingAreaId, countingAreaData], index) =>
-                <div 
-                  key={countingAreaId} 
-                  className={`bg-gray-200 mt-2 rounded p-4 ${index === 0 ? '' : 'ml-4' }`}
-                >
-                  <div className="flex items-center">
-                    <h4 className="font-medium">{countingAreaData.get('name')}</h4>
-                    <div className="w-4 h-4 ml-2 rounded-full" style={{'backgroundColor': COLORS[countingAreaData.get('color')]}}></div>
-                  </div>
-                  <div className="flex flex-wrap mt-5 w-64">
-                    {/* TODO LIMIT to 6 ?, put on its own component to reuse in popover */}
-                    {DISPLAY_CLASSES.slice(0, Math.min(DISPLAY_CLASSES.length, 6)).map((counterClass) =>
-                      <div 
-                        className="flex w-16 m-1 items-center justify-center" 
-                        key={counterClass.class}
-                      >
-                        <h4 className="mr-2">{this.props.counterData && this.props.counterData.getIn([countingAreaId, counterClass.class]) || 0}</h4>
-                        <OpenMoji 
-                          icon={counterClass.icon}
-                          class={counterClass.class}
-                        />
-                      </div>
-                    )}
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
-          <div className="flex flex-col rounded bg-white text-black p-4 ml-4 shadow">
             <div className="flex items-end justify-between">
               <h3 className="mr-3 text-xl font-bold">Tracker</h3>
               <a className="btn-text" href={`/recording/${this.props.id}/tracker`} target="_blank">Download data</a>
             </div>
             <div className="mt-6 rounded relative">
               <div className="text-white absolute" style={{ bottom: 10, left : 10}}>
-                <h2 className="inline text-4xl font-bold">{this.props.nbPaths}</h2> paths
+                <h2 className="inline text-4xl font-bold">{this.props.nbPaths}</h2> objects tracked
               </div>
               <img src="/static/placeholder/pathview.jpg" />
             </div>
