@@ -74,15 +74,8 @@ class DataView extends Component {
             .data-view {
               width: 100%;
               height: 100%;
-              position: fixed;
-              will-change: transform;
               overflow: scroll;
-              -webkit-overflow-scrolling: touch;
               padding-top: 100px;
-              top: 0;
-              left: 0;
-              bottom: 0;
-              right: 0;
             }
           `}</style>
         </div>
