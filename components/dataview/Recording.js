@@ -41,17 +41,19 @@ class Recording extends PureComponent {
           <div className="ml-10">
             {dayjs(this.props.dateStart).format('hh:mm a')} - {this.renderDateEnd(this.props.dateEnd, this.props.active)}
           </div>
-          <button
-            className="btn btn-default p-0 ml-2 shadow rounded"
-            onClick={() => this.props.dispatch(deleteRecording(this.props.id))}
-          >
-            <SVG 
-              className="w-6 h-6 svg-icon flex items-center" 
-              cacheGetRequests={true}
-              src={`/static/icons/ui/delete.svg`} 
-              aria-label="icon close"
-            />
-          </button>
+          {!this.props.active &&
+            <button
+              className="btn btn-default p-0 ml-2 shadow rounded"
+              onClick={() => this.props.dispatch(deleteRecording(this.props.id))}
+            >
+              <SVG 
+                className="w-6 h-6 svg-icon flex items-center" 
+                cacheGetRequests={true}
+                src={`/static/icons/ui/delete.svg`} 
+                aria-label="icon close"
+              />
+            </button>
+          }
         </div>
         <div className="flex flex-no-wrap overflow-x-scroll pb-2 mt-5 pl-1">
           {this.props.countingAreas.size > 0 &&
