@@ -3,7 +3,7 @@ import axios from 'axios';
 import { MODE } from '../../utils/constants';
 import { getURLData } from '../../server/utils/urlHelper';
 import { updateTrackerData } from './TrackerStateManagement';
-import { updateCounterSummary, updateTrackerSummary } from './CounterStateManagement';
+import { updateCounterSummary, updateTrackerSummary, resetCountingAreas } from './CounterStateManagement';
 import { fetchHistory } from './HistoryStateManagement';
 import { setOriginalResolution } from './ViewportStateManagement';
 
@@ -83,12 +83,43 @@ export function hideMenu() {
 }
 
 export function setRecordingSetting(recordingSetting, value) {
-  return {
-    type: SET_RECORDING_SETTING,
-    payload: {
-      recordingSetting,
-      value
+  return (dispatch, getState) => {
+
+    // Side effects
+    const currentMode = getState().app.get('mode');
+
+    // If on pathview and disable pathfinder, go to liveview
+    if(recordingSetting === "pathfinderEnabled" && 
+       value === false &&
+       currentMode === MODE.PATHVIEW) {
+      dispatch(setMode(MODE.LIVEVIEW));
     }
+
+    // If disabling counter while on counterview
+    if(recordingSetting === "counterEnabled" && 
+       value === false &&
+       currentMode === MODE.COUNTERVIEW) {
+
+      // Go to Liveview
+      dispatch(setMode(MODE.LIVEVIEW));
+
+      // If recording, stop recording
+      if(getState().app.getIn(["recordingStatus", "isRecording"]) === true) {
+        dispatch(stopRecording());
+      }
+
+      // Reset any counter areas defined
+      dispatch(resetCountingAreas())
+    }
+
+    
+    dispatch({
+      type: SET_RECORDING_SETTING,
+      payload: {
+        recordingSetting,
+        value
+      }
+    })
   }
 }
 

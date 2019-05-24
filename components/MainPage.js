@@ -52,7 +52,7 @@ class MainPage extends React.Component {
             {this.props.mode === MODE.LIVEVIEW &&
               <LiveView />
             }
-            {this.props.mode === MODE.COUNTERVIEW &&
+            {this.props.recordingSettings.get('counterEnabled') && this.props.mode === MODE.COUNTERVIEW &&
               <CounterView />
             }
             {/* Need to keep pathview in the DOM as it continuously renders */}

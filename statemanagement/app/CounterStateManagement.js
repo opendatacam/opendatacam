@@ -30,6 +30,7 @@ const SET_MODE = 'Counter/SET_MODE'
 const SAVE_COUNTING_AREA_NAME = 'Counter/SAVE_COUNTING_AREA_NAME'
 const ADD_COUNTING_AREA = 'Counter/ADD_COUNTING_AREA'
 const RESTORE_COUNTING_AREAS = 'Counter/RESTORE_COUNTING_AREAS'
+const RESET_COUNTING_AREAS = 'Counter/RESET_COUNTING_AREAS'
 const UPDATE_COUNTERSUMMARY = 'Counter/UPDATE_COUNTERSUMMARY'
 const UPDATE_TRACKERSUMMARY = 'Counter/UPDATE_TRACKERSUMMARY'
 
@@ -59,6 +60,16 @@ export function selectCountingArea(id) {
   return {
     type: SELECT_COUNTING_AREA,
     payload: id
+  }
+}
+
+export function resetCountingAreas() {
+  return (dispatch, getState) => {
+    dispatch({
+      type: RESET_COUNTING_AREAS
+    });
+
+    dispatch(registerCountingAreasOnServer());
   }
 }
 
@@ -196,6 +207,8 @@ export default function CounterReducer (state = initialState, action = {}) {
       return state.setIn(['countingAreas', action.payload.id], fromJS({
         color: action.payload.color
       }))
+    case RESET_COUNTING_AREAS:
+      return state.set('countingAreas', fromJS({}))
     case SET_MODE:
       return state.set('mode', action.payload)
     case RESTORE_COUNTING_AREAS:
