@@ -213,6 +213,38 @@ For example, with only 2 colors:
 ![Demo 2 colors](https://user-images.githubusercontent.com/533590/58332468-ab993880-7e11-11e9-831a-5f958442e015.jpg)
 
 
+### Customize Counter colors
+
+You can change the `COUNTER_COLORS` variable in the `config.json`. As you draw counter lines, the app will pick the colors in the order you specified them.
+
+You need to add "key":"value" for counter lines, the key should be the label of the color (without space, numbers or special characters), and the value the color in HEX.
+
+For example, you can modify the default from:
+
+```json
+"COUNTER_COLORS": {
+  "yellow": "#FFE700",
+  "turquoise": "#A3FFF4",
+  "green": "#a0f17f",
+  "purple": "#d070f0",
+  "red": "#AB4435"
+}
+```
+
+To 
+
+```json
+"COUNTER_COLORS": {
+  "white": "#fff"
+}
+```
+
+And after restarting Opendatacam you should get a white line when defining a counter area:
+
+![Screenshot 2019-05-24 at 21 03 44](https://user-images.githubusercontent.com/533590/58361790-71f31c80-7e67-11e9-8b35-ecabb4a1e78a.png)
+
+_NOTE: If you draw more line than COUNTER_COLORS defined, the lines will be black_
+
 ### Advanced settings
 
 #### VIDEO_INPUTS_PARAMS:
