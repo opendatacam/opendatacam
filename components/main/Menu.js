@@ -128,6 +128,7 @@ class Menu extends Component {
             bottom: 0;
             z-index: 3;
             min-width: 250px;
+            max-width: 320px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -139,8 +140,8 @@ class Menu extends Component {
 
           .btn-close {
             position: absolute;
-            top: 10px;
-            left: -70px;
+            top: 1rem;
+            left: -4rem;
           }
         `}</style>
       </React.Fragment>

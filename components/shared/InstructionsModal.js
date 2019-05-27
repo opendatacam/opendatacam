@@ -34,7 +34,7 @@ class InstructionsModal extends Component {
             border: 1px solid black;
             width: 300px;
             height: auto;
-            padding: 15px;
+            padding: 1rem;
             display: flex;
             justify-content: center;
             align-items: center;

@@ -107,7 +107,7 @@ class UIControls extends Component {
             text-align: center;
             width: 100%;
             z-index: 3;
-            height: 5px;
+            height: 0.32rem;
           }
 
           .recording-status {
@@ -117,7 +117,7 @@ class UIControls extends Component {
             text-align: center;
             color: #FF0000;
             text-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            top: 15px;
+            top: 1rem;
           }
         `}</style>
       </React.Fragment>

@@ -36,7 +36,7 @@ class BtnRecording extends Component {
 
           .btn-record-container {
             position: fixed;
-            bottom: 10px;
+            bottom: 0.62rem;
             left: 50%;
             transform: translateX(-50%);
             z-index: 5;
