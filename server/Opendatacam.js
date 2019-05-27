@@ -26,11 +26,9 @@ const initialState = {
     recordingId: null,
     dateStarted: null
   },
-  userSettings: {
-    dimmerOpacity: 0.1,
-    darkMode: false,
-    counter: true,
-    pathfinder: true
+  uiSettings: {
+    counterEnabled: true,
+    pathfinderEnabled: true
   },
   isListeningToYOLO: false,
   HTTPRequestListeningToYOLO: null,
@@ -577,6 +575,16 @@ module.exports = {
 
     // Actually send request
     self.HTTPRequestListeningToYOLO.end();
+  },
+
+  setUISettings(settings) {
+    console.log('Save UI settings')
+    console.log(JSON.stringify(settings))
+    Opendatacam.uiSettings = settings;
+  },
+
+  getUISettings() {
+    return Opendatacam.uiSettings;
   },
 
   clean() {

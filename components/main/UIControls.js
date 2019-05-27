@@ -40,20 +40,20 @@ class UIControls extends Component {
             
             <div className="nav-left mt-2 ml-2 shadow flex">
               <button 
-                className={`btn btn-default rounded-l ${this.props.mode === MODE.LIVEVIEW ? 'btn-default--active' : ''} ${!this.props.recordingSettings.get('pathfinderEnabled') && !this.props.recordingSettings.get('counterEnabled') ? 'rounded-r': ''}`}
+                className={`btn btn-default rounded-l ${this.props.mode === MODE.LIVEVIEW ? 'btn-default--active' : ''} ${!this.props.uiSettings.get('pathfinderEnabled') && !this.props.uiSettings.get('counterEnabled') ? 'rounded-r': ''}`}
                 onClick={() => this.props.dispatch(setMode(MODE.LIVEVIEW))}
               >
                 Live view
               </button>
-              {this.props.recordingSettings.get('counterEnabled') &&
+              {this.props.uiSettings.get('counterEnabled') &&
                 <button
-                  className={`btn btn-default border-r border-l border-default-soft border-solid ${this.props.mode === MODE.COUNTERVIEW ? 'btn-default--active' : ''} ${this.props.recordingSettings.get('pathfinderEnabled') ? '': 'rounded-r'}`}
+                  className={`btn btn-default border-r border-l border-default-soft border-solid ${this.props.mode === MODE.COUNTERVIEW ? 'btn-default--active' : ''} ${this.props.uiSettings.get('pathfinderEnabled') ? '': 'rounded-r'}`}
                   onClick={() => this.props.dispatch(setMode(MODE.COUNTERVIEW))}
                 >
                   Counter
                 </button>
               }
-              {this.props.recordingSettings.get('pathfinderEnabled') &&
+              {this.props.uiSettings.get('pathfinderEnabled') &&
                 <button
                   className={`btn btn-default rounded-r ${this.props.mode === MODE.PATHVIEW ? 'btn-default--active' : ''}`}
                   onClick={() => this.props.dispatch(setMode(MODE.PATHVIEW))}
@@ -128,7 +128,7 @@ class UIControls extends Component {
 export default connect((state) => {
   return {
     recordingStatus: state.app.get('recordingStatus').toJS(),
-    recordingSettings: state.app.get('recordingSettings'),
+    uiSettings: state.app.get('uiSettings'),
     mode: state.app.get('mode')
   }
 })(UIControls);

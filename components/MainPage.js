@@ -54,11 +54,11 @@ class MainPage extends React.Component {
             {this.props.mode === MODE.LIVEVIEW &&
               <LiveView />
             }
-            {this.props.recordingSettings.get('counterEnabled') && this.props.mode === MODE.COUNTERVIEW &&
+            {this.props.uiSettings.get('counterEnabled') && this.props.mode === MODE.COUNTERVIEW &&
               <CounterView />
             }
             {/* Need to keep pathview in the DOM as it continuously renders */}
-            {this.props.recordingSettings.get('pathfinderEnabled') &&
+            {this.props.uiSettings.get('pathfinderEnabled') &&
               <PathView hidden={this.props.mode !== MODE.PATHVIEW} />
             }
             <WebcamStream />
@@ -87,7 +87,7 @@ export default connect((state) => {
     mode: state.app.get('mode'),
     isListeningToYOLO: state.app.get('isListeningToYOLO'),
     showMenu: state.app.get('showMenu'),
-    recordingSettings: state.app.get('recordingSettings'),
+    uiSettings: state.app.get('uiSettings'),
     config: state.app.get('config')
   }
 })(MainPage)

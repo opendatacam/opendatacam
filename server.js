@@ -650,6 +650,54 @@ app.prepare()
     res.json(config);
   })
 
+
+  /**
+   * @api {post} /ui Save UI settings
+   * @apiName  Save UI settings
+   * @apiGroup Helper
+   *
+   * @apiDescription Save UI settings
+   * 
+   * Through this api you can persist some UI settings like whether counter and pathfinder features are enabled
+   * 
+   * 
+   * @apiParam {Boolean} counterEnabled If counter feature is enabled
+   * @apiParam {Boolean} pathfinderEnabled If pathfinder feature is enabled
+   * 
+   * @apiParamExample {json} Request Example:
+   *    {
+          counterEnabled: true,
+          pathfinderEnabled: true
+        }
+  * @apiSuccessExample Success-Response:
+  *   HTTP/1.1 200 OK
+  */
+  express.post('/ui', (req, res) => {
+    Opendatacam.setUISettings(req.body)
+    res.sendStatus(200)
+  });
+
+  /**
+   * @api {get} /ui Get UI settings
+   * @apiName  Get UI settings
+   * @apiGroup Helper
+   *
+   * @apiDescription Get UI settings
+   * 
+   * Through this api you can get UI settings like whether counter and pathfinder features are enabled
+   * 
+   * 
+  * @apiSuccessExample {json} Success Response:
+   *    {
+          counterEnabled: true,
+          pathfinderEnabled: true
+        }
+  */
+ express.get('/ui', (req, res) => {
+  var uiSettings = Opendatacam.getUISettings()
+  res.json(uiSettings);
+});
+
   express.use("/api/doc", serveStatic('apidoc'))
 
   // Global next.js handler
