@@ -35,6 +35,7 @@ export function handleOrientationChange (dispatch) {
     // console.log('portrait')
     dispatch(setPortrait())
   }
+  dispatch(setCanvasResolution(getCanvasResolution()))
 }
 
 export function initViewportListeners () {
@@ -45,10 +46,7 @@ export function initViewportListeners () {
         type: INIT_LISTENERS
       })
       // console.log('init orientation change listener')
-      window.addEventListener(
-        'orientationchange',
-        handleOrientationChange.bind(this, dispatch)
-      )
+      window.addEventListener('orientationchange', handleOrientationChange.bind(this, dispatch))
       handleOrientationChange(dispatch)
       dispatch(setCanvasResolution(getCanvasResolution()))
 
