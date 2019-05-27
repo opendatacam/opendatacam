@@ -19,6 +19,7 @@ const initialState = {
   trackerDataForLastFrame: null,
   nbItemsTrackedThisFrame: 0,
   totalItemsTracked: 0,
+  _refTrackedItemIdWhenRecordingStarted: 0,
   sseConnexion: null,
   recordingStatus: {
     isRecording: false,
@@ -228,6 +229,12 @@ module.exports = {
 
     Opendatacam.nbItemsTrackedThisFrame = trackerDataForThisFrame.length;
 
+    // TODO bake this into tracker to avoid reasoning about ids here:
+    //  -> implement Tracker.nbItemsTrackedSinceTimestamp(timestamp)
+    const biggestTrackedItemIdThisFrame = trackerDataForThisFrame[trackerDataForThisFrame.length - 1].id;
+    const nbItemsTrackedSinceRecordingStarted = biggestTrackedItemIdThisFrame - Opendatacam._refTrackedItemIdWhenRecordingStarted;
+    Opendatacam.totalItemsTracked = nbItemsTrackedSinceRecordingStarted;
+
     // Compute deltaYs for all tracked items (between the counting lines and the tracked items position)
     // And check if trackedItem are going through some counting areas 
     // For each new tracked item
@@ -283,9 +290,6 @@ module.exports = {
 
               
             }
-          } else {
-            // Newly tracked item, increment nbPath
-            Opendatacam.totalItemsTracked++;
           }
         }
 
@@ -437,6 +441,10 @@ module.exports = {
     Opendatacam.recordingStatus.isRecording = true;
     Opendatacam.recordingStatus.dateStarted = new Date();
     Opendatacam.totalItemsTracked = 0;
+    // TODO bake this into tracker, get nbItemsTrackedSinceTimestamp( timestamp )
+    const currentlyTrackedItems = Tracker.getJSONOfTrackedItems() 
+    const highestTrackedItemId = currentlyTrackedItems[currentlyTrackedItems.length - 1].id;
+    Opendatacam._refTrackedItemIdWhenRecordingStarted = highestTrackedItemId - currentlyTrackedItems.length;
     // Persist recording
     DBManager.insertRecording(new Recording(
       Opendatacam.recordingStatus.dateStarted, 
