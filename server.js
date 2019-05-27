@@ -636,6 +636,28 @@ app.prepare()
     });
   })
 
+  /**
+   * @api {get} /recording/:id/counter/csv Counter history (CSV)
+   * @apiName Counter history (CSV)
+   * @apiGroup Recording
+   *
+   * @apiDescription Get counter history data as CSV file
+   * 
+   * @apiParam {String} id Recording id (_id field of /recordings)
+   * 
+   * @apiSuccessExample {csv} Success Response:
+   *    "Timestamp","Counter area","ObjectClass","UniqueID"
+   *    "2019-05-02T19:10:22.150Z","blabla","car",4096
+        "2019-05-02T19:10:23.658Z","truc","car",4109
+        "2019-05-02T19:10:26.728Z","truc","car",4126
+        "2019-05-02T19:10:26.939Z","blabla","car",4099
+        "2019-05-02T19:10:28.997Z","test","car",4038
+        "2019-05-02T19:10:29.495Z","blabla","car",4135
+        "2019-05-02T19:10:29.852Z","truc","car",4122
+        "2019-05-02T19:10:32.070Z","blabla","car",4134
+        "2019-05-02T19:10:34.144Z","truc","car",4151
+        "2019-05-02T19:10:36.925Z","truc","car",4156
+  */
   express.get('/recording/:id/counter/csv', (req, res) => {
     DBManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
       var data = counterData.counterHistory;
