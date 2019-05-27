@@ -58,7 +58,7 @@ class MenuCountingAreasEditor extends Component {
         }
         <style jsx>{`
           .menu-active-areas {
-            z-index: 5;
+            z-index: 8;
           }
         `}</style>
       </div>

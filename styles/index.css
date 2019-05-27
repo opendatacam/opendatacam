@@ -45,3 +45,23 @@ body.theme-dark .overlay {
     background-color: rgba(0,0,0,.5);
     -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
 }
+
+
+/** Responsive fixes */
+
+@media (min-width: 800px) and (max-width: 950px) {
+    html {
+        font-size: 90%;
+    }
+}
+
+
+@media (max-width: 800px) {
+    html {
+        font-size: 80%;
+    }
+
+    .recording-status {
+        margin-left: calc(50% + 2.8rem) !important;
+    }
+}

@@ -48,6 +48,10 @@ class BtnRecording extends Component {
             z-index: 2;
             cursor: pointer;
           }
+
+          .btn-record img {
+            width: 3.12rem;
+          }
       
           .btn-record-label {
             margin-top: 0.5rem;
