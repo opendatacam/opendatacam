@@ -126,7 +126,7 @@ class Menu extends Component {
             top: 0;
             right: 0;
             bottom: 0;
-            z-index: 3;
+            z-index: 10;
             min-width: 250px;
             max-width: 320px;
             display: flex;
