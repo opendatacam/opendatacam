@@ -8,7 +8,7 @@ const sse = require('server-sent-events');
 const ip = require('ip');
 const YOLO = require('./server/processes/YOLO');
 const Opendatacam = require('./server/Opendatacam');
-const cloneDeep = require('lodash.clonedeep');
+const flatten = require('lodash.flatten');
 const getURLData = require('./server/utils/urlHelper').getURLData;
 const DBManager = require('./server/db/DBManager')
 const MjpegProxy = require('mjpeg-proxy').MjpegProxy;
@@ -633,6 +633,28 @@ app.prepare()
       // res.write(JSON.stringify(trackerData), function (err) {
       //     res.end();
       // })
+    });
+  })
+
+  express.get('/recording/:id/counter/csv', (req, res) => {
+    DBManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
+      var data = counterData.counterHistory;
+      if(data) {
+        // Flatten
+        data = flatten(data);
+        // Map counting area name
+        data = data.map((countedItem) => {
+          return {
+            ...countedItem,
+            timestamp: countedItem.timestamp.toISOString(),
+            area: counterData.areas[countedItem.area].name
+          }
+        })
+      } else {
+        data = [];
+      }
+      console.log(`Exporting ${req.params.id} counter history to CSV`);
+      res.csv(data, false ,{'Content-disposition': 'attachment; filename=counterData.csv'});
     });
   })
 

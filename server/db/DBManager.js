@@ -209,7 +209,11 @@ class DBManager {
             if (err) {
               reject(err)
             } else {
-              resolve(docs)
+              if(docs.length === 0) {
+                resolve({});
+              } else {
+                resolve(docs[0])
+              } 
             }
           })
       });
