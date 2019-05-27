@@ -56,7 +56,7 @@ class DataView extends Component {
             />
           )}
           {needPagination &&
-            <div className="pagination">
+            <div className="flex justify-center mb-8">
               {pagesArray.map((value, index) =>
                 <button 
                   key={index}
