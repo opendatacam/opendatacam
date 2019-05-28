@@ -59,7 +59,8 @@ class LiveViewEngine {
     objectTrackerData,
     countingAreas,
     canvasResolution,
-    originalResolution
+    originalResolution,
+    timeNow = new Date().getTime()
   ) {
     context.globalAlpha = 1
     context.lineWidth = 2
@@ -72,11 +73,19 @@ class LiveViewEngine {
       
       let x = objectTrackedScaled.x - objectTrackedScaled.w / 2
       let y = objectTrackedScaled.y - objectTrackedScaled.h / 2
+
+      // Counted status
+      // display counted color 4s after beeing counted
+      let displayCountedArea = objectTracked.counted && objectTracked.counted.find((countedEvent) => {
+        if(timeNow - countedEvent.timeMs < 1000) {
+          return countedEvent.areaKey;
+        }
+      })
     
-      if(objectTracked.counted) {
-        // counted contain countingareakey : see Opendatacam.js on server side
-        context.strokeStyle = getCounterColor(countingAreas.getIn([objectTracked.counted, 'color']));
-        context.fillStyle = getCounterColor(countingAreas.getIn([objectTracked.counted, 'color']));
+      if(displayCountedArea) {
+        // displayCountedArea contain countingareakey : see Opendatacam.js on server side
+        context.strokeStyle = getCounterColor(countingAreas.getIn([displayCountedArea.areaKey, 'color']));
+        context.fillStyle = getCounterColor(countingAreas.getIn([displayCountedArea.areaKey, 'color']));
         context.strokeRect(
           x + 5,
           y + 5,

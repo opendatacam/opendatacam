@@ -127,7 +127,10 @@ module.exports = {
       Opendatacam.countedItemsHistory.push(countedItem)
     }
     // Mark tracked item as counted this frame for display
-    trackedItem.counted = countingAreaKey;
+    trackedItem.counted.push({
+      areaKey: countingAreaKey,
+      timeMs: new Date().getTime()
+    });
     return countedItem;
   },
 
@@ -258,6 +261,8 @@ module.exports = {
             if(trackerItemLastFrame.counted) {
               // console.log(`${trackerItemLastFrame.id} appear to have been counted on last frame`);
               trackedItem.counted = trackerItemLastFrame.counted;
+            } else {
+              trackedItem.counted = [];
             }
 
             if(Math.sign(lastDeltaY) !== Math.sign(deltaY)) {
@@ -275,6 +280,14 @@ module.exports = {
                 // console.log("COUNTING SOMETHING")
                 // console.log("*****************************")
                 // // console.log(trackedItem);
+
+                // Here we should count the item, 
+                // but add a check to avoid counting it twice on  
+                // the same area key
+                // TODO
+                // if(trackedItem.counted.find((countedEvent) => countedEvent.areaKey = countingAreaKey)) {
+                //   // already counted on this areaKey, do not count twice 
+                // }
   
                 // Tracked item has cross the {countingAreaKey} counting line
                 // Count it

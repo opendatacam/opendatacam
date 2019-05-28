@@ -32,7 +32,7 @@ class CanvasEngine extends PureComponent {
   }
 
   clearCanvas () {
-    console.log('clearCanvas')
+    //console.log('clearCanvas')
     this.canvasContext.clearRect(
       0,
       0,
