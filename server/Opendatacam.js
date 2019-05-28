@@ -33,10 +33,17 @@ const initialState = {
   },
   zombiesAreas: {
     topleft: 0,
+    topleftZombies: 0,
+    topleftZombiesPercentage: 0,
     topright: 0,
+    toprightZombies: 0,
+    toprightZombiesPercentage: 0,
     bottomleft: 0,
+    bottomleftZombies: 0,
+    bottomleftZombiesPercentage: 0,
     bottomright: 0,
-    _total: 0
+    bottomrightZombies: 0,
+    bottomrightZombiesPercentage: 0
   },
   isListeningToYOLO: false,
   HTTPRequestListeningToYOLO: null,
@@ -44,6 +51,12 @@ const initialState = {
 }
 
 let Opendatacam = cloneDeep(initialState);
+
+// TODO in_min = 1 / Max zombie percentage
+// TODO in_max = 1 / Min zombie percentage
+function mapRange(number, in_min = 1/13, in_max = 1/4, out_min = 0.1, out_max = 1) {
+  return (number - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
+}
 
 module.exports = {
 
@@ -128,7 +141,7 @@ module.exports = {
         timestamp: new Date(),
         area: countingAreaKey,
         name: trackedItem.name,
-        id: trackedItem.id
+        id: trackedItem.idDisplay
       }
       // Add it to the history
       Opendatacam.countedItemsHistory.push(countedItem)
@@ -155,7 +168,7 @@ module.exports = {
       timestamp: frameTimestamp,
       objects: trackerDataForThisFrame.map((trackerData) => {
         return {
-          id: trackerData.id,
+          id: trackerData.idDisplay,
           x: Math.round(trackerData.x),
           y: Math.round(trackerData.y),
           w: Math.round(trackerData.w),
@@ -247,40 +260,58 @@ module.exports = {
 
     // TODO bake this into tracker to avoid reasoning about ids here:
     //  -> implement Tracker.nbItemsTrackedSinceTimestamp(timestamp)
-    const biggestTrackedItemIdThisFrame = trackerDataForThisFrame[trackerDataForThisFrame.length - 1].id;
+    const biggestTrackedItemIdThisFrame = trackerDataForThisFrame[trackerDataForThisFrame.length - 1].idDisplay;
     const nbItemsTrackedSinceRecordingStarted = biggestTrackedItemIdThisFrame - Opendatacam._refTrackedItemIdWhenRecordingStarted;
     Opendatacam.totalItemsTracked = nbItemsTrackedSinceRecordingStarted;
+
+    
 
     // Compute deltaYs for all tracked items (between the counting lines and the tracked items position)
     // And check if trackedItem are going through some counting areas 
     // For each new tracked item
     trackerDataForThisFrame = trackerDataForThisFrame.map((trackedItem) => {
 
-      if(trackedItem.isZombie) {
-        Opendatacam.zombiesAreas._total++;
-        if(trackedItem.x / Opendatacam.videoResolution.w > 0.5) {
-          // top or bottom right
-          if(trackedItem.y / Opendatacam.videoResolution.h > 0.5) {
-            // bottom right
-            Opendatacam.zombiesAreas.bottomright++;
-            Opendatacam.zombiesAreas.bottomrightZombies = Opendatacam.zombiesAreas.bottomright * 100 / Opendatacam.zombiesAreas._total;
-          } else {
-            // top right
-            Opendatacam.zombiesAreas.topright++;
-            Opendatacam.zombiesAreas.toprightZombies = Opendatacam.zombiesAreas.topright * 100 / Opendatacam.zombiesAreas._total;
+      // For each area (right now 4 , compute zombies percentage)
+      if(trackedItem.x / Opendatacam.videoResolution.w > 0.5) {
+        // top or bottom right
+        if(trackedItem.y / Opendatacam.videoResolution.h > 0.5) {
+          // bottom right
+          Opendatacam.zombiesAreas.bottomright++;
+          if(trackedItem.isZombie) {
+            Opendatacam.zombiesAreas.bottomrightZombies++;
           }
+          Opendatacam.zombiesAreas.bottomrightZombiesPercentage = Opendatacam.zombiesAreas.bottomrightZombies * 100 / Opendatacam.zombiesAreas.bottomright;
+          trackedItem.opacity = mapRange(1 / Opendatacam.zombiesAreas.bottomrightZombiesPercentage) 
+          Opendatacam.zombiesAreas.bottomrightOpacityMapped = trackedItem.opacity;
         } else {
-          if(trackedItem.y / Opendatacam.videoResolution.h > 0.5) {
-            // bottom left
-            Opendatacam.zombiesAreas.bottomleft++;
-            Opendatacam.zombiesAreas.bottomleftZombies = Opendatacam.zombiesAreas.bottomleft * 100 / Opendatacam.zombiesAreas._total;
-          
-          } else {
-            // top left
-            Opendatacam.zombiesAreas.topleft++;
-            Opendatacam.zombiesAreas.topleftZombies = Opendatacam.zombiesAreas.topleft * 100 / Opendatacam.zombiesAreas._total;
-          
+          // top right
+          Opendatacam.zombiesAreas.topright++;
+          if(trackedItem.isZombie) {
+            Opendatacam.zombiesAreas.toprightZombies++;
           }
+          Opendatacam.zombiesAreas.toprightZombiesPercentage = Opendatacam.zombiesAreas.toprightZombies * 100 / Opendatacam.zombiesAreas.topright;
+          trackedItem.opacity = mapRange(1 / Opendatacam.zombiesAreas.toprightZombiesPercentage) 
+          Opendatacam.zombiesAreas.toprightOpacityMapped = trackedItem.opacity;
+        }
+      } else {
+        if(trackedItem.y / Opendatacam.videoResolution.h > 0.5) {
+          // bottom left
+          Opendatacam.zombiesAreas.bottomleft++;
+          if(trackedItem.isZombie) {
+            Opendatacam.zombiesAreas.bottomleftZombies++;
+          }
+          Opendatacam.zombiesAreas.bottomleftZombiesPercentage = Opendatacam.zombiesAreas.bottomleftZombies * 100 / Opendatacam.zombiesAreas.bottomleft;
+          trackedItem.opacity = mapRange(1 / Opendatacam.zombiesAreas.bottomleftZombiesPercentage) 
+          Opendatacam.zombiesAreas.bottomleftOpacityMapped = trackedItem.opacity;
+        } else {
+          // top left
+          Opendatacam.zombiesAreas.topleft++;
+          if(trackedItem.isZombie) {
+            Opendatacam.zombiesAreas.topleftZombies++;
+          }
+          Opendatacam.zombiesAreas.topleftZombiesPercentage = Opendatacam.zombiesAreas.topleftZombies * 100 / Opendatacam.zombiesAreas.topleft;
+          trackedItem.opacity = mapRange(1 / Opendatacam.zombiesAreas.topleftZombiesPercentage) 
+          Opendatacam.zombiesAreas.topleftOpacityMapped = trackedItem.opacity;
         }
       }
       // For each counting areas
@@ -294,13 +325,13 @@ module.exports = {
         // If trackerDataForLastFrame exists, we can if we items are passing through the counting line
         if(Opendatacam.trackerDataForLastFrame) {
           // Find trackerItem data of last frame
-          let trackerItemLastFrame = Opendatacam.trackerDataForLastFrame.data.find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
+          let trackerItemLastFrame = Opendatacam.trackerDataForLastFrame.data.find((itemLastFrame) => itemLastFrame.idDisplay === trackedItem.idDisplay)
           // If trackedItemLastFrame exist and deltaY was computed last frame
           if(trackerItemLastFrame && trackerItemLastFrame.countingDeltas[countingAreaKey]) {
             let lastDeltaY = trackerItemLastFrame.countingDeltas[countingAreaKey]
             // Remind counted status
             if(trackerItemLastFrame.counted) {
-              // console.log(`${trackerItemLastFrame.id} appear to have been counted on last frame`);
+              // console.log(`${trackerItemLastFrame.idDisplay} appear to have been counted on last frame`);
               trackedItem.counted = trackerItemLastFrame.counted;
             } else {
               trackedItem.counted = [];
@@ -329,7 +360,7 @@ module.exports = {
                 } else {
                   // Tracked item has cross the {countingAreaKey} counting line
                   // Count it
-                  // console.log(`Counting ${trackedItem.id}`);
+                  // console.log(`Counting ${trackedItem.idDisplay}`);
                   let countedItem = this.countItem(trackedItem, countingAreaKey);
                   countedItemsForThisFrame.push(countedItem);
                 }
@@ -499,7 +530,7 @@ module.exports = {
     Opendatacam.totalItemsTracked = 0;
     // TODO bake this into tracker, get nbItemsTrackedSinceTimestamp( timestamp )
     const currentlyTrackedItems = Tracker.getJSONOfTrackedItems() 
-    const highestTrackedItemId = currentlyTrackedItems[currentlyTrackedItems.length - 1].id;
+    const highestTrackedItemId = currentlyTrackedItems[currentlyTrackedItems.length - 1].idDisplay;
     Opendatacam._refTrackedItemIdWhenRecordingStarted = highestTrackedItemId - currentlyTrackedItems.length;
     // Persist recording
     DBManager.insertRecording(new Recording(
