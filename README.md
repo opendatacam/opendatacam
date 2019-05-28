@@ -49,7 +49,7 @@ Open a terminal or ssh to you jetson and run these command (make sure an usb web
 
 ```bash
 # Download install script
-wget -N https://raw.githubusercontent.com/moovel/lab-opendatacam/v2.0.0-beta.2/docker/run-jetson/install-opendatacam.sh
+wget -N https://raw.githubusercontent.com/moovel/lab-opendatacam/v2.0.0-beta.4/docker/run-jetson/install-opendatacam.sh
 
 # Give exec permission
 chmod 777 install-opendatacam.sh

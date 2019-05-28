@@ -28,6 +28,7 @@ v4l2-ctl --list-devices
 
 - Make sure that config.json has the TO_REPLACE_VIDEO_INPUT, TO_REPLACE_VIDEO_INPUT values
 - Set correct version in package.json
+- Set correct version in README "Install and start Opendatacam" wget install script
 - Set correct VERSION in /docker/run-jetson/install-opendatacam.sh
 - Tag version on github
 - Compile docker image on 3 platform ( nano, tx2, xavier ) , upload them to dockerhub and tag them properly
