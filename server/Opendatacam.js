@@ -281,19 +281,19 @@ module.exports = {
                 // console.log("*****************************")
                 // // console.log(trackedItem);
 
-                // Here we should count the item, 
-                // but add a check to avoid counting it twice on  
-                // the same area key
-                // TODO
-                // if(trackedItem.counted.find((countedEvent) => countedEvent.areaKey = countingAreaKey)) {
-                //   // already counted on this areaKey, do not count twice 
-                // }
+                // Do not count twice the same tracked item
+                if(trackedItem.counted.find((countedEvent) => countedEvent.areaKey === countingAreaKey)) {
+                  // already counted on this areaKey, do not count twice 
+                  Logger.log('Already counted, do not count it twice')
+                } else {
+                  // Tracked item has cross the {countingAreaKey} counting line
+                  // Count it
+                  // console.log(`Counting ${trackedItem.id}`);
+                  let countedItem = this.countItem(trackedItem, countingAreaKey);
+                  countedItemsForThisFrame.push(countedItem);
+                }
   
-                // Tracked item has cross the {countingAreaKey} counting line
-                // Count it
-                let countedItem = this.countItem(trackedItem, countingAreaKey);
-                countedItemsForThisFrame.push(countedItem);
-                // console.log(`Counting ${trackedItem.id}`);
+                
 
               } else {
                 // console.log('NOT IN xBOUNDS');
