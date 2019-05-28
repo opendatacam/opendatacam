@@ -31,6 +31,13 @@ const initialState = {
     counterEnabled: true,
     pathfinderEnabled: true
   },
+  zombiesAreas: {
+    topleft: 0,
+    topright: 0,
+    bottomleft: 0,
+    bottomright: 0,
+    _total: 0
+  },
   isListeningToYOLO: false,
   HTTPRequestListeningToYOLO: null,
   HTTPRequestListeningToYOLOMaxRetries: 60
@@ -227,10 +234,16 @@ module.exports = {
      
     Tracker.updateTrackedItemsWithNewFrame(detectionScaledOfThisFrame, Opendatacam.currentFrame);
 
-    let trackerDataForThisFrame = Tracker.getJSONOfTrackedItems();
+    let trackerDataForThisFrame = Tracker.getJSONDebugOfTrackedItems();
     let countedItemsForThisFrame = [];
 
     Opendatacam.nbItemsTrackedThisFrame = trackerDataForThisFrame.length;
+
+    // var nbZombiesThisFrame = trackerDataForThisFrame.reduce((accumulator, currentValue) => {
+    //   return currentValue.isZombie ? accumulator + 1 : accumulator
+    // }, 0)
+
+    // Opendatacam.zombiesAreas._total += nbZombiesThisFrame;
 
     // TODO bake this into tracker to avoid reasoning about ids here:
     //  -> implement Tracker.nbItemsTrackedSinceTimestamp(timestamp)
@@ -242,6 +255,34 @@ module.exports = {
     // And check if trackedItem are going through some counting areas 
     // For each new tracked item
     trackerDataForThisFrame = trackerDataForThisFrame.map((trackedItem) => {
+
+      if(trackedItem.isZombie) {
+        Opendatacam.zombiesAreas._total++;
+        if(trackedItem.x / Opendatacam.videoResolution.w > 0.5) {
+          // top or bottom right
+          if(trackedItem.y / Opendatacam.videoResolution.h > 0.5) {
+            // bottom right
+            Opendatacam.zombiesAreas.bottomright++;
+            Opendatacam.zombiesAreas.bottomrightZombies = Opendatacam.zombiesAreas.bottomright * 100 / Opendatacam.zombiesAreas._total;
+          } else {
+            // top right
+            Opendatacam.zombiesAreas.topright++;
+            Opendatacam.zombiesAreas.toprightZombies = Opendatacam.zombiesAreas.topright * 100 / Opendatacam.zombiesAreas._total;
+          }
+        } else {
+          if(trackedItem.y / Opendatacam.videoResolution.h > 0.5) {
+            // bottom left
+            Opendatacam.zombiesAreas.bottomleft++;
+            Opendatacam.zombiesAreas.bottomleftZombies = Opendatacam.zombiesAreas.bottomleft * 100 / Opendatacam.zombiesAreas._total;
+          
+          } else {
+            // top left
+            Opendatacam.zombiesAreas.topleft++;
+            Opendatacam.zombiesAreas.topleftZombies = Opendatacam.zombiesAreas.topleft * 100 / Opendatacam.zombiesAreas._total;
+          
+          }
+        }
+      }
       // For each counting areas
       var countingDeltas = Object.keys(Opendatacam.countingAreas).map((countingAreaKey) => {
         let countingAreaProps = Opendatacam.countingAreas[countingAreaKey].computed;
@@ -342,6 +383,8 @@ module.exports = {
 
     let counterSummary = this.getCounterSummary();
     let trackerSummary = this.getTrackerSummary();
+
+    console.log(Opendatacam.zombiesAreas);
 
     // Persist to db
     if(Opendatacam.recordingStatus.isRecording) {
