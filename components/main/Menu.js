@@ -67,7 +67,7 @@ class Menu extends Component {
             />
             <Toggle
               label="Pathfinder"
-              description="Track paths and positions"
+              description="Display paths and positions"
               enabled={this.props.uiSettings.get('pathfinderEnabled')}
               onChange={(value) => this.props.dispatch(setUiSetting('pathfinderEnabled', value))}
             />
@@ -109,14 +109,11 @@ class Menu extends Component {
               </div>
             </div>
           </div>
-          <div className="menu-footer bg-gray-800 text-white p-5 w-full">
+          <div className="menu-footer bg-black text-white p-5 w-full">
               <div className="flex flex-col">
                   <a className="" href="#">About</a>
                   <a className="mt-2" target="_blank" href="/api/doc">API documentation</a>
                   <a className="mt-2" href="https://github.com/moovel/lab-opendatacam" target="_blank">Github</a>
-                  <a className="mt-4" href="https://lab.moovel.com" target="_blank">
-                    <img src="/static/icons/moovellablogo.svg" />
-                  </a>
               </div>
           </div>
         </div>
