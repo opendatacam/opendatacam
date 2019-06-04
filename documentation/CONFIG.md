@@ -112,6 +112,8 @@ The config available are: `"yolov3"` , `"yolov3-tiny"`, `"yolov2-voc"`.
 
 _TODO @tdurand improve this to enable people to use other weights with a Docker installed opendatacam ( other pre-trainer weights like [yolov3-openimages](https://pjreddie.com/media/files/yolov3-openimages.weights), [yolov3-spp](https://pjreddie.com/media/files/yolov3-spp.weights).. or custom trained ones)_
 
+_Or even "non-official" weights : https://github.com/moovel/lab-opendatacam/issues/86_
+
 #### For a non-docker install of opendatacam:
 
 The settings are the same as with the docker install, but you can also run from other weights file. ([yolov3-openimages](https://pjreddie.com/media/files/yolov3-openimages.weights), [yolov3-spp](https://pjreddie.com/media/files/yolov3-spp.weights)... or custom trained ones)
