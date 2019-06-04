@@ -72,6 +72,14 @@ You can also [install opendatacam without docker](#how-to-run-opendatacam-withou
 
 [TODO UPDATE VIDEO TUTORIAL](https://www.youtube.com/watch?v=NwXrXHHGSgk)
 
+### 2. bis (optional) Upgrade Opendatacam (from v2.x to another v2.x version):
+
+- If you have modified the `config.json`, save it somewhere
+- Run the install steps again (previous section), this will download a new default `config.json` file compatible with the opendatacam version you are installing and setup a new docker container
+- Open the newly downloaded config.json script and modify with the things you had changed previously
+
+_NB: we do not handle auto update of the config.json file_
+
 ### 3. Use Opendatacam 🖖
 
 Open your browser at http://IPOFJETSON:8080 .
@@ -115,7 +123,7 @@ sudo docker container list
 sudo docker logs <containerID>
 ```
 
-**How to upgrade / stop / restart Opendatacam**
+**How to  stop / restart Opendatacam**
 
 ```bash
 # List containers
