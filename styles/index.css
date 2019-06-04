@@ -6,6 +6,32 @@
 @import "./components/toggle.css";
 
 @import "tailwindcss/utilities";
+
+
+@font-face {
+    font-family: 'WorkSans';
+    font-weight: normal;
+    src: url("/static/font/WorkSans-Regular.woff2");
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'WorkSans';
+    font-weight: 500;
+    src: url("/static/font/WorkSans-Medium.woff2");
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'WorkSans';
+    font-weight: bold;
+    src: url("/static/font/WorkSans-Bold.woff2");
+    font-display: swap;
+}
+
+html, body {
+    font-family: 'WorkSans', sans-serif;
+}
  
 body {
     --color-default: #fff;
