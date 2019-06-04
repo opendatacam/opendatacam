@@ -252,8 +252,12 @@ _NOTE: If you draw more line than COUNTER_COLORS defined, the lines will be blac
 Todo document how to change the webcam resolution, how to change the gstreamer pipeline, how to run from an IP cam.
 
 
+### MONGODB_URL:
+
+If you want to persist the data on a remote mongodb instance, you can change this variable.
+
 ### Limitation with docker setup
 
-- You can't use the raspberry cam on Jetson nano with a docker installation, you need to install opendatacam without docker for this. More context: [https://devtalk.nvidia.com/default/topic/1051653/jetson-nano/access-to-raspberry-cam-nvargus-daemon-from-docker-container069](https://devtalk.nvidia.com/default/topic/1051653/jetson-nano/access-to-raspberry-cam-nvargus-daemon-from-docker-container069)
+- In order to use the raspberrycam with the Jetson nano, follow this guide: https://github.com/moovel/lab-opendatacam/blob/v2/doc/JETSON_NANO.md#run-opendatacam-container-with-raspberrypi-cam
 
 
