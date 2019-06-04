@@ -43,12 +43,12 @@ class InitializingView extends Component {
           </div>
         </div>
         {!this.state.showConsole &&
-          <button className="btn btn-light mt-10" onClick={() => this.setState({showConsole: true})}>
+          <button className="btn btn-light mt-10 rounded" onClick={() => this.setState({showConsole: true})}>
             Show details
           </button>
         }
         {this.state.showConsole &&
-          <button className="btn btn-light mt-10" onClick={() => this.setState({showConsole: false})}>
+          <button className="btn btn-light mt-10 rounded" onClick={() => this.setState({showConsole: false})}>
             Hide details
           </button>
         }
