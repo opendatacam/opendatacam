@@ -2,9 +2,11 @@
 
 *We support only jetpack version 4.2 (more recent versions might also work)*
 
+Video tutorial: https://www.youtube.com/watch?v=s1QDsa6SzuQ , or full documentation: https://docs.nvidia.com/sdk-manager/install-with-sdkm-jetson/index.html
+
 #### Jetson Nano
 
-Directly flash the microSD card with jetpack 4.2 , follow this nice guide
+Directly flash the microSD card with jetpack 4.2 , follow this guide:
 
 [https://nvidia.com/JetsonNano-Start](https://nvidia.com/JetsonNano-Start)
 
