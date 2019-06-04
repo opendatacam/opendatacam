@@ -1,24 +1,12 @@
 var MongoClient = require('mongodb').MongoClient
 var ObjectID = require('mongodb').ObjectID
+const config = require('../../config.json');
 
-// For docker
-// var mongoURL = 'mongodb://mongo'
-
-// For localhost
-var mongoURL = 'mongodb://127.0.0.1:27017'
+var mongoURL = config.MONGODB_URL;
 
 var RECORDING_COLLECTION = 'recordings';
 var TRACKER_COLLECTION = 'tracker';
 
-// Where "mongo" is the name of the service in the docker-compose.yml file
-// if (process.env.DOCKER_DEPLOY) {
-//   mongoURL = 'mongodb://mongo:27017'
-// }
-
-// if (process.env.NOW_DEPLOY) {
-//   mongoURL =
-//     'mongodb://beatthetraffic:beatthetraffic@ds243418.mlab.com:43418/beatthetraffic'
-// }
 
 class DBManager {
   contructor () {

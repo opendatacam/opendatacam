@@ -53,5 +53,6 @@
       "cfg": "cfg/yolo-voc.cfg",
       "weights": "yolo-voc.weights"
     }
-  }
+  },
+  "MONGODB_URL": "mongodb://127.0.0.1:27017"
 }
