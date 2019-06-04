@@ -547,11 +547,11 @@ app.prepare()
    * @apiSuccessExample Success-Response:
   *   HTTP/1.1 200 OK 
   */
- express.delete('/recording/:id', (req, res) => {
-  DBManager.deleteRecording(req.params.id).then((success) => {
-    res.sendStatus(200)
-  });
-})
+  express.delete('/recording/:id', (req, res) => {
+    DBManager.deleteRecording(req.params.id).then((success) => {
+      res.sendStatus(200)
+    });
+  })
 
   /**
    * @api {get} /recording/:id/counter Counter data
@@ -678,6 +678,48 @@ app.prepare()
       console.log(`Exporting ${req.params.id} counter history to CSV`);
       res.csv(data, false ,{'Content-disposition': 'attachment; filename=counterData.csv'});
     });
+  })
+
+  /**
+   * @api {get} /status Status
+   * @apiName Status
+   * @apiGroup Helper
+   *
+   * @apiDescription Return opendatacam status (isRecording, recordingId etc etc)
+   * 
+   * @apiSuccessExample {json} Success Response:
+   * 
+   * {
+      "counterSummary": {
+        "22d35d27-7d73-4f54-a99c-a3391f5c1c46": {
+          "_total": 4,
+          "car": 4
+        }
+      },
+      "trackerSummary": {
+        "totalItemsTracked": 201
+      },
+      "videoResolution": {
+        "w": 1280,
+        "h": 720
+      },
+      "appState": {
+        "yoloStatus": {
+          "isStarting": true,
+          "isStarted": false
+        },
+        "isListeningToYOLO": true,
+        "recordingStatus": {
+          "isRecording": true,
+          "currentFPS": 29,
+          "recordingId": "5cf6bf29d19529238c17affb",
+          "dateStarted": "2019-06-04T18:57:45.169Z"
+        }
+      }
+    }
+  */
+  express.get('/status', (req, res) => {
+    res.json(Opendatacam.getStatus());
   })
 
   /**

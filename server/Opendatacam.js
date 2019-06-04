@@ -608,6 +608,27 @@ module.exports = {
     return Opendatacam.uiSettings;
   },
 
+  isRecording() {
+    return Opendatacam.recordingStatus.isRecording;
+  },
+
+  getCurrentRecordingId() {
+    return Opendatacam.recordingStatus.recordingId;
+  },
+
+  getStatus() {
+    return {
+      counterSummary: this.getCounterSummary(),
+      trackerSummary: this.getTrackerSummary(),
+      videoResolution: Opendatacam.videoResolution, 
+      appState: {
+        yoloStatus: YOLO.getStatus(),
+        isListeningToYOLO: Opendatacam.isListeningToYOLO,
+        recordingStatus: Opendatacam.recordingStatus
+      }
+    }
+  },
+
   clean() {
     if(this.HTTPRequestListeningToYOLO) {
       this.HTTPRequestListeningToYOLO.destroy();
