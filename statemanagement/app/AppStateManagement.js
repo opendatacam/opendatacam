@@ -44,10 +44,18 @@ const STOP_LISTENING_SERVERDATA = 'App/STOP_LISTENING_SERVERDATA'
 const LOAD_CONFIG = 'App/LOAD_CONFIG'
 
 export function startRecording() {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     // Ping webservice to start storing data on server
     axios.get('/recording/start');
+    
     dispatch(fetchHistory());
+
+    // If not counting areas defined, go to live view and remove counter button
+    const isAtLeastOneCountingAreasDefined = getState().counter.get('countingAreas').size > 0;
+    if(!isAtLeastOneCountingAreasDefined && getState().app.get('mode') === MODE.COUNTERVIEW) {
+      // Go to Liveview
+      dispatch(setMode(MODE.LIVEVIEW));
+    }
   }
 }
 

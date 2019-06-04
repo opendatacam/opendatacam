@@ -46,6 +46,7 @@ class UIControls extends Component {
                 Live view
               </button>
               {this.props.uiSettings.get('counterEnabled') &&
+              (!this.props.recordingStatus.isRecording || this.props.isAtLeastOneCountingAreasDefined) &&
                 <button
                   className={`btn btn-default border-r border-l border-default-soft border-solid ${this.props.mode === MODE.COUNTERVIEW ? 'btn-default--active' : ''} ${this.props.uiSettings.get('pathfinderEnabled') ? '': 'rounded-r'}`}
                   onClick={() => this.props.dispatch(setMode(MODE.COUNTERVIEW))}
@@ -129,6 +130,7 @@ export default connect((state) => {
   return {
     recordingStatus: state.app.get('recordingStatus').toJS(),
     uiSettings: state.app.get('uiSettings'),
-    mode: state.app.get('mode')
+    mode: state.app.get('mode'),
+    isAtLeastOneCountingAreasDefined: state.counter.get('countingAreas').size > 0
   }
 })(UIControls);
