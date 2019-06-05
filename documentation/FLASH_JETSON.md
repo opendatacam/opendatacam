@@ -2,7 +2,7 @@
 
 *We support only jetpack version 4.2 (more recent versions might also work)*
 
-Video tutorial: https://www.youtube.com/watch?v=s1QDsa6SzuQ , or full documentation: https://docs.nvidia.com/sdk-manager/install-with-sdkm-jetson/index.html
+Video tutorial: https://www.youtube.com/watch?v=s1QDsa6SzuQ , article: https://www.jetsonhacks.com/2019/06/04/nvidia-sdk-manager-for-jetson-jetpack-4-2/, or full documentation: https://docs.nvidia.com/sdk-manager/install-with-sdkm-jetson/index.html
 
 #### Jetson Nano
 
