@@ -27,14 +27,14 @@ sudo apt-get purge libopencv*
 # Download .deb files
 
 # For Jetson Nano:
-wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-nano-3.4.3/OpenCV-3.4.3-aarch64-libs.deb
-wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-nano-3.4.3/OpenCV-3.4.3-aarch64-dev.deb
-wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-nano-3.4.3/OpenCV-3.4.3-aarch64-python.deb
+wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-nano-3.4.3/OpenCV-3.4.3-aarch64-libs.deb
+wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-nano-3.4.3/OpenCV-3.4.3-aarch64-dev.deb
+wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-nano-3.4.3/OpenCV-3.4.3-aarch64-python.deb
 
 # For Jetson TX2
-wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-tx2-3.4.3/OpenCV-3.4.3-aarch64-libs.deb
-wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-tx2-3.4.3/OpenCV-3.4.3-aarch64-dev.deb
-wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-tx2-3.4.3/OpenCV-3.4.3-aarch64-python.deb
+wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-tx2-3.4.3/OpenCV-3.4.3-aarch64-libs.deb
+wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-tx2-3.4.3/OpenCV-3.4.3-aarch64-dev.deb
+wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-tx2-3.4.3/OpenCV-3.4.3-aarch64-python.deb
 
 # For Jetson Xavier
 # TODO compile binaries specific for xavier architecture

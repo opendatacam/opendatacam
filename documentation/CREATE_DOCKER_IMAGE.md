@@ -35,10 +35,10 @@ cp -R <pathtodarknet> .
 # If you compiled Opencv yourself, you'll find how to create the tar file in the section explaning how to compile opencv
 
 # For Jetson Nano:
-wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-nano-3.4.3/opencv-3.4.3.tar.gz
+wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-nano-3.4.3/opencv-3.4.3.tar.gz
 
 # For Jetson TX2:
-wget https://filedn.com/lkrqWbAQYllSVUK4ip6g3m0/opencv-tx2-3.4.3/opencv-3.4.3.tar.gz
+wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-tx2-3.4.3/opencv-3.4.3.tar.gz
 
 # For Jetson Xavier:
 # TODO
