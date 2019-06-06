@@ -54,9 +54,9 @@ pkg-config --modversion opencv
 #### Get the source files
 
 ```bash
-#TODO Change to final fork url, the only change from https://github.com/alexeyab/darknet is : https://github.com/tdurand/darknet/pull/1/files
+#TODO Change to final fork url, the only change from https://github.com/alexeyab/darknet is : https://github.com/opendatacam/darknet/pull/1/files
 
-git clone --depth 1 -b opendatacam https://github.com/tdurand/darknet
+git clone --depth 1 -b opendatacam https://github.com/opendatacam/darknet
 ```
 
 #### Modify the Makefile before compiling

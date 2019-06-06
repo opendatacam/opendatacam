@@ -48,7 +48,7 @@ RUN  cd /var/local/git/opencv/build && \
 # for debug
 # apt-get install -y --no-install-recommends vim 
 
-RUN git clone --depth 1 -b opendatacam https://github.com/tdurand/darknet /var/local/darknet
+RUN git clone --depth 1 -b opendatacam https://github.com/opendatacam/darknet /var/local/darknet
 WORKDIR /var/local/darknet
 RUN sed -i -e s/GPU=0/GPU=1/ Makefile;
 # For some reason no need for a CUDNN=1 on my CUDA_ARCH_BIN=6.1
