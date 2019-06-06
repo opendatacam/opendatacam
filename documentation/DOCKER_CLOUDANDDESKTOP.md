@@ -39,7 +39,7 @@ sudo docker run --runtime=nvidia -p 8080:8080 -p 8090:8090 -p 8070:8070 -v /data
 # Open browser at http://localhost:8080
 
 # Run with custom config
-sudo docker run --runtime=nvidia -v $(pwd)/config.json:/var/local/lab-opendatacam/config.json -p 8080:8080 -p 8090:8090 -p 8070:8070 -v /data/db:/data/db --rm -it opendatacam/opendatacam:v2.0.0-beta.3-dockernvidia
+sudo docker run --runtime=nvidia -v $(pwd)/config.json:/var/local/opendatacam/config.json -p 8080:8080 -p 8090:8090 -p 8070:8070 -v /data/db:/data/db --rm -it opendatacam/opendatacam:v2.0.0-beta.3-dockernvidia
 ```
 
 ### 2. Build the image
@@ -48,8 +48,8 @@ sudo docker run --runtime=nvidia -v $(pwd)/config.json:/var/local/lab-opendataca
 # Go to an empty folder
 mkdir docker
 cd docker
-# get the docker file : https://github.com/moovel/lab-opendatacam/blob/v2/docker/run-cloud/Dockerfile
-wget https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-cloud/Dockerfile
+# get the docker file : https://github.com/opendatacam/opendatacam/blob/master/docker/run-cloud/Dockerfile
+wget https://raw.githubusercontent.com/opendatacam/opendatacam/v2/docker/run-cloud/Dockerfile
 # Build
 # Takes a really long time the first time as it compile opencv
 sudo docker build -t opendatacam .

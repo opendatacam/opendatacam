@@ -64,9 +64,9 @@ RUN apt-get update; \
 # Get weights files
 RUN wget https://pjreddie.com/media/files/yolov3.weights -O /var/local/darknet/yolov3.weights
 RUN wget https://pjreddie.com/media/files/yolov3-tiny.weights -O /var/local/darknet/yolov3-tiny.weights
-RUN mkdir /var/local/darknet/opendatacam_videos && wget https://github.com/moovel/lab-opendatacam/raw/v2.0.0-beta.2/static/demo/demo.mp4 -O /var/local/darknet/opendatacam_videos/demo.mp4
+RUN mkdir /var/local/darknet/opendatacam_videos && wget https://github.com/opendatacam/opendatacam/raw/v2.0.0-beta.2/static/demo/demo.mp4 -O /var/local/darknet/opendatacam_videos/demo.mp4
 
-# wget -N https://github.com/moovel/lab-opendatacam/raw/v2.0.0-beta.2/static/demo/demo.mp4
+# wget -N https://github.com/opendatacam/opendatacam/raw/v2.0.0-beta.2/static/demo/demo.mp4
 # Debug, test darknet : ./darknet detector demo cfg/coco.data cfg/yolov3.cfg yolov3.weights -ext_output -dont_show demo.mp4
 # Debug, test darknet : ./darknet detector demo cfg/coco.data cfg/yolov3-tiny.cfg yolov3-tiny.weights -ext_output -dont_show demo.mp4
 
@@ -85,9 +85,9 @@ VOLUME ["/data/db"]
 # Build using date > marker && docker build .
 # date > marker && sudo docker build -t opendatacam .
 COPY marker /dev/null
-RUN git clone --depth 1 -b v2 https://github.com/moovel/lab-opendatacam /var/local/lab-opendatacam
+RUN git clone --depth 1 https://github.com/opendatacam/opendatacam /var/local/opendatacam
 
-WORKDIR /var/local/lab-opendatacam
+WORKDIR /var/local/opendatacam
 RUN sed -i -e s+/darknet+/var/local/darknet+ config.json
 RUN sed -i -e s+TO_REPLACE_VIDEO_INPUT+file+ config.json
 RUN sed -i -e s+TO_REPLACE_NEURAL_NETWORK+yolov3+ config.json
@@ -98,6 +98,6 @@ RUN npm run build
 
 EXPOSE 8080 8070 8090 27017
 
-RUN wget https://raw.githubusercontent.com/moovel/lab-opendatacam/v2/docker/run-jetson/docker-start-mongo-and-opendatacam.sh
+RUN wget https://raw.githubusercontent.com/opendatacam/opendatacam/v2/docker/run-jetson/docker-start-mongo-and-opendatacam.sh
 RUN chmod 777 docker-start-mongo-and-opendatacam.sh
 CMD ./docker-start-mongo-and-opendatacam.sh

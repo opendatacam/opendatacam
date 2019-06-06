@@ -113,7 +113,7 @@ class Menu extends Component {
               <div className="flex flex-col">
                   <a className="" href="#">About</a>
                   <a className="mt-2" target="_blank" href="/api/doc">API documentation</a>
-                  <a className="mt-2" href="https://github.com/moovel/lab-opendatacam" target="_blank">Github</a>
+                  <a className="mt-2" href="https://github.com/opendatacam/opendatacam" target="_blank">Github</a>
               </div>
           </div>
         </div>

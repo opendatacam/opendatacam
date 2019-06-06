@@ -14,7 +14,7 @@ TODO generate
 
 ### General
 
-All settings are in the [`config.json`](https://github.com/moovel/lab-opendatacam/blob/v2/config.json) file that you will find in the same directory you run the install script.
+All settings are in the [`config.json`](https://github.com/opendatacam/opendatacam/blob/master/config.json) file that you will find in the same directory you run the install script.
 
 When you modify a setting, you will need to restart the docker container, you can do so by:
 
@@ -28,7 +28,7 @@ sudo docker restart <containerID>
 
 #### For a non-docker install of opendatacam:
 
-You need to modify the config.json file located the `lab-opendatacam` folder.
+You need to modify the config.json file located the `opendatacam` folder.
 
 ```
 <PATH_TO_LAB_OPENDATACAM>/config.json
@@ -112,7 +112,7 @@ The config available are: `"yolov3"` , `"yolov3-tiny"`, `"yolov2-voc"`.
 
 _TODO @tdurand improve this to enable people to use other weights with a Docker installed opendatacam ( other pre-trainer weights like [yolov3-openimages](https://pjreddie.com/media/files/yolov3-openimages.weights), [yolov3-spp](https://pjreddie.com/media/files/yolov3-spp.weights).. or custom trained ones)_
 
-_Or even "non-official" weights : https://github.com/moovel/lab-opendatacam/issues/86_
+_Or even "non-official" weights : https://github.com/opendatacam/opendatacam/issues/86_
 
 #### For a non-docker install of opendatacam:
 
@@ -128,7 +128,7 @@ _TODO @tdurand improve, where to find the classes names depending on which flavo
 
 By default, the opendatacam will track all the classes that the neural network is trained to track. In our case, YOLO is trained with the VOC dataset, here is the [complete list of classes](https://github.com/pjreddie/darknet/blob/master/data/voc.names)
 
-You can restrict the opendatacam to some specific classes with the VALID_CLASSES option in the [config.json file](https://github.com/moovel/lab-opendatacam/blob/master/config.json) .
+You can restrict the opendatacam to some specific classes with the VALID_CLASSES option in the [config.json file](https://github.com/opendatacam/opendatacam/blob/master/config.json) .
 
 For example, here is a way to only track buses and person:
 
@@ -146,7 +146,7 @@ In order to track all the classes (default value), you need to set it to:
 }
 ```
 
-*Extra note: the tracking algorithm might work better by allowing all the classes, in our test we saw that for some classes like Bike/Motorbike, YOLO had a hard time distinguishing them well, and was switching between classes across frames for the same object. By keeping all the detections and ignoring the class switch while tracking we saw that we can avoid losing some objects, this is [discussed here](https://github.com/moovel/lab-opendatacam/issues/51#issuecomment-418019606)*
+*Extra note: the tracking algorithm might work better by allowing all the classes, in our test we saw that for some classes like Bike/Motorbike, YOLO had a hard time distinguishing them well, and was switching between classes across frames for the same object. By keeping all the detections and ignoring the class switch while tracking we saw that we can avoid losing some objects, this is [discussed here](https://github.com/opendatacam/opendatacam/issues/51#issuecomment-418019606)*
 
 ### Display custom classes
 
@@ -260,6 +260,6 @@ If you want to persist the data on a remote mongodb instance, you can change thi
 
 ### Limitation with docker setup
 
-- In order to use the raspberrycam with the Jetson nano, follow this guide: https://github.com/moovel/lab-opendatacam/blob/v2/doc/JETSON_NANO.md#run-opendatacam-container-with-raspberrypi-cam
+- In order to use the raspberrycam with the Jetson nano, follow this guide: https://github.com/opendatacam/opendatacam/blob/master/doc/JETSON_NANO.md#run-opendatacam-container-with-raspberrypi-cam
 
 

@@ -6,9 +6,7 @@ Simulation mode is useful to work on the UI and node.js feature deployment witho
 
 ```bash
 # Clone repo
-git@github.com:moovel/lab-opendatacam.git
-# Switch to v2 branch
-git checkout v2
+git@github.com:moovel/opendatacam.git
 # Install dependencies
 npm i
 # Run in dev mode

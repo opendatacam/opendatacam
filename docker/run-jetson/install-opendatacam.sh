@@ -57,20 +57,20 @@ else
       echo "Installing opendatacam $VERSION for platform: $2 ..."
       echo "Download run script for docker ..."
       # Get the run-docker script
-      wget -N https://raw.githubusercontent.com/moovel/lab-opendatacam/$VERSION/docker/run-jetson/run-docker.sh
+      wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/$VERSION/docker/run-jetson/run-docker.sh
 
       # Chmod to give exec permissions
       chmod 777 run-docker.sh
 
       # Get the config file
       echo "Download config file ..."
-      wget -N https://raw.githubusercontent.com/moovel/lab-opendatacam/$VERSION/config.json
+      wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/$VERSION/config.json
 
       # Create the directory to run on files
       echo "Create the directory to run on files ..."
       mkdir -p opendatacam_videos
       echo "Download demo video ..."
-      wget -N https://github.com/moovel/lab-opendatacam/raw/$VERSION/static/demo/demo.mp4 -O opendatacam_videos/demo.mp4
+      wget -N https://github.com/opendatacam/opendatacam/raw/$VERSION/static/demo/demo.mp4 -O opendatacam_videos/demo.mp4
 
       # Replace VIDEO_INPUT and NEURAL_NETWORK with default config for this platform
       # Bash hacks
@@ -112,7 +112,7 @@ else
       fi
 
       echo "Opendatacam will start automaticaly on boot when you restart you jetson"
-      echo "If you want to stop it, please refer to the doc: https://github.com/moovel/lab-opendatacam"
+      echo "If you want to stop it, please refer to the doc: https://github.com/opendatacam/opendatacam"
 
       ;;
     *)

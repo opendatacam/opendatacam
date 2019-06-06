@@ -1,4 +1,4 @@
-# Configure proxy raspberry cam to dev/video2 dependencies : https://github.com/moovel/lab-opendatacam/blob/v2/doc/JETSON_NANO.md#why
+# Configure proxy raspberry cam to dev/video2 dependencies : https://github.com/opendatacam/opendatacam/blob/v2/doc/JETSON_NANO.md#why
 
 cd /usr/src/linux-headers-4.9.140-tegra-ubuntu18.04_aarch64/kernel-4.9;
 make modules_prepare;

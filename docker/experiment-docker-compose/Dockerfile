@@ -72,9 +72,9 @@ ADD opencv-3.4.3.tar.gz /
 # date > marker && sudo docker build -t opendatacam .
 # COPY marker /dev/null
 
-# RUN git clone --depth 1 -b v2 https://github.com/moovel/lab-opendatacam /lab-opendatacam
+# RUN git clone --depth 1 https://github.com/opendatacam/opendatacam /opendatacam
 
-# WORKDIR /lab-opendatacam
+# WORKDIR /opendatacam
 
 # RUN npm install
 # RUN npm run build

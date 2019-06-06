@@ -40,7 +40,7 @@ It is very alpha and we do not provide any guarantee that this will work for you
 
 If your jetson does not have jetpack 4.2 *(CUDA 10, TensorRT 5, cuDNN 7.3, Ubuntu 18.04)*
 
-[Follow this guide to flash your jetson](https://github.com/moovel/lab-opendatacam/blob/v2/doc/FLASH_JETSON.md)
+[Follow this guide to flash your jetson](https://github.com/opendatacam/opendatacam/blob/master/doc/FLASH_JETSON.md)
 
 
 ### 2. Install and start Opendatacam (3 min 🚀):
@@ -49,7 +49,7 @@ Open a terminal or ssh to you jetson and run these command (make sure an usb web
 
 ```bash
 # Download install script
-wget -N https://raw.githubusercontent.com/moovel/lab-opendatacam/v2.0.0-beta.4/docker/run-jetson/install-opendatacam.sh
+wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v2.0.0-beta.4/docker/run-jetson/install-opendatacam.sh
 
 # Give exec permission
 chmod 777 install-opendatacam.sh
@@ -90,7 +90,7 @@ Open your browser at http://IPOFJETSON:8080 .
 
 In order to operate opendatacam from your phone / tablet / computer.
 
-See [WIFI_HOTSPOT_SETUP.md](https://github.com/moovel/lab-opendatacam/blob/v2/doc/WIFI_HOTSPOT_SETUP.md)
+See [WIFI_HOTSPOT_SETUP.md](https://github.com/opendatacam/opendatacam/blob/master/doc/WIFI_HOTSPOT_SETUP.md)
 
 ### 5. Customize Opendatacam ️️⚙️
 
@@ -102,7 +102,7 @@ We offer several customization options:
 
 - **Change display classes:** We default to mobility classes (car, bus, person...), but you can change this
 
-[Learn how to customize Opendatacam, see CONFIG.md](https://github.com/moovel/lab-opendatacam/blob/v2/doc/CONFIG.md)
+[Learn how to customize Opendatacam, see CONFIG.md](https://github.com/opendatacam/opendatacam/blob/master/doc/CONFIG.md)
 
 ### 6. Docker playbook ️📚
 
@@ -110,7 +110,7 @@ We offer several customization options:
 
 Docker doesn't support GPU usage on Jetson (see [issue #214 on docker-nvidia official repo](https://github.com/NVIDIA/nvidia-docker/issues/214))
 
-We need to give to the docker container access to the host platform GPU. We do so by mounting several volumes with [this script](https://github.com/moovel/lab-opendatacam/blob/v2/docker/run-jetson/run-docker.sh).
+We need to give to the docker container access to the host platform GPU. We do so by mounting several volumes with [this script](https://github.com/opendatacam/opendatacam/blob/master/docker/run-jetson/run-docker.sh).
 
 That is why you need to use our install script to install a container.
 
@@ -157,22 +157,22 @@ v2 API doc (TODO depoy on the github page of the project ?? ): [https://apidoc-d
 
 ## ⁉️ Troubleshooting
 
-Common errors with answers: [TROUBLESHOOTING.md](https://github.com/moovel/lab-opendatacam/blob/v2/doc/TROUBLESHOOTING.md)
+Common errors with answers: [TROUBLESHOOTING.md](https://github.com/opendatacam/opendatacam/blob/master/doc/TROUBLESHOOTING.md)
 
 ## 🎛 Advanced uses
 
 ### How to run opendatacam without docker
 
-Read [RUN_WITHOUT_DOCKER.md](https://github.com/moovel/lab-opendatacam/blob/v2/doc/RUN_WITHOUT_DOCKER.md)
+Read [RUN_WITHOUT_DOCKER.md](https://github.com/opendatacam/opendatacam/blob/master/doc/RUN_WITHOUT_DOCKER.md)
 
 ### How to create / update the docker image
 
-Read [CREATE_DOCKER_IMAGE.md](https://github.com/moovel/lab-opendatacam/blob/v2/doc/CREATE_DOCKER_IMAGE.md)
+Read [CREATE_DOCKER_IMAGE.md](https://github.com/opendatacam/opendatacam/blob/master/doc/CREATE_DOCKER_IMAGE.md)
 
 
 ## 🛠 Development notes
 
-Read [DEVELOPMENT_NOTES.md](https://github.com/moovel/lab-opendatacam/blob/v2/doc/DEVELOPMENT_NOTES.md)
+Read [DEVELOPMENT_NOTES.md](https://github.com/opendatacam/opendatacam/blob/master/doc/DEVELOPMENT_NOTES.md)
 
 
 

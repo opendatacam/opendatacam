@@ -190,9 +190,8 @@ sudo systemctl enable mongod
 - Download source
 
 ```bash
-# TODO Remove branch v2 once released
-git clone --depth 1 -b v2 https://github.com/moovel/lab-opendatacam.git
-cd lab-opendatacam
+git clone --depth 1 https://github.com/opendatacam/opendatacam.git
+cd opendatacam
 ```
 
 - Specify **ABSOLUTE** `PATH_TO_YOLO_DARKNET` path in `lab-open-data-cam/config.json` (open data cam repo)
