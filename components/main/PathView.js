@@ -1,12 +1,11 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux';
+import React, { PureComponent } from 'react'
 
 import CanvasEngine from '../canvas/CanvasEngine';
-import { MODE, CANVAS_RENDERING_MODE } from '../../utils/constants';
+import { CANVAS_RENDERING_MODE } from '../../utils/constants';
 import BtnRecording from '../shared/BtnRecording';
 import SVG from 'react-inlinesvg';
 
-class PathView extends Component {
+class PathView extends PureComponent {
 
   constructor(props) {
     super(props);
@@ -91,8 +90,4 @@ class PathView extends Component {
   }
 }
 
-export default connect((state) => {
-  return {
-    originalResolution: state.viewport.get('originalResolution').toJS()
-  }
-})(PathView)
+export default PathView

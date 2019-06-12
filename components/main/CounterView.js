@@ -8,7 +8,7 @@ import { CANVAS_RENDERING_MODE } from '../../utils/constants';
 import CounterAreasVisualizer from '../shared/CounterAreasVisualizer';
 import BtnRecording from '../shared/BtnRecording';
 
-class CounterView extends React.Component {
+class CounterView extends React.PureComponent {
 
   render () {
     return (

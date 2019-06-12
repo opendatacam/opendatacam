@@ -18,7 +18,7 @@ import Menu from './main/Menu';
 import InitializingView from './shared/InitializingView';
 import { loadUserSettings } from '../statemanagement/app/UserSettingsStateManagement';
 
-class MainPage extends React.Component {
+class MainPage extends React.PureComponent {
 
   componentDidMount() {
     this.props.dispatch(initViewportListeners());

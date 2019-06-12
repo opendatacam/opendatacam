@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { connect } from 'react-redux';
 import { fetchHistory } from '../../statemanagement/app/HistoryStateManagement';
 import dayjs from 'dayjs';
@@ -9,7 +9,7 @@ import Recording from '../dataview/Recording';
  * AND THE HISTORY THAT JUST RENDERS ONCE
  */
 
-class DataView extends Component {
+class DataView extends PureComponent {
 
   constructor(props) {
     super(props);
@@ -26,7 +26,7 @@ class DataView extends Component {
 
   render () {
 
-    const pagination = this.props.recordingsCursor;
+    const pagination = this.props.recordingsCursor.toJS();
     const needPagination = pagination.total > pagination.limit;
     const nbPages = Math.ceil(pagination.total / pagination.limit);
     const pagesArray = new Array(nbPages).fill(0);
@@ -88,7 +88,7 @@ export default connect((state) => {
   return {
     recordingHistory: state.app.getIn(['recordingStatus', 'isRecording']) ? state.history.get('recordingHistory').skip(1) : state.history.get('recordingHistory'),
     recordingStatus: state.app.get('recordingStatus'),
-    recordingsCursor: state.history.get('recordingsCursor').toJS(),
+    recordingsCursor: state.history.get('recordingsCursor'),
     counterSummary: state.counter.get('counterSummary'),
     countingAreas: state.counter.get('countingAreas'),
     totalItemsTracked: state.counter.getIn(['trackerSummary', 'totalItemsTracked'])

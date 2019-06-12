@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { PureComponent } from 'react'
 import { connect } from 'react-redux';
 /*
 
@@ -16,14 +16,14 @@ import { connect } from 'react-redux';
 
 */ 
 
-class WebcamStream extends Component {
+class WebcamStream extends PureComponent {
 
   render () {
     return (
       <React.Fragment>
         <img
-           width={this.props.resolution.w}
-           height={this.props.resolution.h}
+           width={this.props.resolution.get('w')}
+           height={this.props.resolution.get('h')}
            src="/webcam/stream"
          />
         <style jsx>{`
@@ -53,8 +53,6 @@ class WebcamStream extends Component {
 
 export default connect((state) => {
   return {
-    urlData: state.app.get('urlData').toJS(),
-    resolution: state.viewport.get('canvasResolution').toJS()
-
+    resolution: state.viewport.get('canvasResolution')
   }
 })(WebcamStream)
