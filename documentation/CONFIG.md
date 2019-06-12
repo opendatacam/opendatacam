@@ -260,17 +260,60 @@ If you want to persist the data on a remote mongodb instance, you can change thi
 
 ### TRACKER_ACCURACY_DISPLAY:
 
-TODO document, todo post github, make colors gradient configurable also
+The tracker accuracy layer shows a heatmap like this one:
 
-: {
-    "nbFrameBuffer": 300,
-    "settings": {
-      "radius": 3.1,
-      "blur": 6.2,
-      "step": 0.1,
-      "canvasResolutionFactor": 0.1
-    }
+![Screenshot 2019-06-12 at 18 59 54](https://user-images.githubusercontent.com/533590/59389349-78790380-8d44-11e9-9966-f5c7d2c212d7.png)
+
+This heatmap highlights the areas where the tracker accuracy **isn't really good** to help you:
+
+- Set counter lines where things are well tracked
+- Decide if you should change the camera viewpoint
+
+_Behind the hoods, it displays a metric of the tracker called "zombies" which represent the predicted bounding box when the tracked isn't able to asign a bounding box from the YOLO detections._
+
+You can tweak all the settings of this display with the `TRACKER_ACCURACY_DISPLAY` setting.
+
+| nbFrameBuffer          | Number of previous frames displayed on the heatmap                                                                                                                                                                       |
+|------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| radius                 | Radius of the points displayed on the heatmap (in % of the width of the canvas)                                                                                                                                          |
+| blur                   | Blur of the points displayed on the heatmap (in % of the width of the canvas)                                                                                                                                            |
+| step                   | For each point displayed, how much the point should contribute to the increase of the heapmap value (the range is between 0-1), increasing this will cause the heatmap to reach the higher values of the gradient faster |
+| gradient               | Colors gradient, insert as many values as you like between 0-1 (hex value supported, ex: "#fff" or "white")                                                                                                              |
+| canvasResolutionFactor | In order to improve performance, the tracker accuracy canvas resolution is downscaled by a factor of 10 by default (set a value between 0-1)                                                                             |
+
+```json
+"TRACKER_ACCURACY_DISPLAY": {
+  "nbFrameBuffer": 300,
+  "settings": {
+    "radius": 3.1,
+    "blur": 6.2,
+    "step": 0.1,
+    "gradient": {
+      "0.4":"blue",
+      "0.6":"cyan",
+      "0.7":"lime",
+      "0.8":"yellow",
+      "1":"red"
+    },
+    "canvasResolutionFactor": 0.1
   }
+}
+```
+
+For example, if you change the gradient with:
+
+```json
+"gradient": {
+  "0.4":"yellow",
+  "0.6":"#fff",
+  "0.7":"red",
+  "0.8":"yellow",
+  "1":"red"
+}
+```
+
+![Other gradient](https://user-images.githubusercontent.com/533590/59389118-ec66dc00-8d43-11e9-8310-309da6ab42e1.png)
+
 
 ### Limitation with docker setup
 
