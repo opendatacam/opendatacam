@@ -4,13 +4,17 @@ import { connect } from 'react-redux';
 import CanvasEngine from '../canvas/CanvasEngine';
 import { CANVAS_RENDERING_MODE } from '../../utils/constants';
 import { getTrackerAccuracySettings } from '../../statemanagement/app/TrackerStateManagement';
+import TrackerAccuracyModal from './TrackerAccuracyModal';
 
 class TrackerAccuracyView extends Component {
 
   constructor(props) {
     super(props);
-  }
 
+    this.state = {
+      showHelp: true
+    }
+  }
 
   componentDidMount() {
 
@@ -28,6 +32,11 @@ class TrackerAccuracyView extends Component {
   render () {
     return (
       <>
+        {this.state.showHelp &&
+          <TrackerAccuracyModal
+            close={() => this.setState({showHelp: false})}
+          />
+        }
         <CanvasEngine 
           mode={CANVAS_RENDERING_MODE.TRACKER_ACCURACY}
           fixedResolution={{
