@@ -6,6 +6,9 @@ import { CANVAS_RENDERING_MODE } from '../../utils/constants'
 import LiveViewEngine from './engines/LiveViewEngine'
 import PathViewEngine from './engines/PathViewEngine';
 
+import simpleheat from './engines/simpleheat';
+import { scaleDetection } from '../../utils/resolution';
+
 // import GameEngineStateManager from '../../../statemanagement/app/GameEngineStateManager'
 
 class CanvasEngine extends PureComponent {
@@ -18,10 +21,14 @@ class CanvasEngine extends PureComponent {
     this.rafHandle = null;
 
     this.PathViewEngine = new PathViewEngine();
+    this.HeatMapEngine = null;
   }
 
   componentDidMount () {
     this.loopUpdateCanvas();
+    this.HeatMapEngine = simpleheat(this.canvasEl);
+    // this.HeatMapEngine.radius(25, 50);
+    console.log('heatmap engine initialized');
   }
 
   componentDidUpdate(prevProps) {
@@ -107,6 +114,27 @@ class CanvasEngine extends PureComponent {
         )
       }
 
+      if(this.props.mode === CANVAS_RENDERING_MODE.HEATMAP) {
+        let canvasResolution = this.props.fixedResolution || this.props.canvasResolution.toJS();
+        let originalResolution = this.props.originalResolution;
+        this.props.trackerData.data
+          .filter((trackedItem) => trackedItem.isZombie === true)
+          .map((trackedItem) => {
+            let trackedItemScaled = scaleDetection(
+              trackedItem,
+              canvasResolution,
+              originalResolution
+            )
+            if(this.HeatMapEngine) {
+              // console.log(HeatMapEngine);
+              this.HeatMapEngine.add([trackedItemScaled.x, trackedItemScaled.y, 0.05]);
+            }
+          })
+        if(this.HeatMapEngine) {
+          this.HeatMapEngine.draw();
+        }
+      }
+
       this.lastFrameDrawn = this.props.trackerData.frameIndex;
     }
     this.rafHandle = raf(this.loopUpdateCanvas.bind(this))
@@ -157,7 +185,7 @@ class CanvasEngine extends PureComponent {
             top: 0;
             left: 0;
             z-index: 1;
-            background-color: rgba(0,0,0,${this.props.userSettings.get('dimmerOpacity')});
+            {/* background-color: rgba(0,0,0,${this.props.userSettings.get('dimmerOpacity')}); */}
           }
 
           {/* @media (min-aspect-ratio: 16/9) {

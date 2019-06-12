@@ -271,49 +271,6 @@ module.exports = {
     // For each new tracked item
     trackerDataForThisFrame = trackerDataForThisFrame.map((trackedItem) => {
 
-      // For each area (right now 4 , compute zombies percentage)
-      if(trackedItem.x / Opendatacam.videoResolution.w > 0.5) {
-        // top or bottom right
-        if(trackedItem.y / Opendatacam.videoResolution.h > 0.5) {
-          // bottom right
-          Opendatacam.zombiesAreas.bottomright++;
-          if(trackedItem.isZombie) {
-            Opendatacam.zombiesAreas.bottomrightZombies++;
-          }
-          Opendatacam.zombiesAreas.bottomrightZombiesPercentage = Opendatacam.zombiesAreas.bottomrightZombies * 100 / Opendatacam.zombiesAreas.bottomright;
-          trackedItem.opacity = mapRange(1 / Opendatacam.zombiesAreas.bottomrightZombiesPercentage) 
-          Opendatacam.zombiesAreas.bottomrightOpacityMapped = trackedItem.opacity;
-        } else {
-          // top right
-          Opendatacam.zombiesAreas.topright++;
-          if(trackedItem.isZombie) {
-            Opendatacam.zombiesAreas.toprightZombies++;
-          }
-          Opendatacam.zombiesAreas.toprightZombiesPercentage = Opendatacam.zombiesAreas.toprightZombies * 100 / Opendatacam.zombiesAreas.topright;
-          trackedItem.opacity = mapRange(1 / Opendatacam.zombiesAreas.toprightZombiesPercentage) 
-          Opendatacam.zombiesAreas.toprightOpacityMapped = trackedItem.opacity;
-        }
-      } else {
-        if(trackedItem.y / Opendatacam.videoResolution.h > 0.5) {
-          // bottom left
-          Opendatacam.zombiesAreas.bottomleft++;
-          if(trackedItem.isZombie) {
-            Opendatacam.zombiesAreas.bottomleftZombies++;
-          }
-          Opendatacam.zombiesAreas.bottomleftZombiesPercentage = Opendatacam.zombiesAreas.bottomleftZombies * 100 / Opendatacam.zombiesAreas.bottomleft;
-          trackedItem.opacity = mapRange(1 / Opendatacam.zombiesAreas.bottomleftZombiesPercentage) 
-          Opendatacam.zombiesAreas.bottomleftOpacityMapped = trackedItem.opacity;
-        } else {
-          // top left
-          Opendatacam.zombiesAreas.topleft++;
-          if(trackedItem.isZombie) {
-            Opendatacam.zombiesAreas.topleftZombies++;
-          }
-          Opendatacam.zombiesAreas.topleftZombiesPercentage = Opendatacam.zombiesAreas.topleftZombies * 100 / Opendatacam.zombiesAreas.topleft;
-          trackedItem.opacity = mapRange(1 / Opendatacam.zombiesAreas.topleftZombiesPercentage) 
-          Opendatacam.zombiesAreas.topleftOpacityMapped = trackedItem.opacity;
-        }
-      }
       // For each counting areas
       var countingDeltas = Object.keys(Opendatacam.countingAreas).map((countingAreaKey) => {
         let countingAreaProps = Opendatacam.countingAreas[countingAreaKey].computed;
@@ -415,7 +372,7 @@ module.exports = {
     let counterSummary = this.getCounterSummary();
     let trackerSummary = this.getTrackerSummary();
 
-    console.log(Opendatacam.zombiesAreas);
+    // console.log(Opendatacam.zombiesAreas);
 
     // Persist to db
     if(Opendatacam.recordingStatus.isRecording) {

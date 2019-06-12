@@ -71,6 +71,12 @@ class Menu extends Component {
               enabled={this.props.uiSettings.get('pathfinderEnabled')}
               onChange={(value) => this.props.dispatch(setUiSetting('pathfinderEnabled', value))}
             />
+            <Toggle
+              label="Heatmap"
+              description="Display heatmap"
+              enabled={this.props.uiSettings.get('heatmapEnabled')}
+              onChange={(value) => this.props.dispatch(setUiSetting('heatmapEnabled', value))}
+            />
             <div className="mt-16"></div>
             <Toggle
               label="Dark mode"

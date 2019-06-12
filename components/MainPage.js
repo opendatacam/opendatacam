@@ -17,6 +17,7 @@ import UIControls from './main/UIControls';
 import Menu from './main/Menu';
 import InitializingView from './shared/InitializingView';
 import { loadUserSettings } from '../statemanagement/app/UserSettingsStateManagement';
+import HeatmapView from './main/HeatmapView';
 
 class MainPage extends React.PureComponent {
 
@@ -61,6 +62,8 @@ class MainPage extends React.PureComponent {
             {this.props.uiSettings.get('pathfinderEnabled') &&
               <PathView hidden={this.props.mode !== MODE.PATHVIEW} />
             }
+            {/* Need to keep heatmap in the DOM as it continuously renders */}
+            <HeatmapView hidden={this.props.uiSettings.get('heatmapEnabled')} />
             <WebcamStream />
           </>
         }

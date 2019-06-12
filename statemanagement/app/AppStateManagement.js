@@ -20,7 +20,8 @@ const initialState = fromJS({
   },
   uiSettings: {
     counterEnabled: true,
-    pathfinderEnabled: true
+    pathfinderEnabled: true,
+    heatmapEnabled: false
   },
   isListeningToYOLO: false,
   mode: MODE.LIVEVIEW,
