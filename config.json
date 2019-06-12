@@ -57,9 +57,9 @@
   "TRACKER_ACCURACY_DISPLAY": {
     "nbFrameBuffer": 300,
     "settings": {
-      "radius": 2,
-      "blur": 4,
-      "step": 0.2,
+      "radius": 3.1,
+      "blur": 6.2,
+      "step": 0.1,
       "canvasResolutionFactor": 0.1
     }
   },
