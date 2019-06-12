@@ -258,6 +258,20 @@ Todo document how to change the webcam resolution, how to change the gstreamer p
 
 If you want to persist the data on a remote mongodb instance, you can change this variable.
 
+### TRACKER_ACCURACY_DISPLAY:
+
+TODO document, todo post github, make colors gradient configurable also
+
+: {
+    "nbFrameBuffer": 300,
+    "settings": {
+      "radius": 3.1,
+      "blur": 6.2,
+      "step": 0.1,
+      "canvasResolutionFactor": 0.1
+    }
+  }
+
 ### Limitation with docker setup
 
 - In order to use the raspberrycam with the Jetson nano, follow this guide: https://github.com/opendatacam/opendatacam/blob/master/doc/JETSON_NANO.md#run-opendatacam-container-with-raspberrypi-cam

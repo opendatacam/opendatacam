@@ -17,6 +17,8 @@ class TrackerAccuracyEngine {
     if (!this.simpleheat) {
       this.simpleheat = simpleheat(canvasCtx, canvasResolution)
       this.simpleheat.radius(canvasResolution.w * getTrackerAccuracySettings().radius / 100, canvasResolution.w * getTrackerAccuracySettings().blur / 100);
+      this.simpleheat.gradient(getTrackerAccuracySettings().gradient);
+
     }
     if (this.heatmapData.length > getTrackerAccuracyNbFrameBuffer()) {
       // remove first item
