@@ -63,7 +63,7 @@ class MainPage extends React.PureComponent {
               <PathView hidden={this.props.mode !== MODE.PATHVIEW} />
             }
             {/* Need to keep heatmap in the DOM as it continuously renders */}
-            <HeatmapView hidden={this.props.uiSettings.get('heatmapEnabled')} />
+            <HeatmapView hidden={!this.props.uiSettings.get('heatmapEnabled')} />
             <WebcamStream />
           </>
         }

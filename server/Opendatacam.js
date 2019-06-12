@@ -29,7 +29,8 @@ const initialState = {
   },
   uiSettings: {
     counterEnabled: true,
-    pathfinderEnabled: true
+    pathfinderEnabled: true,
+    heatmapEnabled: false
   },
   zombiesAreas: {
     topleft: 0,

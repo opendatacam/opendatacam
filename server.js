@@ -16,7 +16,7 @@ const intercept = require("intercept-stdout");
 const config = require('./config.json');
 
 const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not running on the Jetson
-//const SIMULATION_MODE = true;
+// const SIMULATION_MODE = true;
 
 const port = parseInt(process.env.PORT, 10) || 8080
 const dev = process.env.NODE_ENV !== 'production'

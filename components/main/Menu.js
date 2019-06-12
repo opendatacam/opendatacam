@@ -72,8 +72,8 @@ class Menu extends Component {
               onChange={(value) => this.props.dispatch(setUiSetting('pathfinderEnabled', value))}
             />
             <Toggle
-              label="Heatmap"
-              description="Display heatmap"
+              label="Tracker accuracy"
+              description="Display tracker accuracy"
               enabled={this.props.uiSettings.get('heatmapEnabled')}
               onChange={(value) => this.props.dispatch(setUiSetting('heatmapEnabled', value))}
             />
