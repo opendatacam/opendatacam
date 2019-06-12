@@ -2,10 +2,10 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 
 import CanvasEngine from '../canvas/CanvasEngine';
-import { MODE, CANVAS_RENDERING_MODE } from '../../utils/constants';
-import BtnRecording from '../shared/BtnRecording';
+import { CANVAS_RENDERING_MODE } from '../../utils/constants';
+import { getTrackerAccuracySettings } from '../../statemanagement/app/TrackerStateManagement';
 
-class HeatmapView extends Component {
+class TrackerAccuracyView extends Component {
 
   constructor(props) {
     super(props);
@@ -31,8 +31,8 @@ class HeatmapView extends Component {
         <CanvasEngine 
           mode={CANVAS_RENDERING_MODE.TRACKER_ACCURACY}
           fixedResolution={{
-            w: this.props.canvasResolution.get('w') / 10 ,
-            h: this.props.canvasResolution.get('h') / 10
+            w: this.props.canvasResolution.get('w') * getTrackerAccuracySettings().canvasResolutionFactor,
+            h: this.props.canvasResolution.get('h') * getTrackerAccuracySettings().canvasResolutionFactor
           }}
           hidden={this.props.hidden} 
           registerClearCanvas={(clearCanvas) => this.clearVisibleCanvas = clearCanvas}
@@ -46,4 +46,4 @@ export default connect((state) => {
   return {
     canvasResolution: state.viewport.get('canvasResolution')
   }
-})(HeatmapView)
+})(TrackerAccuracyView)

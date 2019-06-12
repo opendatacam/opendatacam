@@ -1,7 +1,7 @@
 import { scaleDetection } from '../../../utils/resolution';
 import { getPathfinderColors } from '../../../utils/colors';
 import simpleheat from './simpleheat';
-import { getAccuracyNbFrameBuffer } from '../../../statemanagement/app/TrackerStateManagement';
+import { getTrackerAccuracyNbFrameBuffer, getTrackerAccuracySettings } from '../../../statemanagement/app/TrackerStateManagement';
 
 class TrackerAccuracyEngine {
 
@@ -16,9 +16,9 @@ class TrackerAccuracyEngine {
     // if simpleheat engine not initialiaze
     if (!this.simpleheat) {
       this.simpleheat = simpleheat(canvasCtx, canvasResolution)
-      this.simpleheat.radius(2, 5);
+      this.simpleheat.radius(getTrackerAccuracySettings().radius, getTrackerAccuracySettings().blur);
     }
-    if (this.heatmapData.length > getAccuracyNbFrameBuffer()) {
+    if (this.heatmapData.length > getTrackerAccuracyNbFrameBuffer()) {
       // remove first item
       this.heatmapData.shift()
     }
@@ -31,7 +31,7 @@ class TrackerAccuracyEngine {
             canvasResolution,
             originalResolution
           )
-          return [trackedItemScaled.x, trackedItemScaled.y, 0.1]
+          return [trackedItemScaled.x, trackedItemScaled.y, getTrackerAccuracySettings().step]
         })
     )
     this.simpleheat.data(this.heatmapData.flat()).draw();

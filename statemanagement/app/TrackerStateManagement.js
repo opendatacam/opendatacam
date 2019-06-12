@@ -11,8 +11,12 @@ const initialState = fromJS({
 // Actions
 const UPDATE_DATA = 'Tracker/UPDATE_DATA'
 
-export function getAccuracyNbFrameBuffer() {
+export function getTrackerAccuracyNbFrameBuffer() {
   return window.CONFIG.TRACKER_ACCURACY_DISPLAY.nbFrameBuffer;
+}
+
+export function getTrackerAccuracySettings() {
+  return window.CONFIG.TRACKER_ACCURACY_DISPLAY.settings;
 }
 
 export function updateTrackerData(trackerDataLastFrame) {

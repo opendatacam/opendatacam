@@ -55,7 +55,13 @@
     }
   },
   "TRACKER_ACCURACY_DISPLAY": {
-    "nbFrameBuffer": 300
+    "nbFrameBuffer": 300,
+    "settings": {
+      "radius": 2,
+      "blur": 4,
+      "step": 0.2,
+      "canvasResolutionFactor": 0.1
+    }
   },
   "MONGODB_URL": "mongodb://127.0.0.1:27017"
 }

@@ -17,7 +17,7 @@ import UIControls from './main/UIControls';
 import Menu from './main/Menu';
 import InitializingView from './shared/InitializingView';
 import { loadUserSettings } from '../statemanagement/app/UserSettingsStateManagement';
-import HeatmapView from './main/HeatmapView';
+import TrackerAccuracyView from './shared/TrackerAccuracyView';
 
 class MainPage extends React.PureComponent {
 
@@ -64,7 +64,7 @@ class MainPage extends React.PureComponent {
             }
             {/* Hide it on pathview mode */}
             {this.props.uiSettings.get('heatmapEnabled') &&
-              <HeatmapView hidden={this.props.mode === MODE.PATHVIEW} />
+              <TrackerAccuracyView hidden={this.props.mode === MODE.PATHVIEW} />
             }
             <WebcamStream />
           </>
