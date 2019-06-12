@@ -30,6 +30,10 @@ class HeatmapView extends Component {
       <>
         <CanvasEngine 
           mode={CANVAS_RENDERING_MODE.HEATMAP} 
+          fixedResolution={{
+            w: this.props.canvasResolution.get('w') / 10 ,
+            h: this.props.canvasResolution.get('h') / 10
+          }}
           hidden={this.props.hidden} 
           registerClearCanvas={(clearCanvas) => this.clearVisibleCanvas = clearCanvas}
         />
@@ -43,6 +47,6 @@ class HeatmapView extends Component {
 
 export default connect((state) => {
   return {
-    originalResolution: state.viewport.get('originalResolution').toJS()
+    canvasResolution: state.viewport.get('canvasResolution')
   }
 })(HeatmapView)

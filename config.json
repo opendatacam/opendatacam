@@ -54,5 +54,8 @@
       "weights": "yolo-voc.weights"
     }
   },
+  "TRACKER_ACCURACY_DISPLAY": {
+    "nbFrameBuffer": 300
+  },
   "MONGODB_URL": "mongodb://127.0.0.1:27017"
 }

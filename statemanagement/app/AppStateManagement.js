@@ -218,10 +218,10 @@ export function startListeningToServerData() {
       if(message.videoResolution) {
         dispatch(setOriginalResolution(message.videoResolution))
       }
-      dispatch(updateTrackerData(message.trackerDataForLastFrame))
+      //dispatch(updateTrackerData(message.trackerDataForLastFrame))
       dispatch(updateAppState(message.appState))
-      dispatch(updateCounterSummary(message.counterSummary))
-      dispatch(updateTrackerSummary(message.trackerSummary))
+      // dispatch(updateCounterSummary(message.counterSummary))
+      // dispatch(updateTrackerSummary(message.trackerSummary))
     }
   }
 }
