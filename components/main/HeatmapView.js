@@ -29,7 +29,7 @@ class HeatmapView extends Component {
     return (
       <>
         <CanvasEngine 
-          mode={CANVAS_RENDERING_MODE.HEATMAP} 
+          mode={CANVAS_RENDERING_MODE.HEATMAP}
           fixedResolution={{
             w: this.props.canvasResolution.get('w') / 10 ,
             h: this.props.canvasResolution.get('h') / 10
@@ -37,9 +37,6 @@ class HeatmapView extends Component {
           hidden={this.props.hidden} 
           registerClearCanvas={(clearCanvas) => this.clearVisibleCanvas = clearCanvas}
         />
-        {!this.props.hidden &&
-          <BtnRecording />
-        }
       </>
     )
   }

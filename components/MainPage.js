@@ -62,8 +62,10 @@ class MainPage extends React.PureComponent {
             {this.props.uiSettings.get('pathfinderEnabled') &&
               <PathView hidden={this.props.mode !== MODE.PATHVIEW} />
             }
-            {/* Need to keep heatmap in the DOM as it continuously renders */}
-            <HeatmapView hidden={!this.props.uiSettings.get('heatmapEnabled')} />
+            {/* Hide it on pathview mode */}
+            {this.props.uiSettings.get('heatmapEnabled') &&
+              <HeatmapView hidden={this.props.mode === MODE.PATHVIEW} />
+            }
             <WebcamStream />
           </>
         }
