@@ -5,12 +5,9 @@ import { CANVAS_RENDERING_MODE } from '../../utils/constants'
 
 import LiveViewEngine from './engines/LiveViewEngine'
 import PathViewEngine from './engines/PathViewEngine';
+import TrackerAccuracyEngine from './engines/TrackerAccuracyEngine';
 
-import simpleheat from './engines/simpleheat';
 import { scaleDetection } from '../../utils/resolution';
-import { getAccuracyNbFrameBuffer } from '../../statemanagement/app/TrackerStateManagement';
-
-// import GameEngineStateManager from '../../../statemanagement/app/GameEngineStateManager'
 
 class CanvasEngine extends PureComponent {
   constructor (props) {
@@ -22,16 +19,11 @@ class CanvasEngine extends PureComponent {
     this.rafHandle = null;
 
     this.PathViewEngine = new PathViewEngine();
-    this.HeatMapEngine = null;
-    this.heatmapData = [];
+    this.TrackerAccuracyEngine = new TrackerAccuracyEngine();
   }
 
   componentDidMount () {
     this.loopUpdateCanvas();
-    if(this.props.mode === CANVAS_RENDERING_MODE.HEATMAP) {
-      this.HeatMapEngine = simpleheat(this.canvasEl);
-      this.HeatMapEngine.radius(2, 5);
-    }
   }
 
   componentDidUpdate(prevProps) {
@@ -117,29 +109,13 @@ class CanvasEngine extends PureComponent {
         )
       }
 
-      if(this.props.mode === CANVAS_RENDERING_MODE.HEATMAP) {
-        // Update heatmap data
-        const canvasResolution = this.props.fixedResolution || this.props.canvasResolution.toJS();
-        const originalResolution = this.props.originalResolution;
-        if(this.heatmapData.length > getAccuracyNbFrameBuffer()) {
-          // remove first item
-          this.heatmapData.shift()
-        }
-        this.heatmapData.push(
-          this.props.trackerData.data
-            .filter((trackedItem) => trackedItem.isZombie === true)
-            .map((trackedItem) => {
-              let trackedItemScaled = scaleDetection(
-                trackedItem,
-                canvasResolution,
-                originalResolution
-              )
-              return [trackedItemScaled.x, trackedItemScaled.y, 0.1]
-            })
+      if(this.props.mode === CANVAS_RENDERING_MODE.TRACKER_ACCURACY) {
+        this.TrackerAccuracyEngine.drawAccuracyHeatmap(
+          this.canvasContext,
+          this.props.trackerData.data,
+          this.props.fixedResolution || this.props.canvasResolution.toJS(),
+          this.props.originalResolution
         )
-        if(this.HeatMapEngine) {
-          this.HeatMapEngine.data(this.heatmapData.flat()).draw();
-        }
       }
 
       this.lastFrameDrawn = this.props.trackerData.frameIndex;

@@ -4,8 +4,7 @@ export const MODE = {
     COUNTERVIEW: "counterview",
     PATHVIEW: "pathview",
     DATAVIEW: "dataview",
-    CONSOLEVIEW: "consoleview",
-    HEATMAPVIEW: "heatmapview"
+    CONSOLEVIEW: "consoleview"
 }
 
 export const CANVAS_RENDERING_MODE = {
@@ -14,7 +13,7 @@ export const CANVAS_RENDERING_MODE = {
     COUNTERVIEW_RECORDING: "counterview_recording",
     PATHVIEW: "pathview",
     COUNTING_AREAS: "countingareas",
-    HEATMAP: "heatmapview"
+    TRACKER_ACCURACY: "tracker_accuracy"
 }
 
 // TODO Make this resolution independant by specifying a percentage of the total

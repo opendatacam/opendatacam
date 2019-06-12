@@ -29,7 +29,7 @@ class HeatmapView extends Component {
     return (
       <>
         <CanvasEngine 
-          mode={CANVAS_RENDERING_MODE.HEATMAP}
+          mode={CANVAS_RENDERING_MODE.TRACKER_ACCURACY}
           fixedResolution={{
             w: this.props.canvasResolution.get('w') / 10 ,
             h: this.props.canvasResolution.get('h') / 10

@@ -2,14 +2,15 @@
 
 if (typeof module !== 'undefined') module.exports = simpleheat;
 
-function simpleheat(canvas) {
-    if (!(this instanceof simpleheat)) return new simpleheat(canvas);
+function simpleheat(ctx, canvasResolution) {
+    if (!(this instanceof simpleheat)) return new simpleheat(ctx, canvasResolution);
+    
+    // this._canvas = canvas = typeof canvas === 'string' ? document.getElementById(canvas) : canvas;
 
-    this._canvas = canvas = typeof canvas === 'string' ? document.getElementById(canvas) : canvas;
-
-    this._ctx = canvas.getContext('2d');
-    this._width = canvas.width;
-    this._height = canvas.height;
+    this._ctx = ctx;
+    this._canvasResolution = canvasResolution;
+    this._width = canvasResolution.w;
+    this._height = canvasResolution.h;
 
     this._max = 1;
     this._data = [];
@@ -70,8 +71,8 @@ simpleheat.prototype = {
     },
 
     resize: function () {
-        this._width = this._canvas.width;
-        this._height = this._canvas.height;
+        this._width = this._canvasResolution.w;
+        this._height = this._canvasResolution.h;
     },
 
     gradient: function (grad) {
