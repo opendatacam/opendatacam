@@ -262,7 +262,7 @@ If you want to persist the data on a remote mongodb instance, you can change thi
 
 The tracker accuracy layer shows a heatmap like this one:
 
-![Screenshot 2019-06-12 at 18 59 54](https://user-images.githubusercontent.com/533590/59389349-78790380-8d44-11e9-9966-f5c7d2c212d7.png)
+![Screenshot 2019-06-12 at 18 59 54](https://user-images.githubusercontent.com/533590/60195072-c6106880-983a-11e9-8edd-178a38d3e2a2.JPG)
 
 This heatmap highlights the areas where the tracker accuracy **isn't really good** to help you:
 
@@ -289,10 +289,7 @@ You can tweak all the settings of this display with the `TRACKER_ACCURACY_DISPLA
     "blur": 6.2,
     "step": 0.1,
     "gradient": {
-      "0.4":"blue",
-      "0.6":"cyan",
-      "0.7":"lime",
-      "0.8":"yellow",
+      "0.4":"orange",
       "1":"red"
     },
     "canvasResolutionFactor": 0.1
