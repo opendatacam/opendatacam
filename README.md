@@ -42,7 +42,7 @@ It is very alpha and we do not provide any guarantee that this will work for you
 
 If your jetson does not have jetpack 4.2 *(CUDA 10, TensorRT 5, cuDNN 7.3, Ubuntu 18.04)*
 
-[Follow this guide to flash your jetson](https://github.com/opendatacam/opendatacam/blob/master/doc/FLASH_JETSON.md)
+[Follow this guide to flash your jetson](https://github.com/opendatacam/opendatacam/blob/master/documentation/FLASH_JETSON.md)
 
 
 ### 2. Install and start Opendatacam (3 min 🚀):
