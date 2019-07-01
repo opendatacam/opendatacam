@@ -2,7 +2,9 @@
 
 *We support only jetpack version 4.2 (more recent versions might also work)*
 
-Video tutorial: https://www.youtube.com/watch?v=s1QDsa6SzuQ , article: https://www.jetsonhacks.com/2019/06/04/nvidia-sdk-manager-for-jetson-jetpack-4-2/, or full documentation: https://docs.nvidia.com/sdk-manager/install-with-sdkm-jetson/index.html
+- Official documentation https://docs.nvidia.com/sdk-manager/install-with-sdkm-jetson/index.html
+- Video tutorial: https://www.youtube.com/watch?v=s1QDsa6SzuQ 
+- Article: https://www.jetsonhacks.com/2019/06/04/nvidia-sdk-manager-for-jetson-jetpack-4-2/
 
 #### Jetson Nano
 
@@ -23,7 +25,6 @@ export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda/lib64
 # Verify, this command should work
 nvcc --version
 ```
-
 
 #### Jetson TX2 / Jetson Xavier
 
