@@ -41,15 +41,13 @@ let Opendatacam = cloneDeep(initialState);
 
 module.exports = {
 
-  // TODO Adapt this when working with multiple recording / multiple files
   reset: function() {
     return new Promise((resolve, reject) => {
       // Reset counter
       Opendatacam = cloneDeep(initialState);
-      // Reset tracker (TODO here reset id of itemstracked)
+      // Reset tracker
       Tracker.reset();
     })
-    
   },
 
   /*
@@ -171,7 +169,7 @@ module.exports = {
   },
 
   updateWithNewFrame: function(detectionsOfThisFrame) {
-    // Set yolo to started if it's not the case
+    // Set yolo status to started if it's not the case
     if(!Opendatacam.isListeningToYOLO) {
       Opendatacam.isListeningToYOLO = true;
       Opendatacam.HTTPRequestListeningToYOLOMaxRetries = initialState.HTTPRequestListeningToYOLOMaxRetries;
@@ -182,8 +180,6 @@ module.exports = {
       console.log('Didn\'t get video resolution yet, not sending tracker info');
       return;
     }
-
-    // TODO when start recording, record the date
 
     // Compute FPS
     const frameTimestamp = new Date();
@@ -218,8 +214,6 @@ module.exports = {
     // console.log('Update tracker with this frame')
     // console.log(`Frame id: ${Opendatacam.currentFrame}`);
     // console.log('=========')
-
-    // TODO UPDATE Tracker code to keep confidence score
      
     Tracker.updateTrackedItemsWithNewFrame(detectionScaledOfThisFrame, Opendatacam.currentFrame);
 
@@ -425,22 +419,6 @@ module.exports = {
 
   getTrackedItemsThisFrame: function() {
     return Opendatacam.trackerDataForLastFrame;
-  },
-
-  getTrackerData: function() {
-    
-    return new Promise((resolve, reject) => {
-      // Copy current trackerHistory but keep the current file has we keep adding line to it
-      fs.copyFile('./static/trackerHistory.json', './static/trackerHistoryExport.json', (err) => {
-        if (err) throw err;
-        // Make a valid json file by adding a closing bracket
-        fs.appendFile('./static/trackerHistoryExport.json', `\n]`, function (err) {
-          if (err) throw err;
-          resolve();
-        });
-      });
-      
-    });
   },
 
   startStreamingData(sse) {
