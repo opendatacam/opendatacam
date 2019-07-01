@@ -12,7 +12,8 @@ export const CANVAS_RENDERING_MODE = {
     COUNTERVIEW: "counterview",
     COUNTERVIEW_RECORDING: "counterview_recording",
     PATHVIEW: "pathview",
-    COUNTING_AREAS: "countingareas"
+    COUNTING_AREAS: "countingareas",
+    TRACKER_ACCURACY: "tracker_accuracy"
 }
 
 // TODO Make this resolution independant by specifying a percentage of the total

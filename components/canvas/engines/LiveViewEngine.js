@@ -11,9 +11,10 @@ class LiveViewEngine {
     canvasResolution,
     originalResolution
   ) {
-    context.globalAlpha = 1
+    context.globalAlpha = 1;
     context.lineWidth = 2
     objectTrackerData.map(objectTracked => {
+      context.globalAlpha = Math.max(Math.min(objectTracked.opacity, 1), 0);
       let objectTrackedScaled = scaleDetection(
         objectTracked,
         canvasResolution,

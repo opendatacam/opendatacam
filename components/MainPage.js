@@ -17,6 +17,7 @@ import UIControls from './main/UIControls';
 import Menu from './main/Menu';
 import InitializingView from './shared/InitializingView';
 import { loadUserSettings } from '../statemanagement/app/UserSettingsStateManagement';
+import TrackerAccuracyView from './shared/TrackerAccuracyView';
 
 class MainPage extends React.PureComponent {
 
@@ -60,6 +61,10 @@ class MainPage extends React.PureComponent {
             {/* Need to keep pathview in the DOM as it continuously renders */}
             {this.props.uiSettings.get('pathfinderEnabled') &&
               <PathView hidden={this.props.mode !== MODE.PATHVIEW} />
+            }
+            {/* Hide it on pathview mode */}
+            {this.props.uiSettings.get('heatmapEnabled') &&
+              <TrackerAccuracyView hidden={this.props.mode === MODE.PATHVIEW} />
             }
             <WebcamStream />
           </>

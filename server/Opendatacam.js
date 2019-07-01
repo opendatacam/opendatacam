@@ -29,7 +29,8 @@ const initialState = {
   },
   uiSettings: {
     counterEnabled: true,
-    pathfinderEnabled: true
+    pathfinderEnabled: true,
+    heatmapEnabled: false
   },
   isListeningToYOLO: false,
   HTTPRequestListeningToYOLO: null,
@@ -47,11 +48,6 @@ module.exports = {
       Opendatacam = cloneDeep(initialState);
       // Reset tracker (TODO here reset id of itemstracked)
       Tracker.reset();
-      // Create empty trackerHistory.json file
-      fs.open("./static/trackerHistory.json", "wx", function (err, fd) {
-        // Add the array opening bracket
-        fs.writeFile("./static/trackerHistory.json", "[\n{}", function(err) {});
-      });
     })
     
   },
@@ -232,16 +228,16 @@ module.exports = {
 
     Opendatacam.nbItemsTrackedThisFrame = trackerDataForThisFrame.length;
 
-    // TODO bake this into tracker to avoid reasoning about ids here:
-    //  -> implement Tracker.nbItemsTrackedSinceTimestamp(timestamp)
+    // Compute nbItemsTrackedSinceRecordingStarted based on ids (assume that id increment is one)
     const biggestTrackedItemIdThisFrame = trackerDataForThisFrame[trackerDataForThisFrame.length - 1].id;
     const nbItemsTrackedSinceRecordingStarted = biggestTrackedItemIdThisFrame - Opendatacam._refTrackedItemIdWhenRecordingStarted;
     Opendatacam.totalItemsTracked = nbItemsTrackedSinceRecordingStarted;
-
+  
     // Compute deltaYs for all tracked items (between the counting lines and the tracked items position)
     // And check if trackedItem are going through some counting areas 
     // For each new tracked item
     trackerDataForThisFrame = trackerDataForThisFrame.map((trackedItem) => {
+
       // For each counting areas
       var countingDeltas = Object.keys(Opendatacam.countingAreas).map((countingAreaKey) => {
         let countingAreaProps = Opendatacam.countingAreas[countingAreaKey].computed;
@@ -342,6 +338,8 @@ module.exports = {
 
     let counterSummary = this.getCounterSummary();
     let trackerSummary = this.getTrackerSummary();
+
+    // console.log(Opendatacam.zombiesAreas);
 
     // Persist to db
     if(Opendatacam.recordingStatus.isRecording) {
@@ -454,10 +452,13 @@ module.exports = {
     Opendatacam.recordingStatus.isRecording = true;
     Opendatacam.recordingStatus.dateStarted = new Date();
     Opendatacam.totalItemsTracked = 0;
-    // TODO bake this into tracker, get nbItemsTrackedSinceTimestamp( timestamp )
+
+    // Store lowest ID of currently tracked item when start recording 
+    // to be able to compute nbObjectTracked
     const currentlyTrackedItems = Tracker.getJSONOfTrackedItems() 
     const highestTrackedItemId = currentlyTrackedItems[currentlyTrackedItems.length - 1].id;
     Opendatacam._refTrackedItemIdWhenRecordingStarted = highestTrackedItemId - currentlyTrackedItems.length;
+
     // Persist recording
     DBManager.insertRecording(new Recording(
       Opendatacam.recordingStatus.dateStarted, 

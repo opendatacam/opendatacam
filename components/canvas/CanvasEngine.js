@@ -5,8 +5,9 @@ import { CANVAS_RENDERING_MODE } from '../../utils/constants'
 
 import LiveViewEngine from './engines/LiveViewEngine'
 import PathViewEngine from './engines/PathViewEngine';
+import TrackerAccuracyEngine from './engines/TrackerAccuracyEngine';
 
-// import GameEngineStateManager from '../../../statemanagement/app/GameEngineStateManager'
+import { scaleDetection } from '../../utils/resolution';
 
 class CanvasEngine extends PureComponent {
   constructor (props) {
@@ -18,6 +19,7 @@ class CanvasEngine extends PureComponent {
     this.rafHandle = null;
 
     this.PathViewEngine = new PathViewEngine();
+    this.TrackerAccuracyEngine = new TrackerAccuracyEngine();
   }
 
   componentDidMount () {
@@ -107,6 +109,15 @@ class CanvasEngine extends PureComponent {
         )
       }
 
+      if(this.props.mode === CANVAS_RENDERING_MODE.TRACKER_ACCURACY) {
+        this.TrackerAccuracyEngine.drawAccuracyHeatmap(
+          this.canvasContext,
+          this.props.trackerData.data,
+          this.props.fixedResolution || this.props.canvasResolution.toJS(),
+          this.props.originalResolution
+        )
+      }
+
       this.lastFrameDrawn = this.props.trackerData.frameIndex;
     }
     this.rafHandle = raf(this.loopUpdateCanvas.bind(this))
@@ -157,6 +168,8 @@ class CanvasEngine extends PureComponent {
             top: 0;
             left: 0;
             z-index: 1;
+            width: 100%;
+            height: 100%;
             background-color: rgba(0,0,0,${this.props.userSettings.get('dimmerOpacity')});
           }
 
