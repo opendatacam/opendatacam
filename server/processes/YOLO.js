@@ -112,8 +112,6 @@ module.exports = {
     var dataThisFrame = [];
     var JSONStreamRes = null;
     
-    // TODO Simulate delay starting
-
     console.log("Start HTTP JSON Stream server");
 
     YOLO.simulationJSONHTTPStreamServer = http.createServer(function(req, res) {

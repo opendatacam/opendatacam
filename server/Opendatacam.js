@@ -349,7 +349,6 @@ module.exports = {
     if(Opendatacam.sseConnexion) {
       // console.log('sending message');
       // console.log(`send frame ${Opendatacam.trackerDataForLastFrame.frameIndex}`);
-      // TODO add isRecording
       Opendatacam.sseConnexion(`data:${JSON.stringify({
         trackerDataForLastFrame: Opendatacam.trackerDataForLastFrame,
         counterSummary: counterSummary,
