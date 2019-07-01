@@ -32,32 +32,12 @@ const initialState = {
     pathfinderEnabled: true,
     heatmapEnabled: false
   },
-  zombiesAreas: {
-    topleft: 0,
-    topleftZombies: 0,
-    topleftZombiesPercentage: 0,
-    topright: 0,
-    toprightZombies: 0,
-    toprightZombiesPercentage: 0,
-    bottomleft: 0,
-    bottomleftZombies: 0,
-    bottomleftZombiesPercentage: 0,
-    bottomright: 0,
-    bottomrightZombies: 0,
-    bottomrightZombiesPercentage: 0
-  },
   isListeningToYOLO: false,
   HTTPRequestListeningToYOLO: null,
   HTTPRequestListeningToYOLOMaxRetries: 60
 }
 
 let Opendatacam = cloneDeep(initialState);
-
-// TODO in_min = 1 / Max zombie percentage
-// TODO in_max = 1 / Min zombie percentage
-function mapRange(number, in_min = 1/13, in_max = 1/4, out_min = 0.1, out_max = 1) {
-  return (number - in_min) * (out_max - out_min) / (in_max - in_min) + out_min;
-}
 
 module.exports = {
 
@@ -68,11 +48,6 @@ module.exports = {
       Opendatacam = cloneDeep(initialState);
       // Reset tracker (TODO here reset id of itemstracked)
       Tracker.reset();
-      // Create empty trackerHistory.json file
-      fs.open("./static/trackerHistory.json", "wx", function (err, fd) {
-        // Add the array opening bracket
-        fs.writeFile("./static/trackerHistory.json", "[\n{}", function(err) {});
-      });
     })
     
   },
@@ -142,7 +117,7 @@ module.exports = {
         timestamp: new Date(),
         area: countingAreaKey,
         name: trackedItem.name,
-        id: trackedItem.idDisplay
+        id: trackedItem.id
       }
       // Add it to the history
       Opendatacam.countedItemsHistory.push(countedItem)
@@ -169,7 +144,7 @@ module.exports = {
       timestamp: frameTimestamp,
       objects: trackerDataForThisFrame.map((trackerData) => {
         return {
-          id: trackerData.idDisplay,
+          id: trackerData.id,
           x: Math.round(trackerData.x),
           y: Math.round(trackerData.y),
           w: Math.round(trackerData.w),
@@ -253,20 +228,14 @@ module.exports = {
 
     Opendatacam.nbItemsTrackedThisFrame = trackerDataForThisFrame.length;
 
-    // var nbZombiesThisFrame = trackerDataForThisFrame.reduce((accumulator, currentValue) => {
-    //   return currentValue.isZombie ? accumulator + 1 : accumulator
-    // }, 0)
-
-    // Opendatacam.zombiesAreas._total += nbZombiesThisFrame;
-
     // TODO bake this into tracker to avoid reasoning about ids here:
     //  -> implement Tracker.nbItemsTrackedSinceTimestamp(timestamp)
-    const biggestTrackedItemIdThisFrame = trackerDataForThisFrame[trackerDataForThisFrame.length - 1].idDisplay;
+    const biggestTrackedItemIdThisFrame = trackerDataForThisFrame[trackerDataForThisFrame.length - 1].id;
     const nbItemsTrackedSinceRecordingStarted = biggestTrackedItemIdThisFrame - Opendatacam._refTrackedItemIdWhenRecordingStarted;
     Opendatacam.totalItemsTracked = nbItemsTrackedSinceRecordingStarted;
+    // END TODO bake this into tracker
 
-    
-
+  
     // Compute deltaYs for all tracked items (between the counting lines and the tracked items position)
     // And check if trackedItem are going through some counting areas 
     // For each new tracked item
@@ -283,13 +252,13 @@ module.exports = {
         // If trackerDataForLastFrame exists, we can if we items are passing through the counting line
         if(Opendatacam.trackerDataForLastFrame) {
           // Find trackerItem data of last frame
-          let trackerItemLastFrame = Opendatacam.trackerDataForLastFrame.data.find((itemLastFrame) => itemLastFrame.idDisplay === trackedItem.idDisplay)
+          let trackerItemLastFrame = Opendatacam.trackerDataForLastFrame.data.find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
           // If trackedItemLastFrame exist and deltaY was computed last frame
           if(trackerItemLastFrame && trackerItemLastFrame.countingDeltas[countingAreaKey]) {
             let lastDeltaY = trackerItemLastFrame.countingDeltas[countingAreaKey]
             // Remind counted status
             if(trackerItemLastFrame.counted) {
-              // console.log(`${trackerItemLastFrame.idDisplay} appear to have been counted on last frame`);
+              // console.log(`${trackerItemLastFrame.id} appear to have been counted on last frame`);
               trackedItem.counted = trackerItemLastFrame.counted;
             } else {
               trackedItem.counted = [];
@@ -318,7 +287,7 @@ module.exports = {
                 } else {
                   // Tracked item has cross the {countingAreaKey} counting line
                   // Count it
-                  // console.log(`Counting ${trackedItem.idDisplay}`);
+                  // console.log(`Counting ${trackedItem.id}`);
                   let countedItem = this.countItem(trackedItem, countingAreaKey);
                   countedItemsForThisFrame.push(countedItem);
                 }
@@ -488,8 +457,9 @@ module.exports = {
     Opendatacam.totalItemsTracked = 0;
     // TODO bake this into tracker, get nbItemsTrackedSinceTimestamp( timestamp )
     const currentlyTrackedItems = Tracker.getJSONOfTrackedItems() 
-    const highestTrackedItemId = currentlyTrackedItems[currentlyTrackedItems.length - 1].idDisplay;
+    const highestTrackedItemId = currentlyTrackedItems[currentlyTrackedItems.length - 1].id;
     Opendatacam._refTrackedItemIdWhenRecordingStarted = highestTrackedItemId - currentlyTrackedItems.length;
+    // END TODO bake this into tracker
     // Persist recording
     DBManager.insertRecording(new Recording(
       Opendatacam.recordingStatus.dateStarted, 
