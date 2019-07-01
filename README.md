@@ -92,7 +92,7 @@ Open your browser at http://IPOFJETSON:8080 .
 
 In order to operate opendatacam from your phone / tablet / computer.
 
-See [WIFI_HOTSPOT_SETUP.md](https://github.com/opendatacam/opendatacam/blob/master/doc/WIFI_HOTSPOT_SETUP.md)
+See [WIFI_HOTSPOT_SETUP.md](https://github.com/opendatacam/opendatacam/blob/master/documentation/WIFI_HOTSPOT_SETUP.md)
 
 ### 5. Customize Opendatacam ️️⚙️
 
@@ -104,7 +104,7 @@ We offer several customization options:
 
 - **Change display classes:** We default to mobility classes (car, bus, person...), but you can change this
 
-[Learn how to customize Opendatacam, see CONFIG.md](https://github.com/opendatacam/opendatacam/blob/master/doc/CONFIG.md)
+[Learn how to customize Opendatacam, see CONFIG.md](https://github.com/opendatacam/opendatacam/blob/master/documentation/CONFIG.md)
 
 ### 6. Docker playbook ️📚
 
@@ -159,22 +159,22 @@ v2 API doc (TODO depoy on the github page of the project ?? ): [https://apidoc-d
 
 ## ⁉️ Troubleshooting
 
-Common errors with answers: [TROUBLESHOOTING.md](https://github.com/opendatacam/opendatacam/blob/master/doc/TROUBLESHOOTING.md)
+Common errors with answers: [TROUBLESHOOTING.md](https://github.com/opendatacam/opendatacam/blob/master/documentation/TROUBLESHOOTING.md)
 
 ## 🎛 Advanced uses
 
 ### How to run opendatacam without docker
 
-Read [RUN_WITHOUT_DOCKER.md](https://github.com/opendatacam/opendatacam/blob/master/doc/RUN_WITHOUT_DOCKER.md)
+Read [RUN_WITHOUT_DOCKER.md](https://github.com/opendatacam/opendatacam/blob/master/documentation/RUN_WITHOUT_DOCKER.md)
 
 ### How to create / update the docker image
 
-Read [CREATE_DOCKER_IMAGE.md](https://github.com/opendatacam/opendatacam/blob/master/doc/CREATE_DOCKER_IMAGE.md)
+Read [CREATE_DOCKER_IMAGE.md](https://github.com/opendatacam/opendatacam/blob/master/documentation/CREATE_DOCKER_IMAGE.md)
 
 
 ## 🛠 Development notes
 
-Read [DEVELOPMENT_NOTES.md](https://github.com/opendatacam/opendatacam/blob/master/doc/DEVELOPMENT_NOTES.md)
+Read [DEVELOPMENT_NOTES.md](https://github.com/opendatacam/opendatacam/blob/master/documentation/DEVELOPMENT_NOTES.md)
 
 
 

@@ -314,6 +314,6 @@ For example, if you change the gradient with:
 
 ### Limitation with docker setup
 
-- In order to use the raspberrycam with the Jetson nano, follow this guide: https://github.com/opendatacam/opendatacam/blob/master/doc/JETSON_NANO.md#run-opendatacam-container-with-raspberrypi-cam
+- In order to use the raspberrycam with the Jetson nano, follow this guide: https://github.com/opendatacam/opendatacam/blob/master/documentation/JETSON_NANO.md#run-opendatacam-container-with-raspberrypi-cam
 
 
