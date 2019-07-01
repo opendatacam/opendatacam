@@ -49,7 +49,12 @@ class LiveViewEngine {
       context.fillStyle = evaluateCSSVariable(colors.inverse);
       context.fillText(
         `${objectTrackedScaled.name}`,
-        x + 8,
+        x + 10,
+        y
+      )
+      context.fillText(
+        `${Math.round(objectTrackedScaled.confidence * 100)}%`,
+        x + objectTrackedScaled.w - 30,
         y
       )
     })
