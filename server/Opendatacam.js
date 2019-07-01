@@ -248,7 +248,7 @@ module.exports = {
      
     Tracker.updateTrackedItemsWithNewFrame(detectionScaledOfThisFrame, Opendatacam.currentFrame);
 
-    let trackerDataForThisFrame = Tracker.getJSONDebugOfTrackedItems();
+    let trackerDataForThisFrame = Tracker.getJSONOfTrackedItems();
     let countedItemsForThisFrame = [];
 
     Opendatacam.nbItemsTrackedThisFrame = trackerDataForThisFrame.length;
