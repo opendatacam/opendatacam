@@ -1,4 +1,4 @@
-## How to create / update the docker image
+## How to create / update a docker image for a jetson device
 
 In order to build the docker image, you need to have:
 
@@ -10,13 +10,13 @@ In order to build the docker image, you need to have:
 
 ### 1. Install Opencv 3.4.3:
 
-TODO link RUN_WITHOUT_DOCKER.md
+TODO link USE_WITHOUT_DOCKER.md
 
 - Follow the "1. Install OpenCV 3.4.3 with Gstreamer"
 
 ### 2. Compile Darknet with Opencv 3.4.3:
 
-TODO link RUN_WITHOUT_DOCKER.md
+TODO link USE_WITHOUT_DOCKER.md
 
 - Follow the "2. Install Darknet (Neural network framework running YOLO)" 
 

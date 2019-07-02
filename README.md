@@ -26,28 +26,39 @@ It is very alpha and we do not provide any guarantee that this will work for you
   * [🔌 API Documentation](#-api-documentation)
   * [⁉️ Troubleshooting](#-troubleshooting)
   * [🎛 Advanced uses](#-advanced-uses)
-    + [How to run opendatacam without docker](#how-to-run-opendatacam-without-docker)
+    + [How to use opendatacam without docker](#how-to-use-opendatacam-without-docker)
     + [How to create / update the docker image](#how-to-create--update-the-docker-image)
   * [🛠 Development notes](#-development-notes)
 
 ## 💻 Hardware pre-requisite
 
-- Nvidia Jetson Nano / TX2 / Xavier
-- Webcam Logitech C222 (or any usb webcam compatible with Ubuntu 18.04)
+- Nvidia Jetson Nano / TX2 / Xavier or any GNU/Linux x86_64 machine with a CUDA compatible GPU compatible with [nvidia-docker v2.0](https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(version-2.0)#prerequisites) (in the cloud or locally)
+- Webcam Logitech C222 (or any usb webcam compatible with Ubuntu 18.04) / Rasberry Pi cam for Jetson nano / Video file / IP camera
 - A smartphone / tablet / laptop that you will use to operate the system
 
 ## 🎬 Get Started, quick setup
 
-### 1. Flash Jetson board to jetpack 4.2+ ⚡️ ️(if not installed)️:
+### 1. 📦 Software pre-requisite :
+
+#### Flash Jetson board to jetpack 4.2 ⚡️ ️(if not installed)️:
+
+*If you are not running on a jetson, ignore this section.*
 
 If your jetson does not have jetpack 4.2 *(CUDA 10, TensorRT 5, cuDNN 7.3, Ubuntu 18.04)*
 
-[Follow this guide to flash your jetson](https://github.com/opendatacam/opendatacam/blob/master/documentation/FLASH_JETSON.md)
+[Follow this guide to flash your jetson](https://github.com/opendatacam/opendatacam/blob/master/documentation/jetson/FLASH_JETSON.md)
 
+#### Install nvidia-docker v2.0 🔧:
+
+*If you are running on a jetson, ignore this section, nvidia-docker isn't necessary with jetpack 4.2*
+
+Nvidia-docker v2.0 is only compatible with GNU/Linux x86_64 with kernel version > 3.10. 
+
+[Follow this guide to install nvidia-docker v2.0 on your machine](https://github.com/opendatacam/opendatacam/blob/master/documentation/jetson/FLASH_JETSON.md)
 
 ### 2. Install and start Opendatacam (3 min 🚀):
 
-Open a terminal or ssh to you jetson and run these command (make sure an usb webcam is connected):
+Open a terminal or ssh to you machine and run these command (make sure an usb webcam is connected)
 
 ```bash
 # Download install script
@@ -63,14 +74,17 @@ sudo ./install-opendatacam.sh --platform nano
 sudo ./install-opendatacam.sh --platform tx2
 
 # Install command for jetson xavier
-# NOT AVAILABLE YET
+# TODO
+
+# Install command for nvidia-docker
+# TODO
 ```
 
-This command will download and start a docker container on the Jetson. After it finishes the docker container starts a webserver on port 8080.
+This command will download and start a docker container on the machine. After it finishes the docker container starts a webserver on port 8080.
 
-The docker container is started in auto-restart mode, so if you reboot your jetson it will automaticaly start opendatacam on startup. ([Learn more about the specificities of docker on jetson](#6-docker-playbook-))
+The docker container is started in auto-restart mode, so if you reboot your machine it will automaticaly start opendatacam on startup. ([Learn more about the specificities of docker on jetson](#6-docker-playbook-))
 
-You can also [install opendatacam without docker](#how-to-run-opendatacam-without-docker)
+You can also [use opendatacam without docker](#how-to-run-opendatacam-without-docker)
 
 [TODO UPDATE VIDEO TUTORIAL](https://www.youtube.com/watch?v=NwXrXHHGSgk)
 
@@ -88,11 +102,11 @@ Open your browser at http://IPOFJETSON:8080 .
 
 *If you are running with the jetson connected to a screen: http://localhost:8080*
 
-### 4. Configure your jetson Wifi hotspot 📲
+### 4. Configure your Wifi hotspot 📲
 
 In order to operate opendatacam from your phone / tablet / computer.
 
-See [WIFI_HOTSPOT_SETUP.md](https://github.com/opendatacam/opendatacam/blob/master/documentation/WIFI_HOTSPOT_SETUP.md)
+See [Make machine accessible via WIFI](https://github.com/opendatacam/opendatacam/blob/master/documentation/WIFI_HOTSPOT_SETUP.md)
 
 ### 5. Customize Opendatacam ️️⚙️
 
@@ -104,7 +118,7 @@ We offer several customization options:
 
 - **Change display classes:** We default to mobility classes (car, bus, person...), but you can change this
 
-[Learn how to customize Opendatacam, see CONFIG.md](https://github.com/opendatacam/opendatacam/blob/master/documentation/CONFIG.md)
+[Learn how to customize Opendatacam](https://github.com/opendatacam/opendatacam/blob/master/documentation/CONFIG.md)
 
 ### 6. Docker playbook ️📚
 
@@ -159,22 +173,28 @@ v2 API doc (TODO depoy on the github page of the project ?? ): [https://apidoc-d
 
 ## ⁉️ Troubleshooting
 
-Common errors with answers: [TROUBLESHOOTING.md](https://github.com/opendatacam/opendatacam/blob/master/documentation/TROUBLESHOOTING.md)
+[Common errors with answers](https://github.com/opendatacam/opendatacam/blob/master/documentation/TROUBLESHOOTING.md)
 
 ## 🎛 Advanced uses
 
-### How to run opendatacam without docker
+### How to use opendatacam without docker
 
-Read [RUN_WITHOUT_DOCKER.md](https://github.com/opendatacam/opendatacam/blob/master/documentation/RUN_WITHOUT_DOCKER.md)
+Read [How to use opendatacam without docker](https://github.com/opendatacam/opendatacam/blob/master/documentation/USE_WITHOUT_DOCKER.md)
 
 ### How to create / update the docker image
 
-Read [CREATE_DOCKER_IMAGE.md](https://github.com/opendatacam/opendatacam/blob/master/documentation/CREATE_DOCKER_IMAGE.md)
+*For jetson devices:*
+
+See [How to create / update a docker image for a jetson device](https://github.com/opendatacam/opendatacam/blob/master/documentation/jetson/CREATE_DOCKER_IMAGE.md)
+
+*For nvidia-docker machine:*
+
+See [How to create / update a docker image for a nvidia-docker machine](https://github.com/opendatacam/opendatacam/blob/master/documentation/nvidia-docker/CREATE_NVIDIADOCKER_IMAGE.md)
 
 
 ## 🛠 Development notes
 
-Read [DEVELOPMENT_NOTES.md](https://github.com/opendatacam/opendatacam/blob/master/documentation/DEVELOPMENT_NOTES.md)
+See [Development notes](https://github.com/opendatacam/opendatacam/blob/master/documentation/DEVELOPMENT_NOTES.md)
 
 Technical architecture overview:
 

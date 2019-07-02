@@ -1,4 +1,4 @@
-## Make jetson available as a wifi hotspot
+## Make machine accessible via WIFI
 
 ### On Ubuntu 18.04 via UI:
 

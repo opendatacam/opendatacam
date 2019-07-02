@@ -1,4 +1,6 @@
-## Run simulation mode
+## Development notes
+
+### Run in simulation mode
 
 Simulation mode is useful to work on the UI and node.js feature deployment without having to run the neural network / the webcam.
 
@@ -16,13 +18,13 @@ npm run dev
 
 If you have an error while doing `npm install` it is probably a problem with node-gyp, you need to install additional dependencies depending on your platform: https://github.com/nodejs/node-gyp#on-unix
 
-# List all cams
+### List all cams
 
 ```bash
 v4l2-ctl --list-devices
 ```
 
-## Stuff to do with releasing a new version
+### Stuff to do with releasing a new version
 
 - Make sure that config.json has the TO_REPLACE_VIDEO_INPUT, TO_REPLACE_VIDEO_INPUT values
 - Set correct version in package.json
@@ -50,3 +52,9 @@ git tag v2.0.0-beta.3
 # Push tag
 git push --tags
 ```
+
+
+### Technical architecture
+
+![Technical architecture](https://user-images.githubusercontent.com/533590/60489282-3f2d1700-9ca4-11e9-932c-19bf84e04f9a.png)
+

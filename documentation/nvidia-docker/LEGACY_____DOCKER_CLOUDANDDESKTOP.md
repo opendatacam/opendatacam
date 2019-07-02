@@ -1,4 +1,4 @@
-## How to create / update / run the docker image for non jetson devices
+## How to create / update / run the docker image for nvidia-docker
 
 In order to build or run the docker image, you need to have:
 

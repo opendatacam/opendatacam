@@ -1,4 +1,4 @@
-## How to install opendatacam without docker
+## How to use opendatacam without docker
 
 - [1. Install OpenCV 3.4.3 with Gstreamer:](#1-install-opencv-343-with-gstreamer-)
 - [2. Install Darknet (Neural network framework running YOLO)](#2-install-darknet--neural-network-framework-running-yolo-)
@@ -16,7 +16,6 @@ You can either:
 
 - Use pre-built binaries for your host device (see links below)
 - Compile your own (see below section on how to compile) 
-
 
 Then follow this to install it:
 
@@ -38,6 +37,9 @@ wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-tx2-3.4.3/Op
 
 # For Jetson Xavier
 # TODO compile binaries specific for xavier architecture
+
+# For Generic cuda machine (docker-nvidia)
+# TODO compile binaries
 
 # Install .deb files
 sudo dpkg -i OpenCV-3.4.3-aarch64-libs.deb
@@ -103,7 +105,7 @@ OPENCV=1
 ARCH= -gencode arch=compute_72,code=[sm_72,compute_72]
 ```
 
-*For Linux machine with desktop/laptop GPU*
+*For Generic Ubuntu machine with CUDA GPU*
 
 Make sure you have CUDA installed:
 
@@ -169,14 +171,36 @@ cd darknet
 sudo apt-get install curl
 curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
 sudo apt-get install -y nodejs
+```
 
+#### Mongodb for Jetson devices (ARM64):
+
+```bash
 # Install mongodb
+
 # Detailed doc: https://computingforgeeks.com/how-to-install-latest-mongodb-on-ubuntu-18-04-ubuntu-16-04/
 # NB: at time of writing this guide, we install the mongodb package for ubuntu 16.04 as the arm64 version of it isn't available for 18.04
 sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4
 echo "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse" | sudo tee /etc/apt/sources.list.d/mongodb-org-4.0.list
 sudo apt-get update
 sudo apt-get install -y openssl libcurl3 mongodb-org
+
+# Start service
+sudo systemctl start mongod
+
+# Enable service on boot
+sudo systemctl enable mongod
+```
+
+#### Mongodb for Generic Ubuntu machine with CUDA GPU:
+
+```bash
+# Install mongodb
+
+# Detailed doc: https://docs.mongodb.com/manual/tutorial/install-mongodb-on-ubuntu/
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 9DA31620334BD75D9DCB49F368818C72E52529D4 && \
+    echo "deb [ arch=amd64 ] https://repo.mongodb.org/apt/ubuntu xenial/mongodb-org/4.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-4.0.list
+sudo apt-get update && apt-get install -y --no-install-recommends openssl libcurl3 mongodb-org
 
 # Start service
 sudo systemctl start mongod
@@ -194,7 +218,7 @@ git clone --depth 1 https://github.com/opendatacam/opendatacam.git
 cd opendatacam
 ```
 
-- Specify **ABSOLUTE** `PATH_TO_YOLO_DARKNET` path in `lab-open-data-cam/config.json` (open data cam repo)
+- Specify **ABSOLUTE** `PATH_TO_YOLO_DARKNET` path in `opendatacam/config.json`
 
 ```json
 {
@@ -207,7 +231,7 @@ cd opendatacam
 pwd .
 ```
 
-- Specify `VIDEO_INPUT` and `NEURAL_NETWORK` in `lab-open-data-cam/config.json` 
+- Specify `VIDEO_INPUT` and `NEURAL_NETWORK` in `opendatacam/config.json` 
 
 *For Jetson Nano*
 
@@ -236,9 +260,9 @@ pwd .
 }
 ```
 
-TODO @tdurand link to CONFIG.md to learn more about those settings
+Learn more in the [config documentation](https://github.com/opendatacam/opendatacam/blob/master/documentation/CONFIG.md) page.
 
-- Install **open data cam**
+- Install **Opendatacam**
 
 ```bash
 cd <path/to/open-data-cam>
@@ -246,14 +270,14 @@ npm install
 npm run build
 ```
 
-- Run **open data cam**
+- Run **Opendatacam**
 
 ```bash
 cd <path/to/open-data-cam>
 npm run start
 ```
 
-- (optional) Config **open data cam** to run on boot
+- (optional) Config **Opendatacam** to run on boot
 
 ```bash
 # install pm2
@@ -268,7 +292,7 @@ sudo pm2 startup
 
 # Once pm2 is configured to start at startup
 # Configure pm2 to start the Open Traffic Cam app
-sudo pm2 start npm --name "open-data-cam" -- start
+sudo pm2 start npm --name "opendatacam" -- start
 sudo pm2 save
 ```
 
