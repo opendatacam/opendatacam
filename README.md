@@ -130,7 +130,7 @@ We need to give to the docker container access to the host platform GPU. We do s
 
 That is why you need to use our install script to install a container.
 
-**How to show logs Opendatacam**
+**How to show Opendatacam logs**
 
 ```bash
 # List containers
