@@ -1,4 +1,4 @@
-## How to create / update the docker image
+## How to create / update a docker image for a jetson device
 
 In order to build the docker image, you need to have:
 
@@ -10,13 +10,13 @@ In order to build the docker image, you need to have:
 
 ### 1. Install Opencv 3.4.3:
 
-TODO link RUN_WITHOUT_DOCKER.md
+TODO link USE_WITHOUT_DOCKER.md
 
 - Follow the "1. Install OpenCV 3.4.3 with Gstreamer"
 
 ### 2. Compile Darknet with Opencv 3.4.3:
 
-TODO link RUN_WITHOUT_DOCKER.md
+TODO link USE_WITHOUT_DOCKER.md
 
 - Follow the "2. Install Darknet (Neural network framework running YOLO)" 
 
@@ -86,17 +86,17 @@ sudo docker images
 # opendatacam             latest    023ab91c6291     3 minutes ago     1.975 GB
 
 # Tag your image
-sudo docker tag 023ab91c6291 opendatacam/opendatacam:v2.0.0-beta.3-nano
+sudo docker tag 023ab91c6291 opendatacam/opendatacam:v2.0.0-beta.4-nano
 
-# Or for nano : v2.0.0-beta.2-nano
-# Or for xavier : v2.0.0-beta.2-xavier
+# Or for nano : v2.0.0-beta.4-nano
+# Or for xavier : v2.0.0-beta.4-xavier
 
 # Push image
-sudo docker push opendatacam/opendatacam:v2.0.0-beta.3-nano
+sudo docker push opendatacam/opendatacam:v2.0.0-beta.4-nano
 
 
 # (optional) Useful Untag image (if you made a tipo)
-sudo docker rmi opendatacam/opendatacam:v2.0.0-beta.3-nano
+sudo docker rmi opendatacam/opendatacam:v2.0.0-beta.4-nano
 ```
 
 ### (Optional) Compile Opencv on jetson (this takes 1-2h)

@@ -1,5 +1,5 @@
 {
-  "name": "open-data-cam",
+  "name": "Opendatacam",
   "version": "2.0.0-beta.4",
   "scripts": {
     "dev": "node server.js",
