@@ -1,4 +1,4 @@
-## Make machine accessible via WIFI
+## Make machine / hotspot accessible via WIFI
 
 ### On Ubuntu 18.04 via UI:
 
