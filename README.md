@@ -168,8 +168,12 @@ sudo docker system prune -a
 
 In order to solve use cases that aren't taken care by our opendatacam base app, you might be able to build on top of our API instead of forking the project.
 
-API Documentation: [https://opendatacam.github.io/opendatacam/apidoc/](https://opendatacam.github.io/opendatacam/apidoc/)
+[https://opendatacam.github.io/opendatacam/apidoc/](https://opendatacam.github.io/opendatacam/apidoc/)
 
+## 🗃 Data export documentation
+
+- [Counter data](https://opendatacam.github.io/opendatacam/apidoc/#api-Recording-Counter_data)
+- [Tracker data](https://opendatacam.github.io/opendatacam/apidoc/#api-Recording-Tracker_data)
 
 ## ⁉️ Troubleshooting
 

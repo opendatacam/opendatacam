@@ -528,13 +528,13 @@ app.prepare()
    * @apiSuccess {String} recordingId Corresponding recordingId of this tracker recorded frame
    * @apiSuccess {String} timestamp Frame date
    * @apiSuccess {Object[]} objects All objects tracked on this frame 
-   * @apiSuccess {id} Unique id of the object
-   * @apiSuccess {x} Position of the center on the X axis (0,0 is on top left of frame)
-   * @apiSuccess {y} Position of the center on the Y axis (0,0 is on top left of frame)
-   * @apiSuccess {w} Width of the object
-   * @apiSuccess {h} Height of the object
-   * @apiSuccess {bearing} Direction where the object is heading (in degree)
-   * @apiSuccess {name} Class of the object
+   * @apiSuccess {Number} id Unique id of the object
+   * @apiSuccess {Number} x Position of the center on the X axis (0,0 is on top left of frame)
+   * @apiSuccess {Number} y Position of the center on the Y axis (0,0 is on top left of frame)
+   * @apiSuccess {Number} w Width of the object
+   * @apiSuccess {Number} h Height of the object
+   * @apiSuccess {Number} bearing Direction where the object is heading (in degree)
+   * @apiSuccess {String} name Class of the object
    * 
    * @apiSuccessExample {json} Success Response:
    *     [
@@ -638,7 +638,15 @@ app.prepare()
    *
    * @apiDescription Get counter data for a specific recording
    * 
-   * @apiParam {String} id Recording id (_id field of /recordings)
+   * @apiParam {String} id Recording id (_id field of GET /recordings)
+   * 
+   * @apiSuccess {String} _id recordingId you will use to fetch more data on a specific recording
+   * @apiSuccess {String} dateStart recording start date
+   * @apiSuccess {String} dateEnd recording end date
+   * @apiSuccess {Object} areas Areas defined in this recording (see Counter -> Get areas for documentation)
+   * @apiSuccess {Object} counterSummary For each area, nb items counted
+   * @apiSuccess {Object} trackerSummary Total tracked items for all the recording
+   * @apiSuccess {Object} counterHistory Details of all items that have been counted
    * 
    * @apiSuccessExample {json} Success Response:
    *     [
