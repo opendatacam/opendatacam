@@ -10,15 +10,11 @@ In order to build the docker image, you need to have:
 
 ### 1. Install Opencv 3.4.3:
 
-TODO link USE_WITHOUT_DOCKER.md
-
-- Follow the "1. Install OpenCV 3.4.3 with Gstreamer"
+- Follow the ["1. Install OpenCV 3.4.3 with Gstreamer"](../USE_WITHOUT_DOCKER.md)
 
 ### 2. Compile Darknet with Opencv 3.4.3:
 
-TODO link USE_WITHOUT_DOCKER.md
-
-- Follow the "2. Install Darknet (Neural network framework running YOLO)" 
+- Follow the ["2. Install Darknet (Neural network framework running YOLO)"](../USE_WITHOUT_DOCKER.md) 
 
 ### 3. Create the docker image
 
