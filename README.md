@@ -204,8 +204,8 @@ Technical architecture overview:
 
 ## 💌 Acknowledgments
 
-- Original darknet + YOLOv3 @pjreddie  : https://pjreddie.com/darknet/
-- Darknet fork by @alexeyab : https://github.com/alexeyab/darknet
-- IOU / V-IOU Tracker by @bochinski : https://github.com/bochinski/iou-tracker/
-- Next.js by @zeit : https://github.com/zeit/next.js
+- Original darknet + YOLOv3 @pjreddie  : [https://pjreddie.com/darknet/](https://pjreddie.com/darknet/)
+- Darknet fork by @alexeyab : [https://github.com/alexeyab/darknet](https://github.com/alexeyab/darknet)
+- IOU / V-IOU Tracker by @bochinski : [https://github.com/bochinski/iou-tracker/](https://github.com/bochinski/iou-tracker/)
+- Next.js by @zeit : [https://github.com/zeit/next.js](https://github.com/zeit/next.js)
 
