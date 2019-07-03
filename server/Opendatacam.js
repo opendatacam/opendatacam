@@ -440,7 +440,8 @@ module.exports = {
     DBManager.insertRecording(new Recording(
       Opendatacam.recordingStatus.dateStarted, 
       Opendatacam.recordingStatus.dateStarted,
-      Opendatacam.countingAreas
+      Opendatacam.countingAreas,
+      Opendatacam.videoResolution
     )).then((recording) => {
       Opendatacam.recordingStatus.recordingId = recording.insertedId;
     }, (error) => {

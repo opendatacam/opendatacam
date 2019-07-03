@@ -150,6 +150,26 @@ class DBManager {
     })
   }
 
+  getRecording (recordingId) {
+    return new Promise((resolve, reject) => {
+      this.getDB().then(db => {
+        db
+          .collection(RECORDING_COLLECTION)
+          .findOne(
+            { _id : ObjectID(recordingId)},
+            { projection : { counterHistory: 0, areas: 0 } },
+            (err, doc) => {
+              if (err) {
+                reject(err)
+              } else {
+                resolve(doc)
+              }
+            }
+          )
+      })
+    })
+  }
+
   getRecordingsCount () {
     return new Promise((resolve, reject) => {
       this.getDB().then(db => {

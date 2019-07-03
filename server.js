@@ -106,6 +106,26 @@ app.prepare()
   })
 
   /**
+   * @api {get} /start Start Opendatacam
+   * @apiName Start
+   * @apiGroup Opendatacam
+   *
+   * @apiDescription Start opendatacam without loading the UI
+   * 
+   * This will start the YOLO process on the video input stream
+   * 
+   * @apiSuccessExample Success-Response:
+   *  HTTP/1.1 200 OK
+   *
+  */
+  express.get('/start', (req, res) => {
+    YOLO.start(); // Inside yolo process will check is started
+    const urlData = getURLData(req);
+    Opendatacam.listenToYOLO(urlData);
+    res.sendStatus(200)
+  });
+
+  /**
    * @api {get} /webcam/stream Stream (MJPEG)
    * @apiName Stream
    * @apiGroup Webcam
@@ -227,7 +247,11 @@ app.prepare()
    *
    * @apiDescription Get counter areas defined
    * 
-   * @apiSuccessExample {json} Frame example (once parsed to JSON):
+   * @apiSuccess {Object} location Two points defining the counting line, along with reference frame resolution
+   * @apiSuccess {String} color Color of the area (defined in config.json)
+   * @apiSuccess {String} name Name of the area
+   * @apiSuccess {Object} computed Computed linear function representing the counting line (used by the counting algorithm)
+   * @apiSuccessExample {json} Response
    *  {
         "fbb8a65b-03cc-4c95-8d6f-663ac4bd9aa0": {
           "color": "yellow",
@@ -284,10 +308,9 @@ app.prepare()
       }
    * 
   */
-
- express.get('/counter/areas', (req, res) => {
-  res.json(Opendatacam.getCountingAreas());
-})
+  express.get('/counter/areas', (req, res) => {
+    res.json(Opendatacam.getCountingAreas());
+  })
 
   // Maybe Remove the need for dependency with direct express implem: https://github.com/expressjs/compression#server-sent-events
   /**
@@ -417,6 +440,13 @@ app.prepare()
    *
    * @apiDescription Get list of all recording ordered by latest date
    * 
+   * 
+   * @apiSuccess {String} _id recordingId you will use to fetch more data on a specific recording
+   * @apiSuccess {String} dateStart recording start date
+   * @apiSuccess {String} dateEnd recording end date
+   * @apiSuccess {Object} areas Areas defined in this recording (see Counter -> Get areas for documentation)
+   * @apiSuccess {Object} counterSummary For each area, nb items counted
+   * @apiSuccess {Object} trackerSummary Total tracked items for all the recording
    * @apiSuccessExample {json} Success Response:
    *    {
    *      "offset": 0,
@@ -493,7 +523,18 @@ app.prepare()
    *
    * @apiDescription Get tracker data for a specific recording **(can be very large as it returns all the data for each frame)**
    * 
-   * @apiParam {String} id Recording id (_id field of /recordings)
+   * @apiParam {String} id Recording id (_id field of GET /recordings endpoint)
+   * 
+   * @apiSuccess {String} recordingId Corresponding recordingId of this tracker recorded frame
+   * @apiSuccess {String} timestamp Frame date
+   * @apiSuccess {Object[]} objects All objects tracked on this frame 
+   * @apiSuccess {id} Unique id of the object
+   * @apiSuccess {x} Position of the center on the X axis (0,0 is on top left of frame)
+   * @apiSuccess {y} Position of the center on the Y axis (0,0 is on top left of frame)
+   * @apiSuccess {w} Width of the object
+   * @apiSuccess {h} Height of the object
+   * @apiSuccess {bearing} Direction where the object is heading (in degree)
+   * @apiSuccess {name} Class of the object
    * 
    * @apiSuccessExample {json} Success Response:
    *     [
@@ -534,6 +575,43 @@ app.prepare()
       // })
     });
   })
+
+  /**
+   * @api {get} /recording/:id Get recording
+   * @apiName Get recording
+   * @apiGroup Recording
+   *
+   * @apiDescription Get recording details
+   * 
+   * @apiParam {String} id Recording id (_id field of /recordings)
+   * 
+   * @apiSuccess {videoResolution} Frame resolution
+   * @apiSuccessExample {json} Success Response:
+   *
+      {
+        "counterSummary": {
+          "c1cb4701-0a6e-4350-bb05-f35b56b550a6": {
+            "_total": 1,
+            "car": 1
+          }
+        },
+        "trackerSummary": {
+          "totalItemsTracked": 36
+        },
+        "_id": "5d1cb11e445cae3654e2274a",
+        "dateStart": "2019-07-03T13:43:58.602Z",
+        "dateEnd": "2019-07-03T13:44:01.463Z",
+        "videoResolution": {
+          "w": 1280,
+          "h": 720
+        }
+      }
+  */
+ express.get('/recording/:id', (req, res) => {
+  DBManager.getRecording(req.params.id).then((recordingData) => {
+    res.json(recordingData)
+  });
+})
 
   /**
    * @api {delete} /recording/:id Delete recording
@@ -676,7 +754,7 @@ app.prepare()
         data = [];
       }
       console.log(`Exporting ${req.params.id} counter history to CSV`);
-      res.csv(data, false ,{'Content-disposition': 'attachment; filename=counterData.csv'});
+      res.csv(data, false ,{'Content-disposition': `attachment; filename=counterData-${counterData.dateStart.toISOString().split("T")[0]}-${req.params.id}.csv`});
     });
   })
 
@@ -728,6 +806,99 @@ app.prepare()
    * @apiGroup Helper
    *
    * @apiDescription Get config.json content loaded by Opendatacam
+   * 
+   * {
+      "OPENDATACAM_VERSION": "2.0.0-beta.4",
+      "PATH_TO_YOLO_DARKNET": "/darknet",
+      "VIDEO_INPUT": "TO_REPLACE_VIDEO_INPUT",
+      "NEURAL_NETWORK": "TO_REPLACE_NEURAL_NETWORK",
+      "VIDEO_INPUTS_PARAMS": {
+        "file": "opendatacam_videos/demo.mp4",
+        "usbcam": "v4l2src device=/dev/video0 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink",
+        "raspberrycam_docker": "v4l2src device=/dev/video2 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink",
+        "raspberrycam_no_docker": "nvarguscamerasrc ! video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12 ! nvvidconv ! video/x-raw, format=BGRx, width=640, height=360 ! videoconvert ! video/x-raw, format=BGR ! appsink",
+        "remote_cam": "YOUR IP CAM STREAM (can be .m3u8, MJPEG ...), anything supported by opencv"
+      },
+      "VALID_CLASSES": [
+        "*"
+      ],
+      "DISPLAY_CLASSES": [
+        {
+          "class": "bicycle",
+          "icon": "1F6B2.svg"
+        },
+        {
+          "class": "person",
+          "icon": "1F6B6.svg"
+        },
+        {
+          "class": "truck",
+          "icon": "1F69B.svg"
+        },
+        {
+          "class": "motorbike",
+          "icon": "1F6F5.svg"
+        },
+        {
+          "class": "car",
+          "icon": "1F697.svg"
+        },
+        {
+          "class": "bus",
+          "icon": "1F68C.svg"
+        }
+      ],
+      "PATHFINDER_COLORS": [
+        "#1f77b4",
+        "#ff7f0e",
+        "#2ca02c",
+        "#d62728",
+        "#9467bd",
+        "#8c564b",
+        "#e377c2",
+        "#7f7f7f",
+        "#bcbd22",
+        "#17becf"
+      ],
+      "COUNTER_COLORS": {
+        "yellow": "#FFE700",
+        "turquoise": "#A3FFF4",
+        "green": "#a0f17f",
+        "purple": "#d070f0",
+        "red": "#AB4435"
+      },
+      "NEURAL_NETWORK_PARAMS": {
+        "yolov3": {
+          "data": "cfg/coco.data",
+          "cfg": "cfg/yolov3.cfg",
+          "weights": "yolov3.weights"
+        },
+        "yolov3-tiny": {
+          "data": "cfg/coco.data",
+          "cfg": "cfg/yolov3-tiny.cfg",
+          "weights": "yolov3-tiny.weights"
+        },
+        "yolov2-voc": {
+          "data": "cfg/voc.data",
+          "cfg": "cfg/yolo-voc.cfg",
+          "weights": "yolo-voc.weights"
+        }
+      },
+      "TRACKER_ACCURACY_DISPLAY": {
+        "nbFrameBuffer": 300,
+        "settings": {
+          "radius": 3.1,
+          "blur": 6.2,
+          "step": 0.1,
+          "gradient": {
+            "1": "red",
+            "0.4": "orange"
+          },
+          "canvasResolutionFactor": 0.1
+        }
+      },
+      "MONGODB_URL": "mongodb://127.0.0.1:27017"
+    } 
    * 
   */
 

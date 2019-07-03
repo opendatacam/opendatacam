@@ -8,10 +8,12 @@ class Recording {
   constructor (
       dateStart,
       dateEnd,
-      areas) {
+      areas,
+      videoResolution) {
     this.dateStart = dateStart
     this.dateEnd = dateEnd
     this.areas = areas
+    this.videoResolution = videoResolution
   }
 }
 
