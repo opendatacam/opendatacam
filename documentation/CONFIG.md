@@ -10,18 +10,24 @@ We offer several customization options:
 
 ### Table of content
 
-* [Table of content](#table-of-content)
+- [⚙️ Customize Opendatacam](#---customize-opendatacam)
+  * [Table of content](#table-of-content)
   * [General](#general)
-  * [Run opendatacam on a video file instead of the webcam:](#run-opendatacam-on-a-video-file-instead-of-the-webcam-)
+  * [Run opendatacam on a video file](#run-opendatacam-on-a-video-file)
   * [Change neural network weights](#change-neural-network-weights)
   * [Track only specific classes](#track-only-specific-classes)
   * [Display custom classes](#display-custom-classes)
   * [Customize pathfinder colors](#customize-pathfinder-colors)
   * [Customize Counter colors](#customize-counter-colors)
   * [Advanced settings](#advanced-settings)
-    + [VIDEO_INPUTS_PARAMS:](#video-inputs-params-)
-  * [MONGODB_URL:](#mongodb-url-)
-  * [TRACKER_ACCURACY_DISPLAY:](#tracker-accuracy-display-)
+    + [Video input](#video-input)
+      - [Run from a file](#run-from-a-file)
+      - [Run from IP cam](#run-from-ip-cam)
+      - [Run from Raspberry Pi cam (Jetson nano)](#run-from-raspberry-pi-cam--jetson-nano-)
+      - [Change webcam resolution](#change-webcam-resolution)
+    + [Use Custom Neural Network weights](#use-custom-neural-network-weights)
+    + [MongoDB URL](#mongodb-url)
+    + [Tracker accuracy display](#tracker-accuracy-display)
   * [Limitation with docker setup](#limitation-with-docker-setup)
 
 ### General
