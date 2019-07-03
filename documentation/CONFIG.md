@@ -84,7 +84,7 @@ Once you do have the video file inside the `opendatacam_videos` folder, you can 
 
 Once `config.json` is saved, you only need to restart the docker container or restart your jetson and next time you access opendatacam, it will run on this file.
 
-[Learn more about the others video inputs available (IP camera, Rasberry Pi in the Advanced use section)](#video_inputs_params)
+[Learn more about the others video inputs available (IP camera, Rasberry Pi in the Advanced use section)](#video_input)
 
 **For a non-docker install of Opendatacam:**
 
@@ -135,13 +135,13 @@ The settings are the same as with the docker install, but you can also run from 
 
 ### Track only specific classes
 
-_TODO @tdurand improve, where to find the classes names depending on which flavour of YOLO you are running_
-
 By default, the opendatacam will track all the classes that the neural network is trained to track. In our case, YOLO is trained with the VOC dataset, here is the [complete list of classes](https://github.com/pjreddie/darknet/blob/master/data/voc.names)
 
 You can restrict the opendatacam to some specific classes with the VALID_CLASSES option in the [config.json file](https://github.com/opendatacam/opendatacam/blob/master/config.json) .
 
-For example, here is a way to only track buses and person:
+_Find which classes YOLO is tracking depending on the weights you are running. For example [yolov3 trained on COCO dataset classes](https://github.com/AlexeyAB/darknet/blob/master/data/coco.names)_
+
+Here is a way to only track buses and person:
 
 ```json
 {
@@ -157,7 +157,7 @@ In order to track all the classes (default value), you need to set it to:
 }
 ```
 
-*Extra note: the tracking algorithm might work better by allowing all the classes, in our test we saw that for some classes like Bike/Motorbike, YOLO had a hard time distinguishing them well, and was switching between classes across frames for the same object. By keeping all the detections and ignoring the class switch while tracking we saw that we can avoid losing some objects, this is [discussed here](https://github.com/opendatacam/opendatacam/issues/51#issuecomment-418019606)*
+*Extra note: the tracking algorithm might work better by allowing all the classes, in our test we saw that for some classes like Bike/Motorbike, YOLO had a hard time distinguishing them well, and was switching between classes across frames for the same object. By keeping all the detections classes we saw that we can avoid losing some objects, this is [discussed here](https://github.com/opendatacam/opendatacam/issues/51#issuecomment-418019606)*
 
 ### Display custom classes
 
@@ -260,31 +260,75 @@ _NOTE: If you draw more line than COUNTER_COLORS defined, the lines will be blac
 
 ### Advanced settings
 
-#### VIDEO_INPUTS_PARAMS:
+#### Video input
 
-Todo document how to change the webcam resolution, how to change the gstreamer pipeline, how to run from an IP cam.
+Opendatacam is capable to take in input several video streams: pre-recorded file, usbcam, raspberry cam, remote IP cam etc etc..
 
-TODO general explanation of 
+This is configurable via the `VIDEO_INPUT` ans `VIDEO_INPUTS_PARAMS` settings.
 
-The `VIDEO_INPUTS_PARAMS` entry selected in the `VIDEO_INPUT` 
+```json
+"VIDEO_INPUTS_PARAMS": {
+  "file": "opendatacam_videos/demo.mp4",
+  "usbcam": "v4l2src device=/dev/video0 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink",
+  "raspberrycam_docker": "v4l2src device=/dev/video2 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink",
+  "raspberrycam_no_docker": "nvarguscamerasrc ! video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12 ! nvvidconv ! video/x-raw, format=BGRx, width=640, height=360 ! videoconvert ! video/x-raw, format=BGR ! appsink",
+  "remote_cam": "YOUR IP CAM STREAM (can be .m3u8, MJPEG ...), anything supported by opencv"
+}
+```
+
+With the default installation, Opendatacam will have `VIDEO_INPUT` set to `usbcam`. See below how to change this
+
+_Technical note:_
+
+Behind the hoods, this config input becomes [the input of the darknet](https://github.com/opendatacam/opendatacam/blob/master/server/processes/YOLO.js#L32) process which then get [fed into OpenCV VideoCapture()](https://github.com/AlexeyAB/darknet/blob/master/src/image_opencv.cpp#L577).
+
+As we compile OpenCV with Gstreamer support when installing Opendatacam, we can use any [Gstreamer pipeline](http://www.einarsundgren.se/gstreamer-basic-real-time-streaming-tutorial/) as input + other VideoCapture supported format like video files / IP cam streams. 
+
+You can add your own gstreamer pipeline for your needs by adding an entry to `"VIDEO_INPUTS_PARAMS"`
 
 ##### Run from a file
 
-See 
+See [Run opendatacam on a video file](#run-opendatacam-on-a-video-file)
 
 ##### Run from IP cam
 
-TODO
+1. Change `VIDEO_INPUT` to `"file"`
+
+```json
+"VIDEO_INPUT": "remote_cam"
+```
+
+2. Change `VIDEO_INPUTS_PARAMS > remote_cam` to your IP cam stream, for example
+
+```json
+"VIDEO_INPUTS_PARAMS": {
+  "remote_cam": "http://162.143.172.100:8081/-wvhttp-01-/GetOneShot?image_size=640x480&frame_count=1000000000"
+}
+```
+
+NB: this IP cam won't work, it is just an example. Only use IP Cam you own yourself, see CODE OF CONDUCT (TODO @b-g)
 
 ##### Run from Raspberry Pi cam (Jetson nano)
 
-TODO link to jetson nano doc
+See [dedicated documention for Jetson nano](jetson/JETSON_NANO.md)
 
 ##### Change webcam resolution
 
-TODO
+As explained on the Technical note above, you can modify the Gstreamer pipeline as you like, by default we use a 640x360 feed from the webcam.
 
-#### NEURAL_NETWORK_PARAMS
+If you want to change this, you need to:
+
+- First know which resolution your webcam supports, run `v4l2-ctl --list-formats-ext`.
+
+- Let's say we will use `1280x720`
+
+- Change the Gstreamer pipeline accordingly: `"v4l2src device=/dev/video0 ! video/x-raw, framerate=30/1, width=1280, height=720 ! videoconvert ! appsink"`
+
+- Restart Opendatacam
+
+_NOTE: Increasing webcam resolution won't increase Opendatacam accuracy, the input of the neural network is 400x400 max, and it might cause the UI to have logs as the MJPEG stream becomes very slow for higher resolution_
+
+#### Use Custom Neural Network weights
 
 In order to use other weights like [yolov3-openimages](https://pjreddie.com/media/files/yolov3-openimages.weights), [yolov3-spp](https://pjreddie.com/media/files/yolov3-spp.weights), custom trained ones or  ["third party" weights](https://giou.stanford.edu/)
 you need to [install Opendatacam without Docker](USE_WITHOUT_DOCKER.md) _(we will enable this for docker install at some point [#97](https://github.com/opendatacam/opendatacam/issues/97))_.
@@ -311,13 +355,13 @@ For example, if you want to use [yolov3-openimages](https://pjreddie.com/media/f
 - Restart the node.js app (not need to recompile)
 
 
-#### MONGODB_URL:
+#### MongoDB URL
 
-If you want to persist the data on a remote mongodb instance, you can change this variable.
+If you want to persist the data on a remote mongodb instance, you can change the setting `MONGODB_URL` .
 
 By default the Mongodb will be persisted in the `/data/db` directory of your host machine
 
-#### TRACKER_ACCURACY_DISPLAY:
+#### Tracker accuracy display
 
 The tracker accuracy layer shows a heatmap like this one:
 
