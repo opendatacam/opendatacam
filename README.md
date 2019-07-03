@@ -54,7 +54,7 @@ If your jetson does not have jetpack 4.2 *(CUDA 10, TensorRT 5, cuDNN 7.3, Ubunt
 
 Nvidia-docker v2.0 is only compatible with GNU/Linux x86_64 with kernel version > 3.10. 
 
-[Follow this guide to install nvidia-docker v2.0 on your machine](https://github.com/opendatacam/opendatacam/blob/master/documentation/jetson/FLASH_JETSON.md)
+[Follow this guide to install nvidia-docker v2.0 on your machine](documentation/nvidia-docker/INSTALL_NVIDIADOCKER.md)
 
 ### 2. Install and start Opendatacam (3 min 🚀):
 
@@ -106,7 +106,7 @@ Open your browser at http://IPOFJETSON:8080 .
 
 In order to operate opendatacam from your phone / tablet / computer.
 
-See [Make machine accessible via WIFI](https://github.com/opendatacam/opendatacam/blob/master/documentation/WIFI_HOTSPOT_SETUP.md)
+See [Make jetson device / machine accessible via WIFI](documentation/WIFI_HOTSPOT_SETUP.md)
 
 ### 5. Customize Opendatacam ️️⚙️
 
@@ -118,15 +118,15 @@ We offer several customization options:
 
 - **Change display classes:** We default to mobility classes (car, bus, person...), but you can change this
 
-[Learn how to customize Opendatacam](https://github.com/opendatacam/opendatacam/blob/master/documentation/CONFIG.md)
+[Learn how to customize Opendatacam](documentation/CONFIG.md)
 
 ### 6. Docker playbook ️📚
 
 **Docker specificities on jetson**
 
-Docker doesn't support GPU usage on Jetson (see [issue #214 on docker-nvidia official repo](https://github.com/NVIDIA/nvidia-docker/issues/214))
+Docker doesn't support GPU usage on Jetson (see [issue #214 on docker-nvidia official repo](https://github.com/NVIDIA/nvidia-docker/issues/214) , support should be landing around Q3-Q4 2019) 
 
-We need to give to the docker container access to the host platform GPU. We do so by mounting several volumes with [this script](https://github.com/opendatacam/opendatacam/blob/master/docker/run-jetson/run-docker.sh).
+Meanwhile we need to give to the docker container access to the host platform GPU. We do so by mounting several volumes with [this script](https://github.com/opendatacam/opendatacam/blob/master/docker/run-jetson/run-docker.sh).
 
 That is why you need to use our install script to install a container.
 
@@ -173,32 +173,39 @@ API Documentation: [https://opendatacam.github.io/opendatacam/apidoc/](https://o
 
 ## ⁉️ Troubleshooting
 
-[Common errors with answers](https://github.com/opendatacam/opendatacam/blob/master/documentation/TROUBLESHOOTING.md)
+[Common errors with answers](documentation/TROUBLESHOOTING.md)
 
 ## 🎛 Advanced uses
 
 ### How to use opendatacam without docker
 
-Read [How to use opendatacam without docker](https://github.com/opendatacam/opendatacam/blob/master/documentation/USE_WITHOUT_DOCKER.md)
+Read [How to use opendatacam without docker](documentation/USE_WITHOUT_DOCKER.md)
 
 ### How to create / update the docker image
 
+We host our docker images on [Dockerhub](https://cloud.docker.com/repository/docker/opendatacam/opendatacam)
+
 *For jetson devices:*
 
-See [How to create / update a docker image for a jetson device](https://github.com/opendatacam/opendatacam/blob/master/documentation/jetson/CREATE_DOCKER_IMAGE.md)
+See [How to create / update a docker image for a jetson device](documentation/jetson/CREATE_DOCKER_IMAGE.md)
 
 *For nvidia-docker machine:*
 
-See [How to create / update a docker image for a nvidia-docker machine](https://github.com/opendatacam/opendatacam/blob/master/documentation/nvidia-docker/CREATE_NVIDIADOCKER_IMAGE.md)
+See [How to create / update a docker image for a nvidia-docker machine](documentation/nvidia-docker/CREATE_NVIDIADOCKER_IMAGE.md)
 
 
 ## 🛠 Development notes
 
-See [Development notes](https://github.com/opendatacam/opendatacam/blob/master/documentation/DEVELOPMENT_NOTES.md)
+See [Development notes](documentation/DEVELOPMENT_NOTES.md)
 
 Technical architecture overview:
 
 ![Technical architecture](https://user-images.githubusercontent.com/533590/60489282-3f2d1700-9ca4-11e9-932c-19bf84e04f9a.png)
 
+## 💌 Acknowledgments
 
+- Original darknet + YOLOv3 @pjreddie  : https://pjreddie.com/darknet/
+- Darknet fork by @alexeyab : https://github.com/alexeyab/darknet
+- IOU / V-IOU Tracker by @bochinski : https://github.com/bochinski/iou-tracker/
+- Next.js by @zeit : https://github.com/zeit/next.js
 

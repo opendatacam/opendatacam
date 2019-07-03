@@ -10,9 +10,23 @@ We offer several customization options:
 
 ### Table of content
 
-TODO generate
+* [Table of content](#table-of-content)
+  * [General](#general)
+  * [Run opendatacam on a video file instead of the webcam:](#run-opendatacam-on-a-video-file-instead-of-the-webcam-)
+  * [Change neural network weights](#change-neural-network-weights)
+  * [Track only specific classes](#track-only-specific-classes)
+  * [Display custom classes](#display-custom-classes)
+  * [Customize pathfinder colors](#customize-pathfinder-colors)
+  * [Customize Counter colors](#customize-counter-colors)
+  * [Advanced settings](#advanced-settings)
+    + [VIDEO_INPUTS_PARAMS:](#video-inputs-params-)
+  * [MONGODB_URL:](#mongodb-url-)
+  * [TRACKER_ACCURACY_DISPLAY:](#tracker-accuracy-display-)
+  * [Limitation with docker setup](#limitation-with-docker-setup)
 
 ### General
+
+**For a standard install of Opendatacam:**
 
 All settings are in the [`config.json`](https://github.com/opendatacam/opendatacam/blob/master/config.json) file that you will find in the same directory you run the install script.
 
@@ -26,17 +40,19 @@ sudo docker container list
 sudo docker restart <containerID>
 ```
 
-#### For a non-docker install of opendatacam:
+**For a non-docker install of Opendatacam:**
 
 You need to modify the config.json file located the `opendatacam` folder.
 
 ```
-<PATH_TO_LAB_OPENDATACAM>/config.json
+<PATH_TO_OPENDATACAM>/config.json
 ```
 
 Once modified,  you just need to restart the node.js app (`npm run start`), no need to re-build it, it loads the config file at runtime.
 
-### Run opendatacam on a video file instead of the webcam:
+### Run opendatacam on a video file
+
+_NB: [we are working on a better support](https://github.com/opendatacam/opendatacam/issues/88) of pre-recorded videos_
 
 By default, opendatacam will try to pickup the usb webcam connected to your jetson. The settings is `VIDEO_INPUT` in the `config.json` file.
 
@@ -68,7 +84,9 @@ Once you do have the video file inside the `opendatacam_videos` folder, you can 
 
 Once `config.json` is saved, you only need to restart the docker container or restart your jetson and next time you access opendatacam, it will run on this file.
 
-#### For a non-docker install of opendatacam:
+[Learn more about the others video inputs available (IP camera, Rasberry Pi in the Advanced use section)](#video_inputs_params)
+
+**For a non-docker install of Opendatacam:**
 
 Follow the same instruction but note the path you will put in `VIDEO_INPUTS_PARAMS > file` if relative to your `darknet` directory. 
 
@@ -86,21 +104,21 @@ You can change YOLO weights files depending on what objects you want to track an
 
 Lighters weights file results in speed improvements, but loss in accuracy, for example `yolov3` run at ~1-2 FPS on Jetson Nano, ~5-6 FPS on Jetson TX2, and ~22 FPS on Jetson Xavier, and `yolov2-voc` runs at ~4-5 FPS on Jetson Nano, ~11-12 FPS on Jetson TX2, and realtime on Jetson Xavier.
 
-In order to have good enough tracking accuracy for cars and mobility objects, from our experiments we found out that the sweet spot was to be able to run YOLO at leat at 8-9 FPS.
+In order to have good enough tracking accuracy for cars and mobility objects, from our experiments we found out that the sweet spot was to be able to run YOLO at least at 8-9 FPS.
 
 For a standard install of opendatacam, these are the default weights we pick depending on your hardware:
 
-- Jetson nano: `yolov3-tiny`
-- Jetson tx2: `yolov2-voc` _([yolov3-voc isn't available openly](https://github.com/AlexeyAB/darknet/issues/2557#issuecomment-473022989), if you trained it and want to share it, please ping us)_
-- Jetson xavier: `yolov3`
+- Jetson Nano: `yolov3-tiny`
+- Jetson TX2: `yolov2-voc` _([yolov3-voc isn't available openly](https://github.com/AlexeyAB/darknet/issues/2557#issuecomment-473022989), if you trained it and want to share it, please ping us)_
+- Jetson Xavier: `yolov3`
 
-But we enable you to change those settings, here is how to do it.
+We allow you to change those settings, here is how to do it:
 
-#### For a docker (standard install) of opendatacam:
+**For a docker (standard install) of Opendatacam:**
 
 We ship inside the docker container those three YOLO weights: [yolov3-tiny](https://pjreddie.com/media/files/yolov3-tiny.weights), [yolov2-voc](https://pjreddie.com/media/files/yolo-voc.weights), [yolov3](https://pjreddie.com/media/files/yolov3.weights)
 
-In order to switch to another one, you just need to change the setting `NEURAL_NETWORK` in `config.json`.
+In order to switch to another one, you need to change the setting `NEURAL_NETWORK` in `config.json`.
 
 ```json
 {
@@ -108,19 +126,12 @@ In order to switch to another one, you just need to change the setting `NEURAL_N
 }
 ```
 
-The config available are: `"yolov3"` , `"yolov3-tiny"`, `"yolov2-voc"`.
+The settings available are: `"yolov3"` , `"yolov3-tiny"`, `"yolov2-voc"`, if you want to run from others weights like [yolov3-openimages](https://pjreddie.com/media/files/yolov3-openimages.weights), [yolov3-spp](https://pjreddie.com/media/files/yolov3-spp.weights).. or custom trained ones, please refer to the [advanced use section below](#neural_network_params).
 
-_TODO @tdurand improve this to enable people to use other weights with a Docker installed opendatacam ( other pre-trainer weights like [yolov3-openimages](https://pjreddie.com/media/files/yolov3-openimages.weights), [yolov3-spp](https://pjreddie.com/media/files/yolov3-spp.weights).. or custom trained ones)_
+**For a non-docker install of opendatacam:**
 
-_Or even "non-official" weights : https://github.com/opendatacam/opendatacam/issues/86_
+The settings are the same as with the docker install, but you can also run from other weights file, [see advanced use section below](#neural_network_params)
 
-#### For a non-docker install of opendatacam:
-
-The settings are the same as with the docker install, but you can also run from other weights file. ([yolov3-openimages](https://pjreddie.com/media/files/yolov3-openimages.weights), [yolov3-spp](https://pjreddie.com/media/files/yolov3-spp.weights)... or custom trained ones)
-
-- copy the weights file inside the `/darknet` folder
-- customize the `NEURAL_NETWORK_PARAMS` settings if you want to add some other weights that isn't one of the 3 pre-defined ones.
-- change the `NEURAL_NETWORK` param to the key you defined in `NEURAL_NETWORK_PARAMS`
 
 ### Track only specific classes
 
@@ -253,12 +264,60 @@ _NOTE: If you draw more line than COUNTER_COLORS defined, the lines will be blac
 
 Todo document how to change the webcam resolution, how to change the gstreamer pipeline, how to run from an IP cam.
 
+TODO general explanation of 
 
-### MONGODB_URL:
+The `VIDEO_INPUTS_PARAMS` entry selected in the `VIDEO_INPUT` 
+
+##### Run from a file
+
+See 
+
+##### Run from IP cam
+
+TODO
+
+##### Run from Raspberry Pi cam (Jetson nano)
+
+TODO link to jetson nano doc
+
+##### Change webcam resolution
+
+TODO
+
+#### NEURAL_NETWORK_PARAMS
+
+In order to use other weights like [yolov3-openimages](https://pjreddie.com/media/files/yolov3-openimages.weights), [yolov3-spp](https://pjreddie.com/media/files/yolov3-spp.weights), custom trained ones or  ["third party" weights](https://giou.stanford.edu/)
+you need to [install Opendatacam without Docker](USE_WITHOUT_DOCKER.md) _(we will enable this for docker install at some point [#97](https://github.com/opendatacam/opendatacam/issues/97))_.
+
+For example, if you want to use [yolov3-openimages](https://pjreddie.com/media/files/yolov3-openimages.weights), you need to:
+
+- copy `yolov3-openimages.weights` the weights file in `/darknet/yolov3-openimages.weights`
+- add an entry to the `NEURAL_NETWORK_PARAMS` setting in `config.json`.
+
+```json
+"yolov3-openimages": {
+  "data": "cfg/coco.data",
+  "cfg": "cfg/yolov3.cfg",
+  "weights": "yolov3-openimages.weights"
+}
+```
+
+- change the `NEURAL_NETWORK` param to the key you defined in `NEURAL_NETWORK_PARAMS` 
+
+```json
+"NEURAL_NETWORK": "yolov3-openimages"
+```
+
+- Restart the node.js app (not need to recompile)
+
+
+#### MONGODB_URL:
 
 If you want to persist the data on a remote mongodb instance, you can change this variable.
 
-### TRACKER_ACCURACY_DISPLAY:
+By default the Mongodb will be persisted in the `/data/db` directory of your host machine
+
+#### TRACKER_ACCURACY_DISPLAY:
 
 The tracker accuracy layer shows a heatmap like this one:
 
@@ -314,6 +373,6 @@ For example, if you change the gradient with:
 
 ### Limitation with docker setup
 
-- In order to use the raspberrycam with the Jetson nano, follow this guide: https://github.com/opendatacam/opendatacam/blob/master/documentation/jetson/JETSON_NANO.md#run-opendatacam-container-with-raspberrypi-cam
+- In order to use the raspberrycam with the Jetson nano [follow this guide](documentation/jetson/JETSON_NANO.md#run-opendatacam-container-with-raspberrypi-cam)
 
 

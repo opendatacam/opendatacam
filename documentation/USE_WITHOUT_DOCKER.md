@@ -260,7 +260,7 @@ pwd .
 }
 ```
 
-Learn more in the [config documentation](https://github.com/opendatacam/opendatacam/blob/master/documentation/CONFIG.md) page.
+Learn more in the [config documentation](CONFIG.md) page.
 
 - Install **Opendatacam**
 

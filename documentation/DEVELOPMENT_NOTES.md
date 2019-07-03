@@ -18,21 +18,17 @@ npm run dev
 
 If you have an error while doing `npm install` it is probably a problem with node-gyp, you need to install additional dependencies depending on your platform: https://github.com/nodejs/node-gyp#on-unix
 
-### List all cams
+### Release checklist
 
-```bash
-v4l2-ctl --list-devices
-```
-
-### Stuff to do with releasing a new version
-
-- Make sure that config.json has the TO_REPLACE_VIDEO_INPUT, TO_REPLACE_VIDEO_INPUT values
+- Generate up to date api documentation `npm run generateapidoc`
+- Make sure that config.json has the TO_REPLACE_VIDEO_INPUT, TO_REPLACE_VIDEO_INPUT values that will be replaced by sed on installation
+- Set correct version in config.json > OPENDATACAM_VERSION
 - Set correct version in package.json
 - Set correct version in README "Install and start Opendatacam" wget install script
 - Set correct VERSION in /docker/run-jetson/install-opendatacam.sh
+- Search and replace OLD_VERSION with NEW_VERSION in all documentation
 - Tag version on github
-- Compile docker image on 3 platform ( nano, tx2, xavier ) , upload them to dockerhub and tag them properly
-
+- Compile docker image on 4 platforms ( nano, tx2, xavier, nvidia-docker ) , upload them to dockerhub and tag them properly
 
 ### Tags commands
 
@@ -53,6 +49,15 @@ git tag v2.0.0-beta.4
 git push --tags
 ```
 
+### Markdown table of content generator
+
+https://ecotrust-canada.github.io/markdown-toc/
+
+### List all cams
+
+```bash
+v4l2-ctl --list-devices
+```
 
 ### Technical architecture
 
