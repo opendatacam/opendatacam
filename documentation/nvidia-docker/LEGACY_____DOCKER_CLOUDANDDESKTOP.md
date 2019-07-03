@@ -35,11 +35,11 @@ __Our image is built for CUDA_ARCH_BIN=6.1__
 
 ```bash
 # After installing docker-nvidia
-sudo docker run --runtime=nvidia -p 8080:8080 -p 8090:8090 -p 8070:8070 -v /data/db:/data/db -d --restart unless-stopped opendatacam/opendatacam:v2.0.0-beta.3-dockernvidia
+sudo docker run --runtime=nvidia -p 8080:8080 -p 8090:8090 -p 8070:8070 -v /data/db:/data/db -d --restart unless-stopped opendatacam/opendatacam:v2.0.0-beta.4-dockernvidia
 # Open browser at http://localhost:8080
 
 # Run with custom config
-sudo docker run --runtime=nvidia -v $(pwd)/config.json:/var/local/opendatacam/config.json -p 8080:8080 -p 8090:8090 -p 8070:8070 -v /data/db:/data/db --rm -it opendatacam/opendatacam:v2.0.0-beta.3-dockernvidia
+sudo docker run --runtime=nvidia -v $(pwd)/config.json:/var/local/opendatacam/config.json -p 8080:8080 -p 8090:8090 -p 8070:8070 -v /data/db:/data/db --rm -it opendatacam/opendatacam:v2.0.0-beta.4-dockernvidia
 ```
 
 ### 2. Build the image
@@ -70,13 +70,13 @@ sudo docker images
 # opendatacam             latest    023ab91c6291     3 minutes ago     1.975 GB
 
 # Tag your image
-sudo docker tag 7ef920844953 opendatacam/opendatacam:v2.0.0-beta.3-dockernvidia
+sudo docker tag 7ef920844953 opendatacam/opendatacam:v2.0.0-beta.4-dockernvidia
 
 # Untag image (if you made a tipo)
-sudo docker rmi opendatacam/opendatacam:v2.0.0-beta.3-dockernvidia
+sudo docker rmi opendatacam/opendatacam:v2.0.0-beta.4-dockernvidia
 
 # Push image
-sudo docker push opendatacam/opendatacam:v2.0.0-beta.3-dockernvidia
+sudo docker push opendatacam/opendatacam:v2.0.0-beta.4-dockernvidia
 ```
 
 ### Improvements to make : docker image smaller 

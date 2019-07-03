@@ -41,13 +41,13 @@ v4l2-ctl --list-devices
 git tag --list
 
 # Remove tag on remote
-git push origin :v2.0.0-beta.3
+git push origin :v2.0.0-beta.4
 
 # Delete local tag
-git tag --delete v2.0.0-beta.3
+git tag --delete v2.0.0-beta.4
 
 # Tag latest commit
-git tag v2.0.0-beta.3
+git tag v2.0.0-beta.4
 
 # Push tag
 git push --tags

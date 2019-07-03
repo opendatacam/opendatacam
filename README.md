@@ -14,7 +14,7 @@ It is very alpha and we do not provide any guarantee that this will work for you
 
 ## Table of content
 
-- [Open data cam 2.0.0-beta.2](#open-data-cam-200-beta2)
+- [Open data cam 2.0.0-beta.4](#open-data-cam-200-beta2)
   * [💻 Hardware pre-requisite](#-hardware-pre-requisite)
   * [🎬 Get Started, quick setup](#-get-started-quick-setup)
     + [1. Flash Jetson board to jetpack 4.2+ ⚡️ ️(if not installed)️:](#1-flash-jetson-board-to-jetpack-42-️-️if-not-installed️)
@@ -168,7 +168,7 @@ sudo docker system prune -a
 
 In order to solve use cases that aren't taken care by our opendatacam base app, you might be able to build on top of our API instead of forking the project.
 
-v2 API doc (TODO depoy on the github page of the project ?? ): [https://apidoc-dzchmakjlf.now.sh](https://apidoc-dzchmakjlf.now.sh)
+API Documentation: [https://opendatacam.github.io/opendatacam/apidoc/](https://opendatacam.github.io/opendatacam/apidoc/)
 
 
 ## ⁉️ Troubleshooting
