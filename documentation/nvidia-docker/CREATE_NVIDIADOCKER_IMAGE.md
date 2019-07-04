@@ -46,13 +46,13 @@ sudo docker images
 # opendatacam             latest    023ab91c6291     3 minutes ago     1.975 GB
 
 # Tag your image
-sudo docker tag 7ef920844953 opendatacam/opendatacam:v2.0.0-rc.1-nvidiadocker_cuda_archbin_6.1
+sudo docker tag 7ef920844953 opendatacam/opendatacam:v2.0.0-rc.1-nvidiadocker_cuda_archbin_6_1
 
 # Untag image (if you made a tipo)
-sudo docker rmi opendatacam/opendatacam:v2.0.0-rc.1-nvidiadocker_cuda_archbin_6.1
+sudo docker rmi opendatacam/opendatacam:v2.0.0-rc.1-nvidiadocker_cuda_archbin_6_1
 
 # Push image
-sudo docker push opendatacam/opendatacam:v2.0.0-rc.1-nvidiadocker_cuda_archbin_6.1
+sudo docker push opendatacam/opendatacam:v2.0.0-rc.1-nvidiadocker_cuda_archbin_6_1
 ```
 
 ### NOTE: Known Improvements to make

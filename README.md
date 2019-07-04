@@ -85,7 +85,7 @@ sudo ./install-opendatacam.sh --platform tx2
 # TODO
 
 # Install command for nvidia-docker
-sudo ./install-opendatacam.sh --platform nvidiadocker_cuda_archbin_6.1
+sudo ./install-opendatacam.sh --platform nvidiadocker_cuda_archbin_6_1
 ```
 
 This command will download and start a docker container on the machine. After it finishes the docker container starts a webserver on port 8080.
