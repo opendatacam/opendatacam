@@ -5,7 +5,7 @@ set -e
 
 # Each opendatacam release should set the correct version here and tag appropriatly on github
 VERSION=v2.0.0-rc.1
-# PLATFORM in ["nano","xavier","tx2","nvidiadocker-cuda-archbin-6.1"]
+# PLATFORM in ["nano","xavier","tx2","nvidiadocker_cuda_archbin_6.1"]
 PLATFORM=undefined
 VIDEO_INPUT=undefined
 
@@ -13,12 +13,12 @@ VIDEO_INPUT=undefined
 DEFAUT_VIDEO_INPUT_nano=usbcam
 DEFAUT_VIDEO_INPUT_tx2=usbcam
 DEFAUT_VIDEO_INPUT_xavier=usbcam
-DEFAUT_VIDEO_INPUT_nvidiadocker-cuda-archbin-6.1=file
+DEFAUT_VIDEO_INPUT_nvidiadocker_cuda_archbin_6.1=file
 
 DEFAUT_NEURAL_NETWORK_nano=yolov3-tiny
 DEFAUT_NEURAL_NETWORK_tx2=yolov2-voc
 DEFAUT_NEURAL_NETWORK_xavier=yolov3
-DEFAUT_NEURAL_NETWORK_nvidiadocker-cuda-archbin-6.1=yolov3
+DEFAUT_NEURAL_NETWORK_nvidiadocker_cuda_archbin_6.1=yolov3
 
 echo "Installing opendatacam docker image"
 
@@ -60,7 +60,7 @@ else
       
       echo "Download run script for docker ..."
       # Get the run-docker script
-      if [[ "$PLATFORM" != "nvidiadocker-cuda-archbin-6.1" ]]; then
+      if [[ "$PLATFORM" != "nvidiadocker_cuda_archbin_6.1" ]]; then
         wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/$VERSION/docker/run-jetson/run-docker.sh
         # Chmod to give exec permissions
         chmod 777 run-docker.sh
@@ -98,7 +98,7 @@ else
 
       echo "Download, install and run opendatacam docker container"
       
-      if [[ "$PLATFORM" != "nvidiadocker-cuda-archbin-6.1" ]]; then
+      if [[ "$PLATFORM" != "nvidiadocker_cuda_archbin_6.1" ]]; then
         # Pull, install and run opendatacam container when docker starts (on boot with --restart unless-stopped, -d is for detached mode)
         sudo ./run-docker.sh run -d --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM
       else
