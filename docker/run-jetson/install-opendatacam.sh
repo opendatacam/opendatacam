@@ -5,7 +5,7 @@ set -e
 
 # Each opendatacam release should set the correct version here and tag appropriatly on github
 VERSION=v2.0.0-beta.4
-# PLATFORM in ["nano","xavier","tx2","dockernvidia"]
+# PLATFORM in ["nano","xavier","tx2","nvidiadocker"]
 PLATFORM=undefined
 VIDEO_INPUT=undefined
 

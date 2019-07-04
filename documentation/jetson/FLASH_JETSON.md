@@ -6,6 +6,25 @@
 - Video tutorial: https://www.youtube.com/watch?v=s1QDsa6SzuQ 
 - Article: https://www.jetsonhacks.com/2019/06/04/nvidia-sdk-manager-for-jetson-jetpack-4-2/
 
+#### How to find out my Jetpack version
+
+You can check your Jetpack version with this tool: [https://github.com/rbonghi/jetson_stats](https://github.com/rbonghi/jetson_stats)
+
+```bash
+# Install Pip package manager
+sudo apt install python-pip
+# Install jetson-stats
+sudo -H pip install jetson-stats
+# Print info about jetson
+jetson-release
+
+# Output should be something like:
+# - NVIDIA Jetson TX2
+#  * Jetpack 4.2 [L4T 32.1.0]
+#  * CUDA GPU architecture 6.2
+#  * NV Power Mode: MAXN - Type: 0
+```
+
 #### Jetson Nano
 
 Directly flash the microSD card with jetpack 4.2 , follow this guide:

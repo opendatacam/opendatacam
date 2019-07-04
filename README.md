@@ -38,27 +38,29 @@ It is very alpha and we do not provide any guarantee that this will work for you
 
 ## 💻 Hardware pre-requisite
 
-- Nvidia Jetson Nano / TX2 / Xavier or any GNU/Linux x86_64 machine with a CUDA compatible GPU compatible with [nvidia-docker v2.0](https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(version-2.0)#prerequisites) (in the cloud or locally)
+- Nvidia Jetson Nano / TX2 / Xavier or any GNU/Linux x86_64 machine with a CUDA compatible GPU with [nvidia-docker v2.0](https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(version-2.0)#prerequisites) (in the cloud or locally)
 - Webcam Logitech C222 (or any usb webcam compatible with Ubuntu 18.04) / Rasberry Pi cam for Jetson nano / Video file / IP camera
 - A smartphone / tablet / laptop that you will use to operate the system
 
 ## 🎬 Get Started, quick setup
 
-### 1. 📦 Software pre-requisite :
+### 1. Software pre-requisite 📦:
 
-#### Flash Jetson board to jetpack 4.2 ⚡️ ️(if not installed)️:
+#### For jetson: Flash Jetson board to jetpack 4.2 ⚡️ ️(if not installed)️:
 
-*If you are not running on a jetson, ignore this section.*
+*Ignore this if you are not running on a jetson*
+
+[See How to find out your jetpack version](documentation/jetson/FLASH_JETSON.md#How-to-find-out-my-Jetpack-version)
 
 If your jetson does not have jetpack 4.2 *(CUDA 10, TensorRT 5, cuDNN 7.3, Ubuntu 18.04)*
 
 [Follow this guide to flash your jetson](documentation/jetson/FLASH_JETSON.md)
 
-#### Install nvidia-docker v2.0 🔧:
+#### For non-jetson: Install nvidia-docker v2.0 🔧:
 
-*If you are running on a jetson, ignore this section, nvidia-docker isn't necessary with jetpack 4.2*
+*Ignore this if you are running on a jetson, nvidia-docker isn't necessary with jetpack 4.2*
 
-Nvidia-docker v2.0 is only compatible with GNU/Linux x86_64 with kernel version > 3.10. 
+Nvidia-docker v2.0 is only compatible with GNU/Linux x86_64 machine with a [CUDA compatible GPU](https://developer.nvidia.com/cuda-gpus)
 
 [Follow this guide to install nvidia-docker v2.0 on your machine](documentation/nvidia-docker/INSTALL_NVIDIADOCKER.md)
 
@@ -130,7 +132,7 @@ We offer several customization options:
 
 **Docker specificities on jetson**
 
-Docker doesn't support GPU usage on Jetson (see [issue #214 on docker-nvidia official repo](https://github.com/NVIDIA/nvidia-docker/issues/214) , support should be landing around Q3-Q4 2019) 
+Docker doesn't support GPU usage on Jetson _(see [issue #214 on docker-nvidia official repo](https://github.com/NVIDIA/nvidia-docker/issues/214) , support should be landing around Q3-Q4 2019)_
 
 Meanwhile we need to give to the docker container access to the host platform GPU. We do so by mounting several volumes with [this script](https://github.com/opendatacam/opendatacam/blob/master/docker/run-jetson/run-docker.sh).
 
