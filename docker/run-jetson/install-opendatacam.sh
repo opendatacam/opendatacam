@@ -5,7 +5,7 @@ set -e
 
 # Each opendatacam release should set the correct version here and tag appropriatly on github
 VERSION=v2.0.0-rc.1
-# PLATFORM in ["nano","xavier","tx2","nvidiadocker"]
+# PLATFORM in ["nano","xavier","tx2","nvidiadocker-cuda-archbin-6.1"]
 PLATFORM=undefined
 VIDEO_INPUT=undefined
 
@@ -13,10 +13,12 @@ VIDEO_INPUT=undefined
 DEFAUT_VIDEO_INPUT_nano=usbcam
 DEFAUT_VIDEO_INPUT_tx2=usbcam
 DEFAUT_VIDEO_INPUT_xavier=usbcam
+DEFAUT_VIDEO_INPUT_nvidiadocker-cuda-archbin-6.1=file
 
 DEFAUT_NEURAL_NETWORK_nano=yolov3-tiny
 DEFAUT_NEURAL_NETWORK_tx2=yolov2-voc
 DEFAUT_NEURAL_NETWORK_xavier=yolov3
+DEFAUT_NEURAL_NETWORK_nvidiadocker-cuda-archbin-6.1=yolov3
 
 echo "Installing opendatacam docker image"
 
@@ -55,13 +57,19 @@ else
       PLATFORM=$2
       # TODO verify if PLATFORM is oneOf(nano, xavier, tx2)
       echo "Installing opendatacam $VERSION for platform: $2 ..."
+      
       echo "Download run script for docker ..."
       # Get the run-docker script
-      wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/$VERSION/docker/run-jetson/run-docker.sh
-
-      # Chmod to give exec permissions
-      chmod 777 run-docker.sh
-
+      if [[ "$PLATFORM" != "nvidiadocker-cuda-archbin-6.1" ]]; then
+        wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/$VERSION/docker/run-jetson/run-docker.sh
+        # Chmod to give exec permissions
+        chmod 777 run-docker.sh
+      else
+        wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/$VERSION/docker/run-nvidia-docker/run-nvidiadocker.sh
+        # Chmod to give exec permissions
+        chmod 777 run-nvidiadocker.sh
+      fi
+      
       # Get the config file
       echo "Download config file ..."
       wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/$VERSION/config.json
@@ -89,8 +97,14 @@ else
       sed -i'.bak' -e "s/TO_REPLACE_NEURAL_NETWORK/$NEURAL_NETWORK/g" config.json
 
       echo "Download, install and run opendatacam docker container"
-      # Pull, install and run opendatacam container when docker starts (on boot with --restart unless-stopped, -d is for detached mode)
-      sudo ./run-docker.sh run -d --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM
+      
+      if [[ "$PLATFORM" != "nvidiadocker-cuda-archbin-6.1" ]]; then
+        # Pull, install and run opendatacam container when docker starts (on boot with --restart unless-stopped, -d is for detached mode)
+        sudo ./run-docker.sh run -d --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM
+      else
+        # Pull, install and run opendatacam container when docker starts (on boot with --restart unless-stopped, -d is for detached mode)
+        sudo ./run-nvidiadocker.sh run -d --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM
+      fi
 
       # Message that docker container has been started and opendatacam will be available shorty on <IP>
       echo "Opendatacam docker container installed successfully, it might take up to 1-2 min to start the node app and the webserver"
