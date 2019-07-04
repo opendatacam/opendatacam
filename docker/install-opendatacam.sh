@@ -96,6 +96,11 @@ else
       sed -i'.bak' -e "s/TO_REPLACE_VIDEO_INPUT/$VIDEO_INPUT/g" config.json
       sed -i'.bak' -e "s/TO_REPLACE_NEURAL_NETWORK/$NEURAL_NETWORK/g" config.json
 
+      # For nvidia-docker, darknet path is /var/local/darknet
+      if [[ "$PLATFORM" != "nvidiadocker_cuda_archbin_6_1" ]]; then
+        sed -i -e s+/darknet+/var/local/darknet+ config.json
+      fi
+
       echo "Download, install and run opendatacam docker container"
       
       if [[ "$PLATFORM" != "nvidiadocker_cuda_archbin_6_1" ]]; then
