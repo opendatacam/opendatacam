@@ -66,7 +66,18 @@ Nvidia-docker v2.0 is only compatible with GNU/Linux x86_64 machine with a [CUDA
 
 ### 2. Install and start Opendatacam (3 min 🚀):
 
-Open a terminal or ssh to you machine and run these command (make sure an usb webcam is connected)
+Open a terminal or ssh to you machine and run the following commands depending on your platform
+
+- For Jetson: make sure an usb webcam is connected on `video0`
+
+```bash
+ls /dev/video*
+# Output should be: /dev/video0
+```
+
+_If this isn't the case, run the install script anyway, and after you will need to [modify the config.json](documentation/CONFIG.md) file to select your desired VIDEO_INPUT (file, usbcam, raspberrycam, remote IP cam)_
+
+- For a Nvidiadocker machine: it will run on a demo file
 
 ```bash
 # Download install script
@@ -76,19 +87,16 @@ wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v2.0.0-rc.1/do
 chmod 777 install-opendatacam.sh
 
 # Install command for jetson nano
-# NB: Will run from usbcam /dev/video0 you can change this after install, look 5. Customize Opendatacam
 sudo ./install-opendatacam.sh --platform nano
 
 # Install command for jetson tx2
-# NB: Will run from usbcam /dev/video0 you can change this after install, look 5. Customize Opendatacam
 sudo ./install-opendatacam.sh --platform tx2
 
 # Install command for jetson xavier
-# NB: Will run from usbcam /dev/video0 you can change this after install, look 5. Customize Opendatacam
 # TODO
 
 # Install command for nvidia-docker
-# NB: Will run from demo file, you can change this after install, look 5. Customize Opendatacam
+# NB: Will run from demo file, you can change this after install, see "5. Customize Opendatacam"
 sudo ./install-opendatacam.sh --platform nvidiadocker_cuda_archbin_6_1
 ```
 
@@ -97,8 +105,6 @@ This command will download and start a docker container on the machine. After it
 The docker container is started in auto-restart mode, so if you reboot your machine it will automaticaly start opendatacam on startup. ([Learn more about the specificities of docker on jetson](#6-docker-playbook-))
 
 You can also [use opendatacam without docker](#how-to-run-opendatacam-without-docker)
-
-[TODO UPDATE VIDEO TUTORIAL](https://www.youtube.com/watch?v=NwXrXHHGSgk)
 
 ### 2. bis (optional) Upgrade Opendatacam (from v2.x to another v2.x version):
 
