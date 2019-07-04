@@ -37,13 +37,13 @@ If you have an error while doing `npm install` it is probably a problem with nod
 git tag --list
 
 # Remove tag on remote
-git push origin :v2.0.0-beta.4
+git push origin :v2.0.0-rc.1
 
 # Delete local tag
-git tag --delete v2.0.0-beta.4
+git tag --delete v2.0.0-rc.1
 
 # Tag latest commit
-git tag v2.0.0-beta.4
+git tag v2.0.0-rc.1
 
 # Push tag
 git push --tags
