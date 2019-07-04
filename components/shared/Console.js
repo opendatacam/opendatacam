@@ -29,16 +29,16 @@ class Console extends Component {
         <>
         {this.state.onClient &&
             <ScrollFollow
-                startFollowing={true}
-                render={({ follow, onScroll }) => (
-                    <LazyLog 
-                      url="/console" 
-                      stream 
-                      follow={follow} 
-                      onScroll={onScroll} 
-                      overscanRowCount={300}
-                    />
-                )}
+              startFollowing={true}
+              render={({ follow, onScroll }) => (
+                  <LazyLog 
+                    url="/console" 
+                    stream 
+                    follow={follow} 
+                    onScroll={onScroll} 
+                    overscanRowCount={300}
+                  />
+              )}
             />
         }
         </>

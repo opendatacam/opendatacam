@@ -63,7 +63,7 @@ if(SIMULATION_MODE) {
 
 var stdoutBuffer = "";
 var stdoutInterval = "";
-var bufferLimit = 3000;
+var bufferLimit = 30000;
 var unhook_intercept = intercept(function(text) {
   var stdoutText = text.toString();
   // Hacky way to get the video resolution from YOLO

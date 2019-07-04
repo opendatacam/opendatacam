@@ -11,6 +11,15 @@ class ConsoleView extends Component {
   render () {
     return (
         <div className="console-view bg-default-soft">
+          <div className="flex justify-end pl-5 pt-5 pr-5">
+            <a 
+              className="btn btn-light rounded" 
+              target="_blank"
+              href="/console"
+            >
+              Download logs
+            </a>
+          </div>
           <div className="w-full h-full p-5">
             <Console />
           </div>

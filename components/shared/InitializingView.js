@@ -48,9 +48,21 @@ class InitializingView extends Component {
           </button>
         }
         {this.state.showConsole &&
-          <button className="btn btn-light mt-10 rounded" onClick={() => this.setState({showConsole: false})}>
-            Hide details
-          </button>
+          <div className="mt-10">
+            <a 
+              className="btn btn-light rounded cursor-pointer" 
+              onClick={() => this.setState({showConsole: false})}
+            >
+              Hide details
+            </a>
+            <a 
+              className="ml-2 btn btn-light rounded" 
+              target="_blank"
+              href="/console"
+            >
+              Download logs
+            </a>
+          </div>
         }
         {this.state.showConsole &&
           <div className="console mt-10">
