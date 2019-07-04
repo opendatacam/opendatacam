@@ -15,3 +15,11 @@
     Happens if the opendatacam is installed after a clean flash. Run `$ sudo docker run hello-world` so that there is a container to stop. 
     
 -   If it happens, that the docker service is not active on startup (which means the container is not starting automatically). Run `$ sudo systemctl enable docker` set the docker service active on startup
+
+
+-   ```bash
+    docker: Error response from daemon: OCI runtime create failed: container_linux.go:345
+    ```
+
+    Try restarting the docker service: `sudo service docker restart`
+    
