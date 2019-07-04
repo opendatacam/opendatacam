@@ -42,6 +42,9 @@ It is very alpha and we do not provide any guarantee that this will work for you
 - Webcam Logitech C222 (or any usb webcam compatible with Ubuntu 18.04) / Rasberry Pi cam for Jetson nano / Video file / IP camera
 - A smartphone / tablet / laptop that you will use to operate the system
 
+
+_If you have a Jetson Nano, [please read this specific documentation](documentation/jetson/JETSON_NANO.md)_
+
 ## 🎬 Get Started, quick setup
 
 ### 1. Software pre-requisite 📦:
