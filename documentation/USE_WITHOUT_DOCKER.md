@@ -56,7 +56,7 @@ pkg-config --modversion opencv
 #### Get the source files
 
 ```bash
-#TODO the only change from https://github.com/alexeyab/darknet is : https://github.com/opendatacam/darknet/pull/1/files
+#NB: the only change from https://github.com/alexeyab/darknet is : https://github.com/opendatacam/darknet/pull/1/files
 
 git clone --depth 1 -b opendatacam https://github.com/opendatacam/darknet
 ```

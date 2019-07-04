@@ -40,10 +40,10 @@ wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-tx2-3.4.3/op
 # TODO
 
 # Download the Dockerfile
-wget https://raw.githubusercontent.com/opendatacam/opendatacam/v2/docker/run-jetson/Dockerfile
+wget https://raw.githubusercontent.com/opendatacam/opendatacam/master/docker/run-jetson/Dockerfile
 
 # Download a script to include in the docker container
-wget https://raw.githubusercontent.com/opendatacam/opendatacam/v2/docker/run-jetson/docker-start-mongo-and-opendatacam.sh
+wget https://raw.githubusercontent.com/opendatacam/opendatacam/master/docker/run-jetson/docker-start-mongo-and-opendatacam.sh
 
 # Build image
 sudo docker build -t opendatacam .
@@ -58,8 +58,8 @@ date > marker && sudo docker build -t opendatacam .
 ### 4. Try the docker image
 
 ```bash
-# Get the darknet-docker script (TODO @tdurand remove v2 when releasing)
-wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v2/docker/run-jetson/run-docker.sh
+# Get the darknet-docker script
+wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/master/docker/run-jetson/run-docker.sh
 
 # Chmod to give exec permissions
 chmod 777 run-docker.sh

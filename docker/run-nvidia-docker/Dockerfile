@@ -98,6 +98,6 @@ RUN npm run build
 
 EXPOSE 8080 8070 8090 27017
 
-RUN wget https://raw.githubusercontent.com/opendatacam/opendatacam/v2/docker/run-jetson/docker-start-mongo-and-opendatacam.sh
+RUN wget https://raw.githubusercontent.com/opendatacam/opendatacam/master/docker/run-jetson/docker-start-mongo-and-opendatacam.sh
 RUN chmod 777 docker-start-mongo-and-opendatacam.sh
 CMD ./docker-start-mongo-and-opendatacam.sh

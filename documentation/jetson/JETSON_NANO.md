@@ -18,9 +18,9 @@ On powerbank, run with  `sudo nvpmodel -m 1`
 ### Setup
 
 ```bash
-# Get scripts TODO @tdurand replace v2
-wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v2/docker/run-jetson/setup-raspberrycam-proxy.sh
-wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v2/docker/run-jetson/run-raspberrycam-proxy.sh
+# Get scripts
+wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/master/docker/run-jetson/setup-raspberrycam-proxy.sh
+wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/master/docker/run-jetson/run-raspberrycam-proxy.sh
 # Give run permission
 sudo chmod 777 run-raspberrycam-proxy.sh setup-raspberrycam-proxy.sh
 
