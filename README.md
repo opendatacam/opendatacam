@@ -70,7 +70,7 @@ Open a terminal or ssh to you machine and run these command (make sure an usb we
 
 ```bash
 # Download install script
-wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v2.0.0-rc.1/docker/run-jetson/install-opendatacam.sh
+wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v2.0.0-rc.1/docker/install-opendatacam.sh
 
 # Give exec permission
 chmod 777 install-opendatacam.sh
