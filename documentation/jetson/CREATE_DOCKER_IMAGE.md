@@ -82,10 +82,10 @@ sudo docker images
 # opendatacam             latest    023ab91c6291     3 minutes ago     1.975 GB
 
 # Tag your image
-sudo docker tag 023ab91c6291 opendatacam/opendatacam:v2.0.0-rc.1-nano
+sudo docker tag <IMAGEID> opendatacam/opendatacam:v2.0.0-rc.1-nano
 
-# Or for nano : v2.0.0-rc.1-nano
-# Or for xavier : v2.0.0-rc.1-xavier
+# Or for tx2 : opendatacam/opendatacam:v2.0.0-rc.1-tx2
+# Or for xavier : opendatacam/opendatacam:v2.0.0-rc.1-xavier
 
 # Push image
 sudo docker push opendatacam/opendatacam:v2.0.0-rc.1-nano
