@@ -27,7 +27,7 @@ If you have an error while doing `npm install` it is probably a problem with nod
 - Set correct version in README "Install and start Opendatacam" wget install script
 - Set correct VERSION in /docker/run-jetson/install-opendatacam.sh
 - Search and replace OLD_VERSION with NEW_VERSION in all documentation
-- Tag version on github
+- Push and Tag version on github
 - Compile docker image on 4 platforms ( nano, tx2, xavier, nvidia-docker ) , upload them to dockerhub and tag them properly
 - Add Release on github
 
