@@ -125,7 +125,7 @@ Open your browser at http://IPOFJETSON:8080 .
 
 _NB: Opendatacam only supports one client at a time, if you open the UI on two different devices, the stream will stop in one of them._
 
-TODO add a restart script / explaine docker restart here
+TODO add a start / restart script / explain docker restart here
 
 ### 4. Configure your Wifi hotspot 📲
 
