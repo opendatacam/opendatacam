@@ -37,7 +37,7 @@ wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-nano-3.4.3/o
 wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-tx2-3.4.3/opencv-3.4.3.tar.gz
 
 # For Jetson Xavier:
-# TODO
+wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-xavier-3.4.3/opencv-3.4.3.tar.gz
 
 # Download the Dockerfile
 wget https://raw.githubusercontent.com/opendatacam/opendatacam/master/docker/run-jetson/Dockerfile
@@ -143,7 +143,7 @@ cd ~/opencv/build
 tar -xvzf OpenCV-3.4.3-aarch64.tar.gz
 
 # Move to directory untar
-cp OpenCV-3.4.3-aarch64
+cd OpenCV-3.4.3-aarch64
 
 # Tar the content in opencv-3.4.3.tar.gz
 tar -czvf opencv-3.4.3.tar.gz .

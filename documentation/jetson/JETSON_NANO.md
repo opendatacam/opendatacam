@@ -50,3 +50,15 @@ In order to do so we need to:
 - Pick this "fake" usb cam from the docker container
 
 
+### Troubleshooting
+
+```bash
+Error generated. /dvs/git/dirty/git-master_linux/multimedia/nvgstreamer/gst-nvarguscamera/gstnvarguscamerasrc.cpp, execute:521 No cameras available
+```
+
+Rasberry Pi Cam isn't working
+
+
+### List of compatible cameras
+
+https://elinux.org/Jetson_Nano#Cameras

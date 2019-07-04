@@ -15,7 +15,7 @@
 You can either:
 
 - Use pre-built binaries for your host device (see links below)
-- Compile your own (see below section on how to compile) 
+- Compile your own (see [how to compile](jetson/CREATE_DOCKER_IMAGE.md#-(Optional)-Compile-Opencv-on-jetson-(this-takes-1-2h))) 
 
 Then follow this to install it:
 
