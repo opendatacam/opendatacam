@@ -76,15 +76,19 @@ wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v2.0.0-rc.1/do
 chmod 777 install-opendatacam.sh
 
 # Install command for jetson nano
+# NB: Will run from usbcam /dev/video0 you can change this after install, look 5. Customize Opendatacam
 sudo ./install-opendatacam.sh --platform nano
 
 # Install command for jetson tx2
+# NB: Will run from usbcam /dev/video0 you can change this after install, look 5. Customize Opendatacam
 sudo ./install-opendatacam.sh --platform tx2
 
 # Install command for jetson xavier
+# NB: Will run from usbcam /dev/video0 you can change this after install, look 5. Customize Opendatacam
 # TODO
 
 # Install command for nvidia-docker
+# NB: Will run from demo file, you can change this after install, look 5. Customize Opendatacam
 sudo ./install-opendatacam.sh --platform nvidiadocker_cuda_archbin_6_1
 ```
 
@@ -138,7 +142,7 @@ Docker doesn't support GPU usage on Jetson _(see [issue #214 on docker-nvidia of
 
 Meanwhile we need to give to the docker container access to the host platform GPU. We do so by mounting several volumes with [this script](https://github.com/opendatacam/opendatacam/blob/master/docker/run-jetson/run-docker.sh).
 
-That is why you need to use our install script to install a container.
+That is why you need to use our install script to install a container. We have [an open issue](https://github.com/opendatacam/opendatacam/issues/89) to simplify setup once nvidia-docker support lands for jetson devices.
 
 **How to show Opendatacam logs**
 
