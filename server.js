@@ -815,6 +815,7 @@ app.prepare()
    *
    * @apiDescription Get config.json content loaded by Opendatacam
    * 
+   * @apiSuccessExample {json} Success Response:
    * {
       "OPENDATACAM_VERSION": "2.0.0-beta.4",
       "PATH_TO_YOLO_DARKNET": "/darknet",
