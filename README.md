@@ -75,7 +75,7 @@ ls /dev/video*
 # Output should be: /dev/video0
 ```
 
-_If this isn't the case, run the install script anyway, and after you will need to [modify the config.json](documentation/CONFIG.md) file to select your desired VIDEO_INPUT (file, usbcam, raspberrycam, remote IP cam)_
+_If this isn't the case, run the install script anyway, and after you will need to [modify the config.json](documentation/CONFIG.md) file to select your desired VIDEO_INPUT (file, usbcam, raspberrycam, remote IP cam), [we will improve setup / install process for v2.1](https://github.com/opendatacam/opendatacam/issues/89) 💪_
 
 - For a Nvidiadocker machine: it will run on a demo file
 
@@ -121,6 +121,8 @@ Open your browser at http://IPOFJETSON:8080 .
 *If you are running with the jetson connected to a screen: http://localhost:8080*
 
 _NB: Opendatacam only supports one client at a time, if you open the UI on two different devices, the stream will stop in one of them._
+
+TODO add a restart script / explaine docker restart here
 
 ### 4. Configure your Wifi hotspot 📲
 

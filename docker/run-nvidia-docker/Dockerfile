@@ -88,7 +88,7 @@ COPY marker /dev/null
 RUN git clone --depth 1 https://github.com/opendatacam/opendatacam /var/local/opendatacam
 
 WORKDIR /var/local/opendatacam
-RUN sed -i -e s+/darknet+/var/local/darknet+ config.json
+RUN sed -i -e s+TO_REPLACE_PATH_TO_DARKNET+/var/local/darknet+ config.json
 RUN sed -i -e s+TO_REPLACE_VIDEO_INPUT+file+ config.json
 RUN sed -i -e s+TO_REPLACE_NEURAL_NETWORK+yolov3+ config.json
 
