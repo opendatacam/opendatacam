@@ -103,9 +103,11 @@ else
 
       # For nvidia-docker, darknet path is /var/local/darknet
       if [[ "$PLATFORM" != "nvidiadocker_cuda_archbin_6_1" ]]; then
-        sed -i'.bak' -e "s/TO_REPLACE_PATH_TO_DARKNET/$PATH_DARKNET_JETSON/g" config.json
+        sed -i'.bak' -e "s|TO_REPLACE_PATH_TO_DARKNET|$PATH_DARKNET_JETSON|g" config.json
+        echo "PATH_TO_YOLO_DARKNET : $PATH_DARKNET_JETSON"
       else
-        sed -i'.bak' -e "s/TO_REPLACE_PATH_TO_DARKNET/$PATH_DARKNET_NVIDIA_DOCKER/g" config.json
+        sed -i'.bak' -e "s|TO_REPLACE_PATH_TO_DARKNET|$PATH_DARKNET_NVIDIA_DOCKER|g" config.json
+        echo "PATH_TO_YOLO_DARKNET : $PATH_DARKNET_NVIDIA_DOCKER"
       fi
 
       echo "Download, install and run opendatacam docker container"
