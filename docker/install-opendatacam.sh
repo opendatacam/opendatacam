@@ -20,6 +20,10 @@ DEFAUT_NEURAL_NETWORK_tx2=yolov2-voc
 DEFAUT_NEURAL_NETWORK_xavier=yolov3
 DEFAUT_NEURAL_NETWORK_nvidiadocker_cuda_archbin_6_1=yolov3
 
+# PATH TO DARKNET
+PATH_DARKNET_JETSON=/darknet
+PATH_DARKNET_NVIDIA_DOCKER=/var/local/darknet
+
 echo "Installing opendatacam docker image"
 
 display_usage() {
@@ -96,9 +100,12 @@ else
       sed -i'.bak' -e "s/TO_REPLACE_VIDEO_INPUT/$VIDEO_INPUT/g" config.json
       sed -i'.bak' -e "s/TO_REPLACE_NEURAL_NETWORK/$NEURAL_NETWORK/g" config.json
 
+
       # For nvidia-docker, darknet path is /var/local/darknet
       if [[ "$PLATFORM" != "nvidiadocker_cuda_archbin_6_1" ]]; then
-        sed -i -e s+/darknet+/var/local/darknet+ config.json
+        sed -i'.bak' -e "s/TO_REPLACE_PATH_TO_DARKNET/$PATH_DARKNET_JETSON/g" config.json
+      else
+        sed -i'.bak' -e "s/TO_REPLACE_PATH_TO_DARKNET/$PATH_DARKNET_NVIDIA_DOCKER/g" config.json
       fi
 
       echo "Download, install and run opendatacam docker container"
