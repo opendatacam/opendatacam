@@ -12,7 +12,7 @@ _You can also [refer to this guide](https://github.com/NVIDIA/nvidia-docker/wiki
 - Docker with API version >= 1.12
 - Nvidia drivers with version >= 361
 
-_Verify Docker Version:_
+__Verify Docker version:__
 
 Docker API version should be >= 1.12
 
@@ -22,7 +22,7 @@ docker version
 # For example, output: API version: 1.39
 ```
 
-_Verify Nvidia drivers Version:_
+__Verify Nvidia drivers version:__
 
 Driver Version should be > 361
 
@@ -87,5 +87,5 @@ sudo docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
 |-------------------------------+----------------------
 ```
 
-🎉🎉🎉 You are ready to install Opendatacam 🎉🎉🎉
+🎉🎉🎉 You are ready to [install Opendatacam](../../README.md#2-install-and-start-opendatacam-3-min-) 🎉🎉🎉
 
