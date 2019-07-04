@@ -29,10 +29,17 @@ If you have an error while doing `npm install` it is probably a problem with nod
 - Search and replace OLD_VERSION with NEW_VERSION in all documentation
 - Tag version on github
 - Compile docker image on 4 platforms ( nano, tx2, xavier, nvidia-docker ) , upload them to dockerhub and tag them properly
+- Add Release on github
 
 ### Tags commands
 
 ```
+# Tag latest commit
+git tag v2.0.0-rc.1
+
+# Push tag
+git push origin v2.0.0-rc.1
+
 # List tags
 git tag --list
 
@@ -42,10 +49,7 @@ git push origin :v2.0.0-rc.1
 # Delete local tag
 git tag --delete v2.0.0-rc.1
 
-# Tag latest commit
-git tag v2.0.0-rc.1
-
-# Push tag
+# Push all tag
 git push --tags
 ```
 
