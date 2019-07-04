@@ -24,6 +24,12 @@ wget https://raw.githubusercontent.com/opendatacam/opendatacam/master/docker/run
 # Takes a really long time the first time as it compiles opencv
 sudo docker build -t opendatacam .
 
+# If you are building a second time, use this to pull the latest opendatacam code
+# TODO change this by adding the tag of the version in the Dockerfile
+# Technique to rebuild the docker file from here : https://stackoverflow.com/a/49831094/1228937
+# Build using date > marker && docker build .
+date > marker && sudo docker build -t opendatacam .
+
 # Test the image in interactive mode
 sudo docker run --runtime=nvidia -p 8080:8080 -p 8090:8090 -p 8070:8070 -v /data/db:/data/db --rm -it opendatacam
 ```

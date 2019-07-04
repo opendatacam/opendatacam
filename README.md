@@ -110,6 +110,8 @@ Open your browser at http://IPOFJETSON:8080 .
 
 *If you are running with the jetson connected to a screen: http://localhost:8080*
 
+_NB: Opendatacam only supports one client at a time, if you open the UI on two different devices, the stream will stop in one of them._
+
 ### 4. Configure your Wifi hotspot 📲
 
 In order to operate opendatacam from your phone / tablet / computer.
