@@ -44,6 +44,9 @@ sudo docker container list
 
 # Restart container (find id from previous command)
 sudo docker restart <containerID>
+
+# Or if you have stopped it
+sudo ./run-opendatacam.sh
 ```
 
 **For a non-docker install of Opendatacam:**
