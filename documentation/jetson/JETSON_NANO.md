@@ -4,7 +4,11 @@
 
 Jetson nano has two power mode, 5W and 10W.
 
-Once Opendatacam is setup and __running without a monitor__, it runs perfectly fine on 5W powermode _(which is nice because you can power it with a powerbank)_.
+Once Opendatacam is installed and __running without a monitor__, it runs perfectly fine on 5W powermode _(which is nice because you can power it with a powerbank)_. If you use it with a monitor connected, the display will be a bit laggy but it should work.
+
+We recommend you to do the setup with a monitor connected and then make your Jetson nano available as a Wifi hotspot to operate it from another device.
+
+The 10W Power mode of the Jetson won't bring much performance improvement for Opendatacam.
 
 ### Shopping list
 

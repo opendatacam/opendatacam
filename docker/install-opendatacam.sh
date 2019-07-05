@@ -115,9 +115,15 @@ else
       if [[ "$PLATFORM" != "nvidiadocker_cuda_archbin_6_1" ]]; then
         # Pull, install and run opendatacam container when docker starts (on boot with --restart unless-stopped, -d is for detached mode)
         sudo ./run-docker.sh run -d --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM
+        # Create the run-opendatacam.sh script
+        echo "./run-docker.sh run -d --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM" > run-opendatacam.sh
+        echo "Create a run-opendatacam.sh script for easy container start"
       else
         # Pull, install and run opendatacam container when docker starts (on boot with --restart unless-stopped, -d is for detached mode)
         sudo ./run-nvidiadocker.sh run -d --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM
+        # Create the run-opendatacam.sh script
+        echo "./run-nvidiadocker.sh run -d --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM" > run-opendatacam.sh
+        echo "Create a run-opendatacam.sh script for easy container start"
       fi
 
       # Message that docker container has been started and opendatacam will be available shorty on <IP>
