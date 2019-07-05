@@ -22,11 +22,12 @@ If you have an error while doing `npm install` it is probably a problem with nod
 
 - Generate up to date api documentation `npm run generateapidoc`
 - Make sure that config.json has the TO_REPLACE_VIDEO_INPUT, TO_REPLACE_VIDEO_INPUT values that will be replaced by sed on installation
-- Set correct version in config.json > OPENDATACAM_VERSION
-- Set correct version in package.json
-- Set correct version in README "Install and start Opendatacam" wget install script
-- Set correct VERSION in /docker/install-opendatacam.sh
 - Search and replace OLD_VERSION with NEW_VERSION in all documentation
+- Make sure correct version in config.json > OPENDATACAM_VERSION
+- Make sure correct version in package.json
+- Make sure correct version in README "Install and start Opendatacam" wget install script
+- Make sure correct version in JETSON_NANO.md "Install Opendatacam" wget install script
+- Make sure correct VERSION in /docker/install-opendatacam.sh
 - Push and Tag version on github
 - Compile docker image on 4 platforms ( nano, tx2, xavier, nvidia-docker ) , upload them to dockerhub and tag them properly
 - Add Release on github

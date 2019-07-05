@@ -11,7 +11,7 @@ Once Opendatacam is setup and __running without a monitor__, it runs perfectly f
 The minimum setup for 5W power mode is:
 
 - 1 Jetson nano
-- 1 [Raspberrycam module v2](https://www.raspberrypi.org/products/camera-module-v2/) or one of [the compatible camera](https://elinux.org/Jetson_Nano#Cameras)
+- 1 Camera [USB compatible camera](https://elinux.org/Jetson_Nano#Cameras) or [Raspberrycam module v2](https://www.raspberrypi.org/products/camera-module-v2/)
 - 1 Wifi dongle , [this one is compatible](https://www.edimax.com/edimax/merchandise/merchandise_detail/data/edimax/in/wireless_adapters_n150/ew-7811un/) out of the box, or [see compatibility list](https://elinux.org/Jetson_Nano#Wireless).
 - 1 MicroSD card (at least 32 GB and 100 MB/s)
 - 1 Power supply: either a [5V⎓2A Micro-USB adapter](https://www.adafruit.com/product/1995) or a Powerbank with min 2A output.
@@ -33,13 +33,13 @@ Learn more about Jetson nano ecosystem: [https://elinux.org/Jetson_Nano#Ecosyste
 
 ### Setup Opendatacam
 
-## Flash Jetson Nano:
+#### 1. Flash Jetson Nano:
 
 Follow [Flashing guide](FLASH_JETSON.md#Jetson-Nano) (don't forget to verify if CUDA is in your PATH)
 
-## Set correct Powermode according to your Power supply
+#### 2. Set correct Powermode according to your Power supply
 
-### Using microUSB
+##### Using microUSB
 
 Using microUSD with a powerbank or a 5V⎓2A power supply, you just need to plug-in and the Jetson Nano will start when connected to it.
 
@@ -55,7 +55,7 @@ To switch back to 10W power mode (default)
 sudo nvpmodel -m 0
 ```
 
-### Using barrel jack (5V - 4A)
+##### Using barrel jack (5V - 4A)
 
 When working with the Jetson nano with the monitor connected, we advise to use the barrel jack power. In order to do so you need first to put a jumper on the J48 pin (more details on Jetson nano power supply)
 
@@ -67,28 +67,77 @@ By default, the Jetson nano will already run on the 10W power mode, but you can 
 sudo nvpmodel -m 0
 ```
 
-## Setup a swap partition:
+#### 3. Setup a swap partition:
 
 In order to reduce memory pressure (and crashes), it is a good idea to setup a 6GB swap partition. _(Nano has only 4GB of RAM)_
 
 ```bash
 git clone https://github.com/JetsonHacksNano/installSwapfile 
 cd installSwapfile
-./installSwapfile
+chmod 777 installSwapfile.sh
+./installSwapfile.sh
 ```
 
-### Run Opendatacam container with raspberrypi cam
+Reboot the Jetson nano
 
-#### Why
+#### 4. Verify your if your USB Camera is connected
 
-From the docker container, we can't access directly the raspberrypi camera ( [more background](https://devtalk.nvidia.com/default/topic/1051653/jetson-nano/access-to-raspberry-cam-nvargus-daemon-from-docker-container/post/5338140/#5338140) )
+```bash
+ls /dev/video*
+# Output should be: /dev/video0
+```
 
-In order to do so we need to:
+If this isn't the case, run the install script anyway, and after you will need to [modify the config.json](documentation/CONFIG.md) file to select your desired VIDEO_INPUT
 
-- Start a process that proxys the Raspberry cam feed into an usb cam
-- Pick this "fake" usb cam from the docker container
+_If you have a Raspberry Pi Cam, [see advanced usage](#advanced-usage)._
 
-#### Setup
+#### 5. Install Opendatacam
+
+```bash
+# Download install script
+wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v2.0.0-rc.1/docker/install-opendatacam.sh
+
+# Give exec permission
+chmod 777 install-opendatacam.sh
+
+# NB: You will be asked for sudo password when installing the docker container
+
+# Install command for Jetson Nano
+./install-opendatacam.sh --platform nano
+```
+
+#### 6. Test Opendatacam
+
+Open http://localhost:8080
+
+#### 7. Access Opendatacam via Wifi hotspot
+
+N.B: you need a wifi dongle for this
+
+- [Make jetson available as a WiFi hotspot](../WIFI_HOTSPOT_SETUP.md)
+- Unplug monitor and reboot
+- Connect with another device to this Wifi network, and open <IP_OF_JETSON>:8080 in your browser
+
+
+### Advanced usage
+
+#### Use Rasberry Pi Cam with a non-docker installation of Opendatacam
+
+_NB: [We hope this won't be necessary](https://github.com/opendatacam/opendatacam/issues/89) after Jetpack 4.2.1 release with native docker support._
+
+- Follow [Install without docker guide](../USE_WITHOUT_DOCKER.md)
+
+- In `config.json > VIDEO_INPUT` , set `raspberrycam_no_docker`
+
+Restart Opendatacam, [learn more about changing config.json here](../CONFIG.md).
+
+#### (EXPERIMENTAL) Use Rasberry Pi Cam with Opendatacam default installation
+
+_This is experimental, it might work for a time and then stop working... If it is the case you will be forced to re-flash your Jetson Nano as we have don't know a way to uninstall this._
+
+_NB: [We hope this won't be necessary](https://github.com/opendatacam/opendatacam/issues/89) after Jetpack 4.2.1 release with native docker support._
+
+##### Setup
 
 ```bash
 # Get scripts
@@ -111,3 +160,12 @@ Then you need to choose the `experimental_raspberrycam_docker` options in the co
 
 - Open `config.json`
 - Replace `VIDEO_INPUT` param with `"experimental_raspberrycam_docker"` _(NOTE: Under the hood, the important thing is that OpenCV get this gstreamer pipeline in entry: `v4l2src device=/dev/video2 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink`)_
+
+##### Why
+
+From the docker container, we can't access directly the raspberrypi camera ( [more background](https://devtalk.nvidia.com/default/topic/1051653/jetson-nano/access-to-raspberry-cam-nvargus-daemon-from-docker-container/post/5338140/#5338140) )
+
+In order to do so we need to:
+
+- Start a process that proxys the Raspberry cam feed into an usb cam
+- Pick this "fake" usb cam from the docker container

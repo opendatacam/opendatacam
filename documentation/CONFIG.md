@@ -316,7 +316,7 @@ NB: this IP cam won't work, it is just an example. Only use IP Cam you own yours
 
 ##### Run from Raspberry Pi cam (Jetson nano)
 
-See [dedicated documention for Jetson nano](jetson/JETSON_NANO.md)
+See [dedicated documention for Jetson nano](jetson/JETSON_NANO.md#advanced-usage)
 
 ##### Change webcam resolution
 
