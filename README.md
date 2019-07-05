@@ -47,9 +47,9 @@ _If you have a Jetson Nano, [please read this specific documentation](documentat
 
 ## 🎬 Get Started, quick setup
 
-### 1. Software pre-requisite 📦:
+### 1. Software pre-requisite 📦
 
-#### For jetson: Flash Jetson board to jetpack 4.2 ⚡️ ️(if not installed)️:
+#### For jetson: Flash Jetson board to jetpack 4.2 ⚡️
 
 *Ignore this if you are not running on a jetson*
 
@@ -59,7 +59,7 @@ If your jetson does not have jetpack 4.2 *(CUDA 10, TensorRT 5, cuDNN 7.3, Ubunt
 
 [Follow this guide to flash your jetson](documentation/jetson/FLASH_JETSON.md)
 
-#### For non-jetson: Install nvidia-docker v2.0 🔧:
+#### For non-jetson: Install nvidia-docker v2.0 🔧
 
 *Ignore this if you are running on a jetson, nvidia-docker isn't necessary with jetpack 4.2*
 
@@ -67,7 +67,7 @@ Nvidia-docker v2.0 is only compatible with GNU/Linux x86_64 machine with a [CUDA
 
 [Follow this guide to install nvidia-docker v2.0 on your machine](documentation/nvidia-docker/INSTALL_NVIDIADOCKER.md)
 
-### 2. Install and start Opendatacam (3 min 🚀):
+### 2. Install and start Opendatacam 🚀
 
 Open a terminal or ssh to you machine and run the following commands depending on your platform
 
@@ -113,7 +113,7 @@ The docker container is started in auto-restart mode, so if you reboot your mach
 
 You can also [use opendatacam without docker](#how-to-run-opendatacam-without-docker)
 
-### 2. bis (optional) Upgrade Opendatacam (from v2.x to another v2.x version):
+### 2. bis (optional) Upgrade Opendatacam (from v2.x to another v2.x version)
 
 - If you have modified the `config.json`, save it somewhere
 - Run the install steps again (previous section), this will download a new default `config.json` file compatible with the opendatacam version you are installing and setup a new docker container
