@@ -11,6 +11,8 @@
 You can check your Jetpack version with this tool: [https://github.com/rbonghi/jetson_stats](https://github.com/rbonghi/jetson_stats)
 
 ```bash
+# Update package manager
+sudo apt update
 # Install Pip package manager
 sudo apt install python-pip
 # Install jetson-stats
@@ -30,10 +32,6 @@ jetson-release
 Directly flash the microSD card with jetpack 4.2 , follow this guide:
 
 [https://nvidia.com/JetsonNano-Start](https://nvidia.com/JetsonNano-Start)
-
-##### Misc
-
-POWER SUPPLY: The nano has to power modes. For the **5W** mode run `$ sudo nvpmodel -m 1` for the **10W** run `$ sudo nvpmodel -m 0`. 10W is the default mode.
 
 Make sure CUDA is in your PATH:
 

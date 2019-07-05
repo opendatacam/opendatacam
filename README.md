@@ -39,11 +39,12 @@ It is very alpha and we do not provide any guarantee that this will work for you
 ## 💻 Hardware pre-requisite
 
 - Nvidia Jetson Nano / TX2 / Xavier or any GNU/Linux x86_64 machine with a CUDA compatible GPU with [nvidia-docker v2.0](https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(version-2.0)#prerequisites) (in the cloud or locally)
-- Webcam Logitech C222 (or any usb webcam compatible with Ubuntu 18.04) / Rasberry Pi cam for Jetson nano / Video file / IP camera
+- Webcam Logitech C222, C270, C920 / Rasberry Pi cam for Jetson nano / a Video file / IP camera 
 - A smartphone / tablet / laptop that you will use to operate the system
 
-
 _If you have a Jetson Nano, [please read this specific documentation](documentation/jetson/JETSON_NANO.md)_
+
+_Also see [In depth guide about compatible Cameras with Jetson](https://elinux.org/Jetson/Cameras)_
 
 ## 🎬 Get Started, quick setup
 
@@ -225,6 +226,24 @@ See [How to create / update a docker image for a jetson device](documentation/je
 *For nvidia-docker machine:*
 
 See [How to create / update a docker image for a nvidia-docker machine](documentation/nvidia-docker/CREATE_NVIDIADOCKER_IMAGE.md)
+
+
+## 🎯 How accurate is Opendatacam ?
+
+We are working on [adding a benchmark](https://github.com/opendatacam/opendatacam/issues/87) to rank Opendatacam on the [MOT Challenge (Multiple Object Tracking Benchmark)](https://motchallenge.net/) for v2.1.
+
+Accuracy depends on which YOLO weights your hardware is capable of running.
+
+## 🚤 How fast is Opendatacam ?
+
+FPS depends on:
+
+- which hardware your are running Opendatacam on
+- which YOLO weights you are using
+
+We made the default settings to run at least at 10 FPS on any Jetson.
+
+Learn more in the [Customize Opendatacam documentation](documentation/CONFIG.md#Change-neural-network-weights)
 
 
 ## 🛠 Development notes

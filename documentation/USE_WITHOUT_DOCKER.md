@@ -233,7 +233,7 @@ pwd .
 
 - Specify `VIDEO_INPUT` and `NEURAL_NETWORK` in `opendatacam/config.json` 
 
-*For Jetson Nano*
+*For Jetson Nano (recommanded)*
 
 ```json
 {
@@ -242,7 +242,7 @@ pwd .
 }
 ```
 
-*For Jetson TX2*
+*For Jetson TX2 (recommanded)*
 
 ```json
 {
@@ -251,7 +251,7 @@ pwd .
 }
 ```
 
-*For Jetson Xavier*
+*For Jetson Xavier (recommanded)*
 
 ```json
 {

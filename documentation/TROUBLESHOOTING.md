@@ -23,3 +23,10 @@
 
     Try restarting the docker service: `sudo service docker restart` , also try to restart your machine.
     
+    
+-   ```bash
+    Error generated. /dvs/git/dirty/git-master_linux/multimedia/nvgstreamer/gst-nvarguscamera/gstnvarguscamerasrc.cpp, execute:521 No cameras available
+    ```
+
+    Rasberry Pi Cam isn't working, try rebooting your device / plug it again.
+    
