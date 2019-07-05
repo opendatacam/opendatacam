@@ -8,9 +8,9 @@ Behind the scenes, it feeds the webcam stream to a neural network (YOLO darknet)
 
 It is very alpha and we do not provide any guarantee that this will work for your use case, but we conceived it as a starting point from where you can build-on & improve.
 
-[See Demo Video (60s)](https://www.youtube.com/watch?v=NwXrXHHGSgk)
+[See Demo Video (60s)](https://vimeo.com/346340651/38966dac9d)
 
-[![Demo open data cam](https://img.youtube.com/vi/A-TvSjAU1pk/0.jpg)](https://www.youtube.com/watch?v=A-TvSjAU1pk)
+[![Demo open data cam](https://i.vimeocdn.com/video/796339162.webp?mw=1100&mh=571)](https://vimeo.com/346340651/38966dac9d)
 
 ## Table of content
 
@@ -130,7 +130,7 @@ Open your browser at http://IPOFJETSON:8080 .
 
 _NB: Opendatacam only supports one client at a time, if you open the UI on two different devices, the stream will stop in one of them._
 
-TODO add a start / restart script / explain docker restart here
+See [Docker playbook ️📚](#6-docker-playbook-️) how to restart / stop Opendatacam.
 
 ### 4. Configure your Wifi hotspot 📲
 
