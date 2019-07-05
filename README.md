@@ -1,4 +1,4 @@
-_We are working toward Opendatacam v2.0.0 release, if you have bugs / feedback please ping us on this issue: https://github.com/opendatacam/opendatacam/issues/70_
+_We are working toward Opendatacam v2.0.0 release, if you have bugs / feedback please ping us on this issue: https://github.com/opendatacam/opendatacam/issues/100_
 
 # Open data cam 2.0.0-rc.1
 
