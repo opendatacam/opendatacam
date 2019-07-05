@@ -26,6 +26,13 @@ In the "General" tab, you need to check "Automatically connect to this network w
 
 After rebooting your device, you should be able to connect it via the wifi hotspot and access Opendatacam if started.
 
+#### 6. Get IP adress of Wifi hotpot
+
+Click on the network icon on the top right > Connection Information
+
+![connectioninformatio](https://user-images.githubusercontent.com/533590/60710337-bf58b400-9f12-11e9-8056-987f0b5ea583.png)
+
+
 ### On Ubuntu 18.04 via command line
 
 We accept pull request for this 😁

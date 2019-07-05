@@ -122,7 +122,7 @@ N.B: you need a wifi dongle for this.
 
 - [Make jetson available as a WiFi hotspot](../WIFI_HOTSPOT_SETUP.md)
 - Reboot
-- Go click on the network icon on the top right > Connection Information
+- Click on the network icon on the top right > Connection Information
 
 ![connectioninformatio](https://user-images.githubusercontent.com/533590/60710337-bf58b400-9f12-11e9-8056-987f0b5ea583.png)
 
