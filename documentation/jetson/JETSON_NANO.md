@@ -132,16 +132,23 @@ Take note somewhere of the jetson IP Address, in this case 10.42.0.1
 
 - Connect with another device to this Wifi network, and open <IP_OF_JETSON>:8080 in your browser
 
+_After rebooting the Jetson nano may takes 1-5 min to start the docker container, so if your browser say "Page not found", just retry after a few minutes_
+
 You should be able to operate Opendatacam without lag issues.
 
 #### 8. Tips
 
-- You'll notice there are no button to power on / off button your Jetson nano. When you plug the power supply it will power on immediatly. If you want to restart you can just un-plug / re-plug if you are not connected via a Monitor or SSH. There is a way to add power buttons via the J40 pins, [see nvidia forum](https://devtalk.nvidia.com/default/topic/1050888/jetson-nano/power-and-suspend-buttons-for-jetson-nano/post/5333577/#5333577).
+- You'll notice there are no button to power on / off button your Jetson nano. When you plug the power supply it will power on immediately. If you want to restart you can just un-plug / re-plug if you are not connected via a Monitor or SSH. There is a way to add power buttons via the J40 pins, [see nvidia forum](https://devtalk.nvidia.com/default/topic/1050888/jetson-nano/power-and-suspend-buttons-for-jetson-nano/post/5333577/#5333577).
 
+- You can connect your Jetson to Ethernet and SSH into it to do all the setup without having to connect a monitor (after having setup a fixed IP)
 
 ### Advanced usage
 
-#### Use Rasberry Pi Cam with a non-docker installation of Opendatacam
+_[Follow this article](https://www.jetsonhacks.com/2019/04/02/jetson-nano-raspberry-pi-camera/) to test your raspberry pi  cam_
+
+__IMPORTANT:__ Unplug any usb webcam before plugging the raspberry pi cam or reboot after unpluging / plugin things.
+
+#### Use Raspberry Pi Cam with a non-docker installation of Opendatacam
 
 _NB: [We hope this won't be necessary](https://github.com/opendatacam/opendatacam/issues/89) after Jetpack 4.2.1 release with native docker support._
 
@@ -151,11 +158,11 @@ _NB: [We hope this won't be necessary](https://github.com/opendatacam/opendataca
 
 Restart Opendatacam, [learn more about changing config.json here](../CONFIG.md).
 
-#### (EXPERIMENTAL) Use Rasberry Pi Cam with Opendatacam default installation
+#### (EXPERIMENTAL) Use Raspberry Pi Cam with Opendatacam default installation
 
 _This is experimental, it might work for a time and then stop working... If it is the case you will be forced to re-flash your Jetson Nano as we have don't know a way to uninstall this._
 
-_NB: [We hope this won't be necessary](https://github.com/opendatacam/opendatacam/issues/89) after Jetpack 4.2.1 release with native docker support._
+_NB: [We hope this won't be necessary anymore](https://github.com/opendatacam/opendatacam/issues/89) after Jetpack 4.2.1 release with native docker support._
 
 ##### Setup
 
