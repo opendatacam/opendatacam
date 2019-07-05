@@ -179,8 +179,8 @@ sudo docker container list
 # Stop container (get id from previous command)
 sudo docker stop <containerID>
 
-# Start container (get id from previous command)
-sudo docker start <containerID>
+# Start container (will mount the opendatacam_videos/ and the config.json + mount CUDA necessary stuff)
+sudo ./run-opendatacam.sh
 
 # Restart container (after modifying the config.json file for example)
 sudo docker restart <containerID>
