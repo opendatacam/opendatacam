@@ -1,5 +1,25 @@
 ## Jetson Nano
 
+- [Jetson Nano](#jetson-nano)
+  * [Limitations](#limitations)
+  * [Shopping list](#shopping-list)
+  * [Setup Opendatacam](#setup-opendatacam)
+    + [1. Flash Jetson Nano:](#1-flash-jetson-nano)
+    + [2. Set correct Powermode according to your Power supply](#2-set-correct-powermode-according-to-your-power-supply)
+      - [Using microUSB](#using-microusb)
+      - [Using barrel jack (5V - 4A)](#using-barrel-jack-5v---4a)
+    + [3. Setup a swap partition:](#3-setup-a-swap-partition-)
+    + [4. Verify your if your USB Camera is connected](#4-verify-your-if-your-usb-camera-is-connected)
+    + [5. Install Opendatacam](#5-install-opendatacam)
+    + [6. Test Opendatacam](#6-test-opendatacam)
+    + [7. Access Opendatacam via Wifi hotspot](#7-access-opendatacam-via-wifi-hotspot)
+    + [8. Tips](#8-tips)
+  * [Advanced usage](#advanced-usage)
+    + [Use Raspberry Pi Cam with a non-docker installation of Opendatacam](#use-raspberry-pi-cam-with-a-non-docker-installation-of-opendatacam)
+    + [(EXPERIMENTAL) Use Raspberry Pi Cam with Opendatacam default installation](#-experimental--use-raspberry-pi-cam-with-opendatacam-default-installation)
+      - [Setup](#setup)
+      - [Why](#why)
+
 ### Limitations
 
 Jetson nano has two power mode, 5W and 10W.

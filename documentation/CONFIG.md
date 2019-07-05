@@ -23,7 +23,7 @@ We offer several customization options:
     + [Video input](#video-input)
       - [Run from a file](#run-from-a-file)
       - [Run from IP cam](#run-from-ip-cam)
-      - [Run from Raspberry Pi cam (Jetson nano)](#run-from-raspberry-pi-cam--jetson-nano-)
+      - [Run from Raspberry Pi cam (Jetson nano)](#run-from-raspberry-pi-cam-jetson-nano)
       - [Change webcam resolution](#change-webcam-resolution)
     + [Use Custom Neural Network weights](#use-custom-neural-network-weights)
     + [MongoDB URL](#mongodb-url)
