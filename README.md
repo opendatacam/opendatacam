@@ -71,7 +71,7 @@ Nvidia-docker v2.0 is only compatible with GNU/Linux x86_64 machine with a [CUDA
 
 Open a terminal or ssh to you machine and run the following commands depending on your platform
 
-- For Jetson: make sure an usb webcam is connected on `video0`
+- _For a Jetson:_ make sure an usb webcam is connected on `video0`
 
 ```bash
 ls /dev/video*
@@ -80,7 +80,7 @@ ls /dev/video*
 
 _If this isn't the case, run the install script anyway, and after you will need to [modify the config.json](documentation/CONFIG.md) file to select your desired VIDEO_INPUT (file, usbcam, raspberrycam, remote IP cam), [we will improve setup / install process for v2.1](https://github.com/opendatacam/opendatacam/issues/89) 💪_
 
-- For a nvidia-docker compatible machine: it will run on a demo file
+- _For a nvidia-docker compatible machine:_ it will run on a demo file
 
 __Install commands:__
 
