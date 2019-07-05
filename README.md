@@ -80,7 +80,9 @@ ls /dev/video*
 
 _If this isn't the case, run the install script anyway, and after you will need to [modify the config.json](documentation/CONFIG.md) file to select your desired VIDEO_INPUT (file, usbcam, raspberrycam, remote IP cam), [we will improve setup / install process for v2.1](https://github.com/opendatacam/opendatacam/issues/89) 💪_
 
-- For a Nvidiadocker machine: it will run on a demo file
+- For a nvidia-docker compatible machine: it will run on a demo file
+
+__Install commands:__
 
 ```bash
 # Download install script
