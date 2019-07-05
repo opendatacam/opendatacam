@@ -112,15 +112,31 @@ chmod 777 install-opendatacam.sh
 
 #### 6. Test Opendatacam
 
-Open http://localhost:8080
+Open http://localhost:8080 . 
+
+This will be super slow if you are using this directly on the monitor connected to the Jetson nano, see next step to access Opendatacam from an external device.
 
 #### 7. Access Opendatacam via Wifi hotspot
 
-N.B: you need a wifi dongle for this
+N.B: you need a wifi dongle for this.
 
 - [Make jetson available as a WiFi hotspot](../WIFI_HOTSPOT_SETUP.md)
-- Unplug monitor and reboot
+- Reboot
+- Go click on the network icon on the top right > Connection Information
+
+![connectioninformatio](https://user-images.githubusercontent.com/533590/60710337-bf58b400-9f12-11e9-8056-987f0b5ea583.png)
+
+Take note somewhere of the jetson IP Address, in this case 10.42.0.1
+
+- Unplug monitor / ethernet / keyboard / mouse and reboot
+
 - Connect with another device to this Wifi network, and open <IP_OF_JETSON>:8080 in your browser
+
+You should be able to operate Opendatacam without lag issues.
+
+#### 8. Tips
+
+- You'll notice there are no button to power on / off button your Jetson nano. When you plug the power supply it will power on immediatly. If you want to restart you can just un-plug / re-plug if you are not connected via a Monitor or SSH. There is a way to add power buttons via the J40 pins, [see nvidia forum](https://devtalk.nvidia.com/default/topic/1050888/jetson-nano/power-and-suspend-buttons-for-jetson-nano/post/5333577/#5333577).
 
 
 ### Advanced usage
