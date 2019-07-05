@@ -89,18 +89,19 @@ wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v2.0.0-rc.1/do
 # Give exec permission
 chmod 777 install-opendatacam.sh
 
-# Install command for jetson nano
+# Install command for Jetson Nano
 sudo ./install-opendatacam.sh --platform nano
+# We are working on removing the need for sudo (see #89)
 
-# Install command for jetson tx2
+# Install command for Jetson TX2
 sudo ./install-opendatacam.sh --platform tx2
 
-# Install command for jetson xavier
-# TODO
+# Install command for Jetson Xavier
+sudo ./install-opendatacam.sh --platform xavier
 
-# Install command for nvidia-docker
+# Install command for a Nvidia-docker machine (ARCH_BIN=6.1)
 # NB: Will run from demo file, you can change this after install, see "5. Customize Opendatacam"
-sudo ./install-opendatacam.sh --platform nvidiadocker_cuda_archbin_6_1
+./install-opendatacam.sh --platform nvidiadocker_cuda_archbin_6_1
 ```
 
 This command will download and start a docker container on the machine. After it finishes the docker container starts a webserver on port 8080.

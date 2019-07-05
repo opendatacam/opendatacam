@@ -21,5 +21,5 @@
     docker: Error response from daemon: OCI runtime create failed: container_linux.go:345
     ```
 
-    Try restarting the docker service: `sudo service docker restart`
+    Try restarting the docker service: `sudo service docker restart` , also try to restart your machine.
     
