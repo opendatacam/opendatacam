@@ -117,6 +117,7 @@ You can also [use opendatacam without docker](#how-to-run-opendatacam-without-do
 ### 2. bis (optional) Upgrade Opendatacam (from v2.x to another v2.x version)
 
 - If you have modified the `config.json`, save it somewhere
+- Remove `config.json`, `install-opendatacam.sh`, `run-docker.sh`, `run-opendatacam.sh` _(To improve, make install script remove them)_
 - Run the install steps again (previous section), this will download a new default `config.json` file compatible with the opendatacam version you are installing and setup a new docker container
 - Open the newly downloaded config.json script and modify with the things you had changed previously
 
