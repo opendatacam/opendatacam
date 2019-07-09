@@ -33,13 +33,15 @@ Directly flash the microSD card with jetpack 4.2 , follow this guide:
 
 [https://nvidia.com/JetsonNano-Start](https://nvidia.com/JetsonNano-Start)
 
-Make sure CUDA is in your PATH:
+Make sure CUDA is in your PATH! Copy and paste the lines below to `.bashrc` in your home folder, edit it with `sudo gedit .bashrc`.
 
 ```bash
 export PATH=${PATH}:/usr/local/cuda/bin
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda/lib64
+```
 
-# Verify, this command should work
+```bash
+# Verify, this command should work now
 nvcc --version
 ```
 
