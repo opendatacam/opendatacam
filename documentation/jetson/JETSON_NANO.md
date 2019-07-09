@@ -22,7 +22,7 @@
 
 ### Limitations
 
-Jetson nano has two power mode, 5W and 10W.
+Jetson Nano has two power mode, 5W and 10W.
 
 Once Opendatacam is installed and __running without a monitor__, it runs perfectly fine on 5W powermode _(which is nice because you can power it with a powerbank)_. If you use it with a monitor connected, the display will be a bit laggy but it should work.
 
@@ -36,14 +36,14 @@ The minimum setup for 5W power mode is:
 
 - 1 Jetson nano
 - 1 Camera [USB compatible camera](https://elinux.org/Jetson_Nano#Cameras) or [Raspberrycam module v2](https://www.raspberrypi.org/products/camera-module-v2/)
-- 1 Wifi dongle , [this one is compatible](https://www.edimax.com/edimax/merchandise/merchandise_detail/data/edimax/in/wireless_adapters_n150/ew-7811un/) out of the box, or [see compatibility list](https://elinux.org/Jetson_Nano#Wireless).
+- 1 Wifi dongle, [this one is compatible](https://www.edimax.com/edimax/merchandise/merchandise_detail/data/edimax/in/wireless_adapters_n150/ew-7811un/) out of the box, or [see compatibility list](https://elinux.org/Jetson_Nano#Wireless).
 - 1 MicroSD card (at least 32 GB and 100 MB/s)
 - 1 Power supply: either a [5V⎓2A Micro-USB adapter](https://www.adafruit.com/product/1995) or a Powerbank with min 2A output.
 
 For 10W power mode _(this is good for desktop use when you plug the screen, the mouse, the keyboard, it draws powers from the peripherics)_
 
 - Power supply: [5V⎓4A DC barrel jack adapter, 5.5mm OD x 2.1mm ID x 9.5mm length, center-positive](https://www.adafruit.com/product/1466)
-- 1x [2.54mm Standard Computer Jumper](https://www.amazon.com/2-54mm-Standard-Computer-Jumper-100pack/dp/B00N552DWK/) This is used on the J48 Pin when supplying power from the jack entry instead of the microUSB. It tells the jetson to by-pass the microUSD power entry.
+- 1x [2.54mm Standard Computer Jumper](https://www.amazon.com/2-54mm-Standard-Computer-Jumper-100pack/dp/B00N552DWK/) This is used on the J48 Pin when supplying power from the jack entry instead of the microUSB. It tells the Jetson to by-pass the microUSD power entry.
 
 For setup:
 
@@ -52,7 +52,7 @@ For setup:
 - 1 screen (HDMI or Displayport)
 - And for faster connexion, a ethernet cable to your router
 
-Learn more about Jetson nano ecosystem: [https://elinux.org/Jetson_Nano#Ecosystem_Products_and_Sensors](https://elinux.org/Jetson_Nano#Ecosystem_Products_and_Sensors)
+Learn more about Jetson Nano ecosystem: [https://elinux.org/Jetson_Nano#Ecosystem_Products_and_Sensors](https://elinux.org/Jetson_Nano#Ecosystem_Products_and_Sensors)
 
 
 ### Setup Opendatacam
@@ -67,7 +67,7 @@ Follow [Flashing guide](FLASH_JETSON.md#Jetson-Nano) (don't forget to verify if 
 
 Using microUSD with a powerbank or a 5V⎓2A power supply, you just need to plug-in and the Jetson Nano will start when connected to it.
 
-When started, we advise you to set the powermode of the Jetson nano to 5W so it won't crash, to do so, open a terminal and run:
+When started, we advise you to set the powermode of the Jetson Nano to 5W so it won't crash, to do so, open a terminal and run:
 
 ```
 sudo nvpmodel -m 1
@@ -81,11 +81,11 @@ sudo nvpmodel -m 0
 
 ##### Using barrel jack (5V - 4A)
 
-When working with the Jetson nano with the monitor connected, we advise to use the barrel jack power. In order to do so you need first to put a jumper on the J48 pin (more details on Jetson nano power supply)
+When working with the Jetson Nano with the monitor connected, we advise to use the barrel jack power. In order to do so you need first to put a jumper on the J48 pin (more details on Jetson Nano power supply)
 
 ![jumper](https://user-images.githubusercontent.com/533590/60701138-edca9500-9efa-11e9-8c51-6e2b421ed44b.png)
 
-By default, the Jetson nano will already run on the 10W power mode, but you can make sure it is by running:
+By default, the Jetson Nano will already run on the 10W power mode, but you can make sure it is by running:
 
 ```
 sudo nvpmodel -m 0
@@ -132,7 +132,7 @@ chmod 777 install-opendatacam.sh
 
 #### 6. Test Opendatacam
 
-Open http://localhost:8080 . 
+Open `http://localhost:8080`. 
 
 This will be super slow if you are using this directly on the monitor connected to the Jetson nano, see next step to access Opendatacam from an external device.
 
@@ -146,21 +146,21 @@ N.B: you need a wifi dongle for this.
 
 ![connectioninformatio](https://user-images.githubusercontent.com/533590/60710337-bf58b400-9f12-11e9-8056-987f0b5ea583.png)
 
-Take note somewhere of the jetson IP Address, in this case 10.42.0.1
+Take note somewhere of the Jetson IP Address, in this case 10.42.0.1
 
 - Unplug monitor / ethernet / keyboard / mouse and reboot
 
 - Connect with another device to this Wifi network, and open <IP_OF_JETSON>:8080 in your browser
 
-_After rebooting the Jetson nano may takes 1-5 min to start the docker container, so if your browser say "Page not found", just retry after a few minutes_
+_After rebooting the Jetson Nano may takes 1-5 min to start the docker container, so if your browser say "Page not found", just retry after a few minutes_
 
 You should be able to operate Opendatacam without lag issues.
 
 #### 8. Tips
 
-- You'll notice there are no button to power on / off button your Jetson nano. When you plug the power supply it will power on immediately. If you want to restart you can just un-plug / re-plug if you are not connected via a Monitor or SSH. There is a way to add power buttons via the J40 pins, [see nvidia forum](https://devtalk.nvidia.com/default/topic/1050888/jetson-nano/power-and-suspend-buttons-for-jetson-nano/post/5333577/#5333577).
+- You'll notice there are no button to power on / off button your Jetson Nano. When you plug the power supply it will power on immediately. If you want to restart you can just un-plug / re-plug if you are not connected via a Monitor or SSH. There is a way to add power buttons via the J40 pins, [see nvidia forum](https://devtalk.nvidia.com/default/topic/1050888/jetson-nano/power-and-suspend-buttons-for-jetson-nano/post/5333577/#5333577).
 
-- You can connect your Jetson to Ethernet and SSH into it to do all the setup without having to connect a monitor (after having setup a fixed IP)
+- You can connect your Jetson to ethernet and SSH into it to do all the setup without having to connect a monitor (after having setup a fixed IP)
 
 ### Advanced usage
 
