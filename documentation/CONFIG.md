@@ -63,6 +63,8 @@ Once modified,  you just need to restart the node.js app (`npm run start`), no n
 
 _NB: [we are working on a better support](https://github.com/opendatacam/opendatacam/issues/88) of pre-recorded videos_
 
+_NB2: if you are running with nvidiadocker and want to use an usbcam, please see [Run from an usbcam (step 4)](#run-from-an-usbcam)
+
 By default, opendatacam will try to pickup the usb webcam connected to your jetson. The settings is `VIDEO_INPUT` in the `config.json` file.
 
 ```json
@@ -294,6 +296,36 @@ Behind the hoods, this config input becomes [the input of the darknet](https://g
 As we compile OpenCV with Gstreamer support when installing Opendatacam, we can use any [Gstreamer pipeline](http://www.einarsundgren.se/gstreamer-basic-real-time-streaming-tutorial/) as input + other VideoCapture supported format like video files / IP cam streams. 
 
 You can add your own gstreamer pipeline for your needs by adding an entry to `"VIDEO_INPUTS_PARAMS"`
+
+##### Run from an usbcam
+
+1. Verify if you have an usbcam detected
+
+```bash
+ls /dev/video*
+# Output should be: /dev/video0
+#
+```
+
+2. Change `VIDEO_INPUT` to `"usbcam"`
+
+```json
+"VIDEO_INPUT": "usbcam"
+```
+
+3. (Optional) If your device is on `video1` or `video2` instead of default `video0`, change `VIDEO_INPUTS_PARAMS > usbcam` to your video device, for example if /dev/video1
+
+```json
+"VIDEO_INPUTS_PARAMS": {
+  "usbcam": "v4l2src device=/dev/video1 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink"
+}
+```
+
+4. *(If running with nvidiadocker container)* You need allow docker to access your device when starting the container, to do this modify the `run-nvidiadocker.sh` script that should have been downloaded by the install script and set:
+
+```
+docker run --runtime=nvidia --device=/dev/video0:/dev/video0 -p 8080:8080 -p 8090:8090 -p 8070:8070 $DOCKER_VOLUMES -v /data/db:/data/db $@
+```
 
 ##### Run from a file
 
