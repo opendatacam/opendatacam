@@ -16,6 +16,10 @@ You can name the wifi as you like, and you need to select "Hotspot" for the Mode
 
 ![step3-hotspotnane](https://user-images.githubusercontent.com/533590/60503909-eae46000-9cc0-11e9-83df-48a4a57b3799.png)
 
+#### 3.a Set a wifi password (optional)
+
+In the Wi-fi security tab, you can setup an password to protect your jetson from being accessed by others.
+
 #### 4. Set auto-connect
 
 In the "General" tab, you need to check "Automatically connect to this network when it is available" so it will start the wifi hotspot on boot.
