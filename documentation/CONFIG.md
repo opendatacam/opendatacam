@@ -63,7 +63,7 @@ Once modified,  you just need to restart the node.js app (`npm run start`), no n
 
 _NB: [we are working on a better support](https://github.com/opendatacam/opendatacam/issues/88) of pre-recorded videos_
 
-_NB2: if you are running with nvidiadocker and want to use an usbcam, please see [Run from an usbcam (step 4)](#run-from-an-usbcam)
+_NB2: if you are running with nvidiadocker and want to use an usbcam, please see [Run from an usbcam (step 4)](#run-from-an-usbcam)_
 
 By default, opendatacam will try to pickup the usb webcam connected to your jetson. The settings is `VIDEO_INPUT` in the `config.json` file.
 
