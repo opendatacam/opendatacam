@@ -137,19 +137,19 @@ case $argument in
     echo "Download, install and run opendatacam docker container"
     
     if [[ "$PLATFORM" != ${PLATFORM_OPTIONS[3]} ]]; then
-      # Pull, install and run opendatacam container when docker starts (on boot with --restart unless-stopped, -d is for detached mode)
-      sudo ./run-docker.sh run -d --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM
       # Create the run-opendatacam.sh script
       echo "./run-docker.sh run -d --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM" > run-opendatacam.sh
       chmod 777 run-opendatacam.sh
       echo "Create a run-opendatacam.sh script for easy container start"
-    else
       # Pull, install and run opendatacam container when docker starts (on boot with --restart unless-stopped, -d is for detached mode)
-      sudo ./run-nvidiadocker.sh run -d --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM
+      sudo ./run-opendatacam.sh
+    else
       # Create the run-opendatacam.sh script
       echo "./run-nvidiadocker.sh run -d --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM" > run-opendatacam.sh
       chmod 777 run-opendatacam.sh
       echo "Create a run-opendatacam.sh script for easy container start"
+      # Pull, install and run opendatacam container when docker starts (on boot with --restart unless-stopped, -d is for detached mode)
+      sudo ./run-opendatacam.sh
     fi
 
     # Message that docker container has been started and opendatacam will be available shorty on <IP>
