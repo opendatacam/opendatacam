@@ -32,7 +32,7 @@ We offer several customization options:
 
 ### General
 
-**For a standard install of Opendatacam:**
+#### For a standard install of Opendatacam
 
 All settings are in the [`config.json`](https://github.com/opendatacam/opendatacam/blob/master/config.json) file that you will find in the same directory you run the install script.
 
@@ -49,7 +49,7 @@ sudo docker restart <containerID>
 sudo ./run-opendatacam.sh
 ```
 
-**For a non-docker install of Opendatacam:**
+#### For a non-docker install of Opendatacam
 
 You need to modify the config.json file located the `opendatacam` folder.
 
