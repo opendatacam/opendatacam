@@ -10,7 +10,7 @@ The casing is originally designed for the raspberry pi 3. The good thing is, tha
 | --------------------------------- | -------------------------------- |
 | ![Nano on Plate](../assets/4.jpg) | ![Cam on plate](../assets/3.jpg) |
 
-####
+### Steps
 
 The easiest way to fit the board on the baseplate is to
 
