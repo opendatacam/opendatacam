@@ -1,22 +1,23 @@
 ## Jetson Nano
 
 - [Jetson Nano](#jetson-nano)
-  * [Limitations](#limitations)
-  * [Shopping list](#shopping-list)
-  * [Setup Opendatacam](#setup-opendatacam)
-    + [1. Flash Jetson Nano:](#1-flash-jetson-nano)
-    + [2. Set correct Powermode according to your Power supply](#2-set-correct-powermode-according-to-your-power-supply)
+  - [Limitations](#limitations)
+  - [Shopping list](#shopping-list)
+  - [Setup Opendatacam](#setup-opendatacam)
+    - [1. Flash Jetson Nano:](#1-flash-jetson-nano)
+    - [2. Set correct Powermode according to your Power supply](#2-set-correct-powermode-according-to-your-power-supply)
       - [Using microUSB](#using-microusb)
       - [Using barrel jack (5V - 4A)](#using-barrel-jack-5v---4a)
-    + [3. Setup a swap partition:](#3-setup-a-swap-partition-)
-    + [4. Verify your if your USB Camera is connected](#4-verify-your-if-your-usb-camera-is-connected)
-    + [5. Install Opendatacam](#5-install-opendatacam)
-    + [6. Test Opendatacam](#6-test-opendatacam)
-    + [7. Access Opendatacam via Wifi hotspot](#7-access-opendatacam-via-wifi-hotspot)
-    + [8. Tips](#8-tips)
-  * [Advanced usage](#advanced-usage)
-    + [Use Raspberry Pi Cam with a non-docker installation of Opendatacam](#use-raspberry-pi-cam-with-a-non-docker-installation-of-opendatacam)
-    + [(EXPERIMENTAL) Use Raspberry Pi Cam with Opendatacam default installation](#-experimental--use-raspberry-pi-cam-with-opendatacam-default-installation)
+    - [3. Setup a swap partition:](#3-setup-a-swap-partition-)
+    - [4. Verify your if your USB Camera is connected](#4-verify-your-if-your-usb-camera-is-connected)
+    - [5. Install Opendatacam](#5-install-opendatacam)
+    - [6. Test Opendatacam](#6-test-opendatacam)
+    - [7. Access Opendatacam via Wifi hotspot](#7-access-opendatacam-via-wifi-hotspot)
+    - [8. Tips](#8-tips)
+    - [9. Housing](./HOUSING.md)
+  - [Advanced usage](#advanced-usage)
+    - [Use Raspberry Pi Cam with a non-docker installation of Opendatacam](#use-raspberry-pi-cam-with-a-non-docker-installation-of-opendatacam)
+    - [(EXPERIMENTAL) Use Raspberry Pi Cam with Opendatacam default installation](#-experimental--use-raspberry-pi-cam-with-opendatacam-default-installation)
       - [Setup](#setup)
       - [Why](#why)
 
@@ -24,7 +25,7 @@
 
 Jetson Nano has two power mode, 5W and 10W.
 
-Once Opendatacam is installed and __running without a monitor__, it runs perfectly fine on 5W powermode _(which is nice because you can power it with a powerbank)_. If you use it with a monitor connected, the display will be a bit laggy but it should work.
+Once Opendatacam is installed and **running without a monitor**, it runs perfectly fine on 5W powermode _(which is nice because you can power it with a powerbank)_. If you use it with a monitor connected, the display will be a bit laggy but it should work.
 
 We recommend you to do the setup with a monitor connected and then make your Jetson nano available as a Wifi hotspot to operate it from another device.
 
@@ -53,7 +54,6 @@ For setup:
 - And for faster connexion, a ethernet cable to your router
 
 Learn more about Jetson Nano ecosystem: [https://elinux.org/Jetson_Nano#Ecosystem_Products_and_Sensors](https://elinux.org/Jetson_Nano#Ecosystem_Products_and_Sensors)
-
 
 ### Setup Opendatacam
 
@@ -96,7 +96,7 @@ sudo nvpmodel -m 0
 In order to reduce memory pressure (and crashes), it is a good idea to setup a 6GB swap partition. _(Nano has only 4GB of RAM)_
 
 ```bash
-git clone https://github.com/JetsonHacksNano/installSwapfile 
+git clone https://github.com/JetsonHacksNano/installSwapfile
 cd installSwapfile
 chmod 777 installSwapfile.sh
 ./installSwapfile.sh
@@ -132,7 +132,7 @@ chmod 777 install-opendatacam.sh
 
 #### 6. Test Opendatacam
 
-Open `http://localhost:8080`. 
+Open `http://localhost:8080`.
 
 This will be super slow if you are using this directly on the monitor connected to the Jetson nano, see next step to access Opendatacam from an external device.
 
@@ -164,9 +164,9 @@ You should be able to operate Opendatacam without lag issues.
 
 ### Advanced usage
 
-_[Follow this article](https://www.jetsonhacks.com/2019/04/02/jetson-nano-raspberry-pi-camera/) to test your raspberry pi  cam_
+_[Follow this article](https://www.jetsonhacks.com/2019/04/02/jetson-nano-raspberry-pi-camera/) to test your raspberry pi cam_
 
-__IMPORTANT:__ Unplug any usb webcam before plugging the raspberry pi cam or reboot after unpluging / plugin things.
+**IMPORTANT:** Unplug any usb webcam before plugging the raspberry pi cam or reboot after unpluging / plugin things.
 
 #### Use Raspberry Pi Cam with a non-docker installation of Opendatacam
 
