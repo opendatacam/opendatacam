@@ -12,13 +12,20 @@ The casing is originally designed for the raspberry pi 3. The good thing is, tha
 
 ### Steps
 
-The easiest way to fit the board on the baseplate is to
+#### One way to fit the board on the baseplate is:
+
+- Print out the PDF file with the baseplate template
+- Attach the print on the baseplate
+- Drill the holes marked in red on the template (preferably with an 3mm bit since the screws used are M3s)
+
+#### Another way is:
 
 - Fix it with one thread screw on the existing hole (marked in blue in the baseplate template below)
 - Rotate the board to the point where it fits perfectly on the baseplate.
 - Mark your own holes in the locations (also marked in red in the baseplate template below).
 - Once it fits, mark the spots for the hole and drill it with an electric drill (preferably with an 3mm bit since the screws used are M3s)
-  Make sure to leave some space for the power adapter since it takes a bit of space. ([Link to the adapter](https://www.amazon.de/gp/product/B004US2XPS/ref=ppx_yo_dt_b_asin_title_o02_s00?ie=UTF8&psc=1))
+
+Make sure to leave some space for the power adapter since it takes a bit of space. ([Link to the adapter](https://www.amazon.de/gp/product/B004US2XPS/ref=ppx_yo_dt_b_asin_title_o02_s00?ie=UTF8&psc=1))
 
 | Baseplate                                  | Print version                                 |
 | ------------------------------------------ | --------------------------------------------- |
