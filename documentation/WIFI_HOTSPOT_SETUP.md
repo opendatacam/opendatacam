@@ -40,3 +40,13 @@ Click on the network icon on the top right > Connection Information
 ### On Ubuntu 18.04 via command line
 
 We accept pull request for this 😁
+
+
+### ⁉️ Troubleshooting
+
+1.Wifi-Hotspot doesn't show up on other devices
+--> go to /etc/modprobe.d/bcmdhd.conf and add the line: options bcmdhd op_mode=2 
+--> reboot your device 
+      
+  
+
