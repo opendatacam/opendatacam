@@ -19,7 +19,7 @@ It is very alpha and we do not provide any guarantee that this will work for you
   * [💻 Hardware pre-requisite](#-hardware-pre-requisite)
   * [🎬 Get Started, quick setup](#--get-started--quick-setup)
     + [1. Software pre-requisite 📦](#1-software-pre-requisite-)
-      - [For jetson: Flash Jetson board to jetpack 4.2 ⚡️](#for-jetson--flash-jetson-board-to-jetpack-42-)
+      - [For jetson: Flash Jetson board to jetpack 4.2 or 4.2.1 ⚡️](#for-jetson--flash-jetson-board-to-jetpack-42-)
       - [For non-jetson: Install nvidia-docker v2.0 🔧](#for-non-jetson--install-nvidia-docker-v20-)
     + [2. Install and start Opendatacam 🚀](#2-install-and-start-opendatacam-)
     + [2. bis (optional) Upgrade Opendatacam (from v2.x to another v2.x version)](#2-bis--optional--upgrade-opendatacam--from-v2x-to-another-v2x-version-)
@@ -52,13 +52,13 @@ _Also see [In depth guide about compatible Cameras with Jetson](https://elinux.o
 
 ### 1. Software pre-requisite 📦
 
-#### For jetson: Flash Jetson board to jetpack 4.2 ⚡️
+#### For jetson: Flash Jetson board to jetpack 4.2 or 4.2.1 ⚡️
 
 *Ignore this if you are not running on a jetson*
 
 [See How to find out your jetpack version](documentation/jetson/FLASH_JETSON.md#How-to-find-out-my-Jetpack-version)
 
-If your jetson does not have jetpack 4.2 *(CUDA 10, TensorRT 5, cuDNN 7.3, Ubuntu 18.04)*
+If your jetson does not have jetpack 4.2 or 4.2.1 *(CUDA 10, TensorRT 5, cuDNN 7.3, Ubuntu 18.04)*
 
 [Follow this guide to flash your jetson](documentation/jetson/FLASH_JETSON.md)
 

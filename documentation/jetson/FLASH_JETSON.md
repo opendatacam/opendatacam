@@ -1,6 +1,6 @@
 ### ⚡️Flash Jetson Board:
 
-*We support only jetpack version 4.2 (more recent versions might also work)*
+*We support only jetpack version 4.2 and 4.2.1 (more recent versions might also work)*
 
 - Official documentation https://docs.nvidia.com/sdk-manager/install-with-sdkm-jetson/index.html
 - Video tutorial: https://www.youtube.com/watch?v=s1QDsa6SzuQ 
@@ -29,7 +29,7 @@ jetson-release
 
 #### Jetson Nano
 
-Directly flash the microSD card with jetpack 4.2 , follow this guide:
+Directly flash the microSD card with jetpack, follow this guide:
 
 [https://nvidia.com/JetsonNano-Start](https://nvidia.com/JetsonNano-Start)
 
