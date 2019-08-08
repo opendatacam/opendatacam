@@ -64,9 +64,9 @@ RUN apt-get update; \
 # Get weights files
 RUN wget https://pjreddie.com/media/files/yolov3.weights -O /var/local/darknet/yolov3.weights
 RUN wget https://pjreddie.com/media/files/yolov3-tiny.weights -O /var/local/darknet/yolov3-tiny.weights
-RUN mkdir /var/local/darknet/opendatacam_videos && wget https://github.com/opendatacam/opendatacam/raw/v2.0.0-rc.1/static/demo/demo.mp4 -O /var/local/darknet/opendatacam_videos/demo.mp4
+RUN mkdir /var/local/darknet/opendatacam_videos && wget https://github.com/opendatacam/opendatacam/raw/v2.0.0/static/demo/demo.mp4 -O /var/local/darknet/opendatacam_videos/demo.mp4
 
-# wget -N https://github.com/opendatacam/opendatacam/raw/v2.0.0-rc.1/static/demo/demo.mp4
+# wget -N https://github.com/opendatacam/opendatacam/raw/v2.0.0/static/demo/demo.mp4
 # Debug, test darknet : ./darknet detector demo cfg/coco.data cfg/yolov3.cfg yolov3.weights -ext_output -dont_show demo.mp4
 # Debug, test darknet : ./darknet detector demo cfg/coco.data cfg/yolov3-tiny.cfg yolov3-tiny.weights -ext_output -dont_show demo.mp4
 

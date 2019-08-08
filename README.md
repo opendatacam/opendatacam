@@ -1,6 +1,6 @@
 _We are working toward Opendatacam v2.0.0 release, if you have bugs / feedback please ping us on this issue: https://github.com/opendatacam/opendatacam/issues/100_
 
-# Open data cam 2.0.0-rc.1
+# Open data cam 2.0.0
 
 This project is offline lightweight DIY solution to monitor urban landscape. After installing this software on the specified hardware (Nvidia Jetson board + Logitech webcam), you will be able to count cars, pedestrians, motorbikes from your webcam live stream.
 
@@ -14,7 +14,7 @@ It is very alpha and we do not provide any guarantee that this will work for you
 
 ## Table of content
 
-- [Open data cam 2.0.0-rc.1](#open-data-cam-200-rc1)
+- [Open data cam 2.0.0](#open-data-cam-200-rc1)
   * [Table of content](#table-of-content)
   * [💻 Hardware pre-requisite](#-hardware-pre-requisite)
   * [🎬 Get Started, quick setup](#--get-started--quick-setup)
@@ -89,7 +89,7 @@ __Install commands:__
 
 ```bash
 # Download install script
-wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v2.0.0-rc.1/docker/install-opendatacam.sh
+wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v2.0.0/docker/install-opendatacam.sh
 
 # Give exec permission
 chmod 777 install-opendatacam.sh

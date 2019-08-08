@@ -119,7 +119,7 @@ _If you have a Raspberry Pi Cam, [see advanced usage](#advanced-usage)._
 
 ```bash
 # Download install script
-wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v2.0.0-rc.1/docker/install-opendatacam.sh
+wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v2.0.0/docker/install-opendatacam.sh
 
 # Give exec permission
 chmod 777 install-opendatacam.sh
