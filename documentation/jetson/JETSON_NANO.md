@@ -162,6 +162,10 @@ You should be able to operate Opendatacam without lag issues.
 
 - You can connect your Jetson to ethernet and SSH into it to do all the setup without having to connect a monitor (after having setup a fixed IP)
 
+#### 9. Build a case
+
+[Here are the steps to set up the Jetson NANO in the Wildlife Cam Casing from Naturebytes.](HOUSING.md)
+
 ### Advanced usage
 
 _[Follow this article](https://www.jetsonhacks.com/2019/04/02/jetson-nano-raspberry-pi-camera/) to test your raspberry pi cam_
