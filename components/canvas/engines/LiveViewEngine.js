@@ -45,16 +45,33 @@ class LiveViewEngine {
         objectTrackedScaled.w - 8,
         17
       )
+
+      // confidence -- text
       context.font = '10px'
+      context.fillStyle = evaluateCSSVariable(colors.inverse);
+      const rightName = x + 10 + context.measureText(`${objectTrackedScaled.name}`).width
+      const xConfidence = x + objectTrackedScaled.w - 30
+      if (rightName < xConfidence) {
+        context.fillText(
+          `${Math.round(objectTrackedScaled.confidence * 100)}%`,
+          xConfidence,
+          y
+        )
+      }
+
+      // name -- background
+      context.fillStyle = evaluateCSSVariable(colors.default)
+      context.fillRect(
+        x + 10,
+        y - 10,
+        context.measureText(`${objectTrackedScaled.name}`).width,
+        17
+      )
+      // name -- text
       context.fillStyle = evaluateCSSVariable(colors.inverse);
       context.fillText(
         `${objectTrackedScaled.name}`,
         x + 10,
-        y
-      )
-      context.fillText(
-        `${Math.round(objectTrackedScaled.confidence * 100)}%`,
-        x + objectTrackedScaled.w - 30,
         y
       )
     })
@@ -76,7 +93,7 @@ class LiveViewEngine {
         canvasResolution,
         originalResolution
       )
-      
+
       let x = objectTrackedScaled.x - objectTrackedScaled.w / 2
       let y = objectTrackedScaled.y - objectTrackedScaled.h / 2
 
@@ -87,7 +104,7 @@ class LiveViewEngine {
           return countedEvent.areaKey;
         }
       })
-    
+
       if(displayCountedArea) {
         // displayCountedArea contain countingareakey : see Opendatacam.js on server side
         context.strokeStyle = getCounterColor(countingAreas.getIn([displayCountedArea.areaKey, 'color']));
