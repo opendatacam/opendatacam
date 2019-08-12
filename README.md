@@ -1,4 +1,4 @@
-# Open data cam 2.0.0
+# OpenDataCam 2.0.0
 
 This project is offline lightweight DIY solution to monitor urban landscape. After installing this software on the specified hardware (Nvidia Jetson board + Logitech webcam), you will be able to count cars, pedestrians, motorbikes from your webcam live stream.
 
@@ -6,24 +6,24 @@ Behind the scenes, it feeds the webcam stream to a neural network (YOLO darknet)
 
 It is very alpha and we do not provide any guarantee that this will work for your use case, but we conceived it as a starting point from where you can build-on & improve.
 
-[See Demo Video (60s)](https://vimeo.com/346340651/38966dac9d)
+👉 [See Demo Video (4 min)](https://vimeo.com/346340651/38966dac9d)
 
-[![Demo open data cam](https://i.vimeocdn.com/video/796339162.webp?mw=1100&mh=571)](https://vimeo.com/346340651/38966dac9d)
+[![Demo OpenDataCam](https://i.vimeocdn.com/video/805477718.webp?mw=1200&mh=675&q=85)](https://vimeo.com/346340651/38966dac9d)
 
 ## Table of content
 
-- [Open data cam 2.0.0](#open-data-cam-200-rc1)
+- [OpenDataCam 2.0.0](#open-data-cam-200-rc1)
   * [Table of content](#table-of-content)
   * [💻 Hardware pre-requisite](#-hardware-pre-requisite)
   * [🎬 Get Started, quick setup](#--get-started--quick-setup)
     + [1. Software pre-requisite 📦](#1-software-pre-requisite-)
       - [For jetson: Flash Jetson board to jetpack 4.2 or 4.2.1 ⚡️](#for-jetson--flash-jetson-board-to-jetpack-42-)
       - [For non-jetson: Install nvidia-docker v2.0 🔧](#for-non-jetson--install-nvidia-docker-v20-)
-    + [2. Install and start Opendatacam 🚀](#2-install-and-start-opendatacam-)
-    + [2. bis (optional) Upgrade Opendatacam (from v2.x to another v2.x version)](#2-bis--optional--upgrade-opendatacam--from-v2x-to-another-v2x-version-)
-    + [3. Use Opendatacam 🖖](#3-use-opendatacam-)
+    + [2. Install and start OpenDataCam 🚀](#2-install-and-start-opendatacam-)
+    + [2. bis (optional) Upgrade OpenDataCam (from v2.x to another v2.x version)](#2-bis--optional--upgrade-opendatacam--from-v2x-to-another-v2x-version-)
+    + [3. Use OpenDataCam 🖖](#3-use-opendatacam-)
     + [4. Configure your Wifi hotspot 📲](#4-configure-your-wifi-hotspot-)
-    + [5. Customize Opendatacam ️️⚙️](#5-customize-opendatacam-)
+    + [5. Customize OpenDataCam ️️⚙️](#5-customize-opendatacam-)
     + [6. Docker playbook ️📚](#6-docker-playbook-)
   * [🔌 API Documentation](#-api-documentation)
   * [🗃 Data export documentation](#-data-export-documentation)
@@ -31,15 +31,15 @@ It is very alpha and we do not provide any guarantee that this will work for you
   * [🎛 Advanced uses](#-advanced-uses)
     + [How to use opendatacam without docker](#how-to-use-opendatacam-without-docker)
     + [How to create / update the docker image](#how-to-create--update-the-docker-image)
-  * [🎯 How accurate is Opendatacam ?](#-how-accurate-is-opendatacam-)
-  * [🚤 How fast is Opendatacam ?](#-how-fast-is-opendatacam-)
+  * [🎯 How accurate is OpenDataCam ?](#-how-accurate-is-opendatacam-)
+  * [🚤 How fast is OpenDataCam ?](#-how-fast-is-opendatacam-)
   * [🛠 Development notes](#-development-notes)
   * [💌 Acknowledgments](#-acknowledgments)
 
 ## 💻 Hardware pre-requisite
 
 - Nvidia Jetson Nano / TX2 / Xavier or any GNU/Linux x86_64 machine with a CUDA compatible GPU with [nvidia-docker v2.0](https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(version-2.0)#prerequisites) (in the cloud or locally)
-- Webcam Logitech C222, C270, C920 / Rasberry Pi cam for Jetson nano / a Video file / IP camera 
+- Webcam Logitech C222, C270, C920 / Rasberry Pi cam for Jetson nano / a Video file / IP camera
 - A smartphone / tablet / laptop that you will use to operate the system
 
 _If you have a Jetson Nano, [please read this specific documentation](documentation/jetson/JETSON_NANO.md)_
@@ -68,7 +68,7 @@ Nvidia-docker v2.0 is only compatible with GNU/Linux x86_64 machine with a [CUDA
 
 [Follow this guide to install nvidia-docker v2.0 on your machine](documentation/nvidia-docker/INSTALL_NVIDIADOCKER.md)
 
-### 2. Install and start Opendatacam 🚀
+### 2. Install and start OpenDataCam 🚀
 
 Open a terminal or ssh to you machine and run the following commands depending on your platform
 
@@ -104,7 +104,7 @@ chmod 777 install-opendatacam.sh
 ./install-opendatacam.sh --platform xavier
 
 # Install command for a Nvidia-docker machine (ARCH_BIN=6.1)
-# NB: Will run from demo file, you can change this after install, see "5. Customize Opendatacam"
+# NB: Will run from demo file, you can change this after install, see "5. Customize OpenDataCam"
 ./install-opendatacam.sh --platform nvidiadocker_cuda_archbin_6_1
 ```
 
@@ -114,7 +114,7 @@ The docker container is started in auto-restart mode, so if you reboot your mach
 
 You can also [use opendatacam without docker](#how-to-run-opendatacam-without-docker)
 
-### 2. bis (optional) Upgrade Opendatacam (from v2.x to another v2.x version)
+### 2. bis (optional) Upgrade OpenDataCam (from v2.x to another v2.x version)
 
 - If you have modified the `config.json`, save it somewhere
 - Remove `config.json`, `install-opendatacam.sh`, `run-docker.sh`, `run-opendatacam.sh` _(To improve, make install script remove them)_
@@ -123,15 +123,15 @@ You can also [use opendatacam without docker](#how-to-run-opendatacam-without-do
 
 _NB: we do not handle auto update of the config.json file_
 
-### 3. Use Opendatacam 🖖
+### 3. Use OpenDataCam 🖖
 
 Open your browser at http://IPOFJETSON:8080 .
 
 *If you are running with the jetson connected to a screen: http://localhost:8080*
 
-_NB: Opendatacam only supports one client at a time, if you open the UI on two different devices, the stream will stop in one of them._
+_NB: OpenDataCam only supports one client at a time, if you open the UI on two different devices, the stream will stop in one of them._
 
-See [Docker playbook ️📚](#6-docker-playbook-️) how to restart / stop Opendatacam.
+See [Docker playbook ️📚](#6-docker-playbook-️) how to restart / stop OpenDataCam.
 
 ### 4. Configure your Wifi hotspot 📲
 
@@ -139,7 +139,7 @@ In order to operate opendatacam from your phone / tablet / computer.
 
 See [Make jetson device / machine accessible via WIFI](documentation/WIFI_HOTSPOT_SETUP.md)
 
-### 5. Customize Opendatacam ️️⚙️
+### 5. Customize OpenDataCam ️️⚙️
 
 We offer several customization options:
 
@@ -149,7 +149,7 @@ We offer several customization options:
 
 - **Change display classes:** We default to mobility classes (car, bus, person...), but you can change this
 
-[Learn how to customize Opendatacam](documentation/CONFIG.md)
+[Learn how to customize OpenDataCam](documentation/CONFIG.md)
 
 ### 6. Docker playbook ️📚
 
@@ -161,7 +161,7 @@ Meanwhile we need to give to the docker container access to the host platform GP
 
 That is why you need to use our install script to install a container. We have [an open issue](https://github.com/opendatacam/opendatacam/issues/89) to simplify setup once nvidia-docker support lands for jetson devices.
 
-**How to show Opendatacam logs**
+**How to show OpenDataCam logs**
 
 ```bash
 # List containers
@@ -170,7 +170,7 @@ sudo docker container list
 sudo docker logs <containerID>
 ```
 
-**How to  stop / restart Opendatacam**
+**How to  stop / restart OpenDataCam**
 
 ```bash
 # List containers
@@ -186,7 +186,7 @@ sudo ./run-opendatacam.sh
 sudo docker restart <containerID>
 
 # Install a newer version of opendatacam
-# Follow the 1. Install and start Opendatacam
+# Follow the 1. Install and start OpenDataCam
 
 # See stats ( CPU , memory usage ...)
 sudo docker stats <containerID>
@@ -229,22 +229,22 @@ See [How to create / update a docker image for a jetson device](documentation/je
 See [How to create / update a docker image for a nvidia-docker machine](documentation/nvidia-docker/CREATE_NVIDIADOCKER_IMAGE.md)
 
 
-## 🎯 How accurate is Opendatacam ?
+## 🎯 How accurate is OpenDataCam ?
 
-We are working on [adding a benchmark](https://github.com/opendatacam/opendatacam/issues/87) to rank Opendatacam on the [MOT Challenge (Multiple Object Tracking Benchmark)](https://motchallenge.net/) for v2.1.
+We are working on [adding a benchmark](https://github.com/opendatacam/opendatacam/issues/87) to rank OpenDataCam on the [MOT Challenge (Multiple Object Tracking Benchmark)](https://motchallenge.net/) for v2.1.
 
 Accuracy depends on which YOLO weights your hardware is capable of running.
 
-## 🚤 How fast is Opendatacam ?
+## 🚤 How fast is OpenDataCam ?
 
 FPS depends on:
 
-- which hardware your are running Opendatacam on
+- which hardware your are running OpenDataCam on
 - which YOLO weights you are using
 
 We made the default settings to run at least at 10 FPS on any Jetson.
 
-Learn more in the [Customize Opendatacam documentation](documentation/CONFIG.md#Change-neural-network-weights)
+Learn more in the [Customize OpenDataCam documentation](documentation/CONFIG.md#Change-neural-network-weights)
 
 
 ## 🛠 Development notes
