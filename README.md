@@ -39,7 +39,7 @@ It is very alpha and we do not provide any guarantee that this will work for you
 ## 💻 Hardware pre-requisite
 
 - Nvidia Jetson Nano / TX2 / Xavier or any GNU/Linux x86_64 machine with a CUDA compatible GPU with [nvidia-docker v2.0](https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(version-2.0)#prerequisites) (in the cloud or locally)
-- Webcam Logitech C222, C270, C920 / Rasberry Pi cam for Jetson nano / a Video file / IP camera
+- Webcam Logitech C222, C270, C310, C920 / Rasberry Pi cam for Jetson nano / a Video file / IP camera
 - A smartphone / tablet / laptop that you will use to operate the system
 
 _If you have a Jetson Nano, [please read this specific documentation](documentation/jetson/JETSON_NANO.md)_
@@ -261,4 +261,3 @@ Technical architecture overview:
 - Darknet fork by @alexeyab : [https://github.com/alexeyab/darknet](https://github.com/alexeyab/darknet)
 - IOU / V-IOU Tracker by @bochinski : [https://github.com/bochinski/iou-tracker/](https://github.com/bochinski/iou-tracker/)
 - Next.js by @zeit : [https://github.com/zeit/next.js](https://github.com/zeit/next.js)
-
