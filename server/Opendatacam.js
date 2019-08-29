@@ -207,6 +207,16 @@ module.exports = {
       console.log(`Filtered out ${detectionsOfThisFrame.length - detectionScaledOfThisFrame.length} detections that weren't valid classes`)
     }
 
+    
+    // if(frameTimestamp % 10000 == 0) {
+    //   console.log("Test cropping image");
+    //   var f = detectionScaledOfThisFrame[0];
+    //   var canvas = document.getElementsByClassName("canvas")[0];
+    //   var cropped = canvas.drawImage(canvas, f.x, f.y, f.w, f.h);
+    //   var img = cropped.toDataURL("image/png");
+    // }
+
+
     // console.log(`Received Detection:`);
     // console.log('=========');
     // console.log(JSON.stringify(detectionScaledOfThisFrame));
@@ -216,7 +226,6 @@ module.exports = {
     // console.log('=========')
      
     Tracker.updateTrackedItemsWithNewFrame(detectionScaledOfThisFrame, Opendatacam.currentFrame);
-
     let trackerDataForThisFrame = Tracker.getJSONOfTrackedItems();
     let countedItemsForThisFrame = [];
 
