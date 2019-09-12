@@ -1,30 +1,47 @@
 
-## Install nvidia-docker v2.0
+## Install nvidia-docker (nvidia-container-toolkit)
 
 _You can also [refer to this guide](https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(version-2.0)) on the wiki of nvidia-docker repository._
 
-### Hardware pre-requisite 
+
+### 1. Hardware pre-requisite 
 
 - An Ubuntu computer/server with a Nvidia CUDA GPU : https://developer.nvidia.com/cuda-gpus
 
-### Software pre-requisite 
 
-- Docker with API version >= 1.12
+### 2. Software pre-requisite 
+
+- Docker with API version >= 1.4
 - Nvidia drivers with version >= 361
 
-__Verify Docker version:__
 
-Docker API version should be >= 1.12
+#### 2.1 Install / Update Docker
+
+Follow the official documentation: [https://docs.docker.com/install/linux/docker-ce/ubuntu/](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
+
+Verify Docker version:
 
 ```
 docker version
 
-# For example, output: API version: 1.39
+# For example, output: API version: 1.4
 ```
 
-__Verify Nvidia drivers version:__
 
-Driver Version should be > 361
+#### 2.2 Install / Update Nvidia driver
+
+The following will also install CUDA along with latest nvidia driver, you don't need it but it is the only "easy install" way we found.
+
+- Go to: https://developer.nvidia.com/cuda-downloads
+- Select Linux > x86_64 > Ubuntu
+- Select your ubuntu version
+- Select Installer type (we tested with deb local or deb network )
+- Follow instructions
+- After install, reboot your machine
+- Test if nvidia driver are installed with: `nvidia-smi`
+
+
+Verify Nvidia drivers version:
 
 ```
 nvidia-smi
@@ -40,50 +57,29 @@ nvidia-smi
 +-------------------------------+----------------------+----------------------+
 ```
 
-#### Install / Update Docker
+### 3. Install nvidia-docker (nvidia-container-toolkit)
 
-Follow the official documentation: [https://docs.docker.com/install/linux/docker-ce/ubuntu/](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
-
-#### Install / Update Nvidia driver
-
-The following will also install CUDA along with latest nvidia driver, you don't need it but it is the only "easy install" way we found.
-
-- Go to: https://developer.nvidia.com/cuda-downloads
-- Select Linux > x86_64 > Ubuntu
-- Select your ubuntu version
-- Select Installer type ( we tested with deb local or deb network )
-- Follow instructions
-- After install, reboot your machine
-- Test if nvidia driver are installed with: `nvidia-smi`
-
-### Install nvidia-docker v2.0
-
-- Add to package manager
+- Follow the official [quickstart documentation](https://github.com/NVIDIA/nvidia-docker#quickstart) e.g. for Ubuntu 16.04/18.04:
 
 ```bash
-curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | \
-  sudo apt-key add -
-distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
-curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | \
-  sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-sudo apt-get update
-```
+# Add the package repositories
+$ distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+$ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+$ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
 
-- Install and reload Docker
-
-```bash
-sudo apt-get install nvidia-docker2
-sudo pkill -SIGHUP dockerd
+# Install and reload Docker
+$ sudo apt-get update && sudo apt-get install -y nvidia-container-toolkit
+$ sudo systemctl restart docker
 ```
 
 - Verify installation by running a dummy docker image
 
 ```bash
-sudo docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
+$ sudo docker run --gpus all nvidia/cuda:9.0-base nvidia-smi
 
 # Should output something like
 +----------------------------------------------------------+
-| NVIDIA-SMI 418.67   Driver Version: 418.67 CUDA Version: 10.1
+| NVIDIA-SMI 418.87   Driver Version: 418.87 CUDA Version: 10.1
 |-------------------------------+----------------------
 ```
 
