@@ -9,7 +9,7 @@
 - [3. Run the tracker on the yolo-detections.json](#3-run-the-tracker-on-the-yolo-detectionsjson)
 
 
-### 1. Install Darknet (Neural network framework running YOLO)
+### 1. Install Darknet with run on file support (Neural network framework running YOLO)
 
 #### Get the source files
 
