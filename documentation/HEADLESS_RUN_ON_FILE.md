@@ -1,4 +1,4 @@
-## How run Opendatacam Tracker on a video file
+## How run OpenDataCam headless on a video file
 
 - [1. Install Darknet (Neural network framework running YOLO)](#1-install-darknet--neural-network-framework-running-yolo-)
   * [Get the source files](#get-the-source-files)
@@ -10,6 +10,19 @@
 
 
 ### 1. Install Darknet with run on file support (Neural network framework running YOLO)
+
+#### Pre-requised:
+
+OpenCV installed. To run on a file the version should be > 2.4 and < 4.x, you don't need a version compiled with GStreamer.
+
+- For jetson, the version coming with Jetpack is enough
+- For ubuntu machine, `sudo apt-get install libopencv` should work
+
+You can verify if opencv is installed with this command
+
+```
+pkg-config --modversion opencv
+```
 
 #### Get the source files
 
@@ -135,6 +148,7 @@ The tracker will enhance the detections of YOLO with unique ids for each objects
 
 ```bash
 # Install the tracker (you need to have node.js installed)
+# You need node-moving-things-tracker >= 0.7.0
 npm install -g node-moving-things-tracker
 
 # Run the tracker on the yolo-detections.json file
