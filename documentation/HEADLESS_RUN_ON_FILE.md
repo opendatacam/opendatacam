@@ -11,11 +11,11 @@
 
 ### 1. Install Darknet with run on file support (Neural network framework running YOLO)
 
-#### Pre-requised:
+#### Dependency needed:
 
-OpenCV installed. To run on a file the version should be > 2.4 and < 4.x, you don't need a version compiled with GStreamer.
+You need OpenCV installed. The version should be > 2.4 and < 4.x, you don't need a version compiled with GStreamer.
 
-- For jetson, the version coming with Jetpack is enough
+- For jetson, the version coming with Jetpack should work
 - For ubuntu machine, `sudo apt-get install libopencv` should work
 
 You can verify if opencv is installed with this command
