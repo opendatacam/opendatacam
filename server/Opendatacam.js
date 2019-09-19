@@ -10,7 +10,9 @@ const DBManager = require('./db/DBManager');
 const Logger = require('./utils/Logger');
 
 // YOLO process max retries
-const HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES = 60;
+const HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS = 30;
+// Max wait time for YOLO to start is 3 min = 180s
+const HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES = 180 * (1000 / HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS);
 
 const initialState = {
   timeLastFrame: new Date(),
@@ -342,7 +344,9 @@ module.exports = {
     // console.log(Opendatacam.zombiesAreas);
 
     // Persist to db
-    if(Opendatacam.recordingStatus.isRecording) {
+    if(Opendatacam.recordingStatus.isRecording && frameId >= 50) {
+      // Only record from frame 50, the start of a stream is very buggy
+      // and send bad JSON objects
       this.persistNewRecordingFrame(
         frameId,
         frameTimestamp,
@@ -493,7 +497,7 @@ module.exports = {
       method:   'GET'
     };
 
-    console.log('Send request to connect to YOLO JSON Stream')
+    Logger.log('Send request to connect to YOLO JSON Stream')
     self.HTTPRequestListeningToYOLO = http.request(options, function(res) {
       Logger.log(`statusCode: ${res.statusCode}`)
       var message = ""; // variable that collects chunks
@@ -587,13 +591,13 @@ module.exports = {
         !Opendatacam.isListeningToYOLO &&
         Opendatacam.HTTPRequestListeningToYOLOMaxRetries > 0
       ) {
-        Logger.log('Will retry in 1s')
+        Logger.log(`Will retry in ${HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS} ms`)
         // Retry, YOLO might not have started server just yet
         setTimeout(() => {
           Logger.log("Retry connect to YOLO");
           self.listenToYOLO(urlData);
           Opendatacam.HTTPRequestListeningToYOLOMaxRetries--;
-        }, 3000)
+        }, HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS)
       } else {
         YOLO.stop();
         console.log('Something went wrong: ' + e.message);
@@ -626,6 +630,10 @@ module.exports = {
 
   requestFileRecording() {
     Opendatacam.recordingStatus.requestedFileRecording = true;
+    console.log('Ask YOLO to restart to record on a file ');
+    // Will just work the first time.. afterwise will restart only after file ended
+    //YOLO.stop();
+    //YOLO.start();
     YOLO.restart();
   },
 
