@@ -16,13 +16,20 @@
 You need OpenCV installed. The version should be > 2.4 and < 4.x, you don't need a version compiled with GStreamer.
 
 - For jetson, the version coming with Jetpack should work
-- For ubuntu machine, `sudo apt-get install libopencv` should work
+- For ubuntu machine, `sudo apt-get install libopencv-dev` should work
 
 You can verify if opencv is installed with this command
 
 ```
 pkg-config --modversion opencv
 ```
+
+Make sure you have CUDA installed
+
+```
+nvcc --version
+```
+If it returns Command 'nvcc' not found, you need to install cuda properly, see [install nvidia driver](nvidia-docker/INSTALL_NVIDIADOCKER.md#22-install--update-nvidia-driver).
 
 #### Get the source files
 
@@ -84,15 +91,6 @@ Make change to Makefile:
 # Set these variable to 1:
 GPU=1
 OPENCV=1
-```
-
-And also Make sure you have CUDA installed:
-
-```
-# Type this command
-nvcc --version
-
-# If it returns Command 'nvcc' not found , you need to install cuda properly: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#package-manager-installation and also add cuda to your PATH with the post install instructions: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#post-installation-actions
 ```
 
 
