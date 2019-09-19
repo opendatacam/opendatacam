@@ -112,9 +112,10 @@ module.exports = {
     }
   },
 
-  countItem: function(trackedItem, countingAreaKey) {
+  countItem: function(trackedItem, countingAreaKey, frameId) {
     if(Opendatacam.recordingStatus.isRecording) {
       var countedItem = {
+        frameId: frameId,
         timestamp: new Date(),
         area: countingAreaKey,
         name: trackedItem.name,
@@ -133,6 +134,7 @@ module.exports = {
 
   /* Persist in DB */ 
   persistNewRecordingFrame: function(
+    frameId,
     frameTimestamp,
     counterSummary,
     trackerSummary,
@@ -142,6 +144,7 @@ module.exports = {
     
     const trackerEntry = {
       recordingId: Opendatacam.recordingStatus.recordingId,
+      frameId: frameId,
       timestamp: frameTimestamp,
       objects: trackerDataForThisFrame.map((trackerData) => {
         return {
@@ -171,7 +174,7 @@ module.exports = {
     })
   },
 
-  updateWithNewFrame: function(detectionsOfThisFrame) {
+  updateWithNewFrame: function(detectionsOfThisFrame, frameId) {
     // Set yolo status to started if it's not the case
     if(!Opendatacam.isListeningToYOLO) {
       Opendatacam.isListeningToYOLO = true;
@@ -282,7 +285,7 @@ module.exports = {
                   // Tracked item has cross the {countingAreaKey} counting line
                   // Count it
                   // console.log(`Counting ${trackedItem.id}`);
-                  let countedItem = this.countItem(trackedItem, countingAreaKey);
+                  let countedItem = this.countItem(trackedItem, countingAreaKey, frameId);
                   countedItemsForThisFrame.push(countedItem);
                 }
   
@@ -341,6 +344,7 @@ module.exports = {
     // Persist to db
     if(Opendatacam.recordingStatus.isRecording) {
       this.persistNewRecordingFrame(
+        frameId,
         frameTimestamp,
         counterSummary,
         trackerSummary,
@@ -540,7 +544,7 @@ module.exports = {
             }
             var detectionsOfThisFrame = JSON.parse(message);
             message = '';
-            self.updateWithNewFrame(detectionsOfThisFrame.objects);
+            self.updateWithNewFrame(detectionsOfThisFrame.objects, detectionsOfThisFrame.frame_id);
           } catch (error) {
             console.log("Error with message send by YOLO, not valid JSON")
             message = '';
