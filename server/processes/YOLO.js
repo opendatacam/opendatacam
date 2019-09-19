@@ -30,7 +30,7 @@ module.exports = {
       var videoParams = config.VIDEO_INPUTS_PARAMS[config.VIDEO_INPUT];
 
       YOLO.process = new (forever.Monitor)(['./darknet','detector','demo', yoloParams.data , yoloParams.cfg, yoloParams.weights, videoParams, '-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{
-        max: 1,
+        max: Number.POSITIVE_INFINITY,
         cwd: config.PATH_TO_YOLO_DARKNET,
         killTree: true
       });
@@ -46,8 +46,18 @@ module.exports = {
         YOLO.isStarted = false;
       });
 
+      YOLO.process.on("restart", () => {
+        // Forever 
+        console.log("Restart YOLO");
+      })
+
       YOLO.process.on("error", (err) => {
         console.log('Process YOLO error');
+        console.log(err);
+      });
+
+      YOLO.process.on("exit", (err) => {
+        console.log('Process YOLO exit');
         console.log(err);
       });
     }
@@ -97,6 +107,12 @@ module.exports = {
       if(YOLO.isStarted) {
         YOLO.process.stop();
       }
+    }
+  },
+
+  restart() {
+    if(YOLO.isStarted) {
+      YOLO.process.restart();
     }
   },
 

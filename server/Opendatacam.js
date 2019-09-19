@@ -9,6 +9,8 @@ const Recording = require('./model/Recording');
 const DBManager = require('./db/DBManager');
 const Logger = require('./utils/Logger');
 
+// YOLO process max retries
+const HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES = 60;
 
 const initialState = {
   timeLastFrame: new Date(),
@@ -22,6 +24,7 @@ const initialState = {
   _refTrackedItemIdWhenRecordingStarted: 0,
   sseConnexion: null,
   recordingStatus: {
+    requestedFileRecording: false,
     isRecording: false,
     currentFPS: 0,
     recordingId: null,
@@ -34,7 +37,7 @@ const initialState = {
   },
   isListeningToYOLO: false,
   HTTPRequestListeningToYOLO: null,
-  HTTPRequestListeningToYOLOMaxRetries: 60
+  HTTPRequestListeningToYOLOMaxRetries: HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES
 }
 
 let Opendatacam = cloneDeep(initialState);
@@ -345,14 +348,20 @@ module.exports = {
         trackerDataForThisFrame
       );
     }
+
+    this.sendUpdateToClient();
+
+  },
+
+  sendUpdateToClient: function() {
     // Stream it to client if SSE request is open
     if(Opendatacam.sseConnexion) {
       // console.log('sending message');
       // console.log(`send frame ${Opendatacam.trackerDataForLastFrame.frameIndex}`);
       Opendatacam.sseConnexion(`data:${JSON.stringify({
         trackerDataForLastFrame: Opendatacam.trackerDataForLastFrame,
-        counterSummary: counterSummary,
-        trackerSummary: trackerSummary,
+        counterSummary: this.getCounterSummary(),
+        trackerSummary: this.getTrackerSummary(),
         videoResolution: Opendatacam.videoResolution, 
         appState: {
           yoloStatus: YOLO.getStatus(),
@@ -544,8 +553,24 @@ module.exports = {
 
       res.on('close', () => {
         if(Opendatacam.isListeningToYOLO)  {
-          console.log("==== HTTP Stream closed by darknet, reset UI, might be running from file and ended it or have troubles with webcam and need restart =====")
-          YOLO.stop();
+          console.log("==== HTTP Stream closed by darknet, reset UI ====")
+          console.log("==== If you are running on a file, it is restarting  because you reached the end ====")
+          console.log("==== If you are running on a camera, it might have crashed for some reason and we are trying to restart ====")
+          // YOLO process will auto-restart, so re-listen to it
+          // reset retries counter
+          Opendatacam.isListeningToYOLO = false;
+          Opendatacam.HTTPRequestListeningToYOLOMaxRetries = HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES;
+          if(config.VIDEO_INPUT === "file") {
+            if(self.isFileRecordingRequested()) {
+              // Todo start or stop recording depending on the previous flag
+              self.startRecording();
+              Opendatacam.recordingStatus.requestedFileRecording = false;
+            } else {
+              self.stopRecording();
+            }
+          }
+          self.sendUpdateToClient();
+          self.listenToYOLO(urlData);
         } else {
           // Counting stopped by user, keep yolo running
         }
@@ -589,6 +614,15 @@ module.exports = {
 
   isRecording() {
     return Opendatacam.recordingStatus.isRecording;
+  },
+
+  isFileRecordingRequested() {
+    return Opendatacam.recordingStatus.requestedFileRecording;
+  },
+
+  requestFileRecording() {
+    Opendatacam.recordingStatus.requestedFileRecording = true;
+    YOLO.restart();
   },
 
   getCurrentRecordingId() {

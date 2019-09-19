@@ -410,7 +410,11 @@ app.prepare()
    *   HTTP/1.1 200 OK
   */
   express.get('/recording/start', (req, res) => {
-    Opendatacam.startRecording();
+    if(config.VIDEO_INPUT !== "file") {
+      Opendatacam.startRecording();
+    } else {
+      Opendatacam.requestFileRecording()
+    }
     res.sendStatus(200)
   });
 
