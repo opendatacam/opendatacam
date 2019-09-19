@@ -146,7 +146,7 @@ The tracker will enhance the detections of YOLO with unique ids for each objects
 
 ```bash
 # Install the tracker (you need to have node.js installed)
-# You need node-moving-things-tracker >= 0.7.0
+# You need node-moving-things-tracker >= 0.7.1
 npm install -g node-moving-things-tracker
 
 # Run the tracker on the yolo-detections.json file
