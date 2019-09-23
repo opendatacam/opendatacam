@@ -1,7 +1,9 @@
 
-## Install nvidia-docker (nvidia-container-toolkit)
+## Install nvidia-docker (nvidia-container-toolkit or nvidia-docker2)
 
-_You can also [refer to this guide](https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(version-2.0)) on the wiki of nvidia-docker repository._
+_⚠️ Currently (Sep 2019) the nvidia-docker projects seems to be in an odd transition phase of supporting two slightly different ways of leveraging NVIDIA GPUs in docker containers. At the moment best practice seems to install both the nvidia-container-toolkit and the deprecated nvidia-docker2._
+
+_You can also refer directly to the guides on [nvidia-container-toolkit](https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(Native-GPU-Support)) or [nvidia-docker2](https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(version-2.0)) on the wiki of nvidia-docker repository._
 
 
 ### 1. Hardware pre-requisite 
@@ -57,7 +59,7 @@ nvidia-smi
 +-------------------------------+----------------------+----------------------+
 ```
 
-### 3. Install nvidia-docker (nvidia-container-toolkit)
+### 3. Install nvidia-container-toolkit
 
 - Follow the official [quickstart documentation](https://github.com/NVIDIA/nvidia-docker#quickstart) e.g. for Ubuntu 16.04/18.04:
 
@@ -82,6 +84,31 @@ $ sudo docker run --gpus all nvidia/cuda:9.0-base nvidia-smi
 | NVIDIA-SMI 418.87   Driver Version: 418.87 CUDA Version: 10.1
 |-------------------------------+----------------------
 ```
+
+### 4. Install nvidia-docker2 (deprecated)
+
+```bash
+# Add the package repositories
+$ distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
+$ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
+$ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
+
+# Install and reload Docker
+sudo apt-get install nvidia-docker2
+sudo pkill -SIGHUP dockerd
+```
+
+- Verify installation by running a dummy docker image
+
+```bash
+$ docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
+
+# Should output something like
++----------------------------------------------------------+
+| NVIDIA-SMI 418.87   Driver Version: 418.87 CUDA Version: 10.1
+|-------------------------------+----------------------
+```
+
 
 🎉🎉🎉 You are ready to [install Opendatacam](../../README.md#2-install-and-start-opendatacam-3-min-) 🎉🎉🎉
 
