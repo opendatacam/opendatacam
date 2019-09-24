@@ -111,7 +111,7 @@ module.exports = {
   },
 
   restart() {
-    if(YOLO.isStarted) {
+    if(!YOLO.simulationMode) {
       YOLO.process.restart();
     }
   },

@@ -181,6 +181,11 @@ module.exports = {
     if(!Opendatacam.isListeningToYOLO) {
       Opendatacam.isListeningToYOLO = true;
       Opendatacam.HTTPRequestListeningToYOLOMaxRetries = initialState.HTTPRequestListeningToYOLOMaxRetries;
+      // Start recording depending on the previous flag
+      if(this.isFileRecordingRequested()) {
+        this.startRecording();
+        Opendatacam.recordingStatus.requestedFileRecording = false;
+      }
     }
 
     // If we didn't get the videoResolution yet
@@ -569,13 +574,7 @@ module.exports = {
           Opendatacam.isListeningToYOLO = false;
           Opendatacam.HTTPRequestListeningToYOLOMaxRetries = HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES;
           if(config.VIDEO_INPUT === "file") {
-            if(self.isFileRecordingRequested()) {
-              // Todo start or stop recording depending on the previous flag
-              self.startRecording();
-              Opendatacam.recordingStatus.requestedFileRecording = false;
-            } else {
-              self.stopRecording();
-            }
+            self.stopRecording();
           }
           self.sendUpdateToClient();
           self.listenToYOLO(urlData);
@@ -631,9 +630,6 @@ module.exports = {
   requestFileRecording() {
     Opendatacam.recordingStatus.requestedFileRecording = true;
     console.log('Ask YOLO to restart to record on a file ');
-    // Will just work the first time.. afterwise will restart only after file ended
-    //YOLO.stop();
-    //YOLO.start();
     YOLO.restart();
   },
 

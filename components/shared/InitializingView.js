@@ -32,7 +32,12 @@ class InitializingView extends Component {
   render () {
     return (
       <div className="initializing-view pt-20 pb-20 pr-12 pl-12">
-        <h2 className="text-white text-3xl font-bold">Initializing OpenDataCam</h2>
+        {!this.props.requestedFileRecording &&
+          <h2 className="text-white text-3xl font-bold">Initializing Open Data Cam</h2>
+        }
+        {this.props.requestedFileRecording &&
+          <h2 className="text-white text-3xl font-bold">Restarting to start recording on a file</h2>
+        }
         <div className="w-1/5 mt-5 h-5 progress-bar rounded overflow-hidden">
           <div className="shadow w-full h-full bg-gray-900">
             <div
