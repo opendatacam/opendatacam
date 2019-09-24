@@ -38,7 +38,7 @@ class MainPage extends React.PureComponent {
           <AskLandscape />
         }
         {!this.props.isListeningToYOLO &&
-          <InitializingView />
+          <InitializingView requestedFileRecording={this.props.requestedFileRecording} />
         }
         {this.props.isListeningToYOLO &&
           <>
@@ -91,6 +91,7 @@ export default connect((state) => {
     deviceOrientation: state.viewport.get('deviceOrientation'),
     mode: state.app.get('mode'),
     isListeningToYOLO: state.app.get('isListeningToYOLO'),
+    requestedFileRecording: state.app.getIn(['recordingStatus', 'requestedFileRecording']),
     showMenu: state.app.get('showMenu'),
     uiSettings: state.app.get('uiSettings'),
     config: state.app.get('config')

@@ -11,8 +11,11 @@ import { setOriginalResolution } from './ViewportStateManagement';
 const initialState = fromJS({
   urlData: {},
   recordingStatus: {
+    requestedFileRecording: false,
     isRecording: false,
-    currentFPS: 0
+    currentFPS: 0,
+    recordingId: null,
+    dateStarted: null
   },
   yoloStatus: {
     isStarted: false,
