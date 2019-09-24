@@ -4,7 +4,7 @@
 set -e
 
 # Each opendatacam release should set the correct version here and tag appropriatly on github
-VERSION=v2.1-alpha.1
+VERSION=v2.1-alpha.2
 # PLATFORM in ["nano","xavier","tx2","nvidiadocker_cuda_archbin_6_1"]
 PLATFORM=undefined
 VIDEO_INPUT=undefined
