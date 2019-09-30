@@ -10,10 +10,10 @@ class Index extends React.Component {
   static async getInitialProps (params) {
     const { store, isServer, req, query } = params;
     if (isServer) {
-      await store.dispatch(restoreCountingAreas(req))
-      await store.dispatch(restoreUiSettings(req))
+      await store.dispatch(restoreCountingAreas(req, isServer))
+      await store.dispatch(restoreUiSettings(req, isServer))
       await store.dispatch(setURLData(req));
-      await store.dispatch(loadConfig(req));      
+      await store.dispatch(loadConfig(req, isServer));      
     }
   }
 

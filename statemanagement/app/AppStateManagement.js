@@ -68,12 +68,16 @@ export function stopRecording() {
   }
 }
 
-export function loadConfig(req) {
+export function loadConfig(req, isServer) {
   return (dispatch) => {
     return new Promise((resolve, reject) => {
       let urlData = getURLData(req);
       let session = req && req.session ? req.session : null
       let url = `${urlData.protocol}://${urlData.address}:${urlData.port}/config`;
+
+      if(isServer) {
+        url = `http://localhost:${urlData.port}/config`;
+      }
 
       axios({
         method: 'get',
@@ -97,12 +101,16 @@ export function loadConfig(req) {
   }
 }
 
-export function restoreUiSettings(req) {
+export function restoreUiSettings(req, isServer) {
   return (dispatch) => {
     return new Promise((resolve, reject) => {
       let urlData = getURLData(req);
       let session = req && req.session ? req.session : null
       let url = `${urlData.protocol}://${urlData.address}:${urlData.port}/ui`;
+
+      if(isServer) {
+        url = `http://localhost:${urlData.port}/ui`;
+      }
 
       axios({
         method: 'get',
