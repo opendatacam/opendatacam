@@ -154,12 +154,17 @@ export function saveCountingAreaName(id, name) {
   }
 }
 
-export function restoreCountingAreas(req) {
+export function restoreCountingAreas(req, isServer) {
   return (dispatch) => {
     return new Promise((resolve, reject) => {
       let urlData = getURLData(req);
       let session = req && req.session ? req.session : null
+
       let url = `${urlData.protocol}://${urlData.address}:${urlData.port}/counter/areas`;
+
+      if(isServer) {
+        url = `http://localhost:${urlData.port}/counter/areas`;
+      }
 
       axios({
         method: 'get',
