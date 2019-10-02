@@ -262,7 +262,7 @@ pwd .
 
 Learn more in the [config documentation](CONFIG.md) page.
 
-- Install **Opendatacam**
+- Install **OpenDataCam**
 
 ```bash
 cd <path/to/open-data-cam>
@@ -270,14 +270,14 @@ npm install
 npm run build
 ```
 
-- Run **Opendatacam**
+- Run **OpenDataCam**
 
 ```bash
 cd <path/to/open-data-cam>
 npm run start
 ```
 
-- (optional) Config **Opendatacam** to run on boot
+- (optional) Config **OpenDataCam** to run on boot
 
 ```bash
 # install pm2

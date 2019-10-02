@@ -1,4 +1,4 @@
-## ⚙️ Customize Opendatacam
+## ⚙️ Customize OpenDataCam
 
 We offer several customization options:
 
@@ -10,7 +10,7 @@ We offer several customization options:
 
 ### Table of content
 
-- [⚙️ Customize Opendatacam](#---customize-opendatacam)
+- [⚙️ Customize OpenDataCam](#---customize-opendatacam)
   * [Table of content](#table-of-content)
   * [General](#general)
   * [Run opendatacam on a video file](#run-opendatacam-on-a-video-file)
@@ -32,7 +32,7 @@ We offer several customization options:
 
 ### General
 
-#### For a standard install of Opendatacam
+#### For a standard install of OpenDataCam
 
 All settings are in the [`config.json`](https://github.com/opendatacam/opendatacam/blob/master/config.json) file that you will find in the same directory you run the install script.
 
@@ -49,7 +49,7 @@ sudo docker restart <containerID>
 sudo ./run-opendatacam.sh
 ```
 
-#### For a non-docker install of Opendatacam
+#### For a non-docker install of OpenDataCam
 
 You need to modify the config.json file located the `opendatacam` folder.
 
@@ -97,7 +97,7 @@ Once `config.json` is saved, you only need to restart the docker container or re
 
 [Learn more about the others video inputs available (IP camera, Rasberry Pi in the Advanced use section)](#video_input)
 
-**For a non-docker install of Opendatacam:**
+**For a non-docker install of OpenDataCam:**
 
 Follow the same instruction but note the path you will put in `VIDEO_INPUTS_PARAMS > file` if relative to your `darknet` directory. 
 
@@ -125,7 +125,7 @@ For a standard install of opendatacam, these are the default weights we pick dep
 
 We allow you to change those settings, here is how to do it:
 
-**For a docker (standard install) of Opendatacam:**
+**For a docker (standard install) of OpenDataCam:**
 
 We ship inside the docker container those three YOLO weights: [yolov3-tiny](https://pjreddie.com/media/files/yolov3-tiny.weights), [yolov2-voc](https://pjreddie.com/media/files/yolo-voc.weights), [yolov3](https://pjreddie.com/media/files/yolov3.weights)
 
@@ -263,7 +263,7 @@ To
 }
 ```
 
-And after restarting Opendatacam you should get a white line when defining a counter area:
+And after restarting OpenDataCam you should get a white line when defining a counter area:
 
 ![Screenshot 2019-05-24 at 21 03 44](https://user-images.githubusercontent.com/533590/58361790-71f31c80-7e67-11e9-8b35-ecabb4a1e78a.png)
 
@@ -273,7 +273,7 @@ _NOTE: If you draw more line than COUNTER_COLORS defined, the lines will be blac
 
 #### Video input
 
-Opendatacam is capable to take in input several video streams: pre-recorded file, usbcam, raspberry cam, remote IP cam etc etc..
+OpenDataCam is capable to take in input several video streams: pre-recorded file, usbcam, raspberry cam, remote IP cam etc etc..
 
 This is configurable via the `VIDEO_INPUT` ans `VIDEO_INPUTS_PARAMS` settings.
 
@@ -287,13 +287,13 @@ This is configurable via the `VIDEO_INPUT` ans `VIDEO_INPUTS_PARAMS` settings.
 }
 ```
 
-With the default installation, Opendatacam will have `VIDEO_INPUT` set to `usbcam`. See below how to change this
+With the default installation, OpenDataCam will have `VIDEO_INPUT` set to `usbcam`. See below how to change this
 
 _Technical note:_
 
 Behind the hoods, this config input becomes [the input of the darknet](https://github.com/opendatacam/opendatacam/blob/master/server/processes/YOLO.js#L32) process which then get [fed into OpenCV VideoCapture()](https://github.com/AlexeyAB/darknet/blob/master/src/image_opencv.cpp#L577).
 
-As we compile OpenCV with Gstreamer support when installing Opendatacam, we can use any [Gstreamer pipeline](http://www.einarsundgren.se/gstreamer-basic-real-time-streaming-tutorial/) as input + other VideoCapture supported format like video files / IP cam streams. 
+As we compile OpenCV with Gstreamer support when installing OpenDataCam, we can use any [Gstreamer pipeline](http://www.einarsundgren.se/gstreamer-basic-real-time-streaming-tutorial/) as input + other VideoCapture supported format like video files / IP cam streams. 
 
 You can add your own gstreamer pipeline for your needs by adding an entry to `"VIDEO_INPUTS_PARAMS"`
 
@@ -365,14 +365,14 @@ If you want to change this, you need to:
 
 - Change the Gstreamer pipeline accordingly: `"v4l2src device=/dev/video0 ! video/x-raw, framerate=30/1, width=1280, height=720 ! videoconvert ! appsink"`
 
-- Restart Opendatacam
+- Restart OpenDataCam
 
-_NOTE: Increasing webcam resolution won't increase Opendatacam accuracy, the input of the neural network is 400x400 max, and it might cause the UI to have logs as the MJPEG stream becomes very slow for higher resolution_
+_NOTE: Increasing webcam resolution won't increase OpenDataCam accuracy, the input of the neural network is 400x400 max, and it might cause the UI to have logs as the MJPEG stream becomes very slow for higher resolution_
 
 #### Use Custom Neural Network weights
 
 In order to use other weights like [yolov3-openimages](https://pjreddie.com/media/files/yolov3-openimages.weights), [yolov3-spp](https://pjreddie.com/media/files/yolov3-spp.weights), custom trained ones or  ["third party" weights](https://giou.stanford.edu/)
-you need to [install Opendatacam without Docker](USE_WITHOUT_DOCKER.md) _(we will enable this for docker install at some point [#97](https://github.com/opendatacam/opendatacam/issues/97))_.
+you need to [install OpenDataCam without Docker](USE_WITHOUT_DOCKER.md) _(we will enable this for docker install at some point [#97](https://github.com/opendatacam/opendatacam/issues/97))_.
 
 For example, if you want to use [yolov3-openimages](https://pjreddie.com/media/files/yolov3-openimages.weights), you need to:
 

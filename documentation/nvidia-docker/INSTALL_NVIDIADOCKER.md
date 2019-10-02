@@ -83,5 +83,5 @@ $ sudo docker run --gpus all nvidia/cuda:9.0-base nvidia-smi
 |-------------------------------+----------------------
 ```
 
-🎉🎉🎉 You are ready to [install Opendatacam](../../README.md#2-install-and-start-opendatacam-3-min-) 🎉🎉🎉
+🎉🎉🎉 You are ready to [install OpenDataCam](../../README.md#2-install-and-start-opendatacam-3-min-) 🎉🎉🎉
 

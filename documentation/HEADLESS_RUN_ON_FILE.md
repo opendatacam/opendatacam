@@ -1,4 +1,4 @@
-## How run Opendatacam Tracker on a video file
+## How run OpenDataCam Tracker on a video file
 
 - [1. Install Darknet (Neural network framework running YOLO)](#1-install-darknet--neural-network-framework-running-yolo-)
   * [Get the source files](#get-the-source-files)
