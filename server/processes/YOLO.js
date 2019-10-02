@@ -113,6 +113,12 @@ module.exports = {
   restart() {
     if(!YOLO.simulationMode) {
       YOLO.process.restart();
+    } else {
+      YOLO.simulationJSONHTTPStreamServer.kill();
+      YOLO.simulationMJPEGServer.kill();
+      setTimeout(() => {
+        this.startYOLOSimulation()
+      }, 5000)
     }
   },
 
@@ -138,6 +144,7 @@ module.exports = {
     }).listen(8070);
 
 
+    killable(YOLO.simulationJSONHTTPStreamServer);
     console.log("Start MJPEG server");
     
 
