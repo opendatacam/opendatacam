@@ -156,6 +156,7 @@ module.exports = {
           w: Math.round(trackerData.w),
           h: Math.round(trackerData.h),
           bearing: Math.round(trackerData.bearing),
+          confidence: trackerData.confidence,
           name: trackerData.name
         }
       })
