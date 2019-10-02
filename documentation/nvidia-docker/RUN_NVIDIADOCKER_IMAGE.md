@@ -1,4 +1,4 @@
-## Run Opendatacam nvidia-docker image without install script
+## Run OpenDataCam nvidia-docker image without install script
 
 __Our image is built for CUDA_ARCH_BIN=6.1 , if you GPU doesn't support this architecture, performance might be bad / it might not work, you will need to [build your own image](CREATE_NVIDIADOCKER_IMAGE.md) with another CUDA_ARCH_BIN version.__
 

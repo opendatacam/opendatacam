@@ -153,7 +153,7 @@ case $argument in
     fi
 
     # Message that docker container has been started and opendatacam will be available shorty on <IP>
-    echo "Opendatacam docker container installed successfully, it might take up to 1-2 min to start the node app and the webserver"
+    echo "OpenDataCam docker container installed successfully, it might take up to 1-2 min to start the node app and the webserver"
     
     # Cancel stop bash script on error (get IP will fail is no wifi dongle / ethernet connexion)
     set +e
@@ -163,15 +163,15 @@ case $argument in
     
     if [ -n "$wifiIP" ]; then
       echo "WIFI device IP"
-      echo "Opendatacam is available at: http://$wifiIP:8080"
+      echo "OpenDataCam is available at: http://$wifiIP:8080"
     fi
 
     if [ -n "$ethernetIP" ]; then
       echo "Ethernet device IP"
-      echo "Opendatacam is available at: http://$ethernetIP:8080"
+      echo "OpenDataCam is available at: http://$ethernetIP:8080"
     fi
 
-    echo "Opendatacam will start automaticaly on boot when you restart you jetson"
+    echo "OpenDataCam will start automaticaly on boot when you restart you jetson"
     echo "If you want to stop it, please refer to the doc: https://github.com/opendatacam/opendatacam"
 
     ;;

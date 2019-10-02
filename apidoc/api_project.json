@@ -1,8 +1,8 @@
 {
-  "name": "Opendatacam API",
+  "name": "OpenDataCam API",
   "version": "2.0.0",
   "description": "",
-  "title": "Opendatacam API",
+  "title": "OpenDataCam API",
   "template": {
     "withCompare": false
   },
@@ -11,7 +11,7 @@
   "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2019-08-08T08:35:34.192Z",
+    "time": "2019-10-02T17:12:06.507Z",
     "url": "http://apidocjs.com",
     "version": "0.17.7"
   }
