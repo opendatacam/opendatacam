@@ -39,7 +39,7 @@ wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-tx2-3.4.3/Op
 # TODO compile binaries specific for xavier architecture
 
 # For Generic cuda machine (docker-nvidia)
-# TODO compile binaries
+# TODO compile binaries, see section below
 
 # Install .deb files
 sudo dpkg -i OpenCV-3.4.3-aarch64-libs.deb
@@ -302,4 +302,32 @@ sudo pm2 save
 sudo ufw allow 8080
 sudo ufw allow 8090
 sudo ufw allow 8070
+```
+
+### (Optional) How to compile Opencv with Gstreamer support on desktop
+
+```bash
+sudo apt-get install -y libgstreamer1.0-0 gstreamer1.0-plugins-base gstreamer1.0-plugins-good gstreamer1.0-plugins-bad gstreamer1.0-plugins-ugly gstreamer1.0-libav gstreamer1.0-doc gstreamer1.0-tools libgstreamer1.0-dev libgstreamer-plugins-base1.0-dev
+
+sudo apt-get install -y  pkg-config zlib1g-dev libwebp-dev libtbb2 libtbb-dev libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev cmake libv4l-dev
+
+sudo apt-get install -y autoconf autotools-dev build-essential gcc git
+
+sudo apt-get install -y ffmpeg
+
+git clone --depth 1 -b 3.3.1 https://github.com/opencv/opencv.git
+
+cd opencv
+mkdir build
+cd build
+# Note here you need to set both FFMPEG and GSTREAMER to ON
+# Running this command should output a summary of which dependencies are gonna be build with opencv
+# Double check that both gstreamer and ffmpeg are ON
+cmake -D CMAKE_INSTALL_PREFIX=/usr/local CMAKE_BUILD_TYPE=Release -D WITH_GSTREAMER=ON -D WITH_GSTREAMER_0_10=OFF -D WITH_CUDA=OFF -D WITH_TBB=ON -D WITH_LIBV4L=ON WITH_FFMPEG=ON .. 
+
+sudo make install
+
+#reload if opencv already installed
+sudo /bin/bash -c 'echo "/usr/local/lib" >> /etc/ld.so.conf.d/opencv.conf'
+sudo ldconfig
 ```

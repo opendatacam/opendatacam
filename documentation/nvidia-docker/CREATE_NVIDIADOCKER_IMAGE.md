@@ -2,6 +2,8 @@
 
 ### Note about CUDA_ARCH_BIN
 
+_Seems this will be non needed as the opencv build we use doesn't need CUDA support in end_
+
 Our Dockerfile is set for CUDA_ARCH_BIN=6.1 , if you GPU doesn't support this architecture, you need to build with another CUDA_ARCH_BIN version.
 
 [Find out what is your CUDA Compute Capability depending on your GPU](https://developer.nvidia.com/cuda-gpus)
@@ -54,6 +56,7 @@ sudo docker rmi opendatacam/opendatacam:v2.0.0-nvidiadocker_cuda_archbin_6_1
 # Push image
 sudo docker push opendatacam/opendatacam:v2.0.0-nvidiadocker_cuda_archbin_6_1
 ```
+
 
 ### NOTE: Known Improvements to make
 
