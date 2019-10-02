@@ -1,4 +1,5 @@
 import React, { Component } from 'react'
+import { connect } from 'react-redux';
 import raf from 'raf';
 import Console from './Console';
 
@@ -36,7 +37,7 @@ class InitializingView extends Component {
           <h2 className="text-white text-3xl font-bold">Initializing Open Data Cam</h2>
         }
         {this.props.requestedFileRecording &&
-          <h2 className="text-white text-3xl font-bold">Restarting to start recording on a file</h2>
+          <h2 className="text-white text-3xl font-bold">Restarting to process video file {this.props.fileName.split("/").pop()}</h2>
         }
         <div className="w-1/5 mt-5 h-5 progress-bar rounded overflow-hidden">
           <div className="shadow w-full h-full bg-gray-900">
@@ -111,4 +112,10 @@ class InitializingView extends Component {
   }
 }
 
-export default InitializingView
+export default connect((state) => {
+
+  return {
+    fileName: state.app.getIn(['config','VIDEO_INPUTS_PARAMS','file']) 
+  }
+})(InitializingView)
+
