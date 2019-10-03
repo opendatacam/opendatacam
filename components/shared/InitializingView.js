@@ -32,7 +32,7 @@ class InitializingView extends Component {
   render () {
     return (
       <div className="initializing-view pt-20 pb-20 pr-12 pl-12">
-        <h2 className="text-white text-3xl font-bold">Initializing Open Data Cam</h2>
+        <h2 className="text-white text-3xl font-bold">Initializing OpenDataCam</h2>
         <div className="w-1/5 mt-5 h-5 progress-bar rounded overflow-hidden">
           <div className="shadow w-full h-full bg-gray-900">
             <div
@@ -49,14 +49,14 @@ class InitializingView extends Component {
         }
         {this.state.showConsole &&
           <div className="mt-10">
-            <a 
-              className="btn btn-light rounded cursor-pointer" 
+            <a
+              className="btn btn-light rounded cursor-pointer"
               onClick={() => this.setState({showConsole: false})}
             >
               Hide details
             </a>
-            <a 
-              className="ml-2 btn btn-light rounded" 
+            <a
+              className="ml-2 btn btn-light rounded"
               target="_blank"
               href="/console"
             >
