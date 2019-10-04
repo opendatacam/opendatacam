@@ -30,7 +30,8 @@ const initialState = {
     isRecording: false,
     currentFPS: 0,
     recordingId: null,
-    dateStarted: null
+    dateStarted: null,
+    filename: ''
   },
   uiSettings: {
     counterEnabled: true,
@@ -184,7 +185,7 @@ module.exports = {
       Opendatacam.HTTPRequestListeningToYOLOMaxRetries = initialState.HTTPRequestListeningToYOLOMaxRetries;
       // Start recording depending on the previous flag
       if(this.isFileRecordingRequested()) {
-        this.startRecording();
+        this.startRecording(true);
         Opendatacam.recordingStatus.requestedFileRecording = false;
       }
     }
@@ -447,11 +448,13 @@ module.exports = {
     Opendatacam.sseConnexion = sse;
   },
 
-  startRecording() {
+  startRecording(isFile) {
     console.log('Start recording');
     Opendatacam.recordingStatus.isRecording = true;
     Opendatacam.recordingStatus.dateStarted = new Date();
     Opendatacam.totalItemsTracked = 0;
+    const filename = isFile ? config.VIDEO_INPUTS_PARAMS.file.split('/').pop() : '';
+    Opendatacam.recordingStatus.filename = filename;
 
     // Store lowest ID of currently tracked item when start recording 
     // to be able to compute nbObjectTracked
@@ -459,12 +462,15 @@ module.exports = {
     const highestTrackedItemId = currentlyTrackedItems[currentlyTrackedItems.length - 1].id;
     Opendatacam._refTrackedItemIdWhenRecordingStarted = highestTrackedItemId - currentlyTrackedItems.length;
 
+    
+
     // Persist recording
     DBManager.insertRecording(new Recording(
       Opendatacam.recordingStatus.dateStarted, 
       Opendatacam.recordingStatus.dateStarted,
       Opendatacam.countingAreas,
-      Opendatacam.videoResolution
+      Opendatacam.videoResolution,
+      filename
     )).then((recording) => {
       Opendatacam.recordingStatus.recordingId = recording.insertedId;
     }, (error) => {

@@ -15,7 +15,8 @@ const initialState = fromJS({
     isRecording: false,
     currentFPS: 0,
     recordingId: null,
-    dateStarted: null
+    dateStarted: null,
+    filename: ''
   },
   yoloStatus: {
     isStarted: false,

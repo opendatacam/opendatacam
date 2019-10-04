@@ -42,6 +42,11 @@ class Recording extends PureComponent {
           <div className="ml-10">
             {dayjs(this.props.dateStart).format('hh:mm a')} - {this.renderDateEnd(this.props.dateEnd, this.props.active)}
           </div>
+          {this.props.filename &&
+            <div className="ml-10">
+              {this.props.filename}
+            </div>
+          }
           {!this.props.active &&
             <button
               className="btn btn-default p-0 ml-2 shadow rounded"
