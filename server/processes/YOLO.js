@@ -29,7 +29,18 @@ module.exports = {
       var yoloParams = config.NEURAL_NETWORK_PARAMS[config.NEURAL_NETWORK];
       var videoParams = config.VIDEO_INPUTS_PARAMS[config.VIDEO_INPUT];
 
-      YOLO.process = new (forever.Monitor)(['./darknet','detector','demo', yoloParams.data , yoloParams.cfg, yoloParams.weights, videoParams, '-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090'],{
+      var darknetCommand = [];
+      var initialCommand = ['./darknet','detector','demo', yoloParams.data , yoloParams.cfg, yoloParams.weights]
+      var endCommand = ['-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090']
+
+      // Special case if input camera is specified as a -c flag as we need to add one arg
+      if(videoParams.indexOf('-c') === 0) {
+        darknetCommand = initialCommand.concat(videoParams.split(" ")).concat(endCommand);
+      } else {
+        darknetCommand = initialCommand.concat(videoParams).concat(endCommand);
+      }
+
+      YOLO.process = new (forever.Monitor)(darknetCommand,{
         max: Number.POSITIVE_INFINITY,
         cwd: config.PATH_TO_YOLO_DARKNET,
         killTree: true
