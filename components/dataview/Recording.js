@@ -63,8 +63,8 @@ class Recording extends PureComponent {
                 <h3 className="mr-3 text-xl font-bold">Counter</h3>
                 <div>
                   <div className="font-medium mr-2 inline-block">Download:</div>
-                  <a className="btn-text mr-2" href={`/recording/${this.props.id}/counter`} target="_blank">JSON</a>
-                  <a className="btn-text" href={`/recording/${this.props.id}/counter/csv`} target="_blank">CSV</a>
+                  <a className="btn-text mr-2" href={`/recording/${this.props.id}/counter`} target="_blank" download>JSON</a>
+                  <a className="btn-text" href={`/recording/${this.props.id}/counter/csv`} target="_blank" download>CSV</a>
                 </div>
               </div>
               <div className="mt-4 flex flex-wrap">
@@ -99,7 +99,10 @@ class Recording extends PureComponent {
           <div className="flex flex-initial flex-col rounded bg-white text-black shadow m-2 p-4">
             <div className="flex items-end justify-between">
               <h3 className="mr-3 text-xl font-bold">Tracker</h3>
-              <a className="btn-text" href={`/recording/${this.props.id}/tracker`} target="_blank">Download data</a>
+              <div>
+                <div className="font-medium mr-2 inline-block">Download:</div>
+                <a className="btn-text mr-2" href={`/recording/${this.props.id}/tracker`} target="_blank" download>JSON</a>
+              </div>
             </div>
             <div className="mt-6 rounded relative">
               <div className="text-white absolute" style={{ bottom: 10, left : 10}}>
