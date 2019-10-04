@@ -80,7 +80,7 @@ VOLUME ["/data/db"]
 # Build using date > marker && docker build .
 # date > marker && sudo docker build -t opendatacam .
 COPY marker /dev/null
-RUN git clone --depth 1 -b evo-runfromfile https://github.com/opendatacam/opendatacam /var/local/opendatacam
+RUN git clone --depth 1 -b v2.1.0-beta.1 https://github.com/opendatacam/opendatacam /var/local/opendatacam
 
 WORKDIR /var/local/opendatacam
 RUN sed -i -e s+TO_REPLACE_PATH_TO_DARKNET+/var/local/darknet+ config.json
