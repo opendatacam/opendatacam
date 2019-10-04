@@ -107,7 +107,9 @@ class DBManager {
 
         // Add counterHistory when somethings counted 
         if(counterEntry.length > 0) {
-          itemsToAdd['counterHistory'] = counterEntry;
+          itemsToAdd['counterHistory'] = {
+            $each: counterEntry
+          }
           updateRequest['$push'] = itemsToAdd;
         }
 
