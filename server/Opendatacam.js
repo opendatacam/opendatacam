@@ -497,7 +497,8 @@ module.exports = {
     Opendatacam.videoResolution = videoResolution;
     // Restore counting areas if defined
     DBManager.getAppSettings().then((appSettings) => {
-      if(appSettings.countingAreas) {
+      if(appSettings && appSettings.countingAreas) {
+        console.log('Restore counting areas');
         self.registerCountingAreas(appSettings.countingAreas)
       }
     });
