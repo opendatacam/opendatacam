@@ -6,6 +6,7 @@ var mongoURL = config.MONGODB_URL;
 
 var RECORDING_COLLECTION = 'recordings';
 var TRACKER_COLLECTION = 'tracker';
+var APP_COLLECTION = 'app';
 
 
 class DBManager {
@@ -42,8 +43,48 @@ class DBManager {
       if (this.db) {
         resolve(this.db)
       } else {
-        return this.init()
+        resolve(this.init())
       }
+    })
+  }
+
+  persistAppSettings(settings) {
+    return new Promise((resolve, reject) => {
+      this.getDB().then(db => {
+        db.collection(APP_COLLECTION).updateOne({
+          id: 'settings'
+        }, {
+          $set: {
+            id: 'settings',
+            countingAreas: settings.countingAreas
+          }
+        }, { upsert: true}, (err, r) => {
+          if (err) {
+            reject(err)
+          } else {
+            resolve(r)
+          }
+        })
+      })
+    })
+  }
+
+  getAppSettings() {
+    return new Promise((resolve, reject) => {
+      this.getDB().then(db => {
+        db
+          .collection(APP_COLLECTION)
+          .findOne(
+            { id : 'settings'},
+            (err, doc) => {
+              if (err) {
+                reject(err)
+              } else {
+                resolve(doc)
+              }
+            }
+          )
+      })
     })
   }
 

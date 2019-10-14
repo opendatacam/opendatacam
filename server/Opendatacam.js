@@ -67,6 +67,9 @@ module.exports = {
   registerCountingAreas : function(countingAreas) {
     // Reset existing
     Opendatacam.countingAreas = {}
+    DBManager.persistAppSettings({
+      countingAreas: countingAreas
+    })
     Object.keys(countingAreas).map((countingAreaKey) => {
       if(countingAreas[countingAreaKey]) {
         this.registerSingleCountingArea(countingAreaKey, countingAreas[countingAreaKey]);
@@ -489,7 +492,15 @@ module.exports = {
   },
 
   setVideoResolution(videoResolution) {
+    var self = this;
+    console.log('setvideoresolution')
     Opendatacam.videoResolution = videoResolution;
+    // Restore counting areas if defined
+    DBManager.getAppSettings().then((appSettings) => {
+      if(appSettings.countingAreas) {
+        self.registerCountingAreas(appSettings.countingAreas)
+      }
+    });
   },
 
   // Listen to 8070 for Tracker data detections

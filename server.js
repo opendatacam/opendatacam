@@ -102,6 +102,7 @@ app.prepare()
 
     const urlData = getURLData(req);
     Opendatacam.listenToYOLO(urlData);
+
     return app.render(req, res, '/')
   })
 
