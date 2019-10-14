@@ -157,28 +157,47 @@ export function saveCountingAreaName(id, name) {
 export function restoreCountingAreas(req) {
   return (dispatch) => {
     return new Promise((resolve, reject) => {
-      let urlData = getURLData(req);
-      let session = req && req.session ? req.session : null
-      let url = `${urlData.protocol}://${urlData.address}:${urlData.port}/counter/areas`;
+      if(req) {
+        let urlData = getURLData(req);
+        let session = req && req.session ? req.session : null
+        let url = `${urlData.protocol}://${urlData.address}:${urlData.port}/counter/areas`;
 
-      axios({
-        method: 'get',
-        url: url,
-        credentials: 'same-origin',
-        data: {'session': session}
-      }).then((response) => {
-        dispatch({
-          type: RESTORE_COUNTING_AREAS,
-          payload: response.data
-        })
-        resolve();
-      }, (error) => {
-        console.log(error);
-        reject();
-      }).catch((error) => {
-        console.log(error)
-        reject();
-      });
+        axios({
+          method: 'get',
+          url: url,
+          credentials: 'same-origin',
+          data: {'session': session}
+        }).then((response) => {
+          dispatch({
+            type: RESTORE_COUNTING_AREAS,
+            payload: response.data
+          })
+          resolve();
+        }, (error) => {
+          console.log(error);
+          reject();
+        }).catch((error) => {
+          console.log(error)
+          reject();
+        });
+      } else {
+        axios({
+          method: 'get',
+          url: '/counter/areas',
+        }).then((response) => {
+          dispatch({
+            type: RESTORE_COUNTING_AREAS,
+            payload: response.data
+          })
+          resolve();
+        }, (error) => {
+          console.log(error);
+          reject();
+        }).catch((error) => {
+          console.log(error)
+          reject();
+        });
+      }
     });
   }
 }

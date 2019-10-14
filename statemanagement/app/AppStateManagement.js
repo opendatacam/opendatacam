@@ -3,7 +3,7 @@ import axios from 'axios';
 import { MODE } from '../../utils/constants';
 import { getURLData } from '../../server/utils/urlHelper';
 import { updateTrackerData } from './TrackerStateManagement';
-import { updateCounterSummary, updateTrackerSummary, resetCountingAreas } from './CounterStateManagement';
+import { updateCounterSummary, updateTrackerSummary, resetCountingAreas, restoreCountingAreas } from './CounterStateManagement';
 import { fetchHistory } from './HistoryStateManagement';
 import { setOriginalResolution } from './ViewportStateManagement';
 

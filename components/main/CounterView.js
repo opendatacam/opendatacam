@@ -7,8 +7,13 @@ import CanvasEngine from '../canvas/CanvasEngine';
 import { CANVAS_RENDERING_MODE } from '../../utils/constants';
 import CounterAreasVisualizer from '../shared/CounterAreasVisualizer';
 import BtnRecording from '../shared/BtnRecording';
+import { restoreCountingAreas } from '../../statemanagement/app/CounterStateManagement';
 
 class CounterView extends React.PureComponent {
+
+  componentDidMount() {
+    this.props.dispatch(restoreCountingAreas());
+  }
 
   render () {
     return (
