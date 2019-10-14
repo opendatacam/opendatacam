@@ -137,6 +137,12 @@ sudo jetson_clocks
 make
 ```
 
+If you have an error "nvcc not found" on Jetson update path to NVCC in Makefile
+
+```
+NVCC=/usr/local/cuda/bin/nvcc
+```
+
 #### Download weight file
 
 The .weights files that need to be in the root of the `/darknet` folder
