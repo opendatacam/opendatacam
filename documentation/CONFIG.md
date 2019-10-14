@@ -61,9 +61,7 @@ Once modified,  you just need to restart the node.js app (`npm run start`), no n
 
 ### Run opendatacam on a video file
 
-_NB: [we are working on a better support](https://github.com/opendatacam/opendatacam/issues/88) of pre-recorded videos_
-
-_NB2: if you are running with nvidiadocker and want to use an usbcam, please see [Run from an usbcam (step 4)](#run-from-an-usbcam)_
+_NB: if you are running with nvidiadocker and want to use an usbcam, please see [Run from an usbcam (step 4)](#run-from-an-usbcam)_
 
 By default, opendatacam will try to pickup the usb webcam connected to your jetson. The settings is `VIDEO_INPUT` in the `config.json` file.
 
@@ -108,6 +106,13 @@ For example if you have a `myvideo.mp4` file in your `darknet` directory, the se
   "file": "myvideo.mp4"
 }
 ```
+
+#### Specificities of running on a file
+
+- Opendatacam will restart the video file when it reaches the end
+- When you click on record, Opendatacam will reload the file to start the recording at the beggining
+- **LIMITATION: it will only record from frame nº50**
+
 
 ### Change neural network weights
 
