@@ -10,7 +10,7 @@ PLATFORM=undefined
 VIDEO_INPUT=undefined
 INDEX=undefined
 
-PLATFORM_OPTIONS=("nano" "xavier" "tx2" "nvidiadocker_cuda_archbin_6_1")
+PLATFORM_OPTIONS=("nano" "tx2" "xavier" "nvidiadocker_cuda_archbin_6_1")
 DEFAUT_VIDEO_INPUT_OPTIONS=("usbcam" "usbcam" "usbcam" "file")
 DEFAUT_NEURAL_NETWORK_OPTIONS=("yolov3-tiny" "yolov2-voc" "yolov3" "yolov3")
 
