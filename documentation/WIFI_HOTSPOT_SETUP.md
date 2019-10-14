@@ -28,7 +28,7 @@ In the "General" tab, you need to check "Automatically connect to this network w
 
 #### 5. Reboot
 
-After rebooting your device, you should be able to connect it via the wifi hotspot and access Opendatacam if started.
+After rebooting your device, you should be able to connect it via the wifi hotspot and access OpenDataCam if started.
 
 #### 6. Get IP adress of Wifi hotpot
 

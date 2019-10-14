@@ -82,17 +82,17 @@ sudo docker images
 # opendatacam             latest    023ab91c6291     3 minutes ago     1.975 GB
 
 # Tag your image
-sudo docker tag <IMAGEID> opendatacam/opendatacam:v2.0.0-nano
+sudo docker tag <IMAGEID> opendatacam/opendatacam:v2.1.0-nano
 
-# Or for tx2 : opendatacam/opendatacam:v2.0.0-tx2
-# Or for xavier : opendatacam/opendatacam:v2.0.0-xavier
+# Or for tx2 : opendatacam/opendatacam:v2.1.0-tx2
+# Or for xavier : opendatacam/opendatacam:v2.1.0-xavier
 
 # Push image
-sudo docker push opendatacam/opendatacam:v2.0.0-nano
+sudo docker push opendatacam/opendatacam:v2.1.0-nano
 
 
 # (optional) Useful Untag image (if you made a tipo)
-sudo docker rmi opendatacam/opendatacam:v2.0.0-nano
+sudo docker rmi opendatacam/opendatacam:v2.1.0-nano
 ```
 
 ### (Optional) Compile Opencv on jetson (this takes 1-2h)
@@ -150,3 +150,5 @@ tar -czvf opencv-3.4.3.tar.gz .
 
 # The result opencv-3.4.3.tar.gz is the archive you need to include in the docker image to install opencv
 ```
+
+

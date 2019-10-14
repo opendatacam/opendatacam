@@ -58,7 +58,7 @@ class Menu extends Component {
             />
           </button>
           <div className="p-5 w-full overflow-y-scroll">
-            <h3 className="mb-4 text-2xl font-bold">Opendatacam</h3>
+            <h3 className="mb-4 text-2xl font-bold">OpenDataCam</h3>
             <Toggle
               label="Counter"
               description="Count objects on active areas"

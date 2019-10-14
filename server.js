@@ -102,6 +102,7 @@ app.prepare()
 
     const urlData = getURLData(req);
     Opendatacam.listenToYOLO(urlData);
+
     return app.render(req, res, '/')
   })
 
@@ -410,7 +411,11 @@ app.prepare()
    *   HTTP/1.1 200 OK
   */
   express.get('/recording/start', (req, res) => {
-    Opendatacam.startRecording();
+    if(config.VIDEO_INPUT !== "file") {
+      Opendatacam.startRecording();
+    } else {
+      Opendatacam.requestFileRecording()
+    }
     res.sendStatus(200)
   });
 
@@ -817,7 +822,7 @@ app.prepare()
    * 
    * @apiSuccessExample {json} Success Response:
    * {
-      "OPENDATACAM_VERSION": "2.0.0",
+      "OPENDATACAM_VERSION": "2.1.0",
       "PATH_TO_YOLO_DARKNET": "/darknet",
       "VIDEO_INPUT": "TO_REPLACE_VIDEO_INPUT",
       "NEURAL_NETWORK": "TO_REPLACE_NEURAL_NETWORK",

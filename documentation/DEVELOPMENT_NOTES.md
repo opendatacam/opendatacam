@@ -25,8 +25,8 @@ If you have an error while doing `npm install` it is probably a problem with nod
 - Search and replace OLD_VERSION with NEW_VERSION in all documentation
 - Make sure correct version in config.json > OPENDATACAM_VERSION
 - Make sure correct version in package.json
-- Make sure correct version in README "Install and start Opendatacam" wget install script
-- Make sure correct version in JETSON_NANO.md "Install Opendatacam" wget install script
+- Make sure correct version in README "Install and start OpenDataCam" wget install script
+- Make sure correct version in JETSON_NANO.md "Install OpenDataCam" wget install script
 - Make sure correct VERSION in /docker/install-opendatacam.sh
 - Push and Tag version on github
 - Compile docker image on 4 platforms ( nano, tx2, xavier, nvidia-docker ) , upload them to dockerhub and tag them properly
@@ -36,19 +36,19 @@ If you have an error while doing `npm install` it is probably a problem with nod
 
 ```
 # Tag latest commit
-git tag v2.0.0
+git tag v2.1.0
 
 # Push tag
-git push origin v2.0.0
+git push origin v2.1.0
 
 # List tags
 git tag --list
 
 # Remove tag on remote
-git push origin :v2.0.0
+git push origin :v2.1.0
 
 # Delete local tag
-git tag --delete v2.0.0
+git tag --delete v2.1.0
 
 # Push all tag
 git push --tags

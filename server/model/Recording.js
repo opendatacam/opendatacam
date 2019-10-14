@@ -9,11 +9,13 @@ class Recording {
       dateStart,
       dateEnd,
       areas,
-      videoResolution) {
+      videoResolution,
+      filename) {
     this.dateStart = dateStart
     this.dateEnd = dateEnd
     this.areas = areas
     this.videoResolution = videoResolution
+    this.filename = filename
   }
 }
 

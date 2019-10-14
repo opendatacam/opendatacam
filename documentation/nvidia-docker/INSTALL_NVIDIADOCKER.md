@@ -85,30 +85,5 @@ $ sudo docker run --gpus all nvidia/cuda:9.0-base nvidia-smi
 |-------------------------------+----------------------
 ```
 
-### 4. Install nvidia-docker2 (deprecated)
-
-```bash
-# Add the package repositories
-$ distribution=$(. /etc/os-release;echo $ID$VERSION_ID)
-$ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | sudo apt-key add -
-$ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | sudo tee /etc/apt/sources.list.d/nvidia-docker.list
-
-# Install and reload Docker
-sudo apt-get install nvidia-docker2
-sudo pkill -SIGHUP dockerd
-```
-
-- Verify installation by running a dummy docker image
-
-```bash
-$ docker run --runtime=nvidia --rm nvidia/cuda nvidia-smi
-
-# Should output something like
-+----------------------------------------------------------+
-| NVIDIA-SMI 418.87   Driver Version: 418.87 CUDA Version: 10.1
-|-------------------------------+----------------------
-```
-
-
-🎉🎉🎉 You are ready to [install Opendatacam](../../README.md#2-install-and-start-opendatacam-3-min-) 🎉🎉🎉
+🎉🎉🎉 You are ready to [install OpenDataCam](../../README.md#2-install-and-start-opendatacam-3-min-) 🎉🎉🎉
 

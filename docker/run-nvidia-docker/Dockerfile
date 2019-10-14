@@ -19,7 +19,7 @@ RUN  apt-get update -y && apt-get install -y \
 RUN  apt-get update -y && apt-get install -y  pkg-config \
  zlib1g-dev  libwebp-dev \
  libtbb2 libtbb-dev  \
- libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev \
+ libgtk2.0-dev pkg-config libavcodec-dev libavformat-dev libswscale-dev libv4l-dev \
  cmake
 RUN apt-get install -y \
   autoconf \
@@ -27,22 +27,17 @@ RUN apt-get install -y \
   build-essential \
   gcc \
   git
-ENV OPENCV_RELEASE_TAG 3.4.5
+RUN apt-get update -y && apt-get install -y ffmpeg
+ENV OPENCV_RELEASE_TAG 3.3.1
 RUN git clone --depth 1 -b ${OPENCV_RELEASE_TAG}  https://github.com/opencv/opencv.git /var/local/git/opencv
 RUN cd /var/local/git/opencv
 RUN mkdir -p /var/local/git/opencv/build && \
-     cd /var/local/git/opencv/build $$ && \
-    cmake -D CMAKE_BUILD_TYPE=Release -D BUILD_PNG=OFF -D \
-    BUILD_TIFF=OFF -D BUILD_TBB=OFF -D BUILD_JPEG=ON \
-    -D BUILD_JASPER=OFF -D BUILD_ZLIB=ON -D BUILD_EXAMPLES=OFF \
-    -D BUILD_opencv_java=OFF -D BUILD_opencv_python2=ON \
-    -D BUILD_opencv_python3=OFF -D ENABLE_NEON=OFF -D WITH_OPENCL=OFF \
-    -D WITH_OPENMP=OFF -D WITH_FFMPEG=OFF -D WITH_GSTREAMER=ON -D WITH_GSTREAMER_0_10=OFF \
-    -D WITH_CUDA=ON -D CUDA_TOOLKIT_ROOT_DIR=/usr/local/cuda/ -D WITH_GTK=ON \
-    -D WITH_VTK=OFF -D WITH_TBB=ON -D WITH_1394=OFF -D WITH_OPENEXR=OFF \
-     -D CUDA_ARCH_BIN=6.1 -D CUDA_ARCH_PTX="" -D INSTALL_C_EXAMPLES=OFF -D INSTALL_TESTS=OFF ..
+    cd /var/local/git/opencv/build $$ && \
+    cmake -D CMAKE_INSTALL_PREFIX=/usr/local CMAKE_BUILD_TYPE=Release -D WITH_GSTREAMER=ON -D WITH_GSTREAMER_0_10=OFF -D WITH_CUDA=OFF -D WITH_TBB=ON -D WITH_LIBV4L=ON WITH_FFMPEG=ON .. 
 RUN  cd /var/local/git/opencv/build && \ 
-      make install
+      make -j8 install
+
+# make -j8 if CPU has 8 processor to speed up things
 
 # Checkout and build darknet
 # for debug
@@ -64,9 +59,9 @@ RUN apt-get update; \
 # Get weights files
 RUN wget https://pjreddie.com/media/files/yolov3.weights -O /var/local/darknet/yolov3.weights
 RUN wget https://pjreddie.com/media/files/yolov3-tiny.weights -O /var/local/darknet/yolov3-tiny.weights
-RUN mkdir /var/local/darknet/opendatacam_videos && wget https://github.com/opendatacam/opendatacam/raw/v2.0.0/static/demo/demo.mp4 -O /var/local/darknet/opendatacam_videos/demo.mp4
+RUN mkdir /var/local/darknet/opendatacam_videos && wget https://github.com/opendatacam/opendatacam/raw/v2.1.0/static/demo/demo.mp4 -O /var/local/darknet/opendatacam_videos/demo.mp4
 
-# wget -N https://github.com/opendatacam/opendatacam/raw/v2.0.0/static/demo/demo.mp4
+# wget -N https://github.com/opendatacam/opendatacam/raw/v2.1.0/static/demo/demo.mp4
 # Debug, test darknet : ./darknet detector demo cfg/coco.data cfg/yolov3.cfg yolov3.weights -ext_output -dont_show demo.mp4
 # Debug, test darknet : ./darknet detector demo cfg/coco.data cfg/yolov3-tiny.cfg yolov3-tiny.weights -ext_output -dont_show demo.mp4
 
@@ -85,7 +80,7 @@ VOLUME ["/data/db"]
 # Build using date > marker && docker build .
 # date > marker && sudo docker build -t opendatacam .
 COPY marker /dev/null
-RUN git clone --depth 1 https://github.com/opendatacam/opendatacam /var/local/opendatacam
+RUN git clone --depth 1 -b v2.1.0 https://github.com/opendatacam/opendatacam /var/local/opendatacam
 
 WORKDIR /var/local/opendatacam
 RUN sed -i -e s+TO_REPLACE_PATH_TO_DARKNET+/var/local/darknet+ config.json

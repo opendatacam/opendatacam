@@ -9,6 +9,10 @@ const Recording = require('./model/Recording');
 const DBManager = require('./db/DBManager');
 const Logger = require('./utils/Logger');
 
+// YOLO process max retries
+const HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS = 30;
+// Max wait time for YOLO to start is 3 min = 180s
+const HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES = 180 * (1000 / HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS);
 
 const initialState = {
   timeLastFrame: new Date(),
@@ -22,10 +26,12 @@ const initialState = {
   _refTrackedItemIdWhenRecordingStarted: 0,
   sseConnexion: null,
   recordingStatus: {
+    requestedFileRecording: false,
     isRecording: false,
     currentFPS: 0,
     recordingId: null,
-    dateStarted: null
+    dateStarted: null,
+    filename: ''
   },
   uiSettings: {
     counterEnabled: true,
@@ -34,7 +40,7 @@ const initialState = {
   },
   isListeningToYOLO: false,
   HTTPRequestListeningToYOLO: null,
-  HTTPRequestListeningToYOLOMaxRetries: 60
+  HTTPRequestListeningToYOLOMaxRetries: HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES
 }
 
 let Opendatacam = cloneDeep(initialState);
@@ -61,6 +67,9 @@ module.exports = {
   registerCountingAreas : function(countingAreas) {
     // Reset existing
     Opendatacam.countingAreas = {}
+    DBManager.persistAppSettings({
+      countingAreas: countingAreas
+    })
     Object.keys(countingAreas).map((countingAreaKey) => {
       if(countingAreas[countingAreaKey]) {
         this.registerSingleCountingArea(countingAreaKey, countingAreas[countingAreaKey]);
@@ -109,9 +118,10 @@ module.exports = {
     }
   },
 
-  countItem: function(trackedItem, countingAreaKey) {
+  countItem: function(trackedItem, countingAreaKey, frameId) {
     if(Opendatacam.recordingStatus.isRecording) {
       var countedItem = {
+        frameId: frameId,
         timestamp: new Date(),
         area: countingAreaKey,
         name: trackedItem.name,
@@ -130,6 +140,7 @@ module.exports = {
 
   /* Persist in DB */ 
   persistNewRecordingFrame: function(
+    frameId,
     frameTimestamp,
     counterSummary,
     trackerSummary,
@@ -139,6 +150,7 @@ module.exports = {
     
     const trackerEntry = {
       recordingId: Opendatacam.recordingStatus.recordingId,
+      frameId: frameId,
       timestamp: frameTimestamp,
       objects: trackerDataForThisFrame.map((trackerData) => {
         return {
@@ -148,6 +160,7 @@ module.exports = {
           w: Math.round(trackerData.w),
           h: Math.round(trackerData.h),
           bearing: Math.round(trackerData.bearing),
+          confidence: Math.round(trackerData.confidence * 100),
           name: trackerData.name
         }
       })
@@ -168,11 +181,16 @@ module.exports = {
     })
   },
 
-  updateWithNewFrame: function(detectionsOfThisFrame) {
+  updateWithNewFrame: function(detectionsOfThisFrame, frameId) {
     // Set yolo status to started if it's not the case
     if(!Opendatacam.isListeningToYOLO) {
       Opendatacam.isListeningToYOLO = true;
       Opendatacam.HTTPRequestListeningToYOLOMaxRetries = initialState.HTTPRequestListeningToYOLOMaxRetries;
+      // Start recording depending on the previous flag
+      if(this.isFileRecordingRequested()) {
+        this.startRecording(true);
+        Opendatacam.recordingStatus.requestedFileRecording = false;
+      }
     }
 
     // If we didn't get the videoResolution yet
@@ -279,7 +297,7 @@ module.exports = {
                   // Tracked item has cross the {countingAreaKey} counting line
                   // Count it
                   // console.log(`Counting ${trackedItem.id}`);
-                  let countedItem = this.countItem(trackedItem, countingAreaKey);
+                  let countedItem = this.countItem(trackedItem, countingAreaKey, frameId);
                   countedItemsForThisFrame.push(countedItem);
                 }
   
@@ -336,8 +354,11 @@ module.exports = {
     // console.log(Opendatacam.zombiesAreas);
 
     // Persist to db
-    if(Opendatacam.recordingStatus.isRecording) {
+    if(Opendatacam.recordingStatus.isRecording && frameId >= 50) {
+      // Only record from frame 50, the start of a stream is very buggy
+      // and send bad JSON objects
       this.persistNewRecordingFrame(
+        frameId,
         frameTimestamp,
         counterSummary,
         trackerSummary,
@@ -345,14 +366,20 @@ module.exports = {
         trackerDataForThisFrame
       );
     }
+
+    this.sendUpdateToClient();
+
+  },
+
+  sendUpdateToClient: function() {
     // Stream it to client if SSE request is open
     if(Opendatacam.sseConnexion) {
       // console.log('sending message');
       // console.log(`send frame ${Opendatacam.trackerDataForLastFrame.frameIndex}`);
       Opendatacam.sseConnexion(`data:${JSON.stringify({
         trackerDataForLastFrame: Opendatacam.trackerDataForLastFrame,
-        counterSummary: counterSummary,
-        trackerSummary: trackerSummary,
+        counterSummary: this.getCounterSummary(),
+        trackerSummary: this.getTrackerSummary(),
         videoResolution: Opendatacam.videoResolution, 
         appState: {
           yoloStatus: YOLO.getStatus(),
@@ -424,11 +451,13 @@ module.exports = {
     Opendatacam.sseConnexion = sse;
   },
 
-  startRecording() {
+  startRecording(isFile) {
     console.log('Start recording');
     Opendatacam.recordingStatus.isRecording = true;
     Opendatacam.recordingStatus.dateStarted = new Date();
     Opendatacam.totalItemsTracked = 0;
+    const filename = isFile ? config.VIDEO_INPUTS_PARAMS.file.split('/').pop() : '';
+    Opendatacam.recordingStatus.filename = filename;
 
     // Store lowest ID of currently tracked item when start recording 
     // to be able to compute nbObjectTracked
@@ -436,12 +465,15 @@ module.exports = {
     const highestTrackedItemId = currentlyTrackedItems[currentlyTrackedItems.length - 1].id;
     Opendatacam._refTrackedItemIdWhenRecordingStarted = highestTrackedItemId - currentlyTrackedItems.length;
 
+    
+
     // Persist recording
     DBManager.insertRecording(new Recording(
       Opendatacam.recordingStatus.dateStarted, 
       Opendatacam.recordingStatus.dateStarted,
       Opendatacam.countingAreas,
-      Opendatacam.videoResolution
+      Opendatacam.videoResolution,
+      filename
     )).then((recording) => {
       Opendatacam.recordingStatus.recordingId = recording.insertedId;
     }, (error) => {
@@ -460,7 +492,16 @@ module.exports = {
   },
 
   setVideoResolution(videoResolution) {
+    var self = this;
+    console.log('setvideoresolution')
     Opendatacam.videoResolution = videoResolution;
+    // Restore counting areas if defined
+    DBManager.getAppSettings().then((appSettings) => {
+      if(appSettings && appSettings.countingAreas) {
+        console.log('Restore counting areas');
+        self.registerCountingAreas(appSettings.countingAreas)
+      }
+    });
   },
 
   // Listen to 8070 for Tracker data detections
@@ -480,7 +521,7 @@ module.exports = {
       method:   'GET'
     };
 
-    console.log('Send request to connect to YOLO JSON Stream')
+    Logger.log('Send request to connect to YOLO JSON Stream')
     self.HTTPRequestListeningToYOLO = http.request(options, function(res) {
       Logger.log(`statusCode: ${res.statusCode}`)
       var message = ""; // variable that collects chunks
@@ -531,7 +572,7 @@ module.exports = {
             }
             var detectionsOfThisFrame = JSON.parse(message);
             message = '';
-            self.updateWithNewFrame(detectionsOfThisFrame.objects);
+            self.updateWithNewFrame(detectionsOfThisFrame.objects, detectionsOfThisFrame.frame_id);
           } catch (error) {
             console.log("Error with message send by YOLO, not valid JSON")
             message = '';
@@ -544,8 +585,18 @@ module.exports = {
 
       res.on('close', () => {
         if(Opendatacam.isListeningToYOLO)  {
-          console.log("==== HTTP Stream closed by darknet, reset UI, might be running from file and ended it or have troubles with webcam and need restart =====")
-          YOLO.stop();
+          console.log("==== HTTP Stream closed by darknet, reset UI ====")
+          console.log("==== If you are running on a file, it is restarting  because you reached the end ====")
+          console.log("==== If you are running on a camera, it might have crashed for some reason and we are trying to restart ====")
+          // YOLO process will auto-restart, so re-listen to it
+          // reset retries counter
+          Opendatacam.isListeningToYOLO = false;
+          Opendatacam.HTTPRequestListeningToYOLOMaxRetries = HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES;
+          if(config.VIDEO_INPUT === "file") {
+            self.stopRecording();
+          }
+          self.sendUpdateToClient();
+          self.listenToYOLO(urlData);
         } else {
           // Counting stopped by user, keep yolo running
         }
@@ -558,13 +609,13 @@ module.exports = {
         !Opendatacam.isListeningToYOLO &&
         Opendatacam.HTTPRequestListeningToYOLOMaxRetries > 0
       ) {
-        Logger.log('Will retry in 1s')
+        Logger.log(`Will retry in ${HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS} ms`)
         // Retry, YOLO might not have started server just yet
         setTimeout(() => {
           Logger.log("Retry connect to YOLO");
           self.listenToYOLO(urlData);
           Opendatacam.HTTPRequestListeningToYOLOMaxRetries--;
-        }, 3000)
+        }, HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS)
       } else {
         YOLO.stop();
         console.log('Something went wrong: ' + e.message);
@@ -589,6 +640,16 @@ module.exports = {
 
   isRecording() {
     return Opendatacam.recordingStatus.isRecording;
+  },
+
+  isFileRecordingRequested() {
+    return Opendatacam.recordingStatus.requestedFileRecording;
+  },
+
+  requestFileRecording() {
+    Opendatacam.recordingStatus.requestedFileRecording = true;
+    console.log('Ask YOLO to restart to record on a file ');
+    YOLO.restart();
   },
 
   getCurrentRecordingId() {

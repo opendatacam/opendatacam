@@ -18,13 +18,26 @@ import { connect } from 'react-redux';
 
 class WebcamStream extends PureComponent {
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      url : "/webcam/stream"
+    }
+  }
+
+  componentDidMount() {
+    this.setState({
+      url: `/webcam/stream?date=${new Date().getTime()}`
+    })
+  }
+
   render () {
     return (
       <React.Fragment>
         <img
            width={this.props.resolution.get('w')}
            height={this.props.resolution.get('h')}
-           src="/webcam/stream"
+           src={this.state.url}
          />
         <style jsx>{`
           {/* @media (min-aspect-ratio: 16/9) {

@@ -4,13 +4,13 @@
 set -e
 
 # Each opendatacam release should set the correct version here and tag appropriatly on github
-VERSION=v2.0.0
+VERSION=v2.1.0
 # PLATFORM in ["nano","xavier","tx2","nvidiadocker_cuda_archbin_6_1"]
 PLATFORM=undefined
 VIDEO_INPUT=undefined
 INDEX=undefined
 
-PLATFORM_OPTIONS=("nano" "xavier" "tx2" "nvidiadocker_cuda_archbin_6_1")
+PLATFORM_OPTIONS=("nano" "tx2" "xavier" "nvidiadocker_cuda_archbin_6_1")
 DEFAUT_VIDEO_INPUT_OPTIONS=("usbcam" "usbcam" "usbcam" "file")
 DEFAUT_NEURAL_NETWORK_OPTIONS=("yolov3-tiny" "yolov2-voc" "yolov3" "yolov3")
 
@@ -153,7 +153,7 @@ case $argument in
     fi
 
     # Message that docker container has been started and opendatacam will be available shorty on <IP>
-    echo "Opendatacam docker container installed successfully, it might take up to 1-2 min to start the node app and the webserver"
+    echo "OpenDataCam docker container installed successfully, it might take up to 1-2 min to start the node app and the webserver"
     
     # Cancel stop bash script on error (get IP will fail is no wifi dongle / ethernet connexion)
     set +e
@@ -163,15 +163,15 @@ case $argument in
     
     if [ -n "$wifiIP" ]; then
       echo "WIFI device IP"
-      echo "Opendatacam is available at: http://$wifiIP:8080"
+      echo "OpenDataCam is available at: http://$wifiIP:8080"
     fi
 
     if [ -n "$ethernetIP" ]; then
       echo "Ethernet device IP"
-      echo "Opendatacam is available at: http://$ethernetIP:8080"
+      echo "OpenDataCam is available at: http://$ethernetIP:8080"
     fi
 
-    echo "Opendatacam will start automaticaly on boot when you restart you jetson"
+    echo "OpenDataCam will start automaticaly on boot when you restart you jetson"
     echo "If you want to stop it, please refer to the doc: https://github.com/opendatacam/opendatacam"
 
     ;;

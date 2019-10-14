@@ -41,6 +41,7 @@ class DataView extends PureComponent {
               counterData={this.props.counterSummary}
               countingAreas={this.props.countingAreas}
               nbPaths={this.props.totalItemsTracked}
+              filename={this.props.recordingStatus.get('filename')}
               active
             />
           }
@@ -52,6 +53,7 @@ class DataView extends PureComponent {
               dateEnd={recording.get('dateEnd')}
               counterData={recording.get('counterSummary')}
               countingAreas={recording.get('areas')}
+              filename={recording.get('filename')}
               nbPaths={recording.getIn(['trackerSummary', 'totalItemsTracked'])}
             />
           )}
