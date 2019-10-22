@@ -94,7 +94,7 @@ app.prepare()
   express.use(bodyParser.json());
 
   // TODO add compression: https://github.com/expressjs/compression
-  
+
   // This render pages/index.js for a request to /
   express.get('/', (req, res) => {
 
@@ -112,9 +112,9 @@ app.prepare()
    * @apiGroup Opendatacam
    *
    * @apiDescription Start opendatacam without loading the UI
-   * 
+   *
    * This will start the YOLO process on the video input stream
-   * 
+   *
    * @apiSuccessExample Success-Response:
    *  HTTP/1.1 200 OK
    *
@@ -132,12 +132,12 @@ app.prepare()
    * @apiGroup Webcam
    *
    * @apiDescription Limitation: Only available after YOLO has started
-   * 
+   *
    * This endpoint streams the webcam as a MJPEG stream. (streams the sequence of JPEG frames over HTTP).
    * The TCP connection is not closed as long as the client wants to receive new frames and the server wants to provide new frames
    * Only support one client at a time, if another one connect, the first HTTP connection is closed
-   * 
-   * More on MJPEG over HTTP: https://en.wikipedia.org/wiki/Motion_JPEG#M-JPEG_over_HTTP 
+   *
+   * More on MJPEG over HTTP: https://en.wikipedia.org/wiki/Motion_JPEG#M-JPEG_over_HTTP
    *
   */
   express.get('/webcam/stream', (req, res) => {
@@ -152,7 +152,7 @@ app.prepare()
    * @apiGroup Webcam
    *
    * @apiDescription Limitation: Only available after YOLO has started
-   * 
+   *
    * @apiSuccessExample {json} Success Response:
    *     {
    *       "w": 1280,
@@ -169,7 +169,7 @@ app.prepare()
    * @apiGroup Helper
    *
    * @apiDescription Send the last 3000 characters of the server **stoud**
-   * 
+   *
    * @apiSuccessExample Response
    *    Ready on http://localhost:8080 > Ready on http://192.168.0.195:8080
   */
@@ -188,7 +188,7 @@ app.prepare()
     }
     consoleRes = res;
     consoleRes.write(stdoutBuffer);
-    
+
     consoleInterval = setInterval(() => {
       consoleRes.write(stdoutInterval);
       stdoutInterval = "";
@@ -201,15 +201,15 @@ app.prepare()
    * @apiGroup Counter
    *
    * @apiDescription Send counter areas definition to server
-   * 
+   *
    * It will replace all current counter areas (doesn't update a specific one)
-   * 
+   *
    * If you want to remove all counter areas, send an empty object
-   * 
+   *
    * @apiParam {Object} point1 First point of the counter line definition
    * @apiParam {Object} point2 Second point of the counter line definition
    * @apiParam {Object} refResolution Resolution of client side canvas where the line is drawn
-   * 
+   *
    * @apiParamExample {json} Request Example:
    *     {
             "countingAreas": {
@@ -247,7 +247,7 @@ app.prepare()
    * @apiGroup Counter
    *
    * @apiDescription Get counter areas defined
-   * 
+   *
    * @apiSuccess {Object} location Two points defining the counting line, along with reference frame resolution
    * @apiSuccess {String} color Color of the area (defined in config.json)
    * @apiSuccess {String} name Name of the area
@@ -307,7 +307,7 @@ app.prepare()
           }
         }
       }
-   * 
+   *
   */
   express.get('/counter/areas', (req, res) => {
     res.json(Opendatacam.getCountingAreas());
@@ -320,21 +320,21 @@ app.prepare()
    * @apiGroup Tracker
    *
    * @apiDescription From the browser, you can open a SSE (Server side event) connection to get data from Opendatacan on each frame.
-   * 
+   *
    * **How to open an SSE connexion**
-   * 
+   *
    * ```let eventSource = new EventSource("/tracker/sse")```
-   * 
+   *
    * **How to get data on each frame**
-   * 
+   *
    * ```eventSource.onmessage = (msg) => { let message = JSON.parse(msg.data); }```
-   * 
+   *
    * Then it works like websocket but only the server can push data.
-   * 
+   *
    * *Limitation: Only support one client at a time, if another one connect, the first SSE connection is closed*
-   * 
+   *
    * More doc on server side event, read [What are SSE : Server Side Events](https://medium.com/axiomzenteam/websockets-http-2-and-sse-5c24ae4d9d96)
-   * 
+   *
    * @apiSuccessExample {json} Frame example (once parsed to JSON):
    *  {
         "trackerDataForLastFrame": {
@@ -393,7 +393,7 @@ app.prepare()
           }
         }
       }
-   * 
+   *
   */
   express.get('/tracker/sse', sse, function(req, res) {
     Opendatacam.startStreamingData(res.sse);
@@ -405,8 +405,8 @@ app.prepare()
    * @apiName Start
    * @apiGroup Recording
    *
-   * @apiDescription Start recording (persisting tracker data and counting data to db) 
-   * 
+   * @apiDescription Start recording (persisting tracker data and counting data to db)
+   *
    * @apiSuccessExample Success-Response:
    *   HTTP/1.1 200 OK
   */
@@ -425,7 +425,7 @@ app.prepare()
    * @apiGroup Recording
    *
    * @apiDescription Stop recording
-   * 
+   *
    * @apiSuccessExample Success-Response:
    *   HTTP/1.1 200 OK
   */
@@ -434,18 +434,18 @@ app.prepare()
     res.sendStatus(200)
   });
 
-  
+
   /**
    * @api {get} /recordings?offset=:offset&limit=:limit List
    * @apiName List recordings
    * @apiGroup Recordings
-   * 
+   *
    * @apiParam {Number} [limit=20] Limit of recordings in the response
    * @apiParam {Number} [offset=0] Skipped recordings
    *
    * @apiDescription Get list of all recording ordered by latest date
-   * 
-   * 
+   *
+   *
    * @apiSuccess {String} _id recordingId you will use to fetch more data on a specific recording
    * @apiSuccess {String} dateStart recording start date
    * @apiSuccess {String} dateEnd recording end date
@@ -502,18 +502,18 @@ app.prepare()
             }
           ]
    *    }
-   *  
+   *
   */
   express.get('/recordings', (req, res) => {
     var limit = parseInt(req.query.limit, 10) || 20;
     var offset = parseInt(req.query.offset, 10) || 0;
-    
+
     var recordingPromise = DBManager.getRecordings(limit, offset)
     var countPromise = DBManager.getRecordingsCount()
 
     Promise.all([recordingPromise, countPromise]).then((values) => {
       res.json({
-        offset: offset, 
+        offset: offset,
         limit: limit,
         total: values[1],
         recordings: values[0]
@@ -527,20 +527,20 @@ app.prepare()
    * @apiGroup Recording
    *
    * @apiDescription Get tracker data for a specific recording **(can be very large as it returns all the data for each frame)**
-   * 
+   *
    * @apiParam {String} id Recording id (_id field of GET /recordings endpoint)
-   * 
+   *
    * @apiSuccess {String} recordingId Corresponding recordingId of this tracker recorded frame
    * @apiSuccess {String} timestamp Frame date
-   * @apiSuccess {Object[]} objects All objects tracked on this frame 
+   * @apiSuccess {Object[]} objects All objects tracked on this frame
    * @apiSuccess {Number} id Unique id of the object
-   * @apiSuccess {Number} x Position of the center on the X axis (0,0 is on top left of frame)
-   * @apiSuccess {Number} y Position of the center on the Y axis (0,0 is on top left of frame)
+   * @apiSuccess {Number} x Position center bbox (coordinate system 0,0 is top left of frame)
+   * @apiSuccess {Number} y Position center bbox (coordinate system 0,0 is top left of frame)
    * @apiSuccess {Number} w Width of the object
    * @apiSuccess {Number} h Height of the object
    * @apiSuccess {Number} bearing Direction where the object is heading (in degree)
    * @apiSuccess {String} name Class of the object
-   * 
+   *
    * @apiSuccessExample {json} Success Response:
    *     [
    *      {
@@ -587,9 +587,9 @@ app.prepare()
    * @apiGroup Recording
    *
    * @apiDescription Get recording details
-   * 
+   *
    * @apiParam {String} id Recording id (_id field of /recordings)
-   * 
+   *
    * @apiSuccess {videoResolution} Frame resolution
    * @apiSuccessExample {json} Success Response:
    *
@@ -624,11 +624,11 @@ app.prepare()
    * @apiGroup Recording
    *
    * @apiDescription Delete recording
-   * 
+   *
    * @apiParam {String} id Recording id (_id field of /recordings)
-   * 
+   *
    * @apiSuccessExample Success-Response:
-  *   HTTP/1.1 200 OK 
+  *   HTTP/1.1 200 OK
   */
   express.delete('/recording/:id', (req, res) => {
     DBManager.deleteRecording(req.params.id).then((success) => {
@@ -642,9 +642,9 @@ app.prepare()
    * @apiGroup Recording
    *
    * @apiDescription Get counter data for a specific recording
-   * 
+   *
    * @apiParam {String} id Recording id (_id field of GET /recordings)
-   * 
+   *
    * @apiSuccess {String} _id recordingId you will use to fetch more data on a specific recording
    * @apiSuccess {String} dateStart recording start date
    * @apiSuccess {String} dateEnd recording end date
@@ -652,7 +652,7 @@ app.prepare()
    * @apiSuccess {Object} counterSummary For each area, nb items counted
    * @apiSuccess {Object} trackerSummary Total tracked items for all the recording
    * @apiSuccess {Object} counterHistory Details of all items that have been counted
-   * 
+   *
    * @apiSuccessExample {json} Success Response:
    *     [
           {
@@ -733,9 +733,9 @@ app.prepare()
    * @apiGroup Recording
    *
    * @apiDescription Get counter history data as CSV file
-   * 
+   *
    * @apiParam {String} id Recording id (_id field of /recordings)
-   * 
+   *
    * @apiSuccessExample {csv} Success Response:
    *    "Timestamp","Counter area","ObjectClass","UniqueID"
    *    "2019-05-02T19:10:22.150Z","blabla","car",4096
@@ -777,9 +777,9 @@ app.prepare()
    * @apiGroup Helper
    *
    * @apiDescription Return opendatacam status (isRecording, recordingId etc etc)
-   * 
+   *
    * @apiSuccessExample {json} Success Response:
-   * 
+   *
    * {
       "counterSummary": {
         "22d35d27-7d73-4f54-a99c-a3391f5c1c46": {
@@ -819,7 +819,7 @@ app.prepare()
    * @apiGroup Helper
    *
    * @apiDescription Get config.json content loaded by Opendatacam
-   * 
+   *
    * @apiSuccessExample {json} Success Response:
    * {
       "OPENDATACAM_VERSION": "2.1.0",
@@ -912,8 +912,8 @@ app.prepare()
         }
       },
       "MONGODB_URL": "mongodb://127.0.0.1:27017"
-    } 
-   * 
+    }
+   *
   */
 
   express.get('/config', (req, res) => {
@@ -928,13 +928,13 @@ app.prepare()
    * @apiGroup Helper
    *
    * @apiDescription Save UI settings
-   * 
+   *
    * Through this api you can persist some UI settings like whether counter and pathfinder features are enabled
-   * 
-   * 
+   *
+   *
    * @apiParam {Boolean} counterEnabled If counter feature is enabled
    * @apiParam {Boolean} pathfinderEnabled If pathfinder feature is enabled
-   * 
+   *
    * @apiParamExample {json} Request Example:
    *    {
           counterEnabled: true,
@@ -954,10 +954,10 @@ app.prepare()
    * @apiGroup Helper
    *
    * @apiDescription Get UI settings
-   * 
+   *
    * Through this api you can get UI settings like whether counter and pathfinder features are enabled
-   * 
-   * 
+   *
+   *
   * @apiSuccessExample {json} Success Response:
    *    {
           counterEnabled: true,
@@ -976,7 +976,7 @@ app.prepare()
     return handle(req, res)
   })
 
-  
+
 
   server.listen(port, (err) => {
     if (err) throw err
