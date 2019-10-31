@@ -18,7 +18,7 @@ sudo apt install python-pip
 # Install jetson-stats
 sudo -H pip install jetson-stats
 # Print info about jetson
-jetson-release
+jetson_release
 
 # Output should be something like:
 # - NVIDIA Jetson TX2
