@@ -165,31 +165,26 @@ That is why you need to use our install script to install a container. We have [
 
 ```bash
 # List containers
-sudo docker container list
-
-sudo docker logs <containerID>
+sudo docker logs -f -t opendatacam
 ```
 
 **How to  stop / restart OpenDataCam**
 
 ```bash
-# List containers
-sudo docker container list
-
-# Stop container (get id from previous command)
-sudo docker stop <containerID>
+# Stop container 
+sudo docker stop opendatacam
 
 # Start container (will mount the opendatacam_videos/ and the config.json + mount CUDA necessary stuff)
 sudo ./run-opendatacam.sh
 
 # Restart container (after modifying the config.json file for example)
-sudo docker restart <containerID>
+sudo docker restart opendatacam
 
 # Install a newer version of opendatacam
 # Follow the 1. Install and start OpenDataCam
 
 # See stats ( CPU , memory usage ...)
-sudo docker stats <containerID>
+sudo docker stats opendatacam
 
 # Clear all docker container, images ...
 sudo docker system prune -a
