@@ -321,7 +321,7 @@ sudo apt-get install -y autoconf autotools-dev build-essential gcc git
 
 sudo apt-get install -y ffmpeg
 
-git clone --depth 1 -b 3.3.1 https://github.com/opencv/opencv.git
+git clone --depth 1 -b 3.4.3 https://github.com/opencv/opencv.git
 
 cd opencv
 mkdir build
