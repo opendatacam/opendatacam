@@ -108,7 +108,7 @@ chmod 777 install-opendatacam.sh
 ./install-opendatacam.sh --platform nvidiadocker_cuda_archbin_6_1
 ```
 
-This command will download and start a docker container on the machine. After it finishes the docker container starts a webserver on port 8080.
+This command will download and start a docker container on the machine. After it finishes the docker container starts a webserver on port 8080 (ports 8070 and 8090 are also used).
 
 The docker container is started in auto-restart mode, so if you reboot your machine it will automaticaly start opendatacam on startup. ([Learn more about the specificities of docker on jetson](#6-docker-playbook-))
 
@@ -171,7 +171,7 @@ sudo docker logs -f -t opendatacam
 **How to  stop / restart OpenDataCam**
 
 ```bash
-# Stop container 
+# Stop container
 sudo docker stop opendatacam
 
 # Start container (will mount the opendatacam_videos/ and the config.json + mount CUDA necessary stuff)
