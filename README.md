@@ -10,6 +10,8 @@ Both software and hardware setup are documented and offered as an open source pr
 
 OpenDataCam is very alpha and we do not provide any guarantee that this will work for your use case, but we conceived it as a starting point from where you can build-on & improve.
 
+OpenDataCam is generously supported by [move lab](https://www.move-lab.com/) (ongoing). OpenDataCam was supported in part by a [residency](http://studioforcreativeinquiry.org/people/benedikt-gros) at the Frank-Ratchye [STUDIO for Creative Inquiry](http://studioforcreativeinquiry.org/) at Carnegie Mellon University.
+
 👉 [See Demo Video (4 min)](https://vimeo.com/346340651/38966dac9d)
 
 [![Demo OpenDataCam](https://i.vimeocdn.com/video/805477718.webp?mw=1200&mh=675&q=85)](https://vimeo.com/346340651/38966dac9d)
