@@ -103,15 +103,13 @@ class CounterAreasEditor extends Component {
 
   componentDidMount() {
     if(this.elCanvas) {
+      const { width, height } = this.elCanvas.getBoundingClientRect();
+      this.editorCanvas = new fabric.Canvas(this.elCanvas, { selection: false, width: width, height: height });
+        
       // If no countingAreas exists already
       if(this.props.countingAreas.size === 0) {
-        const { width, height } = this.elCanvas.getBoundingClientRect();
-        this.editorCanvas = new fabric.Canvas(this.elCanvas, { selection: false, width: width, height: height });
         this.props.dispatch(setMode(EDITOR_MODE.SHOW_INSTRUCTION))
       } else {
-        // If some counting areas exists already
-        const { refResolution } = this.props.countingAreas.find((val) => val.get('location') !== null).toJS().location;
-        this.editorCanvas = new fabric.Canvas(this.elCanvas, { selection: false, width: refResolution.w, height: refResolution.h });
         this.reRenderCountingAreasInEditor(this.props.countingAreas)
       }
 
@@ -119,16 +117,20 @@ class CounterAreasEditor extends Component {
     }
   }
 
-  reRenderCountingAreasInEditor(countingAreas) {
+  reRenderCountingAreasInEditor(countingAreas, canvasResolution) {
     // Clear canvas 
     this.editorCanvas.clear();
     this.lines = {}
+
+    const { width, height } = this.elCanvas.getBoundingClientRect();
 
     countingAreas.map((area, id) => {
       if(area.get('location') !== undefined) {
         let data = area.get('location').toJS();
         let color = area.get('color');
-        let points = [ data.point1.x, data.point1.y, data.point2.x, data.point2.y ];
+        let reScalingFactorX = width / data.refResolution.w;
+        let reScalingFactorY = height / data.refResolution.h;
+        let points = [ data.point1.x * reScalingFactorX, data.point1.y * reScalingFactorY, data.point2.x * reScalingFactorX, data.point2.y * reScalingFactorY];
         this.lines[id] = new fabric.Line(points, {
           strokeWidth: 5,
           fill: getCounterColor(color),
@@ -140,16 +142,16 @@ class CounterAreasEditor extends Component {
         this.editorCanvas.add(new fabric.Circle({
           radius: 5,
           fill: getCounterColor(color),
-          top: data.point1.y,
-          left: data.point1.x,
+          top: data.point1.y * reScalingFactorY,
+          left: data.point1.x * reScalingFactorX,
           originX: 'center',
           originY: 'center'
         }));
         this.editorCanvas.add(new fabric.Circle({
           radius: 5,
           fill: getCounterColor(color),
-          top: data.point2.y,
-          left: data.point2.x,
+          top: data.point2.y * reScalingFactorY,
+          left: data.point2.x * reScalingFactorX,
           originX: 'center',
           originY: 'center'
         }));
