@@ -117,7 +117,7 @@ class CounterAreasEditor extends Component {
     }
   }
 
-  reRenderCountingAreasInEditor(countingAreas, canvasResolution) {
+  reRenderCountingAreasInEditor(countingAreas) {
     // Clear canvas 
     this.editorCanvas.clear();
     this.lines = {}
