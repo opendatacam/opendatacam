@@ -1,9 +1,7 @@
 
-## Install nvidia-docker (nvidia-container-toolkit or nvidia-docker2)
+## Install nvidia-docker (nvidia-container-toolkit)
 
-_⚠️ Currently (Sep 2019) the nvidia-docker projects seems to be in an odd transition phase of supporting two slightly different ways of leveraging NVIDIA GPUs in docker containers. At the moment best practice seems to install both the nvidia-container-toolkit and the deprecated nvidia-docker2._
-
-_You can also refer directly to the guides on [nvidia-container-toolkit](https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(Native-GPU-Support)) or [nvidia-docker2](https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(version-2.0)) on the wiki of nvidia-docker repository._
+_You can also refer directly to the guides on [nvidia-container-toolkit](https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(Native-GPU-Support))_
 
 
 ### 1. Hardware pre-requisite 
