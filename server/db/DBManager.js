@@ -26,7 +26,7 @@ class DBManager {
           // Get the collection
           const recordingCollection = db.collection(RECORDING_COLLECTION)
           // Create the index
-          recordingCollection.createIndex({ dateEnd: -1 })
+          recordingCollection.createIndex({ dateStart: -1 })
 
           const trackerCollection = db.collection(TRACKER_COLLECTION)
           // Create the index
