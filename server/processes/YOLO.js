@@ -37,7 +37,7 @@ module.exports = {
       YOLO.process = new (forever.Monitor)(darknetCommand,{
         max: Number.POSITIVE_INFINITY,
         cwd: config.PATH_TO_YOLO_DARKNET,
-        env: { 'LD_LIBRARY_PATH': './:$LD_LIBRARY_PATH' },
+        env: { 'LD_LIBRARY_PATH': './' },
         killTree: true
       });
 
