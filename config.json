@@ -46,12 +46,12 @@
       "weights": "yolov3.weights"
     },
     "yolov3-tiny": {
-      "data": "cfg/coco.data",
+      "data": "data/coco.names",
       "cfg": "cfg/yolov3-tiny.cfg",
       "weights": "yolov3-tiny.weights"
     },
     "yolov2-voc": {
-      "data": "cfg/voc.data",
+      "data": "data/voc.names",
       "cfg": "cfg/yolo-voc.cfg",
       "weights": "yolo-voc.weights"
     }
