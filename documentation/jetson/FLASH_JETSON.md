@@ -1,10 +1,6 @@
 ### ⚡️Flash Jetson Board:
 
-*We support only jetpack version [4.2](https://developer.nvidia.com/jetpack-4_2) and 4.2.1 (more recent versions might also work)*
-
-- Official documentation https://docs.nvidia.com/sdk-manager/install-with-sdkm-jetson/index.html
-- Video tutorial: https://www.youtube.com/watch?v=s1QDsa6SzuQ 
-- Article: https://www.jetsonhacks.com/2019/06/04/nvidia-sdk-manager-for-jetson-jetpack-4-2/
+*We support only jetpack version [4.3](https://developer.nvidia.com/embedded/jetpack) (more recent versions might also work)*
 
 #### How to find out my Jetpack version
 
