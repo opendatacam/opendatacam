@@ -338,7 +338,7 @@ See [Run opendatacam on a video file](#run-opendatacam-on-a-video-file)
 
 ##### Run from IP cam
 
-1. Change `VIDEO_INPUT` to `"file"`
+1. Change `VIDEO_INPUT` to `"remote_cam"`
 
 ```json
 "VIDEO_INPUT": "remote_cam"
@@ -356,7 +356,7 @@ NB: this IP cam won't work, it is just an example. Only use IP Cam you own yours
 
 ##### Run from Raspberry Pi cam (Jetson nano)
 
-See [dedicated documention for Jetson nano](jetson/JETSON_NANO.md#advanced-usage)
+See [dedicated documentation for Jetson nano](jetson/JETSON_NANO.md#advanced-usage)
 
 ##### Change webcam resolution
 
