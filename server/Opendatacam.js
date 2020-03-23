@@ -15,7 +15,8 @@ const HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS = 30;
 const HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES = 180 * (1000 / HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS);
 
 const initialState = {
-  timeLastFrame: new Date(),
+  timeLastFrameFPSComputed: new Date(),
+  indexLastFrameFPSComputed: 0,
   currentFrame: 0,
   countedItemsHistory: [],
   videoResolution: null,
@@ -208,10 +209,15 @@ module.exports = {
 
     // Compute FPS
     const frameTimestamp = new Date();
-    const timeDiff = Math.abs(frameTimestamp.getTime() - Opendatacam.timeLastFrame.getTime());
-    Opendatacam.timeLastFrame = frameTimestamp;
-    // console.log(`YOLO detections FPS: ${1000 / timeDiff}`);
-    Opendatacam.recordingStatus.currentFPS = Math.round(1000 / timeDiff)
+    if(Opendatacam.indexLastFrameFPSComputed + 3 <= frameId) {
+      const timeDiff = Math.abs(frameTimestamp.getTime() - Opendatacam.timeLastFrameFPSComputed.getTime());
+      const frameDiff = frameId - Opendatacam.indexLastFrameFPSComputed;
+      // console.log(`YOLO detections FPS: ${1000 / timeDiff}`);
+      Opendatacam.recordingStatus.currentFPS = Math.round(1000 / timeDiff * frameDiff)
+      Opendatacam.timeLastFrameFPSComputed = frameTimestamp;
+      Opendatacam.indexLastFrameFPSComputed = frameId;
+    }
+
 
     // Scale detection
     let detectionScaledOfThisFrame = detectionsOfThisFrame.map((detection) => {
