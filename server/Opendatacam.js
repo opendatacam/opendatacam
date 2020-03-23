@@ -248,7 +248,7 @@ module.exports = {
     Opendatacam.nbItemsTrackedThisFrame = trackerDataForThisFrame.length;
 
     // Compute nbItemsTrackedSinceRecordingStarted based on ids (assume that id increment is one)
-    const biggestTrackedItemIdThisFrame = trackerDataForThisFrame[trackerDataForThisFrame.length - 1].id;
+    const biggestTrackedItemIdThisFrame = trackerDataForThisFrame.length > 0 ? trackerDataForThisFrame[trackerDataForThisFrame.length - 1].id : 0;
     const nbItemsTrackedSinceRecordingStarted = biggestTrackedItemIdThisFrame - Opendatacam._refTrackedItemIdWhenRecordingStarted;
     Opendatacam.totalItemsTracked = nbItemsTrackedSinceRecordingStarted;
   
