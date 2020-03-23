@@ -571,21 +571,26 @@ module.exports = {
         }
 
         if(isMessageComplete) {
+          var detectionsOfThisFrame = null;
           try {
             Logger.log('Message complete, parse it')
             if(message.charAt(0) === ',') {
               Logger.log('First char is a comma, remove it')
               message = message.substr(1);
             }
-            var detectionsOfThisFrame = JSON.parse(message);
+            detectionsOfThisFrame = JSON.parse(message);
             message = '';
-            self.updateWithNewFrame(detectionsOfThisFrame.objects, detectionsOfThisFrame.frame_id, detectionsOfThisFrame.video_size);
           } catch (error) {
             console.log("Error with message send by YOLO, not valid JSON")
             message = '';
             Logger.log(message);
             Logger.log(error);
             // res.emit('close');
+          }
+
+          // Put this outside the try-catch loop to have proper error handling for updateWithNewFrame
+          if(detectionsOfThisFrame !== null) {
+            self.updateWithNewFrame(detectionsOfThisFrame.objects, detectionsOfThisFrame.frame_id, detectionsOfThisFrame.video_size);
           }
         }
       });
