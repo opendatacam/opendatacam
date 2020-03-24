@@ -24,7 +24,7 @@ export const COUNTING_AREA_TYPE = {
 
 // TODO Make this resolution independant by specifying a percentage of the total
 export const CIRCLE_RADIUS = 30
-export const ICON_DIRECTION_SIZE = 25
+export const ICON_DIRECTION_SIZE = 20
 
 export const CIRCLE_DELETE_RADIUS = 40
 
