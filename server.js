@@ -187,7 +187,8 @@ app.prepare()
    * @apiParam {Object} point1 First point of the counter line definition
    * @apiParam {Object} point2 Second point of the counter line definition
    * @apiParam {Object} refResolution Resolution of client side canvas where the line is drawn
-   *
+   * @apiParam {string="bidirectional","leftright_topbottom", "rightleft_bottomtop"} Direction of counting, if object passes the other direction, it won't be counted
+   * 
    * @apiParamExample {json} Request Example:
    *     {
             "countingAreas": {
@@ -208,6 +209,7 @@ app.prepare()
                   }
                 },
                 "name": "Counter line 1"
+                "type": "bidirectional"
               }
             }
           }
@@ -229,6 +231,7 @@ app.prepare()
    * @apiSuccess {Object} location Two points defining the counting line, along with reference frame resolution
    * @apiSuccess {String} color Color of the area (defined in config.json)
    * @apiSuccess {String} name Name of the area
+   * @apiSuccess {string="bidirectional","leftright_topbottom", "rightleft_bottomtop"} Direction of counting, if object passes the other direction, it won't be counted
    * @apiSuccess {Object} computed Computed linear function representing the counting line (used by the counting algorithm)
    * @apiSuccessExample {json} Response
    *  {
@@ -249,13 +252,18 @@ app.prepare()
             }
           },
           "name": "test",
+          "type": "bidirectional",
           "computed": {
             "a": 0.046349957976037706,
             "b": -527.0496981416069,
             "xBounds": {
               "xMin": 224.42666666666668,
               "xMax": 402.7733333333333
-            }
+            },
+            "lineBearings": [
+              151.6353351530571,
+              331.6353351530571
+            ]
           }
         },
         "a684ad42-d6fe-4be4-b77b-09b8473cc487": {
@@ -275,13 +283,18 @@ app.prepare()
             }
           },
           "name": "area 2",
+          "type": "bidirectional",
           "computed": {
             "a": 0.029503983402006398,
             "b": -548.2275463758912,
             "xBounds": {
               "xMin": 453.97333333333336,
               "xMax": 622.08
-            }
+            },
+            "lineBearings": [
+              151.6353351530571,
+              331.6353351530571
+            ]
           }
         }
       }
@@ -516,7 +529,7 @@ app.prepare()
    * @apiSuccess {Number} y Position center bbox (coordinate system 0,0 is top left of frame)
    * @apiSuccess {Number} w Width of the object
    * @apiSuccess {Number} h Height of the object
-   * @apiSuccess {Number} bearing Direction where the object is heading (in degree)
+   * @apiSuccess {Number} bearing Direction where the object is heading (in degree), !! 0º (north) is headed to the bottom of the frame !!
    * @apiSuccess {String} name Class of the object
    *
    * @apiSuccessExample {json} Success Response:

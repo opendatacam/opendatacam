@@ -112,7 +112,8 @@ export function addCountingArea() {
       type: ADD_COUNTING_AREA,
       payload: {
         id: newCountingAreaId,
-        color: color
+        color: color,
+        type: "bidirectional"
       }
     })
 
@@ -250,7 +251,8 @@ export default function CounterReducer (state = initialState, action = {}) {
       return state.setIn(['countingAreas', action.payload.id, 'name'], action.payload.name)
     case ADD_COUNTING_AREA:
       return state.setIn(['countingAreas', action.payload.id], fromJS({
-        color: action.payload.color
+        color: action.payload.color,
+        type: action.payload.type
       }))
     case RESET_COUNTING_AREAS:
       return state.set('countingAreas', fromJS({}))

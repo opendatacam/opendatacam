@@ -280,6 +280,7 @@ module.exports = {
       // For each counting areas
       var countingDeltas = Object.keys(Opendatacam.countingAreas).map((countingAreaKey) => {
         let countingAreaProps = Opendatacam.countingAreas[countingAreaKey].computed;
+        let countingAreaType = Opendatacam.countingAreas[countingAreaKey].type;
         // deltaY = Y(detection) - Y(on-counting-line)
         // NB: negating Y detection to get it in "normal" coordinates space
         // deltaY = - Y(detection) - a X(detection) - b
@@ -324,12 +325,27 @@ module.exports = {
                   // Tracked item has cross the {countingAreaKey} counting line
                   // Count it
                   // console.log(`Counting ${trackedItem.id}`);
-                  let countedItem = this.countItem(trackedItem, countingAreaKey, frameId);
-                  countedItemsForThisFrame.push(countedItem);
-                }
-  
-                
 
+                  // Object comes from bottom to top, or right to left of the counting lines
+                  if(countingAreaProps.lineBearings[0] <= trackedItem.bearing && trackedItem.bearing <= countingAreaProps.lineBearings[1]) {
+                    if(countingAreaType === 'bidirectional' || countingAreaType === 'rightleft_bottomtop') {
+                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId);
+                      countedItemsForThisFrame.push(countedItem);
+                    } else {
+                      // do not count, comes from the wrong direction
+                      // console.log('not counting, comes from top to bottom or left to right of the counting line ')
+                    }
+                  } else {
+                    // Object comes from top to bottom or left to right of the counting line
+                    if(countingAreaType === 'bidirectional' || countingAreaType === 'leftright_topbottom') {
+                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId);
+                      countedItemsForThisFrame.push(countedItem);
+                    } else {
+                      // do not count, comes from the wrong direction
+                      // console.log('not counting, from bottom to top, or right to left of the counting lines')
+                    }
+                  }
+                }
               } else {
                 // console.log('NOT IN xBOUNDS');
                 // console.log(countingAreaProps.xBounds);
