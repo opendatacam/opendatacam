@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 
-import { ICON_DIRECTION_SIZE, CIRCLE_RADIUS, POPOVER_HEIGHT, POPOVER_WIDTH, POPOVER_ARROW_SIZE } from '../../utils/constants';
+import { ICON_DIRECTION_SIZE, CIRCLE_RADIUS, POPOVER_HEIGHT, POPOVER_WIDTH, POPOVER_ARROW_SIZE, COUNTING_AREA_TYPE } from '../../utils/constants';
 
 import SVG from 'react-inlinesvg';
 import OpenMoji from './OpenMoji';
@@ -82,7 +82,15 @@ class SingleCounterArea extends Component {
                 backgroundColor: getCounterColor(this.props.area.color)
             }} 
         >
-          <img className="icon-direction" src="/static/icons/ui/arrow-double.svg" />
+          {this.props.area.type === COUNTING_AREA_TYPE.BIDIRECTIONAL &&
+            <img className="icon-direction" src="/static/icons/ui/arrow-double.svg" />
+          }
+          {this.props.area.type === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM &&
+            <img className="icon-direction" src="/static/icons/ui/arrow-up.svg" />
+          }
+          {this.props.area.type === COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP &&
+            <img className="icon-direction" src="/static/icons/ui/arrow-down.svg" />
+          }
           <div className="counter-value">
             {this.props.counterData && this.props.counterData.get('_total') || 0}
           </div>
@@ -109,6 +117,7 @@ class SingleCounterArea extends Component {
             .icon-direction {
               width: ${ICON_DIRECTION_SIZE}px;
               height: ${ICON_DIRECTION_SIZE}px;
+              transform: rotate(${this.props.area.computed.lineBearings[0] + 90}deg);
             }
 
             .counter-value {
