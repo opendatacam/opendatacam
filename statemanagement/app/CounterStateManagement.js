@@ -27,6 +27,7 @@ const initialState = fromJS({
 const SELECT_COUNTING_AREA = 'Counter/SELECT_COUNTING_AREA'
 const DELETE_COUNTING_AREA = 'Counter/DELETE_COUNTING_AREA'
 const SAVE_COUNTING_AREA_LOCATION = 'Counter/SAVE_COUNTING_AREA_LOCATION'
+const SAVE_COUNTING_AREA_TYPE = 'Counter/SAVE_COUNTING_AREA_TYPE'
 const SET_MODE = 'Counter/SET_MODE'
 const SAVE_COUNTING_AREA_NAME = 'Counter/SAVE_COUNTING_AREA_NAME'
 const ADD_COUNTING_AREA = 'Counter/ADD_COUNTING_AREA'
@@ -135,6 +136,21 @@ export function saveCountingAreaLocation(id, location) {
     if(!getState().counter.getIn(['countingAreas', id, 'name'])) {
       dispatch(setMode(EDITOR_MODE.ASKNAME));
     }
+    dispatch(registerCountingAreasOnServer());
+  }
+}
+
+export function saveCountingAreaType(id, type) {
+  return (dispatch, getState) => {
+
+    dispatch({
+      type: SAVE_COUNTING_AREA_TYPE,
+      payload: {
+        type,
+        id
+      }
+    });
+
     dispatch(registerCountingAreasOnServer());
   }
 }
@@ -249,6 +265,8 @@ export default function CounterReducer (state = initialState, action = {}) {
       return state.setIn(['countingAreas', action.payload.id, 'location'], fromJS(action.payload.location))
     case SAVE_COUNTING_AREA_NAME:
       return state.setIn(['countingAreas', action.payload.id, 'name'], action.payload.name)
+    case SAVE_COUNTING_AREA_TYPE:
+      return state.setIn(['countingAreas', action.payload.id, 'type'], action.payload.type)
     case ADD_COUNTING_AREA:
       return state.setIn(['countingAreas', action.payload.id], fromJS({
         color: action.payload.color,
