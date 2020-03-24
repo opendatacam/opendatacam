@@ -1,7 +1,7 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux';
 
-import { CIRCLE_RADIUS, POPOVER_HEIGHT, POPOVER_WIDTH, POPOVER_ARROW_SIZE } from '../../utils/constants';
+import { ICON_DIRECTION_SIZE, CIRCLE_RADIUS, POPOVER_HEIGHT, POPOVER_WIDTH, POPOVER_ARROW_SIZE } from '../../utils/constants';
 
 import SVG from 'react-inlinesvg';
 import OpenMoji from './OpenMoji';
@@ -78,18 +78,21 @@ class SingleCounterArea extends Component {
             onClick={this.togglePopover}
             style={{
                 top: this.props.area.location.center.y - CIRCLE_RADIUS / 2, 
-                left: this.props.area.location.center.x - CIRCLE_RADIUS / 2,
+                left: this.props.area.location.center.x - CIRCLE_RADIUS / 2 - (ICON_DIRECTION_SIZE + 5) / 2,
                 backgroundColor: getCounterColor(this.props.area.color)
             }} 
         >
-        {this.props.counterData && this.props.counterData.get('_total') || 0}
+          <img className="icon-direction" src="/static/icons/ui/arrow-double.svg" />
+          <div className="counter-value">
+            {this.props.counterData && this.props.counterData.get('_total') || 0}
+          </div>
         </div>
         <style jsx>{`
             .circle {
                 position: absolute;
                 border-radius: ${CIRCLE_RADIUS}px;
                 z-index: 2;
-                min-width: ${CIRCLE_RADIUS}px;
+                min-width: ${CIRCLE_RADIUS + ICON_DIRECTION_SIZE + 5}px;
                 height: ${CIRCLE_RADIUS}px;
                 line-height: ${CIRCLE_RADIUS}px;
                 font-size: 16px;
@@ -99,7 +102,19 @@ class SingleCounterArea extends Component {
                 color: black;
                 text-align: center;
                 cursor: pointer;
+                display: flex;
+                align-items: center;
             }  
+
+            .icon-direction {
+              width: ${ICON_DIRECTION_SIZE}px;
+              height: ${ICON_DIRECTION_SIZE}px;
+            }
+
+            .counter-value {
+              min-width: ${CIRCLE_RADIUS - ICON_DIRECTION_SIZE - 3}px;
+              margin-left: 3px;
+            }
 
             .area-popover {
               position: absolute;

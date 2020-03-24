@@ -18,6 +18,7 @@ export const CANVAS_RENDERING_MODE = {
 
 // TODO Make this resolution independant by specifying a percentage of the total
 export const CIRCLE_RADIUS = 30
+export const ICON_DIRECTION_SIZE = 25
 
 export const CIRCLE_DELETE_RADIUS = 40
 

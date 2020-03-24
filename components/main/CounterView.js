@@ -21,6 +21,7 @@ class CounterView extends React.PureComponent {
         {!this.props.isRecording &&
           <>
             <CounterAreasEditor />
+            {/* <CounterAreasVisualizer /> */}
             <CanvasEngine mode={CANVAS_RENDERING_MODE.COUNTERVIEW} />
           </>
         }
