@@ -1,6 +1,6 @@
 const Tracker = require('node-moving-things-tracker').Tracker;
 const YOLO = require('./processes/YOLO');
-const isInsideSomeAreas = require('./tracker/utils').isInsideSomeAreas;
+const computeLineBearing = require('./tracker/utils').computeLineBearing;
 const cloneDeep = require('lodash.clonedeep');
 const fs = require('fs');
 const http = require('http');
@@ -110,12 +110,25 @@ module.exports = {
       xMax: Math.max(point1.x, point2.x)
     }
 
+    // Compute bearing
+    let lineBearing = computeLineBearing(point1.x, point1.y, point2.x, point2.y);
+    // in both directions
+    let lineBearings = [0,0];
+    if(lineBearing >= 180) {
+      lineBearings[0] = lineBearing - 180;
+      lineBearings[1] = lineBearing;
+    } else {
+      lineBearings[0] = lineBearing;
+      lineBearings[1] = lineBearing + 180;
+    }
+
     Opendatacam.countingAreas[key] = data;
 
     Opendatacam.countingAreas[key]['computed'] = {
       a: a,
       b: b,
-      xBounds: xBounds
+      xBounds: xBounds,
+      lineBearings: lineBearings
     }
   },
 
@@ -126,7 +139,8 @@ module.exports = {
         timestamp: new Date(),
         area: countingAreaKey,
         name: trackedItem.name,
-        id: trackedItem.id
+        id: trackedItem.id,
+        bearing: trackedItem.bearing
       }
       // Add it to the history
       Opendatacam.countedItemsHistory.push(countedItem)
