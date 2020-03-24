@@ -50,17 +50,6 @@ DBManager.init().then(
   }
 )
 
-// TODO Move the stdout code into it's own module
-var videoResolution = null;
-
-if(SIMULATION_MODE) {
-  videoResolution = {
-    w: 1280,
-    h: 720
-  }
-  Opendatacam.setVideoResolution(videoResolution)
-}
-
 var stdoutBuffer = "";
 var stdoutInterval = "";
 var bufferLimit = 30000;
