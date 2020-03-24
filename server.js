@@ -50,6 +50,7 @@ DBManager.init().then(
   }
 )
 
+// Code to watch & record the console (stdout) to send to the /console API endpoint
 var stdoutBuffer = "";
 var stdoutInterval = "";
 var bufferLimit = 30000;
