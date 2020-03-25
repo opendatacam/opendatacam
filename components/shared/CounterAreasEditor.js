@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 
 import MenuCountingAreasEditor from './MenuCountingAreasEditor'
 
-import { clearCountingArea, saveCountingAreaLocation, defaultCountingAreaValue, saveCountingAreaName, EDITOR_MODE, deleteCountingArea, computeCountingAreasCenters, addCountingArea, computeDistance, setMode } from '../../statemanagement/app/CounterStateManagement'
+import { saveCountingAreaLocation, saveCountingAreaName, EDITOR_MODE, deleteCountingArea, computeCountingAreasCenters, addCountingArea, computeDistance, setMode, toggleCountingAreaType } from '../../statemanagement/app/CounterStateManagement'
 import AskNameModal from './AskNameModal';
 import DeleteModal from './DeleteModal';
 import InstructionsModal from './InstructionsModal'
@@ -192,6 +192,7 @@ class CounterAreasEditor extends Component {
               <SingleCounterDirection 
                 key={id}
                 area={countingArea.toJS()}
+                toggleDirection={() => this.props.dispatch(toggleCountingAreaType(id, countingArea.get('type')))}
               />
             }
           </>

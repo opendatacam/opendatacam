@@ -4,6 +4,8 @@ import uuidv4 from 'uuid/v4'
 import { scalePoint } from '../../utils/resolution';
 import { getURLData } from '../../server/utils/urlHelper';
 import { getAvailableCounterColors, getDefaultCounterColor } from '../../utils/colors.js';
+import { computeLineBearing } from '../../server/tracker/utils';
+import { COUNTING_AREA_TYPE } from '../../utils/constants';
 
 // Rename this to CounterEditorStateManagement
 
@@ -125,11 +127,25 @@ export function addCountingArea() {
 export function saveCountingAreaLocation(id, location) {
   return (dispatch, getState) => {
 
+    // Compute bearing
+    let lineBearing = computeLineBearing(location.point1.x, location.point1.y, location.point2.x, location.point2.y);
+    // in both directions
+    let lineBearings = [0,0];
+    if(lineBearing >= 180) {
+      lineBearings[0] = lineBearing - 180;
+      lineBearings[1] = lineBearing;
+    } else {
+      lineBearings[0] = lineBearing;
+      lineBearings[1] = lineBearing + 180;
+    }
+
+
     dispatch({
       type: SAVE_COUNTING_AREA_LOCATION,
       payload: {
         location,
-        id
+        id,
+        lineBearings
       }
     });
 
@@ -140,13 +156,21 @@ export function saveCountingAreaLocation(id, location) {
   }
 }
 
-export function saveCountingAreaType(id, type) {
+export function toggleCountingAreaType(id, currentDirection) {
   return (dispatch, getState) => {
+
+    let newDirection = COUNTING_AREA_TYPE.BIDIRECTIONAL;
+
+    if(currentDirection === COUNTING_AREA_TYPE.BIDIRECTIONAL) {
+      newDirection = COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM;
+    } else if(currentDirection === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM) {
+      newDirection = COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP;
+    }
 
     dispatch({
       type: SAVE_COUNTING_AREA_TYPE,
       payload: {
-        type,
+        type: newDirection,
         id
       }
     });
@@ -223,6 +247,7 @@ export function restoreCountingAreas(req) {
 // => SAVE_COUNTING_AREA_LOCATION
 // => SAVE_COUNTING_AREA_NAME
 // => DELETE_COUNTING_AREA
+// => SAVE_COUNTING_AREA_TYPE
 export function registerCountingAreasOnServer() {
   return (dispatch, getState) => {
     // Ping webservice to start storing data on server
@@ -263,6 +288,7 @@ export default function CounterReducer (state = initialState, action = {}) {
       return state.deleteIn(['countingAreas', action.payload])
     case SAVE_COUNTING_AREA_LOCATION:
       return state.setIn(['countingAreas', action.payload.id, 'location'], fromJS(action.payload.location))
+                  .setIn(['countingAreas', action.payload.id, 'computed', 'lineBearings'], fromJS(action.payload.lineBearings))
     case SAVE_COUNTING_AREA_NAME:
       return state.setIn(['countingAreas', action.payload.id, 'name'], action.payload.name)
     case SAVE_COUNTING_AREA_TYPE:

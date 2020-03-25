@@ -6,30 +6,13 @@ import { getCounterColor } from '../../utils/colors';
 
 class SingleCounterDirection extends Component {
 
-  constructor(props) {
-    super(props);
-  }
-
-
-  componentDidMount() {
-
-  }
-
-  componentWillUnmount() {
-
-  }
-
-  toggleCounterAreaType() {
-      console.log('blabal');
-  }
-
   render () {
 
     return (
       <React.Fragment>
         <div
             className="circle"
-            onClick={this.toggleCounterAreaType}
+            onClick={() => this.props.toggleDirection()}
             style={{
                 top: this.props.area.location.center.y - CIRCLE_RADIUS / 2, 
                 left: this.props.area.location.center.x - CIRCLE_RADIUS / 2,
