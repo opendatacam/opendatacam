@@ -674,7 +674,11 @@ app.prepare()
                   "xBounds": {
                     "xMin": 241,
                     "xMax": 820
-                  }
+                  },
+                  "lineBearings": [
+                    151.14243038407085,
+                    331.14243038407085
+                  ]
                 }
               }
             },
@@ -694,6 +698,8 @@ app.prepare()
                   "area": "94afa4f8-1d24-4011-a481-ad3036e959b4",
                   "name": "car",
                   "id": 1021
+                  "bearing": 155,
+                  "countingDirection": "rightleft_bottomtop"
                 }
               ],
               [
@@ -701,7 +707,9 @@ app.prepare()
                   "timestamp": "2019-04-26T17:29:40.338Z",
                   "area": "94afa4f8-1d24-4011-a481-ad3036e959b4",
                   "name": "car",
-                  "id": 1030
+                  "id": 1030,
+                  "bearing": 155,
+                  "countingDirection": "rightleft_bottomtop"
                 }
               ]
           }
@@ -728,17 +736,17 @@ app.prepare()
    * @apiParam {String} id Recording id (_id field of /recordings)
    *
    * @apiSuccessExample {csv} Success Response:
-   *    "Timestamp","Counter area","ObjectClass","UniqueID"
-   *    "2019-05-02T19:10:22.150Z","blabla","car",4096
-        "2019-05-02T19:10:23.658Z","truc","car",4109
-        "2019-05-02T19:10:26.728Z","truc","car",4126
-        "2019-05-02T19:10:26.939Z","blabla","car",4099
-        "2019-05-02T19:10:28.997Z","test","car",4038
-        "2019-05-02T19:10:29.495Z","blabla","car",4135
-        "2019-05-02T19:10:29.852Z","truc","car",4122
-        "2019-05-02T19:10:32.070Z","blabla","car",4134
-        "2019-05-02T19:10:34.144Z","truc","car",4151
-        "2019-05-02T19:10:36.925Z","truc","car",4156
+   *    "Timestamp","Counter area","ObjectClass","UniqueID","CountingDirection"
+   *    "2019-05-02T19:10:22.150Z","blabla","car",4096,"rightleft_bottomtop"
+        "2019-05-02T19:10:23.658Z","truc","car",4109,"rightleft_bottomtop"
+        "2019-05-02T19:10:26.728Z","truc","car",4126,"rightleft_bottomtop"
+        "2019-05-02T19:10:26.939Z","blabla","car",4099,"leftright_topbottom"
+        "2019-05-02T19:10:28.997Z","test","car",4038,"leftright_topbottom"
+        "2019-05-02T19:10:29.495Z","blabla","car",4135,"rightleft_bottomtop"
+        "2019-05-02T19:10:29.852Z","truc","car",4122,"rightleft_bottomtop"
+        "2019-05-02T19:10:32.070Z","blabla","car",4134,"rightleft_bottomtop"
+        "2019-05-02T19:10:34.144Z","truc","car",4151,"rightleft_bottomtop"
+        "2019-05-02T19:10:36.925Z","truc","car",4156,"rightleft_bottomtop"
   */
   express.get('/recording/:id/counter/csv', (req, res) => {
     DBManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {

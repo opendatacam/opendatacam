@@ -14,6 +14,12 @@ const HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS = 30;
 // Max wait time for YOLO to start is 3 min = 180s
 const HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES = 180 * (1000 / HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS);
 
+const COUNTING_AREA_TYPE = {
+  BIDIRECTIONAL: "bidirectional",
+  LEFTRIGHT_TOPBOTTOM: "leftright_topbottom",
+  RIGHTLEFT_BOTTOMTOP: "rightleft_bottomtop"
+}
+
 const initialState = {
   timeLastFrameFPSComputed: new Date(),
   indexLastFrameFPSComputed: 0,
@@ -132,7 +138,7 @@ module.exports = {
     }
   },
 
-  countItem: function(trackedItem, countingAreaKey, frameId) {
+  countItem: function(trackedItem, countingAreaKey, frameId, countingDirection) {
     if(Opendatacam.recordingStatus.isRecording) {
       var countedItem = {
         frameId: frameId,
@@ -140,7 +146,8 @@ module.exports = {
         area: countingAreaKey,
         name: trackedItem.name,
         id: trackedItem.id,
-        bearing: trackedItem.bearing
+        bearing: trackedItem.bearing, 
+        countingDirection: countingDirection  
       }
       // Add it to the history
       Opendatacam.countedItemsHistory.push(countedItem)
@@ -328,8 +335,8 @@ module.exports = {
 
                   // Object comes from bottom to top, or right to left of the counting lines
                   if(countingAreaProps.lineBearings[0] <= trackedItem.bearing && trackedItem.bearing <= countingAreaProps.lineBearings[1]) {
-                    if(countingAreaType === 'bidirectional' || countingAreaType === 'rightleft_bottomtop') {
-                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId);
+                    if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP) {
+                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP);
                       countedItemsForThisFrame.push(countedItem);
                     } else {
                       // do not count, comes from the wrong direction
@@ -337,8 +344,8 @@ module.exports = {
                     }
                   } else {
                     // Object comes from top to bottom or left to right of the counting line
-                    if(countingAreaType === 'bidirectional' || countingAreaType === 'leftright_topbottom') {
-                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId);
+                    if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM) {
+                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM);
                       countedItemsForThisFrame.push(countedItem);
                     } else {
                       // do not count, comes from the wrong direction
