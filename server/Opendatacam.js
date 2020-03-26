@@ -672,7 +672,6 @@ module.exports = {
           Opendatacam.HTTPRequestListeningToYOLOMaxRetries--;
         }, HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS)
       } else {
-        YOLO.stop();
         console.log('Something went wrong: ' + e.message);
         console.log('Too much retries, YOLO took more than 3 min to start, likely an error')
         console.log(Opendatacam.HTTPRequestListeningToYOLOMaxRetries)

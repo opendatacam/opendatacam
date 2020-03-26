@@ -49,11 +49,6 @@ module.exports = {
         YOLO.isStarting = false;
       });
 
-      YOLO.process.on("stop", () => {
-        console.log('Process YOLO stopped');
-        YOLO.isStarted = false;
-      });
-
       YOLO.process.on("restart", () => {
         // Forever 
         console.log("Restart YOLO");
@@ -66,7 +61,7 @@ module.exports = {
 
       YOLO.process.on("exit", (err) => {
         console.log('Process YOLO exit');
-        console.log(err);
+        //console.log(err);
       });
     }
 
@@ -118,7 +113,7 @@ module.exports = {
         });
       } else {
         if(YOLO.isStarted) {
-          YOLO.process.on("stop", () => {
+          YOLO.process.once("stop", () => {
             console.log('Process YOLO stopped');
             YOLO.isStarted = false;
             resolve();
@@ -131,6 +126,7 @@ module.exports = {
 
   restart() {
     if(!YOLO.simulationMode) {
+      console.log('Process YOLO restart');
       this.stop().then(() => {
         this.start();
       });
