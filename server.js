@@ -969,10 +969,12 @@ app.prepare()
       YOLO.stop().then(() => {
         console.log('YOLO stopped');
         // TODO set run on file 
-        // TODO set config file name
         console.log(req.file.path);
         YOLO.init(false, req.file.path);
         YOLO.start();
+      },(error) => {
+        console.log('YOLO does not stop')
+        console.log(error);
       });
 
       res.json(req.file.path);

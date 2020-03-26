@@ -8,7 +8,9 @@ class FileSystemManager {
     constructor () {
       this.filesPath = path.join(config.PATH_TO_YOLO_DARKNET, 'opendatacam_videos_uploaded');
       // make directory if not exist
-      fs.mkdir(this.filesPath, err => console.log(err))
+      if (!fs.existsSync(this.filesPath)){
+        fs.mkdirSync(this.filesPath);
+      }
     }
 
     getFilesDirectoryPath() {

@@ -17,7 +17,8 @@ let YOLO = {
   process: null,
   simulationMode: false,
   simulationMJPEGServer: null,
-  simulationJSONHTTPStreamServer: null
+  simulationJSONHTTPStreamServer: null,
+  currentVideoParams: ""
 };
 
 module.exports = {
@@ -28,6 +29,7 @@ module.exports = {
     if(!YOLO.simulationMode) {
       var yoloParams = config.NEURAL_NETWORK_PARAMS[config.NEURAL_NETWORK];
       var videoParams = videoParams || config.VIDEO_INPUTS_PARAMS[config.VIDEO_INPUT];
+      YOLO.currentVideoParams = videoParams
 
       var darknetCommand = [];
       var initialCommand = ['./uselib', yoloParams.data , yoloParams.cfg, yoloParams.weights]
@@ -82,6 +84,10 @@ module.exports = {
     }
   },
 
+  getVideoParams: function() {
+    return YOLO.currentVideoParams;
+  },
+
   start: function() {
     // Do not start it twice
     if(YOLO.isStarted || YOLO.isStarting) {
@@ -125,7 +131,10 @@ module.exports = {
 
   restart() {
     if(!YOLO.simulationMode) {
-      YOLO.process.restart();
+      this.stop().then(() => {
+        this.start();
+      });
+
     } else {
       YOLO.simulationJSONHTTPStreamServer.kill();
       YOLO.simulationMJPEGServer.kill();

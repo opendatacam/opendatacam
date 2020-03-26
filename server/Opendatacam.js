@@ -506,7 +506,7 @@ module.exports = {
     Opendatacam.recordingStatus.isRecording = true;
     Opendatacam.recordingStatus.dateStarted = new Date();
     Opendatacam.totalItemsTracked = 0;
-    const filename = isFile ? config.VIDEO_INPUTS_PARAMS.file.split('/').pop() : '';
+    const filename = isFile ? YOLO.getVideoParams().split('/').pop() : '';
     Opendatacam.recordingStatus.filename = filename;
 
     // Store lowest ID of currently tracked item when start recording 
@@ -703,6 +703,8 @@ module.exports = {
 
   requestFileRecording() {
     Opendatacam.recordingStatus.requestedFileRecording = true;
+    const filename = YOLO.getVideoParams().split('/').pop();
+    Opendatacam.recordingStatus.filename = filename;
     console.log('Ask YOLO to restart to record on a file ');
     YOLO.restart();
   },
