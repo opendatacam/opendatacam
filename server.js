@@ -1,4 +1,5 @@
 const express = require('express')();
+const multer  = require('multer');
 const serveStatic = require('serve-static')
 const csv = require('csv-express');
 const bodyParser = require('body-parser');
@@ -11,6 +12,7 @@ const Opendatacam = require('./server/Opendatacam');
 const flatten = require('lodash.flatten');
 const getURLData = require('./server/utils/urlHelper').getURLData;
 const DBManager = require('./server/db/DBManager')
+const FileSystemManager = require('./server/fs/FileSystemManager')
 const MjpegProxy = require('mjpeg-proxy').MjpegProxy;
 const intercept = require("intercept-stdout");
 const config = require('./config.json');
@@ -919,6 +921,52 @@ app.prepare()
     console.log(config);
     res.json(config);
   })
+
+  // TODO JSDOC
+  // Get video files available in opendatacam_videos directory
+  express.get('/files', (req, res) => {
+    FileSystemManager.getFiles().then((files) => {
+      res.json(files);
+    }, (error) => {
+      res.sendStatus(500).send(error);
+    });
+  });
+
+
+  var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, FileSystemManager.getFilesDirectoryPath())
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname)
+    }
+  })
+  var uploadMulter = multer({ 
+    storage: storage, 
+    fileFilter: function (req, file, cb) {
+      if (!file.originalname.match(/\.(mp4|avi|mov)$/)) {
+        return cb(new Error('Only video files are allowed!'));
+      }
+      cb(null, true);
+    } 
+  }).single('video')
+
+  // TODO JSDOC
+  express.post('/files', function (req, res, next) {
+    uploadMulter(req, res, function (err) {
+      if(err) {
+        console.log(err);
+        res.sendStatus(500);
+        return;
+      }
+  
+      // Everything went fine.
+      console.log('File upload done');
+      res.json(req.file.path);
+    })
+  })
+
+  
 
 
   /**
