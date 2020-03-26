@@ -954,6 +954,7 @@ app.prepare()
   // TODO JSDOC
   express.post('/files', function (req, res, next) {
     uploadMulter(req, res, function (err) {
+      console.log('uploadMulter callback')
       if(err) {
         console.log(err);
         res.sendStatus(500);
@@ -967,6 +968,7 @@ app.prepare()
       console.log('Stop YOLO');
       YOLO.stop().then(() => {
         console.log('YOLO stopped');
+        console.log(req.file.path);
         YOLO.init(false, req.file.path);
         YOLO.start();
       });
