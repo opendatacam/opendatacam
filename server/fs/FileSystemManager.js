@@ -6,8 +6,9 @@ const config = require('../../config.json');
 
 class FileSystemManager {
     constructor () {
-      this.filesPath = config.PATH_TO_YOLO_DARKNET;
-      // this.filesPath = path.join(config.PATH_TO_YOLO_DARKNET, 'opendatacam_videos');
+      this.filesPath = path.join(config.PATH_TO_YOLO_DARKNET, 'opendatacam_videos_uploaded');
+      // make directory if not exist
+      fs.mkdir(this.filesPath, err => console.log(err))
     }
 
     getFilesDirectoryPath() {

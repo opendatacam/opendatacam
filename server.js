@@ -968,6 +968,8 @@ app.prepare()
       console.log('Stop YOLO');
       YOLO.stop().then(() => {
         console.log('YOLO stopped');
+        // TODO set run on file 
+        // TODO set config file name
         console.log(req.file.path);
         YOLO.init(false, req.file.path);
         YOLO.start();
