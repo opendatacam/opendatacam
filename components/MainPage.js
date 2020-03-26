@@ -43,6 +43,8 @@ class MainPage extends React.PureComponent {
         }
     }).then(() => {
       console.log('success');
+      // Todo here
+      // restart YOLO on this file
     },(error) => {
       console.log('error')
     })

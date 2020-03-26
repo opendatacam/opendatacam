@@ -21,13 +21,13 @@ let YOLO = {
 };
 
 module.exports = {
-  init: function(simulationMode) {
+  init: function(simulationMode, videoParams = null) {
 
     YOLO.simulationMode = simulationMode;
 
     if(!YOLO.simulationMode) {
       var yoloParams = config.NEURAL_NETWORK_PARAMS[config.NEURAL_NETWORK];
-      var videoParams = config.VIDEO_INPUTS_PARAMS[config.VIDEO_INPUT];
+      var videoParams = videoParams || config.VIDEO_INPUTS_PARAMS[config.VIDEO_INPUT];
 
       var darknetCommand = [];
       var initialCommand = ['./uselib', yoloParams.data , yoloParams.cfg, yoloParams.weights]
@@ -104,16 +104,23 @@ module.exports = {
   },
 
   stop: function() {
-    // TODO LATER add a isStopping state
-    if(YOLO.simulationMode && YOLO.simulationServer) {
-      YOLO.simulationServer.kill(function () {
-        YOLO.isStarted = false;
-      });
-    } else {
-      if(YOLO.isStarted) {
-        YOLO.process.stop();
+    return new Promise((resolve, reject) => {
+      if(YOLO.simulationMode && YOLO.simulationServer) {
+        YOLO.simulationServer.kill(function () {
+          YOLO.isStarted = false;
+          resolve();
+        });
+      } else {
+        if(YOLO.isStarted) {
+          YOLO.process.on("stop", () => {
+            console.log('Process YOLO stopped');
+            YOLO.isStarted = false;
+            resolve();
+          });
+          YOLO.process.stop();
+        }
       }
-    }
+    });
   },
 
   restart() {

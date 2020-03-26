@@ -962,6 +962,15 @@ app.prepare()
   
       // Everything went fine.
       console.log('File upload done');
+
+      // Restart YOLO
+      console.log('Stop YOLO');
+      YOLO.stop().then(() => {
+        console.log('YOLO stopped');
+        YOLO.init(false, req.file.path);
+        YOLO.start();
+      });
+
       res.json(req.file.path);
     })
   })
