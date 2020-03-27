@@ -332,24 +332,24 @@ module.exports = {
                   // Tracked item has cross the {countingAreaKey} counting line
                   // Count it
                   // console.log(`Counting ${trackedItem.id}`);
-
-                  // Object comes from bottom to top, or right to left of the counting lines
+                  
+                  // Object comes from top to bottom or left to right of the counting line
                   if(countingAreaProps.lineBearings[0] <= trackedItem.bearing && trackedItem.bearing <= countingAreaProps.lineBearings[1]) {
-                    if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP) {
-                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP);
-                      countedItemsForThisFrame.push(countedItem);
-                    } else {
-                      // do not count, comes from the wrong direction
-                      // console.log('not counting, comes from top to bottom or left to right of the counting line ')
-                    }
-                  } else {
-                    // Object comes from top to bottom or left to right of the counting line
                     if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM) {
                       let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM);
                       countedItemsForThisFrame.push(countedItem);
                     } else {
                       // do not count, comes from the wrong direction
                       // console.log('not counting, from bottom to top, or right to left of the counting lines')
+                    }
+                  } else {
+                    // Object comes from bottom to top, or right to left of the counting lines
+                    if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP) {
+                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP);
+                      countedItemsForThisFrame.push(countedItem);
+                    } else {
+                      // do not count, comes from the wrong direction
+                      // console.log('not counting, comes from top to bottom or left to right of the counting line ')
                     }
                   }
                 }

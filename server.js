@@ -531,7 +531,7 @@ app.prepare()
    * @apiSuccess {Number} y Position center bbox (coordinate system 0,0 is top left of frame)
    * @apiSuccess {Number} w Width of the object
    * @apiSuccess {Number} h Height of the object
-   * @apiSuccess {Number} bearing Direction where the object is heading (in degree), !! 0º (north) is headed to the bottom of the frame !!
+   * @apiSuccess {Number} bearing [0-360] Direction where the object is heading (in degree, ex: 0 degree means heading toward top of the frame, 180 towards bottom)
    * @apiSuccess {String} name Class of the object
    *
    * @apiSuccessExample {json} Success Response:
