@@ -195,6 +195,16 @@ export function saveCountingAreaName(id, name) {
   }
 }
 
+export function restoreCountingAreasFromJSON(data) {
+  return (dispatch) => {
+    dispatch({
+      type: RESTORE_COUNTING_AREAS,
+      payload: data
+    })
+    dispatch(registerCountingAreasOnServer());
+  }
+}
+
 export function restoreCountingAreas(req) {
   return (dispatch) => {
     return new Promise((resolve, reject) => {

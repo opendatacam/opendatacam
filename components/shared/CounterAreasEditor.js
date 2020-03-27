@@ -187,7 +187,7 @@ class CounterAreasEditor extends Component {
           />
         }
         {this.props.countingAreasWithCenters.entrySeq().map(([id, countingArea]) =>
-          <>
+          <React.Fragment key={id}>
             {countingArea.get('computed') &&
               <SingleCounterDirection 
                 key={id}
@@ -195,7 +195,7 @@ class CounterAreasEditor extends Component {
                 toggleDirection={() => this.props.dispatch(toggleCountingAreaType(id, countingArea.get('type')))}
               />
             }
-          </>
+          </React.Fragment>
         )}
         <MenuCountingAreasEditor />
         <canvas

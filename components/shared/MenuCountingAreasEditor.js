@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux'
 import SVG from 'react-inlinesvg';
 
-import { deleteCountingArea, setMode, EDITOR_MODE } from '../../statemanagement/app/CounterStateManagement'
+import { deleteCountingArea, setMode, EDITOR_MODE, restoreCountingAreasFromJSON } from '../../statemanagement/app/CounterStateManagement'
 
 class MenuCountingAreasEditor extends Component {
 
@@ -11,6 +11,37 @@ class MenuCountingAreasEditor extends Component {
       this.props.dispatch(setMode(EDITOR_MODE.DELETE))
     } else {
       this.props.dispatch(deleteCountingArea(this.props.countingAreas.keySeq().first()))
+    }
+  }
+
+  loadFile() {
+    console.log('loadFile')
+    var input, file, fr;
+
+    if (typeof window.FileReader !== 'function') {
+      alert("The file API isn't supported on this browser yet.");
+      return;
+    }
+
+    input = document.getElementById('upload');
+    if (!input) {
+      alert("Um, couldn't find the fileinput element.");
+    }
+    else if (!input.files) {
+      alert("This browser doesn't seem to support the `files` property of file inputs.");
+    }
+    else if (!input.files[0]) {
+      alert("Please select a file before clicking 'Load'");
+    }
+    else {
+      file = input.files[0];
+      fr = new FileReader();
+      fr.onload = (e) => {
+        let lines = e.target.result;
+        var json = JSON.parse(lines); 
+        this.props.dispatch(restoreCountingAreasFromJSON(json));
+      };
+      fr.readAsText(file);
     }
   }
 
@@ -32,7 +63,7 @@ class MenuCountingAreasEditor extends Component {
               />
             </button>
             <button
-              className="btn btn-default p-0 rounded-r shadow btn-default--active"
+              className="btn btn-default p-0 shadow rounded-r btn-default--active"
             >
               <SVG 
                 className="w-10 h-10 svg-icon flex items-center" 
@@ -41,6 +72,31 @@ class MenuCountingAreasEditor extends Component {
                 aria-label="icon edit"
               />
             </button>
+            <a
+              href={`/counter/areas`} 
+              target="_blank" 
+              download
+              className="btn btn-default p-0 ml-4 rounded-l shadow"
+            >
+              <SVG 
+                className="w-10 h-10 svg-icon flex items-center" 
+                cacheGetRequests={true}
+                src={`/static/icons/ui/download.svg`} 
+                aria-label="icon download"
+              />
+            </a>
+            <label 
+              htmlFor="upload" 
+              className="btn btn-default p-0 rounded-r shadow cursor-pointer	"
+            >
+              <SVG 
+                className="w-10 h-10 svg-icon flex items-center" 
+                cacheGetRequests={true}
+                src={`/static/icons/ui/upload.svg`} 
+                aria-label="icon upload"
+              />
+              <input type="file" id="upload" onChange={() => this.loadFile()} style={{"display":"none"}} />
+            </label>
           </>
         }
         {this.props.mode === EDITOR_MODE.DELETE &&
