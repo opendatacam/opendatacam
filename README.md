@@ -104,10 +104,12 @@ chmod 777 install-opendatacam.sh
 ./install-opendatacam.sh --platform nano
 
 # Install command for Jetson TX2
-./install-opendatacam.sh --platform tx2
+# Build for v3.0.0-beta.1 isn't available yet for tx2, please try to install without docker (see in avanced use)  or install v2.1.0: https://github.com/opendatacam/opendatacam/tree/v2.1.0
+#./install-opendatacam.sh --platform tx2
 
 # Install command for Jetson Xavier
-./install-opendatacam.sh --platform xavier
+# Build for v3.0.0-beta.1 isn't available yet for xavier, please try to install without docker (see in avanced use) or install v2.1.0 : https://github.com/opendatacam/opendatacam/tree/v2.1.0
+#./install-opendatacam.sh --platform xavier
 
 # Install command for a Nvidia-docker machine (ARCH_BIN=6.1)
 # NB: Will run from demo file, you can change this after install, see "5. Customize OpenDataCam"
