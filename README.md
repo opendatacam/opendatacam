@@ -196,6 +196,9 @@ sudo docker stats opendatacam
 
 # Clear all docker container, images ...
 sudo docker system prune -a
+
+# Restart docker
+sudo service docker restart
 ```
 
 ## 🔌 API Documentation
