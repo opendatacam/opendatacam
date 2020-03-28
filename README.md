@@ -104,14 +104,14 @@ chmod 777 install-opendatacam.sh
 ./install-opendatacam.sh --platform nano
 
 # Install command for Jetson TX2
-#./install-opendatacam.sh --platform tx2
+./install-opendatacam.sh --platform tx2
 
 # Install command for Jetson Xavier
-#./install-opendatacam.sh --platform xavier
+./install-opendatacam.sh --platform xavier
 
 # Install command for a Nvidia-docker machine (ARCH_BIN=6.1)
 # NB: Will run from demo file, you can change this after install, see "5. Customize OpenDataCam"
-#./install-opendatacam.sh --platform nvidiadocker_cuda_archbin_6_1
+./install-opendatacam.sh --platform nvidiadocker_cuda_archbin_6_1
 ```
 
 This command will download and start a docker container on the machine. After it finishes the docker container starts a webserver on port 8080 (ports 8070 and 8090 are also used).
