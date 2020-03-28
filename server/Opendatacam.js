@@ -437,6 +437,9 @@ module.exports = {
           recordingStatus: Opendatacam.recordingStatus
         }
       })}\n\n`);
+    } else {
+      // Sending update to the client but it is not open
+      console.log('Sending update to the client but the SSE connexion is not open');
     }
   },
 
@@ -571,6 +574,9 @@ module.exports = {
       method:   'GET'
     };
 
+
+    var noMessageReceivedYet = true;
+
     Logger.log('Send request to connect to YOLO JSON Stream')
     self.HTTPRequestListeningToYOLO = http.request(options, function(res) {
       Logger.log(`statusCode: ${res.statusCode}`)
@@ -578,6 +584,10 @@ module.exports = {
       var separator = "}"; // consider chunk complete if I see this char
 
       res.on('data', function(chunk) {
+        if(noMessageReceivedYet) {
+          noMessageReceivedYet = false;
+          console.log('Got first message from JSONStream')
+        }
         var msgChunk = chunk.toString();
         Logger.log('----')
         Logger.log('----')

@@ -918,7 +918,7 @@ app.prepare()
   */
 
   express.get('/config', (req, res) => {
-    console.log(config);
+    // console.log(config);
     res.json(config);
   })
 
