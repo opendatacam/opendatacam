@@ -922,6 +922,7 @@ app.prepare()
     res.json(config);
   })
 
+  // API to read opendatacam_videos directory and return list of videos available
   // TODO JSDOC
   // Get video files available in opendatacam_videos directory
   express.get('/files', (req, res) => {
@@ -951,7 +952,9 @@ app.prepare()
     } 
   }).single('video')
 
+  // API to Upload file and restart yolo on that file
   // TODO JSDOC
+  // TODO Only upload file here and then add another endpoint to restart YOLO on a given file
   express.post('/files', function (req, res, next) {
     uploadMulter(req, res, function (err) {
       console.log('uploadMulter callback')
