@@ -4,7 +4,7 @@
 set -e
 
 # Each opendatacam release should set the correct version here and tag appropriatly on github
-VERSION=v2.1.0
+VERSION=v3.0.0-beta.1
 # PLATFORM in ["nano","xavier","tx2","nvidiadocker_cuda_archbin_6_1"]
 PLATFORM=undefined
 VIDEO_INPUT=undefined
@@ -138,14 +138,14 @@ case $argument in
     
     if [[ "$PLATFORM" != ${PLATFORM_OPTIONS[3]} ]]; then
       # Create the run-opendatacam.sh script
-      echo "./run-docker.sh run -d -name opendatacam --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM" > run-opendatacam.sh
+      echo "./run-docker.sh run -d --name opendatacam --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM" > run-opendatacam.sh
       chmod 777 run-opendatacam.sh
       echo "Create a run-opendatacam.sh script for easy container start"
       # Pull, install and run opendatacam container when docker starts (on boot with --restart unless-stopped, -d is for detached mode)
       sudo ./run-opendatacam.sh
     else
       # Create the run-opendatacam.sh script
-      echo "./run-nvidiadocker.sh run -d -name opendatacam --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM" > run-opendatacam.sh
+      echo "./run-nvidiadocker.sh run -d --name opendatacam --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM" > run-opendatacam.sh
       chmod 777 run-opendatacam.sh
       echo "Create a run-opendatacam.sh script for easy container start"
       # Pull, install and run opendatacam container when docker starts (on boot with --restart unless-stopped, -d is for detached mode)

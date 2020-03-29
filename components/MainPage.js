@@ -1,5 +1,6 @@
 import React from 'react'
 import { connect } from 'react-redux'; 
+import axios from 'axios';
 
 import AskLandscape from './shared/AskLandscape';
 import WebcamStream from './shared/WebcamStream';
@@ -31,9 +32,32 @@ class MainPage extends React.PureComponent {
     window.CONFIG = this.props.config.toJS();
   }
 
+  onDrop(event) {
+    event.preventDefault();
+    console.log('drop');
+    var formData = new FormData();
+    formData.append("video", event.dataTransfer.files[0]);
+    axios.post('/files', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+    }).then(() => {
+      console.log('success');
+      // Todo here
+      // Ping API endpoint to restart YOLO on this file
+    },(error) => {
+      console.log('error')
+    })
+  }
+
   render () {
     return (
-      <div className="main-page">
+      <div 
+        className="main-page" 
+        onDragOver={(event) => event.preventDefault()} 
+        onDragStart={(event) => event.preventDefault()} 
+        onDrop={(event) => this.onDrop(event)}
+      >
         {this.props.deviceOrientation === 'portrait' &&
           <AskLandscape />
         }

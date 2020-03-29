@@ -1,7 +1,7 @@
 
 
 class Logger {
-    contructor () {
+    constructor () {
         this.debug = false
     }
 

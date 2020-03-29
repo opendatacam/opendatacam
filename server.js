@@ -1,4 +1,5 @@
 const express = require('express')();
+const multer  = require('multer');
 const serveStatic = require('serve-static')
 const csv = require('csv-express');
 const bodyParser = require('body-parser');
@@ -11,6 +12,7 @@ const Opendatacam = require('./server/Opendatacam');
 const flatten = require('lodash.flatten');
 const getURLData = require('./server/utils/urlHelper').getURLData;
 const DBManager = require('./server/db/DBManager')
+const FileSystemManager = require('./server/fs/FileSystemManager')
 const MjpegProxy = require('mjpeg-proxy').MjpegProxy;
 const intercept = require("intercept-stdout");
 const config = require('./config.json');
@@ -50,34 +52,12 @@ DBManager.init().then(
   }
 )
 
-// TODO Move the stdout code into it's own module
-var videoResolution = null;
-
-if(SIMULATION_MODE) {
-  videoResolution = {
-    w: 1280,
-    h: 720
-  }
-  Opendatacam.setVideoResolution(videoResolution)
-}
-
+// Code to watch & record the console (stdout) to send to the /console API endpoint
 var stdoutBuffer = "";
 var stdoutInterval = "";
 var bufferLimit = 30000;
 var unhook_intercept = intercept(function(text) {
   var stdoutText = text.toString();
-  // Hacky way to get the video resolution from YOLO
-  // We parse the stdout looking for "Video stream: 640 x 480"
-  // alternative would be to add this info to the JSON stream sent by YOLO, would need to send a PR to https://github.com/alexeyab/darknet
-  if(stdoutText.indexOf('Video stream:') > -1) {
-    var splitOnStream = stdoutText.toString().split("stream:")
-    var ratio = splitOnStream[1].split("\n")[0];
-    videoResolution = {
-      w : parseInt(ratio.split("x")[0].trim()),
-      h : parseInt(ratio.split("x")[1].trim())
-    }
-    Opendatacam.setVideoResolution(videoResolution);
-  }
   stdoutBuffer += stdoutText;
   stdoutInterval += stdoutText;
 
@@ -209,7 +189,8 @@ app.prepare()
    * @apiParam {Object} point1 First point of the counter line definition
    * @apiParam {Object} point2 Second point of the counter line definition
    * @apiParam {Object} refResolution Resolution of client side canvas where the line is drawn
-   *
+   * @apiParam {string="bidirectional","leftright_topbottom", "rightleft_bottomtop"} Direction of counting, if object passes the other direction, it won't be counted
+   * 
    * @apiParamExample {json} Request Example:
    *     {
             "countingAreas": {
@@ -230,6 +211,7 @@ app.prepare()
                   }
                 },
                 "name": "Counter line 1"
+                "type": "bidirectional"
               }
             }
           }
@@ -251,6 +233,7 @@ app.prepare()
    * @apiSuccess {Object} location Two points defining the counting line, along with reference frame resolution
    * @apiSuccess {String} color Color of the area (defined in config.json)
    * @apiSuccess {String} name Name of the area
+   * @apiSuccess {string="bidirectional","leftright_topbottom", "rightleft_bottomtop"} Direction of counting, if object passes the other direction, it won't be counted
    * @apiSuccess {Object} computed Computed linear function representing the counting line (used by the counting algorithm)
    * @apiSuccessExample {json} Response
    *  {
@@ -271,13 +254,18 @@ app.prepare()
             }
           },
           "name": "test",
+          "type": "bidirectional",
           "computed": {
             "a": 0.046349957976037706,
             "b": -527.0496981416069,
             "xBounds": {
               "xMin": 224.42666666666668,
               "xMax": 402.7733333333333
-            }
+            },
+            "lineBearings": [
+              151.6353351530571,
+              331.6353351530571
+            ]
           }
         },
         "a684ad42-d6fe-4be4-b77b-09b8473cc487": {
@@ -297,13 +285,18 @@ app.prepare()
             }
           },
           "name": "area 2",
+          "type": "bidirectional",
           "computed": {
             "a": 0.029503983402006398,
             "b": -548.2275463758912,
             "xBounds": {
               "xMin": 453.97333333333336,
               "xMax": 622.08
-            }
+            },
+            "lineBearings": [
+              151.6353351530571,
+              331.6353351530571
+            ]
           }
         }
       }
@@ -538,7 +531,7 @@ app.prepare()
    * @apiSuccess {Number} y Position center bbox (coordinate system 0,0 is top left of frame)
    * @apiSuccess {Number} w Width of the object
    * @apiSuccess {Number} h Height of the object
-   * @apiSuccess {Number} bearing Direction where the object is heading (in degree)
+   * @apiSuccess {Number} bearing [0-360] Direction where the object is heading (in degree, ex: 0 degree means heading toward top of the frame, 180 towards bottom)
    * @apiSuccess {String} name Class of the object
    *
    * @apiSuccessExample {json} Success Response:
@@ -683,7 +676,11 @@ app.prepare()
                   "xBounds": {
                     "xMin": 241,
                     "xMax": 820
-                  }
+                  },
+                  "lineBearings": [
+                    151.14243038407085,
+                    331.14243038407085
+                  ]
                 }
               }
             },
@@ -703,6 +700,8 @@ app.prepare()
                   "area": "94afa4f8-1d24-4011-a481-ad3036e959b4",
                   "name": "car",
                   "id": 1021
+                  "bearing": 155,
+                  "countingDirection": "rightleft_bottomtop"
                 }
               ],
               [
@@ -710,7 +709,9 @@ app.prepare()
                   "timestamp": "2019-04-26T17:29:40.338Z",
                   "area": "94afa4f8-1d24-4011-a481-ad3036e959b4",
                   "name": "car",
-                  "id": 1030
+                  "id": 1030,
+                  "bearing": 155,
+                  "countingDirection": "rightleft_bottomtop"
                 }
               ]
           }
@@ -737,17 +738,17 @@ app.prepare()
    * @apiParam {String} id Recording id (_id field of /recordings)
    *
    * @apiSuccessExample {csv} Success Response:
-   *    "Timestamp","Counter area","ObjectClass","UniqueID"
-   *    "2019-05-02T19:10:22.150Z","blabla","car",4096
-        "2019-05-02T19:10:23.658Z","truc","car",4109
-        "2019-05-02T19:10:26.728Z","truc","car",4126
-        "2019-05-02T19:10:26.939Z","blabla","car",4099
-        "2019-05-02T19:10:28.997Z","test","car",4038
-        "2019-05-02T19:10:29.495Z","blabla","car",4135
-        "2019-05-02T19:10:29.852Z","truc","car",4122
-        "2019-05-02T19:10:32.070Z","blabla","car",4134
-        "2019-05-02T19:10:34.144Z","truc","car",4151
-        "2019-05-02T19:10:36.925Z","truc","car",4156
+   *    "Timestamp","Counter area","ObjectClass","UniqueID","CountingDirection"
+   *    "2019-05-02T19:10:22.150Z","blabla","car",4096,"rightleft_bottomtop"
+        "2019-05-02T19:10:23.658Z","truc","car",4109,"rightleft_bottomtop"
+        "2019-05-02T19:10:26.728Z","truc","car",4126,"rightleft_bottomtop"
+        "2019-05-02T19:10:26.939Z","blabla","car",4099,"leftright_topbottom"
+        "2019-05-02T19:10:28.997Z","test","car",4038,"leftright_topbottom"
+        "2019-05-02T19:10:29.495Z","blabla","car",4135,"rightleft_bottomtop"
+        "2019-05-02T19:10:29.852Z","truc","car",4122,"rightleft_bottomtop"
+        "2019-05-02T19:10:32.070Z","blabla","car",4134,"rightleft_bottomtop"
+        "2019-05-02T19:10:34.144Z","truc","car",4151,"rightleft_bottomtop"
+        "2019-05-02T19:10:36.925Z","truc","car",4156,"rightleft_bottomtop"
   */
   express.get('/recording/:id/counter/csv', (req, res) => {
     DBManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
@@ -822,7 +823,7 @@ app.prepare()
    *
    * @apiSuccessExample {json} Success Response:
    * {
-      "OPENDATACAM_VERSION": "2.1.0",
+      "OPENDATACAM_VERSION": "3.0.0-beta.1",
       "PATH_TO_YOLO_DARKNET": "/darknet",
       "VIDEO_INPUT": "TO_REPLACE_VIDEO_INPUT",
       "NEURAL_NETWORK": "TO_REPLACE_NEURAL_NETWORK",
@@ -917,9 +918,73 @@ app.prepare()
   */
 
   express.get('/config', (req, res) => {
-    console.log(config);
+    // console.log(config);
     res.json(config);
   })
+
+  // API to read opendatacam_videos directory and return list of videos available
+  // TODO JSDOC
+  // Get video files available in opendatacam_videos directory
+  express.get('/files', (req, res) => {
+    FileSystemManager.getFiles().then((files) => {
+      res.json(files);
+    }, (error) => {
+      res.sendStatus(500).send(error);
+    });
+  });
+
+
+  var storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, FileSystemManager.getFilesDirectoryPath())
+    },
+    filename: function (req, file, cb) {
+      cb(null, file.originalname)
+    }
+  })
+  var uploadMulter = multer({ 
+    storage: storage, 
+    fileFilter: function (req, file, cb) {
+      if (!file.originalname.match(/\.(mp4|avi|mov)$/)) {
+        return cb(new Error('Only video files are allowed!'));
+      }
+      cb(null, true);
+    } 
+  }).single('video')
+
+  // API to Upload file and restart yolo on that file
+  // TODO JSDOC
+  // TODO Only upload file here and then add another endpoint to restart YOLO on a given file
+  express.post('/files', function (req, res, next) {
+    uploadMulter(req, res, function (err) {
+      console.log('uploadMulter callback')
+      if(err) {
+        console.log(err);
+        res.sendStatus(500);
+        return;
+      }
+  
+      // Everything went fine.
+      console.log('File upload done');
+
+      // Restart YOLO
+      console.log('Stop YOLO');
+      YOLO.stop().then(() => {
+        console.log('YOLO stopped');
+        // TODO set run on file 
+        console.log(req.file.path);
+        YOLO.init(false, req.file.path);
+        YOLO.start();
+      },(error) => {
+        console.log('YOLO does not stop')
+        console.log(error);
+      });
+
+      res.json(req.file.path);
+    })
+  })
+
+  
 
 
   /**

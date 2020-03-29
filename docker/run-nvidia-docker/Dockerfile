@@ -43,11 +43,13 @@ RUN  cd /var/local/git/opencv/build && \
 # for debug
 # apt-get install -y --no-install-recommends vim 
 
-RUN git clone --depth 1 -b opendatacam https://github.com/opendatacam/darknet /var/local/darknet
+RUN git clone --depth 1 -b opendatacamv3 https://github.com/opendatacam/darknet /var/local/darknet
+
 WORKDIR /var/local/darknet
 RUN sed -i -e s/GPU=0/GPU=1/ Makefile;
 # For some reason no need for a CUDNN=1 on my CUDA_ARCH_BIN=6.1
 RUN sed -i -e s/OPENCV=0/OPENCV=1/ Makefile;
+RUN sed -i -e s/LIBSO=0/LIBSO=1/ Makefile;
 RUN make
 
 RUN apt-get update; \
@@ -59,9 +61,9 @@ RUN apt-get update; \
 # Get weights files
 RUN wget https://pjreddie.com/media/files/yolov3.weights -O /var/local/darknet/yolov3.weights
 RUN wget https://pjreddie.com/media/files/yolov3-tiny.weights -O /var/local/darknet/yolov3-tiny.weights
-RUN mkdir /var/local/darknet/opendatacam_videos && wget https://github.com/opendatacam/opendatacam/raw/v2.1.0/static/demo/demo.mp4 -O /var/local/darknet/opendatacam_videos/demo.mp4
+RUN mkdir /var/local/darknet/opendatacam_videos && wget https://github.com/opendatacam/opendatacam/raw/v3.0.0-beta.1/static/demo/demo.mp4 -O /var/local/darknet/opendatacam_videos/demo.mp4
 
-# wget -N https://github.com/opendatacam/opendatacam/raw/v2.1.0/static/demo/demo.mp4
+# wget -N https://github.com/opendatacam/opendatacam/raw/v3.0.0-beta.1/static/demo/demo.mp4
 # Debug, test darknet : ./darknet detector demo cfg/coco.data cfg/yolov3.cfg yolov3.weights -ext_output -dont_show demo.mp4
 # Debug, test darknet : ./darknet detector demo cfg/coco.data cfg/yolov3-tiny.cfg yolov3-tiny.weights -ext_output -dont_show demo.mp4
 
@@ -80,7 +82,7 @@ VOLUME ["/data/db"]
 # Build using date > marker && docker build .
 # date > marker && sudo docker build -t opendatacam .
 COPY marker /dev/null
-RUN git clone --depth 1 -b v2.1.0 https://github.com/opendatacam/opendatacam /var/local/opendatacam
+RUN git clone --depth 1 -b v3.0.0-beta.1 https://github.com/opendatacam/opendatacam /var/local/opendatacam
 
 WORKDIR /var/local/opendatacam
 RUN sed -i -e s+TO_REPLACE_PATH_TO_DARKNET+/var/local/darknet+ config.json

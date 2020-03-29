@@ -1,64 +1,17 @@
-## How to use opendatacam without docker
+## How to use opendatacam v3 without docker
 
-- [1. Install OpenCV 3.4.3 with Gstreamer:](#1-install-opencv-343-with-gstreamer-)
-- [2. Install Darknet (Neural network framework running YOLO)](#2-install-darknet--neural-network-framework-running-yolo-)
-  * [Get the source files](#get-the-source-files)
-  * [Modify the Makefile before compiling](#modify-the-makefile-before-compiling)
-  * [Compile darknet](#compile-darknet)
-  * [Download weight file](#download-weight-file)
-  * [(Optional) Test darknet](#-optional--test-darknet)
-- [3. Install node.js, mongodb](#3-install-nodejs--mongodb)
-- [4. Install opendatacam](#4-install-opendatacam)
+### 1. Flash jetson to jetpack 4.3
 
-### 1. Install OpenCV 3.4.3 with Gstreamer:
-
-You can either:
-
-- Use pre-built binaries for your host device (see links below)
-- Compile your own (see [how to compile](jetson/CREATE_DOCKER_IMAGE.md#-(Optional)-Compile-Opencv-on-jetson-(this-takes-1-2h))) 
-
-Then follow this to install it:
-
-```bash
-# Remove all old opencv stuffs installed by JetPack
-sudo apt-get purge libopencv*
-
-# Download .deb files
-
-# For Jetson Nano:
-wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-nano-3.4.3/OpenCV-3.4.3-aarch64-libs.deb
-wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-nano-3.4.3/OpenCV-3.4.3-aarch64-dev.deb
-wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-nano-3.4.3/OpenCV-3.4.3-aarch64-python.deb
-
-# For Jetson TX2
-wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-tx2-3.4.3/OpenCV-3.4.3-aarch64-libs.deb
-wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-tx2-3.4.3/OpenCV-3.4.3-aarch64-dev.deb
-wget https://github.com/opendatacam/opencv-builds/raw/master/opencv-tx2-3.4.3/OpenCV-3.4.3-aarch64-python.deb
-
-# For Jetson Xavier
-# TODO compile binaries specific for xavier architecture
-
-# For Generic cuda machine (docker-nvidia)
-# TODO compile binaries, see section below
-
-# Install .deb files
-sudo dpkg -i OpenCV-3.4.3-aarch64-libs.deb
-sudo apt-get install -f
-sudo dpkg -i OpenCV-3.4.3-aarch64-dev.deb
-sudo dpkg -i OpenCV-3.4.3-aarch64-python.deb
-
-# Verify opencv version
-pkg-config --modversion opencv
-```
+https://developer.nvidia.com/embedded/jetpack
 
 ### 2. Install Darknet (Neural network framework running YOLO)
 
 #### Get the source files
 
 ```bash
-#NB: the only change from https://github.com/alexeyab/darknet is : https://github.com/opendatacam/darknet/pull/1/files
+git clone --depth 1 -b opendatacamv3 https://github.com/opendatacam/darknet
 
-git clone --depth 1 -b opendatacam https://github.com/opendatacam/darknet
+#NB: the changes from https://github.com/alexeyab/darknet are documented here : https://github.com/opendatacam/darknet/pull/5
 ```
 
 #### Modify the Makefile before compiling
@@ -72,6 +25,7 @@ Open the `Makefile` in the darknet folder and make these changes:
 GPU=1
 CUDNN=1
 OPENCV=1
+LIBSO=1
 
 # Uncomment the following line
 # For Jetson TX1, Tegra X1, DRIVE CX, DRIVE PX - uncomment:
@@ -85,6 +39,7 @@ ARCH= -gencode arch=compute_53,code=[sm_53,compute_53]
 GPU=1
 CUDNN=1
 OPENCV=1
+LIBSO=1
 
 # Uncomment the following line
 # For Jetson Tx2 or Drive-PX2 uncomment
@@ -99,6 +54,7 @@ GPU=1
 CUDNN=1
 CUDNN_HALF=1
 OPENCV=1
+LIBSO=1
 
 # Uncomment the following line
 # Jetson XAVIER
@@ -123,6 +79,7 @@ Make change to Makefile:
 # Set these variable to 1:
 GPU=1
 OPENCV=1
+LIBSO=1
 ```
 
 #### Compile darknet
@@ -164,10 +121,10 @@ wget https://pjreddie.com/media/files/yolov3.weights --no-check-certificate
 # Go to darknet folder
 cd darknet 
 # Run darknet (yolo) on webcam
-./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink" -ext_output -dont_show
+LD_LIBRARY_PATH=./:$LD_LIBRARY_PATH ./uselib data/coco.names cfg/yolov3-tiny.cfg yolov3-tiny.weights "v4l2src device=/dev/video0 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink"
 
 # Run darknet on file
-./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights opendatacam_videos/demo.mp4 -ext_output -dont_show
+LD_LIBRARY_PATH=./:$LD_LIBRARY_PATH ./uselib data/coco.names cfg/yolov3-tiny.cfg yolov3-tiny.weights opendatacam_videos/demo.mp4
 ```
 
 ### 3. Install node.js, mongodb
@@ -220,7 +177,7 @@ sudo systemctl enable mongod
 - Download source
 
 ```bash
-git clone --depth 1 https://github.com/opendatacam/opendatacam.git
+git clone --depth 1 -b development https://github.com/opendatacam/opendatacam.git
 cd opendatacam
 ```
 

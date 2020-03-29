@@ -10,7 +10,7 @@ var APP_COLLECTION = 'app';
 
 
 class DBManager {
-  contructor () {
+  constructor () {
     this.db = null
   }
 

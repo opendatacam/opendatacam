@@ -1,5 +1,5 @@
 {
-  "OPENDATACAM_VERSION": "2.1.0",
+  "OPENDATACAM_VERSION": "3.0.0-beta.1",
   "PATH_TO_YOLO_DARKNET" : "TO_REPLACE_PATH_TO_DARKNET",
   "VIDEO_INPUT": "TO_REPLACE_VIDEO_INPUT",
   "NEURAL_NETWORK": "TO_REPLACE_NEURAL_NETWORK",
@@ -41,17 +41,17 @@
   },
   "NEURAL_NETWORK_PARAMS": {
     "yolov3": {
-      "data": "cfg/coco.data",
+      "data": "data/coco.names",
       "cfg": "cfg/yolov3.cfg",
       "weights": "yolov3.weights"
     },
     "yolov3-tiny": {
-      "data": "cfg/coco.data",
+      "data": "data/coco.names",
       "cfg": "cfg/yolov3-tiny.cfg",
       "weights": "yolov3-tiny.weights"
     },
     "yolov2-voc": {
-      "data": "cfg/voc.data",
+      "data": "data/voc.names",
       "cfg": "cfg/yolo-voc.cfg",
       "weights": "yolo-voc.weights"
     }

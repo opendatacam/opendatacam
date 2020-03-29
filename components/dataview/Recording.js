@@ -5,6 +5,7 @@ import OpenMoji from '../shared/OpenMoji.js';
 import SVG from 'react-inlinesvg';
 import { deleteRecording } from '../../statemanagement/app/HistoryStateManagement.js';
 import { getCounterColor, getDisplayClasses } from '../../utils/colors.js';
+import { COUNTING_AREA_TYPE } from '../../utils/constants.js';
 
 class Recording extends PureComponent {
 
@@ -81,6 +82,15 @@ class Recording extends PureComponent {
                     <div className="flex items-center">
                       <h4 className="font-medium">{countingAreaData.get('name')}</h4>
                       <div className="w-4 h-4 ml-2 rounded-full" style={{'backgroundColor': getCounterColor(countingAreaData.get('color'))}}></div>
+                      {countingAreaData.get('type') === COUNTING_AREA_TYPE.BIDIRECTIONAL &&
+                        <img className="icon-direction" style={{'transform': `rotate(${countingAreaData.getIn(['computed', 'lineBearings']).first() + 90}deg)`}} src="/static/icons/ui/arrow-double.svg" />
+                      }
+                      {countingAreaData.get('type') === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM &&
+                        <img className="icon-direction" style={{'transform': `rotate(${countingAreaData.getIn(['computed', 'lineBearings']).first() + 90}deg)`}} src="/static/icons/ui/arrow-up.svg" />
+                      }
+                      {countingAreaData.get('type') === COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP &&
+                        <img className="icon-direction" style={{'transform': `rotate(${countingAreaData.getIn(['computed', 'lineBearings']).first() + 90}deg)`}} src="/static/icons/ui/arrow-down.svg" />
+                      }
                     </div>
                     <div className="flex flex-initial flex-wrap mt-5 w-64">
                       {this.DISPLAY_CLASSES.slice(0, Math.min(this.DISPLAY_CLASSES.length, 6)).map((counterClass) =>
@@ -124,6 +134,12 @@ class Recording extends PureComponent {
           .counter-area {
             max-width: 350px;
             flex: 1;
+          }
+
+          .icon-direction {
+            margin-left: 5px;
+            width: 20px;
+            height: 20px;
           }
         `}</style>
       </div>

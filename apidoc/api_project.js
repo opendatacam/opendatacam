@@ -1,6 +1,6 @@
 define({
   "name": "OpenDataCam API",
-  "version": "2.1.0",
+  "version": "3.0.0-alpha.1",
   "description": "",
   "title": "OpenDataCam API",
   "template": {
@@ -11,7 +11,7 @@ define({
   "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2019-10-14T16:15:50.161Z",
+    "time": "2020-03-28T08:58:34.762Z",
     "url": "http://apidocjs.com",
     "version": "0.17.7"
   }

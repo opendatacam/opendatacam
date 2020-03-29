@@ -1,4 +1,4 @@
-# OpenDataCam 2.1.0 – An open source tool to quantify the world
+# OpenDataCam 3.0.0-beta.1 – An open source tool to quantify the world
 
 OpenDataCam is an open source tool to quantify the world. It quantifies and tracks moving objects with live video analysis. It is designed to be an accessible, affordable and open-source solution to better understand interactions in urban environments. 
 
@@ -18,7 +18,7 @@ OpenDataCam is generously supported by [move lab](https://www.move-lab.com/) (on
 
 ## Table of content
 
-- [OpenDataCam 2.1.0](#opendatacam-210)
+- [OpenDataCam 3.0.0-beta.1](#opendatacam-210)
   * [Table of content](#table-of-content)
   * [💻 Hardware pre-requisite](#-hardware-pre-requisite)
   * [🎬 Get Started, quick setup](#-get-started-quick-setup)
@@ -56,13 +56,13 @@ _Also see [In depth guide about compatible Cameras with Jetson](https://elinux.o
 
 ### 1. Software pre-requisite 📦
 
-#### For jetson: Flash Jetson board to jetpack 4.2 or 4.2.1 ⚡️
+#### For jetson: Flash Jetson board to jetpack 4.3 ⚡️
 
 *Ignore this if you are not running on a jetson*
 
 [See How to find out your jetpack version](documentation/jetson/FLASH_JETSON.md#How-to-find-out-my-Jetpack-version)
 
-If your jetson does not have jetpack 4.2 or 4.2.1 *(CUDA 10, TensorRT 5, cuDNN 7.3, Ubuntu 18.04)*
+If your jetson does not have jetpack 4.3
 
 [Follow this guide to flash your jetson](documentation/jetson/FLASH_JETSON.md)
 
@@ -93,7 +93,7 @@ __Install commands:__
 
 ```bash
 # Download install script
-wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v2.1.0/docker/install-opendatacam.sh
+wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v3.0.0-beta.1/docker/install-opendatacam.sh
 
 # Give exec permission
 chmod 777 install-opendatacam.sh
@@ -104,10 +104,12 @@ chmod 777 install-opendatacam.sh
 ./install-opendatacam.sh --platform nano
 
 # Install command for Jetson TX2
-./install-opendatacam.sh --platform tx2
+# Build for v3.0.0-beta.1 isn't available yet for tx2, please try to install without docker (see in avanced use)  or install v2.1.0: https://github.com/opendatacam/opendatacam/tree/v2.1.0
+#./install-opendatacam.sh --platform tx2
 
 # Install command for Jetson Xavier
-./install-opendatacam.sh --platform xavier
+# Build for v3.0.0-beta.1 isn't available yet for xavier, please try to install without docker (see in avanced use) or install v2.1.0 : https://github.com/opendatacam/opendatacam/tree/v2.1.0
+#./install-opendatacam.sh --platform xavier
 
 # Install command for a Nvidia-docker machine (ARCH_BIN=6.1)
 # NB: Will run from demo file, you can change this after install, see "5. Customize OpenDataCam"

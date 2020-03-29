@@ -4,10 +4,11 @@ import { connect } from 'react-redux';
 
 import MenuCountingAreasEditor from './MenuCountingAreasEditor'
 
-import { clearCountingArea, saveCountingAreaLocation, defaultCountingAreaValue, saveCountingAreaName, EDITOR_MODE, deleteCountingArea, computeCountingAreasCenters, addCountingArea, computeDistance, setMode } from '../../statemanagement/app/CounterStateManagement'
+import { saveCountingAreaLocation, saveCountingAreaName, EDITOR_MODE, deleteCountingArea, computeCountingAreasCenters, addCountingArea, computeDistance, setMode, toggleCountingAreaType } from '../../statemanagement/app/CounterStateManagement'
 import AskNameModal from './AskNameModal';
 import DeleteModal from './DeleteModal';
 import InstructionsModal from './InstructionsModal'
+import SingleCounterDirection from './SingleCounterDirection'
 import { getCounterColor } from '../../utils/colors';
 
 class CounterAreasEditor extends Component {
@@ -180,11 +181,22 @@ class CounterAreasEditor extends Component {
         }
         {this.props.mode === EDITOR_MODE.DELETE &&
           <DeleteModal
-            countingAreasWithCenters={computeCountingAreasCenters(this.props.countingAreas, this.props.canvasResolution)}
+            countingAreasWithCenters={this.props.countingAreasWithCenters}
             delete={(id) => this.props.dispatch(deleteCountingArea(id))}
             cancel={() => { this.props.dispatch(setMode(EDITOR_MODE.EDIT)) }}
           />
         }
+        {this.props.countingAreasWithCenters.entrySeq().map(([id, countingArea]) =>
+          <React.Fragment key={id}>
+            {countingArea.get('computed') &&
+              <SingleCounterDirection 
+                key={id}
+                area={countingArea.toJS()}
+                toggleDirection={() => this.props.dispatch(toggleCountingAreaType(id, countingArea.get('type')))}
+              />
+            }
+          </React.Fragment>
+        )}
         <MenuCountingAreasEditor />
         <canvas
           ref={(el) => this.elCanvas = el}
@@ -228,6 +240,7 @@ export default connect((state) => {
 
   return {
     countingAreas: state.counter.get('countingAreas'), // Need to inject this as is it for componentDidUpdate comparison
+    countingAreasWithCenters: countingAreasWithCenters,
     selectedCountingArea: state.counter.get('selectedCountingArea'),
     canvasResolution: state.viewport.get('canvasResolution'),
     mode: state.counter.get('mode')

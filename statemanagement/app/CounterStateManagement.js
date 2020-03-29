@@ -4,6 +4,8 @@ import uuidv4 from 'uuid/v4'
 import { scalePoint } from '../../utils/resolution';
 import { getURLData } from '../../server/utils/urlHelper';
 import { getAvailableCounterColors, getDefaultCounterColor } from '../../utils/colors.js';
+import { computeLineBearing } from '../../server/tracker/utils';
+import { COUNTING_AREA_TYPE } from '../../utils/constants';
 
 // Rename this to CounterEditorStateManagement
 
@@ -27,6 +29,7 @@ const initialState = fromJS({
 const SELECT_COUNTING_AREA = 'Counter/SELECT_COUNTING_AREA'
 const DELETE_COUNTING_AREA = 'Counter/DELETE_COUNTING_AREA'
 const SAVE_COUNTING_AREA_LOCATION = 'Counter/SAVE_COUNTING_AREA_LOCATION'
+const SAVE_COUNTING_AREA_TYPE = 'Counter/SAVE_COUNTING_AREA_TYPE'
 const SET_MODE = 'Counter/SET_MODE'
 const SAVE_COUNTING_AREA_NAME = 'Counter/SAVE_COUNTING_AREA_NAME'
 const ADD_COUNTING_AREA = 'Counter/ADD_COUNTING_AREA'
@@ -112,7 +115,8 @@ export function addCountingArea() {
       type: ADD_COUNTING_AREA,
       payload: {
         id: newCountingAreaId,
-        color: color
+        color: color,
+        type: "bidirectional"
       }
     })
 
@@ -123,17 +127,54 @@ export function addCountingArea() {
 export function saveCountingAreaLocation(id, location) {
   return (dispatch, getState) => {
 
+    // Compute bearing
+    let lineBearing = computeLineBearing(location.point1.x, location.point1.y, location.point2.x, location.point2.y);
+    // in both directions
+    let lineBearings = [0,0];
+    if(lineBearing >= 180) {
+      lineBearings[0] = lineBearing - 180;
+      lineBearings[1] = lineBearing;
+    } else {
+      lineBearings[0] = lineBearing;
+      lineBearings[1] = lineBearing + 180;
+    }
+
+
     dispatch({
       type: SAVE_COUNTING_AREA_LOCATION,
       payload: {
         location,
-        id
+        id,
+        lineBearings
       }
     });
 
     if(!getState().counter.getIn(['countingAreas', id, 'name'])) {
       dispatch(setMode(EDITOR_MODE.ASKNAME));
     }
+    dispatch(registerCountingAreasOnServer());
+  }
+}
+
+export function toggleCountingAreaType(id, currentDirection) {
+  return (dispatch, getState) => {
+
+    let newDirection = COUNTING_AREA_TYPE.BIDIRECTIONAL;
+
+    if(currentDirection === COUNTING_AREA_TYPE.BIDIRECTIONAL) {
+      newDirection = COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM;
+    } else if(currentDirection === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM) {
+      newDirection = COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP;
+    }
+
+    dispatch({
+      type: SAVE_COUNTING_AREA_TYPE,
+      payload: {
+        type: newDirection,
+        id
+      }
+    });
+
     dispatch(registerCountingAreasOnServer());
   }
 }
@@ -151,6 +192,16 @@ export function saveCountingAreaName(id, name) {
 
     dispatch(registerCountingAreasOnServer());
     dispatch(setMode(EDITOR_MODE.EDIT));
+  }
+}
+
+export function restoreCountingAreasFromJSON(data) {
+  return (dispatch) => {
+    dispatch({
+      type: RESTORE_COUNTING_AREAS,
+      payload: data
+    })
+    dispatch(registerCountingAreasOnServer());
   }
 }
 
@@ -206,6 +257,7 @@ export function restoreCountingAreas(req) {
 // => SAVE_COUNTING_AREA_LOCATION
 // => SAVE_COUNTING_AREA_NAME
 // => DELETE_COUNTING_AREA
+// => SAVE_COUNTING_AREA_TYPE
 export function registerCountingAreasOnServer() {
   return (dispatch, getState) => {
     // Ping webservice to start storing data on server
@@ -246,11 +298,15 @@ export default function CounterReducer (state = initialState, action = {}) {
       return state.deleteIn(['countingAreas', action.payload])
     case SAVE_COUNTING_AREA_LOCATION:
       return state.setIn(['countingAreas', action.payload.id, 'location'], fromJS(action.payload.location))
+                  .setIn(['countingAreas', action.payload.id, 'computed', 'lineBearings'], fromJS(action.payload.lineBearings))
     case SAVE_COUNTING_AREA_NAME:
       return state.setIn(['countingAreas', action.payload.id, 'name'], action.payload.name)
+    case SAVE_COUNTING_AREA_TYPE:
+      return state.setIn(['countingAreas', action.payload.id, 'type'], action.payload.type)
     case ADD_COUNTING_AREA:
       return state.setIn(['countingAreas', action.payload.id], fromJS({
-        color: action.payload.color
+        color: action.payload.color,
+        type: action.payload.type
       }))
     case RESET_COUNTING_AREAS:
       return state.set('countingAreas', fromJS({}))

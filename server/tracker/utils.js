@@ -18,5 +18,20 @@ const self = module.exports = {
   isInsideSomeAreas: function(areas, point, idDisplay) {
     const isInside = areas.some((area) => self.isInsideArea(area, point));
     return isInside;
+  },
+
+  computeLineBearing: function(x1,y1,x2,y2) {
+    var angle = Math.atan((x2-x1)/(y1-y2))/(Math.PI/180)
+    if ( angle > 0 ) {
+      if (y1 < y2)
+        return angle;
+      else
+        return 180 + angle;
+    } else {
+      if (x1 < x2)
+        return 180 + angle;
+      else
+        return 360 + angle;
+    }
   }
 }

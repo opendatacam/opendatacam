@@ -1,6 +1,6 @@
 const Tracker = require('node-moving-things-tracker').Tracker;
 const YOLO = require('./processes/YOLO');
-const isInsideSomeAreas = require('./tracker/utils').isInsideSomeAreas;
+const computeLineBearing = require('./tracker/utils').computeLineBearing;
 const cloneDeep = require('lodash.clonedeep');
 const fs = require('fs');
 const http = require('http');
@@ -14,8 +14,15 @@ const HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS = 30;
 // Max wait time for YOLO to start is 3 min = 180s
 const HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES = 180 * (1000 / HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS);
 
+const COUNTING_AREA_TYPE = {
+  BIDIRECTIONAL: "bidirectional",
+  LEFTRIGHT_TOPBOTTOM: "leftright_topbottom",
+  RIGHTLEFT_BOTTOMTOP: "rightleft_bottomtop"
+}
+
 const initialState = {
-  timeLastFrame: new Date(),
+  timeLastFrameFPSComputed: new Date(),
+  indexLastFrameFPSComputed: 0,
   currentFrame: 0,
   countedItemsHistory: [],
   videoResolution: null,
@@ -109,23 +116,38 @@ module.exports = {
       xMax: Math.max(point1.x, point2.x)
     }
 
+    // Compute bearing
+    let lineBearing = computeLineBearing(point1.x, point1.y, point2.x, point2.y);
+    // in both directions
+    let lineBearings = [0,0];
+    if(lineBearing >= 180) {
+      lineBearings[0] = lineBearing - 180;
+      lineBearings[1] = lineBearing;
+    } else {
+      lineBearings[0] = lineBearing;
+      lineBearings[1] = lineBearing + 180;
+    }
+
     Opendatacam.countingAreas[key] = data;
 
     Opendatacam.countingAreas[key]['computed'] = {
       a: a,
       b: b,
-      xBounds: xBounds
+      xBounds: xBounds,
+      lineBearings: lineBearings
     }
   },
 
-  countItem: function(trackedItem, countingAreaKey, frameId) {
+  countItem: function(trackedItem, countingAreaKey, frameId, countingDirection) {
     if(Opendatacam.recordingStatus.isRecording) {
       var countedItem = {
         frameId: frameId,
         timestamp: new Date(),
         area: countingAreaKey,
         name: trackedItem.name,
-        id: trackedItem.id
+        id: trackedItem.id,
+        bearing: trackedItem.bearing, 
+        countingDirection: countingDirection  
       }
       // Add it to the history
       Opendatacam.countedItemsHistory.push(countedItem)
@@ -181,7 +203,7 @@ module.exports = {
     })
   },
 
-  updateWithNewFrame: function(detectionsOfThisFrame, frameId) {
+  updateWithNewFrame: function(detectionsOfThisFrame, frameId, videoSize) {
     // Set yolo status to started if it's not the case
     if(!Opendatacam.isListeningToYOLO) {
       Opendatacam.isListeningToYOLO = true;
@@ -195,25 +217,37 @@ module.exports = {
 
     // If we didn't get the videoResolution yet
     if(!Opendatacam.videoResolution) {
-      console.log('Didn\'t get video resolution yet, not sending tracker info');
-      return;
+      if(!videoSize) {
+        console.log('Didn\'t get video resolution yet, not sending tracker info');
+        return;
+      } else {
+        this.setVideoResolution({
+          w: videoSize.width,
+          h: videoSize.height
+        })
+      }
     }
 
     // Compute FPS
     const frameTimestamp = new Date();
-    const timeDiff = Math.abs(frameTimestamp.getTime() - Opendatacam.timeLastFrame.getTime());
-    Opendatacam.timeLastFrame = frameTimestamp;
-    // console.log(`YOLO detections FPS: ${1000 / timeDiff}`);
-    Opendatacam.recordingStatus.currentFPS = Math.round(1000 / timeDiff)
+    if(Opendatacam.indexLastFrameFPSComputed + 3 <= frameId) {
+      const timeDiff = Math.abs(frameTimestamp.getTime() - Opendatacam.timeLastFrameFPSComputed.getTime());
+      const frameDiff = frameId - Opendatacam.indexLastFrameFPSComputed;
+      // console.log(`YOLO detections FPS: ${1000 / timeDiff}`);
+      Opendatacam.recordingStatus.currentFPS = Math.round(1000 / timeDiff * frameDiff)
+      Opendatacam.timeLastFrameFPSComputed = frameTimestamp;
+      Opendatacam.indexLastFrameFPSComputed = frameId;
+    }
+
 
     // Scale detection
     let detectionScaledOfThisFrame = detectionsOfThisFrame.map((detection) => {
       return {
         name: detection.name,
-        x: detection.relative_coordinates.center_x * Opendatacam.videoResolution.w,
-        y: detection.relative_coordinates.center_y * Opendatacam.videoResolution.h,
-        w: detection.relative_coordinates.width * Opendatacam.videoResolution.w,
-        h: detection.relative_coordinates.height * Opendatacam.videoResolution.h,
+        x: (detection.absolute_coordinates.center_x + detection.absolute_coordinates.width / 2) / videoSize.width * Opendatacam.videoResolution.w,
+        y: (detection.absolute_coordinates.center_y + detection.absolute_coordinates.height / 2) / videoSize.height * Opendatacam.videoResolution.h,
+        w: detection.absolute_coordinates.width / videoSize.width * Opendatacam.videoResolution.w,
+        h: detection.absolute_coordinates.height / videoSize.height * Opendatacam.videoResolution.h,
         counted: false,
         confidence: detection.confidence
       };
@@ -241,7 +275,7 @@ module.exports = {
     Opendatacam.nbItemsTrackedThisFrame = trackerDataForThisFrame.length;
 
     // Compute nbItemsTrackedSinceRecordingStarted based on ids (assume that id increment is one)
-    const biggestTrackedItemIdThisFrame = trackerDataForThisFrame[trackerDataForThisFrame.length - 1].id;
+    const biggestTrackedItemIdThisFrame = trackerDataForThisFrame.length > 0 ? trackerDataForThisFrame[trackerDataForThisFrame.length - 1].id : 0;
     const nbItemsTrackedSinceRecordingStarted = biggestTrackedItemIdThisFrame - Opendatacam._refTrackedItemIdWhenRecordingStarted;
     Opendatacam.totalItemsTracked = nbItemsTrackedSinceRecordingStarted;
   
@@ -253,6 +287,7 @@ module.exports = {
       // For each counting areas
       var countingDeltas = Object.keys(Opendatacam.countingAreas).map((countingAreaKey) => {
         let countingAreaProps = Opendatacam.countingAreas[countingAreaKey].computed;
+        let countingAreaType = Opendatacam.countingAreas[countingAreaKey].type;
         // deltaY = Y(detection) - Y(on-counting-line)
         // NB: negating Y detection to get it in "normal" coordinates space
         // deltaY = - Y(detection) - a X(detection) - b
@@ -297,12 +332,27 @@ module.exports = {
                   // Tracked item has cross the {countingAreaKey} counting line
                   // Count it
                   // console.log(`Counting ${trackedItem.id}`);
-                  let countedItem = this.countItem(trackedItem, countingAreaKey, frameId);
-                  countedItemsForThisFrame.push(countedItem);
+                  
+                  // Object comes from top to bottom or left to right of the counting line
+                  if(countingAreaProps.lineBearings[0] <= trackedItem.bearing && trackedItem.bearing <= countingAreaProps.lineBearings[1]) {
+                    if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM) {
+                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM);
+                      countedItemsForThisFrame.push(countedItem);
+                    } else {
+                      // do not count, comes from the wrong direction
+                      // console.log('not counting, from bottom to top, or right to left of the counting lines')
+                    }
+                  } else {
+                    // Object comes from bottom to top, or right to left of the counting lines
+                    if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP) {
+                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP);
+                      countedItemsForThisFrame.push(countedItem);
+                    } else {
+                      // do not count, comes from the wrong direction
+                      // console.log('not counting, comes from top to bottom or left to right of the counting line ')
+                    }
+                  }
                 }
-  
-                
-
               } else {
                 // console.log('NOT IN xBOUNDS');
                 // console.log(countingAreaProps.xBounds);
@@ -387,6 +437,9 @@ module.exports = {
           recordingStatus: Opendatacam.recordingStatus
         }
       })}\n\n`);
+    } else {
+      // Sending update to the client but it is not open
+      console.log('Sending update to the client but the SSE connexion is not open');
     }
   },
 
@@ -456,7 +509,7 @@ module.exports = {
     Opendatacam.recordingStatus.isRecording = true;
     Opendatacam.recordingStatus.dateStarted = new Date();
     Opendatacam.totalItemsTracked = 0;
-    const filename = isFile ? config.VIDEO_INPUTS_PARAMS.file.split('/').pop() : '';
+    const filename = isFile ? YOLO.getVideoParams().split('/').pop() : '';
     Opendatacam.recordingStatus.filename = filename;
 
     // Store lowest ID of currently tracked item when start recording 
@@ -521,6 +574,9 @@ module.exports = {
       method:   'GET'
     };
 
+
+    var noMessageReceivedYet = true;
+
     Logger.log('Send request to connect to YOLO JSON Stream')
     self.HTTPRequestListeningToYOLO = http.request(options, function(res) {
       Logger.log(`statusCode: ${res.statusCode}`)
@@ -528,6 +584,10 @@ module.exports = {
       var separator = "}"; // consider chunk complete if I see this char
 
       res.on('data', function(chunk) {
+        if(noMessageReceivedYet) {
+          noMessageReceivedYet = false;
+          console.log('Got first message from JSONStream')
+        }
         var msgChunk = chunk.toString();
         Logger.log('----')
         Logger.log('----')
@@ -564,21 +624,26 @@ module.exports = {
         }
 
         if(isMessageComplete) {
+          var detectionsOfThisFrame = null;
           try {
             Logger.log('Message complete, parse it')
             if(message.charAt(0) === ',') {
               Logger.log('First char is a comma, remove it')
               message = message.substr(1);
             }
-            var detectionsOfThisFrame = JSON.parse(message);
+            detectionsOfThisFrame = JSON.parse(message);
             message = '';
-            self.updateWithNewFrame(detectionsOfThisFrame.objects, detectionsOfThisFrame.frame_id);
           } catch (error) {
             console.log("Error with message send by YOLO, not valid JSON")
             message = '';
             Logger.log(message);
             Logger.log(error);
             // res.emit('close');
+          }
+
+          // Put this outside the try-catch loop to have proper error handling for updateWithNewFrame
+          if(detectionsOfThisFrame !== null) {
+            self.updateWithNewFrame(detectionsOfThisFrame.objects, detectionsOfThisFrame.frame_id, detectionsOfThisFrame.video_size);
           }
         }
       });
@@ -617,7 +682,6 @@ module.exports = {
           Opendatacam.HTTPRequestListeningToYOLOMaxRetries--;
         }, HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS)
       } else {
-        YOLO.stop();
         console.log('Something went wrong: ' + e.message);
         console.log('Too much retries, YOLO took more than 3 min to start, likely an error')
         console.log(Opendatacam.HTTPRequestListeningToYOLOMaxRetries)
@@ -648,6 +712,8 @@ module.exports = {
 
   requestFileRecording() {
     Opendatacam.recordingStatus.requestedFileRecording = true;
+    const filename = YOLO.getVideoParams().split('/').pop();
+    Opendatacam.recordingStatus.filename = filename;
     console.log('Ask YOLO to restart to record on a file ');
     YOLO.restart();
   },

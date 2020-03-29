@@ -17,32 +17,29 @@ let YOLO = {
   process: null,
   simulationMode: false,
   simulationMJPEGServer: null,
-  simulationJSONHTTPStreamServer: null
+  simulationJSONHTTPStreamServer: null,
+  currentVideoParams: ""
 };
 
 module.exports = {
-  init: function(simulationMode) {
+  init: function(simulationMode, videoParams = null) {
 
     YOLO.simulationMode = simulationMode;
 
     if(!YOLO.simulationMode) {
       var yoloParams = config.NEURAL_NETWORK_PARAMS[config.NEURAL_NETWORK];
-      var videoParams = config.VIDEO_INPUTS_PARAMS[config.VIDEO_INPUT];
+      var videoParams = videoParams || config.VIDEO_INPUTS_PARAMS[config.VIDEO_INPUT];
+      YOLO.currentVideoParams = videoParams
 
       var darknetCommand = [];
-      var initialCommand = ['./darknet','detector','demo', yoloParams.data , yoloParams.cfg, yoloParams.weights]
-      var endCommand = ['-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090']
+      var initialCommand = ['./uselib', yoloParams.data , yoloParams.cfg, yoloParams.weights]
 
-      // Special case if input camera is specified as a -c flag as we need to add one arg
-      if(videoParams.indexOf('-c') === 0) {
-        darknetCommand = initialCommand.concat(videoParams.split(" ")).concat(endCommand);
-      } else {
-        darknetCommand = initialCommand.concat(videoParams).concat(endCommand);
-      }
-
+      darknetCommand = initialCommand.concat(videoParams);
+      
       YOLO.process = new (forever.Monitor)(darknetCommand,{
         max: Number.POSITIVE_INFINITY,
         cwd: config.PATH_TO_YOLO_DARKNET,
+        env: { 'LD_LIBRARY_PATH': './' },
         killTree: true
       });
 
@@ -50,11 +47,6 @@ module.exports = {
         console.log('Process YOLO started');
         YOLO.isStarted = true;
         YOLO.isStarting = false;
-      });
-
-      YOLO.process.on("stop", () => {
-        console.log('Process YOLO stopped');
-        YOLO.isStarted = false;
       });
 
       YOLO.process.on("restart", () => {
@@ -69,7 +61,7 @@ module.exports = {
 
       YOLO.process.on("exit", (err) => {
         console.log('Process YOLO exit');
-        console.log(err);
+        //console.log(err);
       });
     }
 
@@ -85,6 +77,10 @@ module.exports = {
       isStarting: YOLO.isStarting,
       isStarted: YOLO.isStarted
     }
+  },
+
+  getVideoParams: function() {
+    return YOLO.currentVideoParams;
   },
 
   start: function() {
@@ -109,21 +105,32 @@ module.exports = {
   },
 
   stop: function() {
-    // TODO LATER add a isStopping state
-    if(YOLO.simulationMode && YOLO.simulationServer) {
-      YOLO.simulationServer.kill(function () {
-        YOLO.isStarted = false;
-      });
-    } else {
-      if(YOLO.isStarted) {
-        YOLO.process.stop();
+    return new Promise((resolve, reject) => {
+      if(YOLO.simulationMode && YOLO.simulationServer) {
+        YOLO.simulationServer.kill(function () {
+          YOLO.isStarted = false;
+          resolve();
+        });
+      } else {
+        if(YOLO.isStarted) {
+          YOLO.process.once("stop", () => {
+            console.log('Process YOLO stopped');
+            YOLO.isStarted = false;
+            resolve();
+          });
+          YOLO.process.stop();
+        }
       }
-    }
+    });
   },
 
   restart() {
     if(!YOLO.simulationMode) {
-      YOLO.process.restart();
+      console.log('Process YOLO restart');
+      this.stop().then(() => {
+        this.start();
+      });
+
     } else {
       YOLO.simulationJSONHTTPStreamServer.kill();
       YOLO.simulationMJPEGServer.kill();
@@ -133,7 +140,31 @@ module.exports = {
     }
   },
 
+  formatDetectionsToNewDarknetFormat: function(detection) {
+    return {
+      frame_id: detection.frame_id,
+      video_size: {
+        width: 640,
+        height: 360
+      },
+      objects: detection.objects.map((object) => {
+        return {
+          class_id: object.class_id,
+          name: object.name,
+          absolute_coordinates: {
+            center_x: (object.relative_coordinates.center_x - object.relative_coordinates.width / 2) * 640,
+            center_y: (object.relative_coordinates.center_y - object.relative_coordinates.height / 2) * 360,
+            width: object.relative_coordinates.width * 640,
+            height: object.relative_coordinates.height * 360
+          },
+          confidence: object.confidence
+        }
+      })
+    }
+  },
+
   startYOLOSimulation: function() {
+    var self = this;
     /**
      *   Used in Dev mode for faster development
      *     - Simulate a MJPEG stream on port 8090
@@ -151,7 +182,8 @@ module.exports = {
       console.log("Got request on JSON Stream server started");
       JSONStreamRes = res;
       // Send one frame on the JSON stream to start things
-      JSONStreamRes.write(JSON.stringify(simulation30FPSDetectionsData.find((detection) => detection.frame_id === frameNb)));
+      var detectionsDataForThisFrame = self.formatDetectionsToNewDarknetFormat(simulation30FPSDetectionsData.find((detection) => detection.frame_id === frameNb))
+      JSONStreamRes.write(JSON.stringify(detectionsDataForThisFrame));
     }).listen(8070);
 
 
@@ -170,7 +202,9 @@ module.exports = {
       timer = setInterval(() => {
         updateJPG();
         if(JSONStreamRes) {
-          JSONStreamRes.write(JSON.stringify(simulation30FPSDetectionsData.find((detection) => detection.frame_id === frameNb)));
+          // Modify format of alexeydetections30FPS to match new format since ODCv3 Upgrade
+          var detectionsDataForThisFrame = self.formatDetectionsToNewDarknetFormat(simulation30FPSDetectionsData.find((detection) => detection.frame_id === frameNb))
+          JSONStreamRes.write(JSON.stringify(detectionsDataForThisFrame));
         } else {
           console.log("JSONStream connexion not opened yet");
         }
