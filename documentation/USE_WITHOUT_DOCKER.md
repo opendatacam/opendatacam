@@ -8,6 +8,8 @@ https://developer.nvidia.com/embedded/jetpack
 
 #### Get the source files
 
+_NB: Make sure you reinstall darknet entirely if you were on ODC v2.x, for v3 the version has changed._
+
 ```bash
 git clone --depth 1 -b opendatacamv3 https://github.com/opendatacam/darknet
 
@@ -177,7 +179,7 @@ sudo systemctl enable mongod
 - Download source
 
 ```bash
-git clone --depth 1 -b development https://github.com/opendatacam/opendatacam.git
+git clone --depth 1 https://github.com/opendatacam/opendatacam.git
 cd opendatacam
 ```
 
