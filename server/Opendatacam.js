@@ -515,10 +515,8 @@ module.exports = {
     // Store lowest ID of currently tracked item when start recording 
     // to be able to compute nbObjectTracked
     const currentlyTrackedItems = Tracker.getJSONOfTrackedItems() 
-    const highestTrackedItemId = currentlyTrackedItems[currentlyTrackedItems.length - 1].id;
+    const highestTrackedItemId = currentlyTrackedItems.length > 0 ? currentlyTrackedItems[currentlyTrackedItems.length - 1].id : 0;
     Opendatacam._refTrackedItemIdWhenRecordingStarted = highestTrackedItemId - currentlyTrackedItems.length;
-
-    
 
     // Persist recording
     DBManager.insertRecording(new Recording(
