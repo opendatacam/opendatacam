@@ -120,7 +120,7 @@ This command will download and start a docker container on the machine. After it
 
 The docker container is started in auto-restart mode, so if you reboot your machine it will automaticaly start opendatacam on startup. ([Learn more about the specificities of docker on jetson](#6-docker-playbook-))
 
-You can also [use opendatacam without docker](#how-to-run-opendatacam-without-docker)
+You can also [use opendatacam without docker](#how-to-use-opendatacam-without-docker)
 
 ### 2. bis (optional) Upgrade OpenDataCam (from v2.x to another v2.x version)
 
