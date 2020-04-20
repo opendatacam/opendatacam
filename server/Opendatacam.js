@@ -256,7 +256,13 @@ module.exports = {
     // If VALID_CLASSES if set, we should keep only those and filter out the rest
     if(config.VALID_CLASSES && config.VALID_CLASSES.indexOf("*") === -1) {
       detectionScaledOfThisFrame = detectionScaledOfThisFrame.filter((detection) => config.VALID_CLASSES.indexOf(detection.name) > -1)
-      console.log(`Filtered out ${detectionsOfThisFrame.length - detectionScaledOfThisFrame.length} detections that weren't valid classes`)
+      //console.log(`Filtered out ${detectionsOfThisFrame.length - detectionScaledOfThisFrame.length} detections that weren't valid classes`)
+    }
+
+    // If confidence_threshold if set, we should keep only those and filter out the rest
+    if(config.TRACKER_SETTINGS && config.TRACKER_SETTINGS.confidence_threshold) {
+      detectionScaledOfThisFrame = detectionScaledOfThisFrame.filter((detection) => detection.confidence >= config.TRACKER_SETTINGS.confidence_threshold)
+      //console.log(`Filtered out ${detectionsOfThisFrame.length - detectionScaledOfThisFrame.length} detections that didn't meet the confidence threshold`)
     }
 
     // console.log(`Received Detection:`);
