@@ -111,11 +111,6 @@ module.exports = {
 
     let a = (- point2.y + point1.y) / (point2.x - point1.x);
     let b = - point1.y - a * point1.x;
-    // Store xBounds to determine if the point is "intersecting" the line on the drawn part
-    let xBounds = {
-      xMin: Math.min(point1.x, point2.x),
-      xMax: Math.max(point1.x, point2.x)
-    }
 
     // Compute bearing
     let lineBearing = computeLineBearing(point1.x, point1.y, point2.x, point2.y);
