@@ -1,6 +1,6 @@
 const forever = require('forever-monitor');
 const config = require('../../config.json');
-const simulation30FPSDetectionsData = require('../../static/placeholder/alexeydetections30FPS.json');
+const simulation30FPSDetectionsData = require('../../public/static/placeholder/alexeydetections30FPS.json');
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
@@ -211,7 +211,7 @@ module.exports = {
       }, 34);
 
       function updateJPG() {
-        fs.readFile(path.join(__dirname, '../../static/placeholder/frames') + "/" + String(frameNb).padStart(3, '0') + '.jpg', sendJPGData);
+        fs.readFile(path.join(__dirname, '../../public/static/placeholder/frames') + "/" + String(frameNb).padStart(3, '0') + '.jpg', sendJPGData);
         frameNb++;
       }
 

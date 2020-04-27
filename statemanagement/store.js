@@ -1,34 +1,27 @@
-import { createStore, applyMiddleware, compose } from 'redux'
-import Immutable from 'immutable'
+import { createStore, applyMiddleware } from 'redux'
 import thunkMiddleware from 'redux-thunk'
-import reducers from './reducers.js'
+import { composeWithDevTools } from 'redux-devtools-extension'
+import { fromJS } from 'immutable';
+import reducers from './reducers'
 
-const composeEnhancers =
-  process.env.NODE_ENV !== 'production' &&
-  typeof window === 'object' &&
-  window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__
-    ? window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__({
-      // Specify here name, actionsBlacklist, actionsCreators and other options
-    })
-    : compose
 
-const enhancer = composeEnhancers(
-  applyMiddleware(thunkMiddleware)
-  // other store enhancers if any
-)
+export const makeStore = (initialState, { isServer})  => {
+  const middlewares = [thunkMiddleware]
+  const middlewareEnhancer = applyMiddleware(...middlewares)
 
-export const initStore = initialState => {
-  if (typeof window === 'undefined') {
-    let store = createStore(reducers, initialState, enhancer)
+  const enhancers = [middlewareEnhancer]
+  const composedEnhancers = composeWithDevTools(...enhancers)
+  if (isServer) {
+    let store = createStore(reducers, initialState, composedEnhancers)
     return store
   } else {
     if (!window.store) {
       // For each key of initialState, convert to Immutable object
       // Because SSR passed it as plain object
       Object.keys(initialState).map(function (key, index) {
-        initialState[key] = Immutable.fromJS(initialState[key])
+        initialState[key] = fromJS(initialState[key])
       })
-      window.store = createStore(reducers, initialState, enhancer)
+      window.store = createStore(reducers, initialState, composedEnhancers)
     }
     return window.store
   }
