@@ -42,7 +42,7 @@
     "server-sent-events": "^1.0.1"
   },
   "devDependencies": {
-    "apidoc": "^0.20.1",
+    "apidoc": "^0.22.0",
     "autoprefixer": "^9.7.6",
     "cssnano": "^4.1.10",
     "redux-devtools-extension": "^2.13.8",

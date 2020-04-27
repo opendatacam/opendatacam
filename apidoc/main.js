@@ -12,7 +12,9 @@ require.config({
         semver: './vendor/semver.min',
         utilsSampleRequest: './utils/send_sample_request',
         webfontloader: './vendor/webfontloader',
-        list: './vendor/list.min'
+        list: './vendor/list.min',
+        apiData: './api_data',
+        apiProject: './api_project',
     },
     shim: {
         bootstrap: {
@@ -41,8 +43,8 @@ require([
     'lodash',
     'locales',
     'handlebarsExtended',
-    './api_project.js',
-    './api_data.js',
+    'apiProject',
+    'apiData',
     'prettify',
     'utilsSampleRequest',
     'semver',
@@ -535,11 +537,13 @@ require([
     // HTML-Template specific jQuery-Functions
     //
     // Change Main Version
-    $('#versions li.version a').on('click', function(e) {
-        e.preventDefault();
-
-        var selectedVersion = $(this).html();
-        $('#version strong').html(selectedVersion);
+    function setMainVersion(selectedVersion) {
+        if (typeof(selectedVersion) === 'undefined') {
+            selectedVersion = $('#version strong').html();
+        }
+        else {
+            $('#version strong').html(selectedVersion);
+        }
 
         // hide all
         $('article').addClass('hide');
@@ -575,6 +579,13 @@ require([
 
         initDynamic();
         return;
+    }
+    setMainVersion();
+
+    $('#versions li.version a').on('click', function(e) {
+        e.preventDefault();
+
+        setMainVersion($(this).html());
     });
 
     // compare all article with their predecessor
