@@ -1,6 +1,7 @@
 const Tracker = require('node-moving-things-tracker').Tracker;
 const YOLO = require('./processes/YOLO');
 const computeLineBearing = require('./tracker/utils').computeLineBearing;
+const checkLineIntersection = require('./tracker/utils').checkLineIntersection;
 const cloneDeep = require('lodash.clonedeep');
 const fs = require('fs');
 const http = require('http');
@@ -133,8 +134,15 @@ module.exports = {
     Opendatacam.countingAreas[key]['computed'] = {
       a: a,
       b: b,
-      xBounds: xBounds,
-      lineBearings: lineBearings
+      lineBearings: lineBearings,
+      point1: {
+        x: point1.x,
+        y: - point1.y
+      },
+      point2: {
+        x: point2.x,
+        y: - point2.y
+      }
     }
   },
 
@@ -316,14 +324,19 @@ module.exports = {
 
             if(Math.sign(lastDeltaY) !== Math.sign(deltaY)) {
 
-              // Object trajectory must intersept the counting line between xBounds
-              // We know it intersept between those two frames, check if they are
-              // corresponding to the bounds
-              let minX = Math.min(trackerItemLastFrame.x, trackedItem.x);
-              let maxX = Math.max(trackerItemLastFrame.x, trackedItem.x);
-
-              if(countingAreaProps.xBounds.xMin <= maxX && 
-                countingAreaProps.xBounds.xMax >= minX) {
+              let intersection = checkLineIntersection(
+                countingAreaProps.point1.x, 
+                countingAreaProps.point1.y, 
+                countingAreaProps.point2.x,
+                countingAreaProps.point2.y,
+                trackerItemLastFrame.x,
+                - trackerItemLastFrame.y,
+                trackedItem.x,
+                - trackedItem.y)
+  
+  
+              // Object trajectory must intercept the counting line on the counting line
+              if(intersection.onLine1) {
 
                 // console.log("*****************************")
                 // console.log("COUNTING SOMETHING")
@@ -360,8 +373,7 @@ module.exports = {
                   }
                 }
               } else {
-                // console.log('NOT IN xBOUNDS');
-                // console.log(countingAreaProps.xBounds);
+                // console.log('Intersection with object trajectory is NOT on counting line, do not count');
                 // console.log(trackedItem)
               }
 
