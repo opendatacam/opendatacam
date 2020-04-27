@@ -2,7 +2,6 @@
  * Content
  * ------------------------------------------------------------------------------------------ */
 body {
-  min-width: 980px;
   max-width: 1280px;
 }
 
@@ -10,6 +9,15 @@ body, p, a, div, th, td {
   font-family: "Source Sans Pro", sans-serif;
   font-weight: 400;
   font-size: 16px;
+}
+
+@media (min-width: 1200px) {
+  body.container-fluid {
+    padding-right: 0px;
+    padding-left: 0px;
+    margin-right: 0px;
+    margin-left: 0px;
+  }
 }
 
 td.code {
