@@ -57,7 +57,7 @@ class MenuCountingAreasEditor extends Component {
             >
               <SVG 
                 className="w-10 h-10 svg-icon flex items-center" 
-                cacheGetRequests={true}
+                cacheRequests={true}
                 src={`/static/icons/ui/delete.svg`} 
                 aria-label="icon delete"
               />
@@ -67,7 +67,7 @@ class MenuCountingAreasEditor extends Component {
             >
               <SVG 
                 className="w-10 h-10 svg-icon flex items-center" 
-                cacheGetRequests={true}
+                cacheRequests={true}
                 src={`/static/icons/ui/addline.svg`} 
                 aria-label="icon edit"
               />
@@ -80,7 +80,7 @@ class MenuCountingAreasEditor extends Component {
             >
               <SVG 
                 className="w-10 h-10 svg-icon flex items-center" 
-                cacheGetRequests={true}
+                cacheRequests={true}
                 src={`/static/icons/ui/download.svg`} 
                 aria-label="icon download"
               />
@@ -91,7 +91,7 @@ class MenuCountingAreasEditor extends Component {
             >
               <SVG 
                 className="w-10 h-10 svg-icon flex items-center" 
-                cacheGetRequests={true}
+                cacheRequests={true}
                 src={`/static/icons/ui/upload.svg`} 
                 aria-label="icon upload"
               />
@@ -106,7 +106,7 @@ class MenuCountingAreasEditor extends Component {
           >
             <SVG 
               className="w-10 h-10 svg-icon flex items-center" 
-              cacheGetRequests={true}
+              cacheRequests={true}
               src={`/static/icons/ui/close.svg`} 
               aria-label="icon edit"
             />

@@ -61,7 +61,7 @@ class AskNameModal extends Component {
           >
             <SVG 
               className="w-10 h-10 svg-icon flex items-center" 
-              cacheGetRequests={true}
+              cacheRequests={true}
               src={`/static/icons/ui/close.svg`} 
               aria-label="icon close"
             />
