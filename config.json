@@ -45,7 +45,7 @@
   "NEURAL_NETWORK_PARAMS": {
     "yolov4": {
       "data": "data/coco.names",
-      "cfg": "cfg/yolov4.cfg",
+      "cfg": "cfg/yolov4-416x416.cfg",
       "weights": "yolov4.weights"
     },
     "yolov3": {
