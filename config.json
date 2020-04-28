@@ -43,6 +43,11 @@
     "red": "#AB4435"
   },
   "NEURAL_NETWORK_PARAMS": {
+    "yolov4": {
+      "data": "data/coco.names",
+      "cfg": "cfg/yolov4.cfg",
+      "weights": "yolov4.weights"
+    },
     "yolov3": {
       "data": "data/coco.names",
       "cfg": "cfg/yolov3.cfg",
