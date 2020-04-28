@@ -58,7 +58,7 @@ class Menu extends Component {
             />
           </button>
           <div className="p-5 w-full overflow-y-scroll">
-            <h3 className="mb-4 text-2xl font-bold"><a className="mt-2" href="https://www.move-lab.com/project/opendatacam/" target="_blank">OpenDataCam</a></h3>
+            <h3 className="mb-4 text-2xl font-bold"><a className="mt-2" href="https://github.com/opendatacam/opendatacam" target="_blank">OpenDataCam</a></h3>
             <Toggle
               label="Counter"
               description="Count objects on active areas"
@@ -117,9 +117,9 @@ class Menu extends Component {
           </div>
           <div className="menu-footer bg-black text-white p-5 w-full">
               <div className="flex flex-col">
-                  <a className="" href="#">About</a>
+                  <p>Version {this.props.version}</p>
                   <a className="mt-2" target="_blank" href="/api/doc">API documentation</a>
-                  <a className="mt-2" href="https://github.com/opendatacam/opendatacam" target="_blank">Github</a>
+                  <a className="mt-2" href="https://github.com/opendatacam/opendatacam" target="_blank">About</a>
               </div>
           </div>
         </div>
@@ -156,6 +156,7 @@ export default connect((state) => {
   return {
     mode: state.app.get('mode'),
     userSettings: state.usersettings,
-    uiSettings: state.app.get('uiSettings')
+    uiSettings: state.app.get('uiSettings'),
+    version: state.app.getIn(['config','OPENDATACAM_VERSION'])
   }
 })(Menu);
