@@ -52,7 +52,17 @@ DBManager.init().then(
   }
 )
 
-// Code to watch & record the console (stdout) to send to the /console API endpoint
+// TODO Move the stdout code into it's own module
+var videoResolution = null;
+
+if(SIMULATION_MODE) {
+  videoResolution = {
+    w: 1280,
+    h: 720
+  }
+  Opendatacam.setVideoResolution(videoResolution)
+}
+
 var stdoutBuffer = "";
 var stdoutInterval = "";
 var bufferLimit = 30000;

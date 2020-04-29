@@ -146,31 +146,7 @@ module.exports = {
     }
   },
 
-  formatDetectionsToNewDarknetFormat: function(detection) {
-    return {
-      frame_id: detection.frame_id,
-      video_size: {
-        width: 640,
-        height: 360
-      },
-      objects: detection.objects.map((object) => {
-        return {
-          class_id: object.class_id,
-          name: object.name,
-          absolute_coordinates: {
-            center_x: (object.relative_coordinates.center_x - object.relative_coordinates.width / 2) * 640,
-            center_y: (object.relative_coordinates.center_y - object.relative_coordinates.height / 2) * 360,
-            width: object.relative_coordinates.width * 640,
-            height: object.relative_coordinates.height * 360
-          },
-          confidence: object.confidence
-        }
-      })
-    }
-  },
-
   startYOLOSimulation: function() {
-    var self = this;
     /**
      *   Used in Dev mode for faster development
      *     - Simulate a MJPEG stream on port 8090
@@ -188,8 +164,7 @@ module.exports = {
       console.log("Got request on JSON Stream server started");
       JSONStreamRes = res;
       // Send one frame on the JSON stream to start things
-      var detectionsDataForThisFrame = self.formatDetectionsToNewDarknetFormat(simulation30FPSDetectionsData.find((detection) => detection.frame_id === frameNb))
-      JSONStreamRes.write(JSON.stringify(detectionsDataForThisFrame));
+      JSONStreamRes.write(JSON.stringify(simulation30FPSDetectionsData.find((detection) => detection.frame_id === frameNb)));
     }).listen(8070);
 
 
@@ -208,9 +183,7 @@ module.exports = {
       timer = setInterval(() => {
         updateJPG();
         if(JSONStreamRes) {
-          // Modify format of alexeydetections30FPS to match new format since ODCv3 Upgrade
-          var detectionsDataForThisFrame = self.formatDetectionsToNewDarknetFormat(simulation30FPSDetectionsData.find((detection) => detection.frame_id === frameNb))
-          JSONStreamRes.write(JSON.stringify(detectionsDataForThisFrame));
+          JSONStreamRes.write(JSON.stringify(simulation30FPSDetectionsData.find((detection) => detection.frame_id === frameNb)));
         } else {
           console.log("JSONStream connexion not opened yet");
         }
