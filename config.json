@@ -49,7 +49,7 @@
       "weights": "yolov4.weights"
     },
     "yolov3": {
-      "data": "data/coco.names",
+      "data": "cfg/coco.data",
       "cfg": "cfg/yolov3.cfg",
       "weights": "yolov3.weights"
     },

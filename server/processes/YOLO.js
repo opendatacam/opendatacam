@@ -32,10 +32,16 @@ module.exports = {
       YOLO.currentVideoParams = videoParams
 
       var darknetCommand = [];
-      var initialCommand = ['./uselib', yoloParams.data , yoloParams.cfg, yoloParams.weights]
+      var initialCommand = ['./darknet','detector','demo', yoloParams.data , yoloParams.cfg, yoloParams.weights]
+      var endCommand = ['-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090']
 
-      darknetCommand = initialCommand.concat(videoParams);
-      
+      // Special case if input camera is specified as a -c flag as we need to add one arg
+      if(videoParams.indexOf('-c') === 0) {
+        darknetCommand = initialCommand.concat(videoParams.split(" ")).concat(endCommand);
+      } else {
+        darknetCommand = initialCommand.concat(videoParams).concat(endCommand);
+      }
+
       YOLO.process = new (forever.Monitor)(darknetCommand,{
         max: Number.POSITIVE_INFINITY,
         cwd: config.PATH_TO_YOLO_DARKNET,

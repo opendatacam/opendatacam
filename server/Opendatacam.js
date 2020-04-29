@@ -206,7 +206,7 @@ module.exports = {
     })
   },
 
-  updateWithNewFrame: function(detectionsOfThisFrame, frameId, videoSize) {
+  updateWithNewFrame: function(detectionsOfThisFrame, frameId) {
     // Set yolo status to started if it's not the case
     if(!Opendatacam.isListeningToYOLO) {
       Opendatacam.isListeningToYOLO = true;
@@ -220,15 +220,8 @@ module.exports = {
 
     // If we didn't get the videoResolution yet
     if(!Opendatacam.videoResolution) {
-      if(!videoSize) {
-        console.log('Didn\'t get video resolution yet, not sending tracker info');
-        return;
-      } else {
-        this.setVideoResolution({
-          w: videoSize.width,
-          h: videoSize.height
-        })
-      }
+      console.log('Didn\'t get video resolution yet, not sending tracker info');
+      return;
     }
 
     // Compute FPS
@@ -247,10 +240,10 @@ module.exports = {
     let detectionScaledOfThisFrame = detectionsOfThisFrame.map((detection) => {
       return {
         name: detection.name,
-        x: (detection.absolute_coordinates.center_x + detection.absolute_coordinates.width / 2) / videoSize.width * Opendatacam.videoResolution.w,
-        y: (detection.absolute_coordinates.center_y + detection.absolute_coordinates.height / 2) / videoSize.height * Opendatacam.videoResolution.h,
-        w: detection.absolute_coordinates.width / videoSize.width * Opendatacam.videoResolution.w,
-        h: detection.absolute_coordinates.height / videoSize.height * Opendatacam.videoResolution.h,
+        x: detection.relative_coordinates.center_x * Opendatacam.videoResolution.w,
+        y: detection.relative_coordinates.center_y * Opendatacam.videoResolution.h,
+        w: detection.relative_coordinates.width * Opendatacam.videoResolution.w,
+        h: detection.relative_coordinates.height * Opendatacam.videoResolution.h,
         counted: false,
         confidence: detection.confidence
       };
@@ -644,6 +637,7 @@ module.exports = {
             }
             detectionsOfThisFrame = JSON.parse(message);
             message = '';
+            self.updateWithNewFrame(detectionsOfThisFrame.objects, detectionsOfThisFrame.frame_id);
           } catch (error) {
             console.log("Error with message send by YOLO, not valid JSON")
             message = '';
@@ -654,7 +648,7 @@ module.exports = {
 
           // Put this outside the try-catch loop to have proper error handling for updateWithNewFrame
           if(detectionsOfThisFrame !== null) {
-            self.updateWithNewFrame(detectionsOfThisFrame.objects, detectionsOfThisFrame.frame_id, detectionsOfThisFrame.video_size);
+            self.updateWithNewFrame(detectionsOfThisFrame.objects, detectionsOfThisFrame.frame_id);
           }
         }
       });
