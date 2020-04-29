@@ -54,6 +54,11 @@
       "cfg": "cfg/yolov3.cfg",
       "weights": "yolov3.weights"
     },
+    "yolov3-tiny-prn": {
+      "data": "cfg/coco.data",
+      "cfg": "cfg/yolov3-tiny-prn.cfg",
+      "weights": "yolov3-tiny-prn.weights"
+    },
     "yolov3-tiny": {
       "data": "cfg/coco.data",
       "cfg": "cfg/yolov3-tiny.cfg",
