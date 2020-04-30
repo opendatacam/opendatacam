@@ -111,7 +111,7 @@ For example if you have a `myvideo.mp4` file in your `darknet` directory, the se
 
 - Opendatacam will restart the video file when it reaches the end
 - When you click on record, Opendatacam will reload the file to start the recording at the beggining
-- **LIMITATION: it will only record from frame nº50**
+- **LIMITATION: it will only record from frame nº25**
 
 
 ### Change neural network weights

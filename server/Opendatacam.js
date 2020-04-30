@@ -411,17 +411,23 @@ module.exports = {
     // console.log(Opendatacam.zombiesAreas);
 
     // Persist to db
-    if(Opendatacam.recordingStatus.isRecording && frameId >= 50) {
-      // Only record from frame 50, the start of a stream is very buggy
-      // and send bad JSON objects
-      this.persistNewRecordingFrame(
-        frameId,
-        frameTimestamp,
-        counterSummary,
-        trackerSummary,
-        countedItemsForThisFrame,
-        trackerDataForThisFrame
-      );
+    if(Opendatacam.recordingStatus.isRecording) {
+      // Only record from frame 25 for files, we can't be sure darknet has hooked to opendatacam before
+      if(Opendatacam.recordingStatus.filename.length > 0 && frameId < 25) {
+        console.log('do not persist yet for file, wait for frameId 25')
+        // console.log(frameId);
+      } else {
+        // and send bad JSON objects
+        this.persistNewRecordingFrame(
+          frameId,
+          frameTimestamp,
+          counterSummary,
+          trackerSummary,
+          countedItemsForThisFrame,
+          trackerDataForThisFrame
+        );
+      }
+      
     }
 
     this.sendUpdateToClient();
