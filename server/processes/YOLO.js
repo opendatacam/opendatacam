@@ -6,6 +6,8 @@ const path = require('path');
 const http = require('http');
 const killable = require('killable');
 const mjpegServer = require('mjpeg-server');
+const configHelper = require('../utils/configHelper');
+
 const {
   performance
 } = require('perf_hooks');
@@ -33,7 +35,7 @@ module.exports = {
 
       var darknetCommand = [];
       var initialCommand = ['./darknet','detector','demo', yoloParams.data , yoloParams.cfg, yoloParams.weights]
-      var endCommand = ['-ext_output','-dont_show','-json_port','8070', '-mjpeg_port', '8090']
+      var endCommand = ['-ext_output','-dont_show','-json_port', configHelper.getJsonStreamPort() , '-mjpeg_port', configHelper.getMjpegStreamPort()]
 
       // Special case if input camera is specified as a -c flag as we need to add one arg
       if(videoParams.indexOf('-c') === 0) {
@@ -165,7 +167,7 @@ module.exports = {
       JSONStreamRes = res;
       // Send one frame on the JSON stream to start things
       JSONStreamRes.write(JSON.stringify(simulation30FPSDetectionsData.find((detection) => detection.frame_id === frameNb)));
-    }).listen(8070);
+    }).listen(configHelper.getJsonStreamPort());
 
 
     killable(YOLO.simulationJSONHTTPStreamServer);
@@ -211,7 +213,7 @@ module.exports = {
           frameNb = 16;
         }
       }
-    }).listen(8090);
+    }).listen(configHelper.getMjpegStreamPort());
     killable(YOLO.simulationMJPEGServer);
   },
 }

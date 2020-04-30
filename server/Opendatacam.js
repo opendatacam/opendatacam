@@ -9,6 +9,7 @@ const config = require('../config.json');
 const Recording = require('./model/Recording');
 const DBManager = require('./db/DBManager');
 const Logger = require('./utils/Logger');
+const configHelper = require('./utils/configHelper');
 
 // YOLO process max retries
 const HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS = 30;
@@ -573,7 +574,7 @@ module.exports = {
 
     var options = {
       hostname: urlData.address,
-      port:     8070,
+      port:     configHelper.getJsonStreamPort(),
       path:     '/',
       method:   'GET'
     };

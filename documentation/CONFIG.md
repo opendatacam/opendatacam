@@ -407,6 +407,20 @@ If you want to persist the data on a remote mongodb instance, you can change the
 
 By default the Mongodb will be persisted in the `/data/db` directory of your host machine
 
+#### Ports
+
+You can modify the default ports used by OpenDataCam. 
+
+```json
+"PORTS": {
+  "app": 8080,
+  "darknet_json_stream": 8070,
+  "darknet_mjpeg_stream": 8090
+}
+```
+
+TODO DOCUMENT for docker image run, will need to update EXPOSE, and the commands 
+
 #### Tracker accuracy display
 
 The tracker accuracy layer shows a heatmap like this one:
