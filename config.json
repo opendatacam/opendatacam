@@ -85,8 +85,8 @@
   },
   "MONGODB_URL": "mongodb://127.0.0.1:27017",
   "PORTS": {
-    "app": 8070,
-    "darknet_json_stream": 9000,
-    "darknet_mjpeg_stream": 9100
+    "app": 8080,
+    "darknet_json_stream": 8070,
+    "darknet_mjpeg_stream": 8090
   }
 }
