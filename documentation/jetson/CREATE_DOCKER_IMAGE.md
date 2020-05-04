@@ -14,7 +14,7 @@ This comes pre-installed with Jetpack 4.3+
 
 ### 2. Compile Darknet:
 
-- Follow the ["2. Install Darknet (Neural network framework running YOLO)"](../USE_WITHOUT_DOCKER.md) 
+Follow the ["2. Install Darknet (Neural network framework running YOLO)"](../USE_WITHOUT_DOCKER.md) 
 
 ### 3. Create the docker image
 
@@ -45,13 +45,27 @@ date > marker && sudo docker build -t opendatacam .
 ### 4. Try the docker image
 
 ```bash
+# Optional download demo video
+mkdir opendatacam_videos
+cd opendatacam_videos
+wget https://github.com/opendatacam/opendatacam/raw/master/static/demo/demo.mp4
+cd ..
+
+# Download config.json file
+wget https://raw.githubusercontent.com/opendatacam/opendatacam/master/config.json
+
+# Edit with the parameters you want to use, for example using a raspberrycam with jetson nano
+"PATH_TO_YOLO_DARKNET" : "/var/local/darknet",
+"VIDEO_INPUT": "raspberrycam",
+"NEURAL_NETWORK": "yolov3-tiny",
+
 # Get the darknet-docker script
 wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/master/docker/run-jetson/run-docker.sh
 
 # Chmod to give exec permissions
 chmod 777 run-docker.sh
 
-# Run image interactively while giving access to CUDA stuff
+# Run image interactively mounting config.json and video directory
 sudo ./run-docker.sh run --rm -it opendatacam
 
 # Open browser at http://<IP of Jetson>:8080
