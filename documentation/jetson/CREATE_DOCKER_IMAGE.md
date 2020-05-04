@@ -83,15 +83,15 @@ sudo docker images
 # opendatacam             latest    023ab91c6291     3 minutes ago     1.975 GB
 
 # Tag your image
-sudo docker tag <IMAGEID> opendatacam/opendatacam:v3.0.0-beta.1-nano
+sudo docker tag <IMAGEID> opendatacam/opendatacam:v3.0.0-beta.2-nano
 
-# Or for tx2 : opendatacam/opendatacam:v3.0.0-beta.1-tx2
-# Or for xavier : opendatacam/opendatacam:v3.0.0-beta.1-xavier
+# Or for tx2 : opendatacam/opendatacam:v3.0.0-beta.2-tx2
+# Or for xavier : opendatacam/opendatacam:v3.0.0-beta.2-xavier
 
 # Push image
-sudo docker push opendatacam/opendatacam:v3.0.0-beta.1-nano
+sudo docker push opendatacam/opendatacam:v3.0.0-beta.2-nano
 
 
 # (optional) Useful Untag image (if you made a tipo)
-sudo docker rmi opendatacam/opendatacam:v3.0.0-beta.1-nano
+sudo docker rmi opendatacam/opendatacam:v3.0.0-beta.2-nano
 ```
