@@ -5,14 +5,14 @@ set -e
 
 # Each opendatacam release should set the correct version here and tag appropriatly on github
 VERSION=v3.0.0-beta.2
-# PLATFORM in ["nano","xavier","tx2","nvidiadocker_cuda_archbin_6_1"]
+# PLATFORM in ["nano","xavier","tx2","nvidiadocker"]
 PLATFORM=undefined
 VIDEO_INPUT=undefined
 INDEX=undefined
 
-PLATFORM_OPTIONS=("nano" "tx2" "xavier" "nvidiadocker_cuda_archbin_6_1")
+PLATFORM_OPTIONS=("nano" "tx2" "xavier" "nvidiadocker")
 DEFAUT_VIDEO_INPUT_OPTIONS=("usbcam" "usbcam" "usbcam" "file")
-DEFAUT_NEURAL_NETWORK_OPTIONS=("yolov3-tiny" "yolov2-voc" "yolov3" "yolov3")
+DEFAUT_NEURAL_NETWORK_OPTIONS=("yolov3-tiny" "yolov2-voc" "yolov4" "yolov4")
 
 # PATH TO DARKNET
 PATH_DARKNET_JETSON=/var/local/darknet

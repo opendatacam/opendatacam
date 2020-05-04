@@ -111,9 +111,9 @@ chmod 777 install-opendatacam.sh
 # Build for v3.0.0-beta.2 isn't available yet for xavier, please try to install without docker (see in avanced use) or install v2.1.0 : https://github.com/opendatacam/opendatacam/tree/v2.1.0
 #./install-opendatacam.sh --platform xavier
 
-# Install command for a Nvidia-docker machine (ARCH_BIN=6.1)
+# Install command for a Nvidia-docker machine
 # NB: Will run from demo file, you can change this after install, see "5. Customize OpenDataCam"
-./install-opendatacam.sh --platform nvidiadocker_cuda_archbin_6_1
+./install-opendatacam.sh --platform nvidiadocker
 ```
 
 This command will download and start a docker container on the machine. After it finishes the docker container starts a webserver on port 8080 (ports 8070 and 8090 are also used).
