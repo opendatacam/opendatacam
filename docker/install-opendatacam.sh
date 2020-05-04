@@ -15,7 +15,7 @@ DEFAUT_VIDEO_INPUT_OPTIONS=("usbcam" "usbcam" "usbcam" "file")
 DEFAUT_NEURAL_NETWORK_OPTIONS=("yolov3-tiny" "yolov2-voc" "yolov3" "yolov3")
 
 # PATH TO DARKNET
-PATH_DARKNET_JETSON=/darknet
+PATH_DARKNET_JETSON=/var/local/darknet
 PATH_DARKNET_NVIDIA_DOCKER=/var/local/darknet
 
 echo "Installing opendatacam docker image"
