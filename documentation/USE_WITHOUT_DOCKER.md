@@ -118,6 +118,12 @@ https://drive.google.com/file/d/18yYZWyKbo4XSDVyztmsEcF9B_6bxrhUY/view?usp=shari
 wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights --no-check-certificate
 ```
 
+Or if you want to copy them over SSH from your main machine with scp
+
+```
+scp yolov3-tiny.weights nvidia@192.168.1.210:/home/nvidia/Documents/darknet
+```
+
 #### (Optional) Test darknet
 
 ```bash
@@ -128,6 +134,9 @@ cd darknet
 
 # Run darknet on file
 ./darknet detector demo cfg/coco.data cfg/yolov3-tiny.cfg yolov3-tiny.weights opendatacam_videos/demo.mp4 -ext_output -dont_show
+
+# Run darknet on raspberrycam
+./darknet detector demo cfg/coco.data cfg/yolov3-tiny.cfg yolov3-tiny.weights "nvarguscamerasrc ! video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12 ! nvvidconv ! video/x-raw, format=BGRx, width=640, height=360 ! videoconvert ! video/x-raw, format=BGR ! appsink" -ext_output -dont_show
 ```
 
 ### 3. Install node.js, mongodb

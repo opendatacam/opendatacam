@@ -27,10 +27,10 @@ cd docker
 cp -R <pathtodarknet> .
 
 # Download the Dockerfile
-wget https://raw.githubusercontent.com/opendatacam/opendatacam/master/docker/run-jetson/Dockerfile
+wget https://raw.githubusercontent.com/opendatacam/opendatacam/development/docker/run-jetson/Dockerfile
 
 # Download a script to include in the docker container
-wget https://raw.githubusercontent.com/opendatacam/opendatacam/master/docker/run-jetson/docker-start-mongo-and-opendatacam.sh
+wget https://raw.githubusercontent.com/opendatacam/opendatacam/development/docker/run-jetson/docker-start-mongo-and-opendatacam.sh
 
 # Build image
 sudo docker build -t opendatacam .
@@ -52,7 +52,7 @@ wget https://github.com/opendatacam/opendatacam/raw/master/static/demo/demo.mp4
 cd ..
 
 # Download config.json file
-wget https://raw.githubusercontent.com/opendatacam/opendatacam/master/config.json
+wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/development/config.json
 
 # Edit with the parameters you want to use, for example using a raspberrycam with jetson nano
 "PATH_TO_YOLO_DARKNET" : "/var/local/darknet",
@@ -60,7 +60,7 @@ wget https://raw.githubusercontent.com/opendatacam/opendatacam/master/config.jso
 "NEURAL_NETWORK": "yolov3-tiny",
 
 # Get the darknet-docker script
-wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/master/docker/run-jetson/run-docker.sh
+wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/development/docker/run-jetson/run-docker.sh
 
 # Chmod to give exec permissions
 chmod 777 run-docker.sh
