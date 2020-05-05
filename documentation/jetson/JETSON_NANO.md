@@ -113,7 +113,7 @@ ls /dev/video*
 
 If this isn't the case, run the install script anyway, and after you will need to [modify the config.json](documentation/CONFIG.md) file to select your desired VIDEO_INPUT
 
-_If you have a Raspberry Pi Cam, [see advanced usage](#advanced-usage)._
+_If you have a Raspberry Pi Cam, [see advanced usage](#use-with-raspberry-pi-cam-v2-or-any-CSI-cam)._
 
 #### 5. Install Opendatacam
 
@@ -166,57 +166,11 @@ You should be able to operate Opendatacam without lag issues.
 
 [Here are the steps to set up the Jetson NANO in the Wildlife Cam Casing from Naturebytes.](HOUSING.md)
 
-### Advanced usage
-
-_[Follow this article](https://www.jetsonhacks.com/2019/04/02/jetson-nano-raspberry-pi-camera/) to test your raspberry pi cam_
+### Use with raspberry pi cam v2 or any CSI cam
 
 **IMPORTANT:** Unplug any usb webcam before plugging the raspberry pi cam or reboot after unpluging / plugin things.
 
-#### Use Raspberry Pi Cam with a non-docker installation of Opendatacam
+If you use a raspberry pi cam, just change the `"VIDEO_INPUT"` to `"raspberrycam"` in `config.json`
 
-_NB: [We hope this won't be necessary](https://github.com/opendatacam/opendatacam/issues/89) after Jetpack 4.2.1 release with native docker support._
 
-- Follow [Install without docker guide](../USE_WITHOUT_DOCKER.md)
 
-- In `config.json > VIDEO_INPUT` , set `raspberrycam_no_docker`
-
-Restart Opendatacam, [learn more about changing config.json here](../CONFIG.md).
-
-#### (EXPERIMENTAL) Use Raspberry Pi Cam with Opendatacam default installation
-
-_This is experimental, it might work for a time and then stop working... If it is the case you will be forced to re-flash your Jetson Nano as we have don't know a way to uninstall this._
-
-_NB: [We hope this won't be necessary anymore](https://github.com/opendatacam/opendatacam/issues/89) after Jetpack 4.2.1 release with native docker support._
-
-##### Setup
-
-```bash
-# Get scripts
-wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/master/docker/run-jetson/setup-raspberrycam-proxy.sh
-wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/master/docker/run-jetson/run-raspberrycam-proxy.sh
-# Give run permission
-sudo chmod 777 run-raspberrycam-proxy.sh setup-raspberrycam-proxy.sh
-
-# Setup proxy dependencies
-sudo ./setup-raspberrycam-proxy.sh
-
-# Install cronjob to start run-raspberrycam-proxy on boot
-cat <(crontab -l) <(echo "@reboot /bin/sh $(pwd)/run-raspberrycam-proxy.sh") | crontab -
-
-# Reboot your nano
-sudo reboot
-```
-
-Then you need to choose the `experimental_raspberrycam_docker` options in the config.json. _(see [CONFIG.md](../CONFIG.md))_
-
-- Open `config.json`
-- Replace `VIDEO_INPUT` param with `"experimental_raspberrycam_docker"` _(NOTE: Under the hood, the important thing is that OpenCV get this gstreamer pipeline in entry: `v4l2src device=/dev/video2 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink`)_
-
-##### Why
-
-From the docker container, we can't access directly the raspberrypi camera ( [more background](https://devtalk.nvidia.com/default/topic/1051653/jetson-nano/access-to-raspberry-cam-nvargus-daemon-from-docker-container/post/5338140/#5338140) )
-
-In order to do so we need to:
-
-- Start a process that proxys the Raspberry cam feed into an usb cam
-- Pick this "fake" usb cam from the docker container
