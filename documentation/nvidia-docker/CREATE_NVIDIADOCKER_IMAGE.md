@@ -2,7 +2,7 @@
 
 ### 1. Pre-requisite 
 
-- [Nvidia-docker v2.0 installed](INSTALL_NVIDIADOCKER.md)
+- [Nvidia Container toolkit installed](INSTALL_NVIDIADOCKER.md)
 
 ### 2. Build the image
 
@@ -23,7 +23,7 @@ sudo docker build -t opendatacam .
 date > marker && sudo docker build -t opendatacam .
 
 # Test the image in interactive mode
-sudo docker run --runtime=nvidia -p 8080:8080 -p 8090:8090 -p 8070:8070 -v /data/db:/data/db --rm -it opendatacam
+sudo docker run --gpus=all -p 8080:8080 -p 8090:8090 -p 8070:8070 -v /data/db:/data/db --rm -it opendatacam
 ```
 
 ### 3. Publish the docker image
