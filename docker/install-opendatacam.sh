@@ -109,7 +109,7 @@ case $argument in
     echo "Create the directory to run on files ..."
     mkdir -p opendatacam_videos
     echo "Download demo video ..."
-    wget -N https://github.com/opendatacam/opendatacam/raw/$VERSION/static/demo/demo.mp4 -O opendatacam_videos/demo.mp4
+    wget -N https://github.com/opendatacam/opendatacam/raw/$VERSION/public/static/demo/demo.mp4 -O opendatacam_videos/demo.mp4
 
     # Replace VIDEO_INPUT and NEURAL_NETWORK with default config for this platform
     VIDEO_INPUT=${DEFAUT_VIDEO_INPUT_OPTIONS[$INDEX]}

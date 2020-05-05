@@ -48,7 +48,7 @@ date > marker && sudo docker build -t opendatacam .
 # Optional download demo video
 mkdir opendatacam_videos
 cd opendatacam_videos
-wget https://github.com/opendatacam/opendatacam/raw/master/static/demo/demo.mp4
+wget https://github.com/opendatacam/opendatacam/raw/master/public/static/demo/demo.mp4
 cd ..
 
 # Download config.json file
