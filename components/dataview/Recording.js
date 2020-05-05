@@ -6,6 +6,7 @@ import SVG from 'react-inlinesvg';
 import { deleteRecording } from '../../statemanagement/app/HistoryStateManagement.js';
 import { getCounterColor, getDisplayClasses } from '../../utils/colors.js';
 import { COUNTING_AREA_TYPE } from '../../utils/constants.js';
+import RecordingDeleteConfirmationModal from '../shared/RecordingDeleteConfirmationModal.js';
 
 class Recording extends PureComponent {
 
@@ -13,6 +14,10 @@ class Recording extends PureComponent {
     super(props);
 
     this.DISPLAY_CLASSES = getDisplayClasses();
+
+    this.state = {
+      showDeleteConfirmationModal: false
+    }
   }
 
 
@@ -51,17 +56,23 @@ class Recording extends PureComponent {
           {!this.props.active &&
             <button
               className="btn btn-default p-0 ml-2 shadow rounded"
-              onClick={() => this.props.dispatch(deleteRecording(this.props.id))}
+              onClick={() => this.setState({ showDeleteConfirmationModal: true})}
             >
               <SVG 
                 className="w-6 h-6 svg-icon flex items-center" 
-                cacheGetRequests={true}
+                cacheRequests={true}
                 src={`/static/icons/ui/delete.svg`} 
                 aria-label="icon close"
               />
             </button>
           }
         </div>
+        {this.state.showDeleteConfirmationModal &&
+          <RecordingDeleteConfirmationModal 
+            onCancel={() => this.setState({ showDeleteConfirmationModal: false})} 
+            onConfirm={() => this.props.dispatch(deleteRecording(this.props.id))} 
+          />
+        }
         <div className="flex flex-initial flex-wrap pb-2 pl-1 m-2">
           {this.props.countingAreas.size > 0 &&
             <div className="flex flex-initial flex-col rounded bg-white text-black shadow m-2 p-4">

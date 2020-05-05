@@ -1,5 +1,33 @@
 define({ "api": [
   {
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "optional": false,
+            "field": "varname1",
+            "description": "<p>No type.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "varname2",
+            "description": "<p>With type.</p>"
+          }
+        ]
+      }
+    },
+    "type": "",
+    "url": "",
+    "version": "0.0.0",
+    "filename": "./apidoc/main.js",
+    "group": "/home/tdurand/Documents/opendatacam/apidoc/main.js",
+    "groupTitle": "/home/tdurand/Documents/opendatacam/apidoc/main.js",
+    "name": ""
+  },
+  {
     "type": "get",
     "url": "/counter/areas",
     "title": "Get areas",
@@ -54,7 +82,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Response",
-          "content": "{\n       \"fbb8a65b-03cc-4c95-8d6f-663ac4bd9aa0\": {\n         \"color\": \"yellow\",\n         \"location\": {\n           \"point1\": {\n             \"x\": 263,\n             \"y\": 625\n           },\n           \"point2\": {\n             \"x\": 472,\n             \"y\": 615\n           },\n           \"refResolution\": {\n             \"w\": 1500,\n             \"h\": 871\n           }\n         },\n         \"name\": \"test\",\n         \"type\": \"bidirectional\",\n         \"computed\": {\n           \"a\": 0.046349957976037706,\n           \"b\": -527.0496981416069,\n           \"xBounds\": {\n             \"xMin\": 224.42666666666668,\n             \"xMax\": 402.7733333333333\n           },\n           \"lineBearings\": [\n             151.6353351530571,\n             331.6353351530571\n           ]\n         }\n       },\n       \"a684ad42-d6fe-4be4-b77b-09b8473cc487\": {\n         \"color\": \"turquoise\",\n         \"location\": {\n           \"point1\": {\n             \"x\": 532,\n             \"y\": 647\n           },\n           \"point2\": {\n             \"x\": 729,\n             \"y\": 641\n           },\n           \"refResolution\": {\n             \"w\": 1500,\n             \"h\": 871\n           }\n         },\n         \"name\": \"area 2\",\n         \"type\": \"bidirectional\",\n         \"computed\": {\n           \"a\": 0.029503983402006398,\n           \"b\": -548.2275463758912,\n           \"xBounds\": {\n             \"xMin\": 453.97333333333336,\n             \"xMax\": 622.08\n           },\n           \"lineBearings\": [\n             151.6353351530571,\n             331.6353351530571\n           ]\n         }\n       }\n     }",
+          "content": "{\n       \"fbb8a65b-03cc-4c95-8d6f-663ac4bd9aa0\": {\n         \"color\": \"yellow\",\n         \"location\": {\n           \"point1\": {\n             \"x\": 263,\n             \"y\": 625\n           },\n           \"point2\": {\n             \"x\": 472,\n             \"y\": 615\n           },\n           \"refResolution\": {\n             \"w\": 1500,\n             \"h\": 871\n           }\n         },\n         \"name\": \"test\",\n         \"type\": \"bidirectional\",\n         \"computed\": {\n           \"a\": 0.046349957976037706,\n           \"b\": -527.0496981416069,\n           \"lineBearings\": [\n             151.6353351530571,\n             331.6353351530571\n           ]\n         }\n       },\n       \"a684ad42-d6fe-4be4-b77b-09b8473cc487\": {\n         \"color\": \"turquoise\",\n         \"location\": {\n           \"point1\": {\n             \"x\": 532,\n             \"y\": 647\n           },\n           \"point2\": {\n             \"x\": 729,\n             \"y\": 641\n           },\n           \"refResolution\": {\n             \"w\": 1500,\n             \"h\": 871\n           }\n         },\n         \"name\": \"area 2\",\n         \"type\": \"bidirectional\",\n         \"computed\": {\n           \"a\": 0.029503983402006398,\n           \"b\": -548.2275463758912,\n           \"lineBearings\": [\n             151.6353351530571,\n             331.6353351530571\n           ]\n         }\n       }\n     }",
           "type": "json"
         }
       ]
@@ -140,7 +168,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success Response:",
-          "content": "{\n      \"OPENDATACAM_VERSION\": \"3.0.0-alpha.1\",\n      \"PATH_TO_YOLO_DARKNET\": \"/darknet\",\n      \"VIDEO_INPUT\": \"TO_REPLACE_VIDEO_INPUT\",\n      \"NEURAL_NETWORK\": \"TO_REPLACE_NEURAL_NETWORK\",\n      \"VIDEO_INPUTS_PARAMS\": {\n        \"file\": \"opendatacam_videos/demo.mp4\",\n        \"usbcam\": \"v4l2src device=/dev/video0 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink\",\n        \"experimental_raspberrycam_docker\": \"v4l2src device=/dev/video2 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink\",\n        \"raspberrycam_no_docker\": \"nvarguscamerasrc ! video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12 ! nvvidconv ! video/x-raw, format=BGRx, width=640, height=360 ! videoconvert ! video/x-raw, format=BGR ! appsink\",\n        \"remote_cam\": \"YOUR IP CAM STREAM (can be .m3u8, MJPEG ...), anything supported by opencv\"\n      },\n      \"VALID_CLASSES\": [\n        \"*\"\n      ],\n      \"DISPLAY_CLASSES\": [\n        {\n          \"class\": \"bicycle\",\n          \"icon\": \"1F6B2.svg\"\n        },\n        {\n          \"class\": \"person\",\n          \"icon\": \"1F6B6.svg\"\n        },\n        {\n          \"class\": \"truck\",\n          \"icon\": \"1F69B.svg\"\n        },\n        {\n          \"class\": \"motorbike\",\n          \"icon\": \"1F6F5.svg\"\n        },\n        {\n          \"class\": \"car\",\n          \"icon\": \"1F697.svg\"\n        },\n        {\n          \"class\": \"bus\",\n          \"icon\": \"1F68C.svg\"\n        }\n      ],\n      \"PATHFINDER_COLORS\": [\n        \"#1f77b4\",\n        \"#ff7f0e\",\n        \"#2ca02c\",\n        \"#d62728\",\n        \"#9467bd\",\n        \"#8c564b\",\n        \"#e377c2\",\n        \"#7f7f7f\",\n        \"#bcbd22\",\n        \"#17becf\"\n      ],\n      \"COUNTER_COLORS\": {\n        \"yellow\": \"#FFE700\",\n        \"turquoise\": \"#A3FFF4\",\n        \"green\": \"#a0f17f\",\n        \"purple\": \"#d070f0\",\n        \"red\": \"#AB4435\"\n      },\n      \"NEURAL_NETWORK_PARAMS\": {\n        \"yolov3\": {\n          \"data\": \"cfg/coco.data\",\n          \"cfg\": \"cfg/yolov3.cfg\",\n          \"weights\": \"yolov3.weights\"\n        },\n        \"yolov3-tiny\": {\n          \"data\": \"cfg/coco.data\",\n          \"cfg\": \"cfg/yolov3-tiny.cfg\",\n          \"weights\": \"yolov3-tiny.weights\"\n        },\n        \"yolov2-voc\": {\n          \"data\": \"cfg/voc.data\",\n          \"cfg\": \"cfg/yolo-voc.cfg\",\n          \"weights\": \"yolo-voc.weights\"\n        }\n      },\n      \"TRACKER_ACCURACY_DISPLAY\": {\n        \"nbFrameBuffer\": 300,\n        \"settings\": {\n          \"radius\": 3.1,\n          \"blur\": 6.2,\n          \"step\": 0.1,\n          \"gradient\": {\n            \"1\": \"red\",\n            \"0.4\": \"orange\"\n          },\n          \"canvasResolutionFactor\": 0.1\n        }\n      },\n      \"MONGODB_URL\": \"mongodb://127.0.0.1:27017\"\n    }",
+          "content": "{\n      \"OPENDATACAM_VERSION\": \"3.0.0-beta.2\",\n      \"PATH_TO_YOLO_DARKNET\": \"/darknet\",\n      \"VIDEO_INPUT\": \"TO_REPLACE_VIDEO_INPUT\",\n      \"NEURAL_NETWORK\": \"TO_REPLACE_NEURAL_NETWORK\",\n      \"VIDEO_INPUTS_PARAMS\": {\n        \"file\": \"opendatacam_videos/demo.mp4\",\n        \"usbcam\": \"v4l2src device=/dev/video0 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink\",\n        \"experimental_raspberrycam_docker\": \"v4l2src device=/dev/video2 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink\",\n        \"raspberrycam_no_docker\": \"nvarguscamerasrc ! video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12 ! nvvidconv ! video/x-raw, format=BGRx, width=640, height=360 ! videoconvert ! video/x-raw, format=BGR ! appsink\",\n        \"remote_cam\": \"YOUR IP CAM STREAM (can be .m3u8, MJPEG ...), anything supported by opencv\"\n      },\n      \"VALID_CLASSES\": [\n        \"*\"\n      ],\n      \"DISPLAY_CLASSES\": [\n        {\n          \"class\": \"bicycle\",\n          \"icon\": \"1F6B2.svg\"\n        },\n        {\n          \"class\": \"person\",\n          \"icon\": \"1F6B6.svg\"\n        },\n        {\n          \"class\": \"truck\",\n          \"icon\": \"1F69B.svg\"\n        },\n        {\n          \"class\": \"motorbike\",\n          \"icon\": \"1F6F5.svg\"\n        },\n        {\n          \"class\": \"car\",\n          \"icon\": \"1F697.svg\"\n        },\n        {\n          \"class\": \"bus\",\n          \"icon\": \"1F68C.svg\"\n        }\n      ],\n      \"PATHFINDER_COLORS\": [\n        \"#1f77b4\",\n        \"#ff7f0e\",\n        \"#2ca02c\",\n        \"#d62728\",\n        \"#9467bd\",\n        \"#8c564b\",\n        \"#e377c2\",\n        \"#7f7f7f\",\n        \"#bcbd22\",\n        \"#17becf\"\n      ],\n      \"COUNTER_COLORS\": {\n        \"yellow\": \"#FFE700\",\n        \"turquoise\": \"#A3FFF4\",\n        \"green\": \"#a0f17f\",\n        \"purple\": \"#d070f0\",\n        \"red\": \"#AB4435\"\n      },\n      \"NEURAL_NETWORK_PARAMS\": {\n        \"yolov3\": {\n          \"data\": \"cfg/coco.data\",\n          \"cfg\": \"cfg/yolov3.cfg\",\n          \"weights\": \"yolov3.weights\"\n        },\n        \"yolov3-tiny\": {\n          \"data\": \"cfg/coco.data\",\n          \"cfg\": \"cfg/yolov3-tiny.cfg\",\n          \"weights\": \"yolov3-tiny.weights\"\n        },\n        \"yolov2-voc\": {\n          \"data\": \"cfg/voc.data\",\n          \"cfg\": \"cfg/yolo-voc.cfg\",\n          \"weights\": \"yolo-voc.weights\"\n        }\n      },\n      \"TRACKER_ACCURACY_DISPLAY\": {\n        \"nbFrameBuffer\": 300,\n        \"settings\": {\n          \"radius\": 3.1,\n          \"blur\": 6.2,\n          \"step\": 0.1,\n          \"gradient\": {\n            \"1\": \"red\",\n            \"0.4\": \"orange\"\n          },\n          \"canvasResolutionFactor\": 0.1\n        }\n      },\n      \"MONGODB_URL\": \"mongodb://127.0.0.1:27017\"\n    }",
           "type": "json"
         }
       ]
@@ -353,7 +381,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success Response:",
-          "content": "[\n      {\n        \"_id\": \"5cc3400252340f451cd7397a\",\n        \"dateStart\": \"2019-04-26T17:29:38.190Z\",\n        \"dateEnd\": \"2019-04-26T17:32:14.563Z\",\n        \"areas\": {\n          \"94afa4f8-1d24-4011-a481-ad3036e959b4\": {\n            \"color\": \"yellow\",\n            \"location\": {\n              \"point1\": {\n                \"x\": 241,\n                \"y\": 549\n              },\n              \"point2\": {\n                \"x\": 820,\n                \"y\": 513\n              },\n              \"refResolution\": {\n                \"w\": 1280,\n                \"h\": 666\n              }\n            },\n            \"name\": \"test\",\n            \"computed\": {\n              \"a\": 0.06721747654390149,\n              \"b\": -609.7129253605938,\n              \"xBounds\": {\n                \"xMin\": 241,\n                \"xMax\": 820\n              },\n              \"lineBearings\": [\n                151.14243038407085,\n                331.14243038407085\n              ]\n            }\n          }\n        },\n        \"counterSummary\": {\n          \"94afa4f8-1d24-4011-a481-ad3036e959b4\": {\n            \"car\": 111,\n            \"_total\": 111\n          }\n        },\n        \"trackerSummary\": {\n          \"totalItemsTracked\": 566\n        },\n        \"counterHistory\": [\n          [\n            {\n              \"timestamp\": \"2019-04-26T17:29:38.811Z\",\n              \"area\": \"94afa4f8-1d24-4011-a481-ad3036e959b4\",\n              \"name\": \"car\",\n              \"id\": 1021\n              \"bearing\": 155,\n              \"countingDirection\": \"rightleft_bottomtop\"\n            }\n          ],\n          [\n            {\n              \"timestamp\": \"2019-04-26T17:29:40.338Z\",\n              \"area\": \"94afa4f8-1d24-4011-a481-ad3036e959b4\",\n              \"name\": \"car\",\n              \"id\": 1030,\n              \"bearing\": 155,\n              \"countingDirection\": \"rightleft_bottomtop\"\n            }\n          ]\n      }\n    ]",
+          "content": "[\n      {\n        \"_id\": \"5cc3400252340f451cd7397a\",\n        \"dateStart\": \"2019-04-26T17:29:38.190Z\",\n        \"dateEnd\": \"2019-04-26T17:32:14.563Z\",\n        \"areas\": {\n          \"94afa4f8-1d24-4011-a481-ad3036e959b4\": {\n            \"color\": \"yellow\",\n            \"location\": {\n              \"point1\": {\n                \"x\": 241,\n                \"y\": 549\n              },\n              \"point2\": {\n                \"x\": 820,\n                \"y\": 513\n              },\n              \"refResolution\": {\n                \"w\": 1280,\n                \"h\": 666\n              }\n            },\n            \"name\": \"test\",\n            \"computed\": {\n              \"a\": 0.06721747654390149,\n              \"b\": -609.7129253605938,\n              \"lineBearings\": [\n                151.14243038407085,\n                331.14243038407085\n              ]\n            }\n          }\n        },\n        \"counterSummary\": {\n          \"94afa4f8-1d24-4011-a481-ad3036e959b4\": {\n            \"car\": 111,\n            \"_total\": 111\n          }\n        },\n        \"trackerSummary\": {\n          \"totalItemsTracked\": 566\n        },\n        \"counterHistory\": [\n          [\n            {\n              \"timestamp\": \"2019-04-26T17:29:38.811Z\",\n              \"area\": \"94afa4f8-1d24-4011-a481-ad3036e959b4\",\n              \"name\": \"car\",\n              \"id\": 1021\n              \"bearing\": 155,\n              \"countingDirection\": \"rightleft_bottomtop\"\n            }\n          ],\n          [\n            {\n              \"timestamp\": \"2019-04-26T17:29:40.338Z\",\n              \"area\": \"94afa4f8-1d24-4011-a481-ad3036e959b4\",\n              \"name\": \"car\",\n              \"id\": 1030,\n              \"bearing\": 155,\n              \"countingDirection\": \"rightleft_bottomtop\"\n            }\n          ]\n      }\n    ]",
           "type": "json"
         }
       ]
@@ -366,7 +394,7 @@ define({ "api": [
     "type": "get",
     "url": "/recording/:id/counter/csv",
     "title": "Counter history (CSV)",
-    "name": "Counter_history__CSV_",
+    "name": "Counter_history_(CSV)",
     "group": "Recording",
     "description": "<p>Get counter history data as CSV file</p>",
     "parameter": {
@@ -698,7 +726,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Success Response:",
-          "content": "{\n  \"offset\": 0,\n       \"limit\": 1,\n       \"total\": 51,\n       \"recordings\": [\n         {\n           \"_id\": \"5cc3400252340f451cd7397a\",\n           \"dateStart\": \"2019-04-26T17:29:38.190Z\",\n           \"dateEnd\": \"2019-04-26T17:32:14.563Z\",\n           \"areas\": {\n             \"94afa4f8-1d24-4011-a481-ad3036e959b4\": {\n               \"color\": \"yellow\",\n               \"location\": {\n                 \"point1\": {\n                   \"x\": 241,\n                   \"y\": 549\n                 },\n                 \"point2\": {\n                   \"x\": 820,\n                   \"y\": 513\n                 },\n                 \"refResolution\": {\n                   \"w\": 1280,\n                   \"h\": 666\n                 }\n               },\n               \"name\": \"test\",\n               \"computed\": {\n                 \"a\": 0.06721747654390149,\n                 \"b\": -609.7129253605938,\n                 \"xBounds\": {\n                   \"xMin\": 241,\n                   \"xMax\": 820\n                 }\n               }\n             }\n           },\n           \"counterSummary\": {\n             \"94afa4f8-1d24-4011-a481-ad3036e959b4\": {\n               \"car\": 111,\n               \"_total\": 111\n             }\n           },\n           \"trackerSummary\": {\n             \"totalItemsTracked\": 566\n           }\n         }\n       ]\n}",
+          "content": "{\n  \"offset\": 0,\n       \"limit\": 1,\n       \"total\": 51,\n       \"recordings\": [\n         {\n           \"_id\": \"5cc3400252340f451cd7397a\",\n           \"dateStart\": \"2019-04-26T17:29:38.190Z\",\n           \"dateEnd\": \"2019-04-26T17:32:14.563Z\",\n           \"areas\": {\n             \"94afa4f8-1d24-4011-a481-ad3036e959b4\": {\n               \"color\": \"yellow\",\n               \"location\": {\n                 \"point1\": {\n                   \"x\": 241,\n                   \"y\": 549\n                 },\n                 \"point2\": {\n                   \"x\": 820,\n                   \"y\": 513\n                 },\n                 \"refResolution\": {\n                   \"w\": 1280,\n                   \"h\": 666\n                 }\n               },\n               \"name\": \"test\",\n               \"computed\": {\n                 \"a\": 0.06721747654390149,\n                 \"b\": -609.7129253605938\n               }\n             }\n           },\n           \"counterSummary\": {\n             \"94afa4f8-1d24-4011-a481-ad3036e959b4\": {\n               \"car\": 111,\n               \"_total\": 111\n             }\n           },\n           \"trackerSummary\": {\n             \"totalItemsTracked\": 566\n           }\n         }\n       ]\n}",
           "type": "json"
         }
       ]
@@ -757,33 +785,5 @@ define({ "api": [
     "version": "0.0.0",
     "filename": "./server.js",
     "groupTitle": "Webcam"
-  },
-  {
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "optional": false,
-            "field": "varname1",
-            "description": "<p>No type.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "String",
-            "optional": false,
-            "field": "varname2",
-            "description": "<p>With type.</p>"
-          }
-        ]
-      }
-    },
-    "type": "",
-    "url": "",
-    "version": "0.0.0",
-    "filename": "./apidoc/main.js",
-    "group": "_home_tdurand_Documents_opendatacam_apidoc_main_js",
-    "groupTitle": "_home_tdurand_Documents_opendatacam_apidoc_main_js",
-    "name": ""
   }
 ] });

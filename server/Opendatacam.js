@@ -1,6 +1,7 @@
 const Tracker = require('node-moving-things-tracker').Tracker;
 const YOLO = require('./processes/YOLO');
 const computeLineBearing = require('./tracker/utils').computeLineBearing;
+const checkLineIntersection = require('./tracker/utils').checkLineIntersection;
 const cloneDeep = require('lodash.clonedeep');
 const fs = require('fs');
 const http = require('http');
@@ -8,6 +9,7 @@ const config = require('../config.json');
 const Recording = require('./model/Recording');
 const DBManager = require('./db/DBManager');
 const Logger = require('./utils/Logger');
+const configHelper = require('./utils/configHelper');
 
 // YOLO process max retries
 const HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS = 30;
@@ -110,11 +112,6 @@ module.exports = {
 
     let a = (- point2.y + point1.y) / (point2.x - point1.x);
     let b = - point1.y - a * point1.x;
-    // Store xBounds to determine if the point is "intersecting" the line on the drawn part
-    let xBounds = {
-      xMin: Math.min(point1.x, point2.x),
-      xMax: Math.max(point1.x, point2.x)
-    }
 
     // Compute bearing
     let lineBearing = computeLineBearing(point1.x, point1.y, point2.x, point2.y);
@@ -133,8 +130,15 @@ module.exports = {
     Opendatacam.countingAreas[key]['computed'] = {
       a: a,
       b: b,
-      xBounds: xBounds,
-      lineBearings: lineBearings
+      lineBearings: lineBearings,
+      point1: {
+        x: point1.x,
+        y: - point1.y
+      },
+      point2: {
+        x: point2.x,
+        y: - point2.y
+      }
     }
   },
 
@@ -203,7 +207,7 @@ module.exports = {
     })
   },
 
-  updateWithNewFrame: function(detectionsOfThisFrame, frameId, videoSize) {
+  updateWithNewFrame: function(detectionsOfThisFrame, frameId) {
     // Set yolo status to started if it's not the case
     if(!Opendatacam.isListeningToYOLO) {
       Opendatacam.isListeningToYOLO = true;
@@ -217,15 +221,8 @@ module.exports = {
 
     // If we didn't get the videoResolution yet
     if(!Opendatacam.videoResolution) {
-      if(!videoSize) {
-        console.log('Didn\'t get video resolution yet, not sending tracker info');
-        return;
-      } else {
-        this.setVideoResolution({
-          w: videoSize.width,
-          h: videoSize.height
-        })
-      }
+      console.log('Didn\'t get video resolution yet, not sending tracker info');
+      return;
     }
 
     // Compute FPS
@@ -244,10 +241,10 @@ module.exports = {
     let detectionScaledOfThisFrame = detectionsOfThisFrame.map((detection) => {
       return {
         name: detection.name,
-        x: (detection.absolute_coordinates.center_x + detection.absolute_coordinates.width / 2) / videoSize.width * Opendatacam.videoResolution.w,
-        y: (detection.absolute_coordinates.center_y + detection.absolute_coordinates.height / 2) / videoSize.height * Opendatacam.videoResolution.h,
-        w: detection.absolute_coordinates.width / videoSize.width * Opendatacam.videoResolution.w,
-        h: detection.absolute_coordinates.height / videoSize.height * Opendatacam.videoResolution.h,
+        x: detection.relative_coordinates.center_x * Opendatacam.videoResolution.w,
+        y: detection.relative_coordinates.center_y * Opendatacam.videoResolution.h,
+        w: detection.relative_coordinates.width * Opendatacam.videoResolution.w,
+        h: detection.relative_coordinates.height * Opendatacam.videoResolution.h,
         counted: false,
         confidence: detection.confidence
       };
@@ -256,7 +253,13 @@ module.exports = {
     // If VALID_CLASSES if set, we should keep only those and filter out the rest
     if(config.VALID_CLASSES && config.VALID_CLASSES.indexOf("*") === -1) {
       detectionScaledOfThisFrame = detectionScaledOfThisFrame.filter((detection) => config.VALID_CLASSES.indexOf(detection.name) > -1)
-      console.log(`Filtered out ${detectionsOfThisFrame.length - detectionScaledOfThisFrame.length} detections that weren't valid classes`)
+      //console.log(`Filtered out ${detectionsOfThisFrame.length - detectionScaledOfThisFrame.length} detections that weren't valid classes`)
+    }
+
+    // If confidence_threshold if set, we should keep only those and filter out the rest
+    if(config.TRACKER_SETTINGS && config.TRACKER_SETTINGS.confidence_threshold) {
+      detectionScaledOfThisFrame = detectionScaledOfThisFrame.filter((detection) => detection.confidence >= config.TRACKER_SETTINGS.confidence_threshold)
+      //console.log(`Filtered out ${detectionsOfThisFrame.length - detectionScaledOfThisFrame.length} detections that didn't meet the confidence threshold`)
     }
 
     // console.log(`Received Detection:`);
@@ -310,14 +313,19 @@ module.exports = {
 
             if(Math.sign(lastDeltaY) !== Math.sign(deltaY)) {
 
-              // Object trajectory must intersept the counting line between xBounds
-              // We know it intersept between those two frames, check if they are
-              // corresponding to the bounds
-              let minX = Math.min(trackerItemLastFrame.x, trackedItem.x);
-              let maxX = Math.max(trackerItemLastFrame.x, trackedItem.x);
-
-              if(countingAreaProps.xBounds.xMin <= maxX && 
-                countingAreaProps.xBounds.xMax >= minX) {
+              let intersection = checkLineIntersection(
+                countingAreaProps.point1.x, 
+                countingAreaProps.point1.y, 
+                countingAreaProps.point2.x,
+                countingAreaProps.point2.y,
+                trackerItemLastFrame.x,
+                - trackerItemLastFrame.y,
+                trackedItem.x,
+                - trackedItem.y)
+  
+  
+              // Object trajectory must intercept the counting line on the counting line
+              if(intersection.onLine1) {
 
                 // console.log("*****************************")
                 // console.log("COUNTING SOMETHING")
@@ -354,8 +362,7 @@ module.exports = {
                   }
                 }
               } else {
-                // console.log('NOT IN xBOUNDS');
-                // console.log(countingAreaProps.xBounds);
+                // console.log('Intersection with object trajectory is NOT on counting line, do not count');
                 // console.log(trackedItem)
               }
 
@@ -404,17 +411,23 @@ module.exports = {
     // console.log(Opendatacam.zombiesAreas);
 
     // Persist to db
-    if(Opendatacam.recordingStatus.isRecording && frameId >= 50) {
-      // Only record from frame 50, the start of a stream is very buggy
-      // and send bad JSON objects
-      this.persistNewRecordingFrame(
-        frameId,
-        frameTimestamp,
-        counterSummary,
-        trackerSummary,
-        countedItemsForThisFrame,
-        trackerDataForThisFrame
-      );
+    if(Opendatacam.recordingStatus.isRecording) {
+      // Only record from frame 25 for files, we can't be sure darknet has hooked to opendatacam before
+      if(Opendatacam.recordingStatus.filename.length > 0 && frameId < 25) {
+        console.log('do not persist yet for file, wait for frameId 25')
+        // console.log(frameId);
+      } else {
+        // and send bad JSON objects
+        this.persistNewRecordingFrame(
+          frameId,
+          frameTimestamp,
+          counterSummary,
+          trackerSummary,
+          countedItemsForThisFrame,
+          trackerDataForThisFrame
+        );
+      }
+      
     }
 
     this.sendUpdateToClient();
@@ -515,10 +528,8 @@ module.exports = {
     // Store lowest ID of currently tracked item when start recording 
     // to be able to compute nbObjectTracked
     const currentlyTrackedItems = Tracker.getJSONOfTrackedItems() 
-    const highestTrackedItemId = currentlyTrackedItems[currentlyTrackedItems.length - 1].id;
+    const highestTrackedItemId = currentlyTrackedItems.length > 0 ? currentlyTrackedItems[currentlyTrackedItems.length - 1].id : 0;
     Opendatacam._refTrackedItemIdWhenRecordingStarted = highestTrackedItemId - currentlyTrackedItems.length;
-
-    
 
     // Persist recording
     DBManager.insertRecording(new Recording(
@@ -569,7 +580,7 @@ module.exports = {
 
     var options = {
       hostname: urlData.address,
-      port:     8070,
+      port:     configHelper.getJsonStreamPort(),
       path:     '/',
       method:   'GET'
     };
@@ -633,6 +644,7 @@ module.exports = {
             }
             detectionsOfThisFrame = JSON.parse(message);
             message = '';
+            self.updateWithNewFrame(detectionsOfThisFrame.objects, detectionsOfThisFrame.frame_id);
           } catch (error) {
             console.log("Error with message send by YOLO, not valid JSON")
             message = '';
@@ -643,7 +655,7 @@ module.exports = {
 
           // Put this outside the try-catch loop to have proper error handling for updateWithNewFrame
           if(detectionsOfThisFrame !== null) {
-            self.updateWithNewFrame(detectionsOfThisFrame.objects, detectionsOfThisFrame.frame_id, detectionsOfThisFrame.video_size);
+            self.updateWithNewFrame(detectionsOfThisFrame.objects, detectionsOfThisFrame.frame_id);
           }
         }
       });

@@ -16,11 +16,12 @@ const FileSystemManager = require('./server/fs/FileSystemManager')
 const MjpegProxy = require('mjpeg-proxy').MjpegProxy;
 const intercept = require("intercept-stdout");
 const config = require('./config.json');
+const configHelper = require('./server/utils/configHelper')
 
 const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not running on the Jetson
 // const SIMULATION_MODE = true;
 
-const port = parseInt(process.env.PORT, 10) || 8080
+const port = parseInt(process.env.PORT, 10) || configHelper.getAppPort()
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
@@ -52,12 +53,34 @@ DBManager.init().then(
   }
 )
 
-// Code to watch & record the console (stdout) to send to the /console API endpoint
+// TODO Move the stdout code into it's own module
+var videoResolution = null;
+
+if(SIMULATION_MODE) {
+  videoResolution = {
+    w: 1280,
+    h: 720
+  }
+  Opendatacam.setVideoResolution(videoResolution)
+}
+
 var stdoutBuffer = "";
 var stdoutInterval = "";
 var bufferLimit = 30000;
 var unhook_intercept = intercept(function(text) {
   var stdoutText = text.toString();
+  // Hacky way to get the video resolution from YOLO
+  // We parse the stdout looking for "Video stream: 640 x 480"
+  // alternative would be to add this info to the JSON stream sent by YOLO, would need to send a PR to https://github.com/alexeyab/darknet
+  if(stdoutText.indexOf('Video stream:') > -1) {
+    var splitOnStream = stdoutText.toString().split("stream:")
+    var ratio = splitOnStream[1].split("\n")[0];
+    videoResolution = {
+      w : parseInt(ratio.split("x")[0].trim()),
+      h : parseInt(ratio.split("x")[1].trim())
+    }
+    Opendatacam.setVideoResolution(videoResolution);
+  }
   stdoutBuffer += stdoutText;
   stdoutInterval += stdoutText;
 
@@ -123,7 +146,7 @@ app.prepare()
   express.get('/webcam/stream', (req, res) => {
     const urlData = getURLData(req);
     // Proxy MJPEG stream from darknet to avoid freezing issues
-    return new MjpegProxy(`http://${urlData.address}:8090`).proxyRequest(req, res);
+    return new MjpegProxy(`http://${urlData.address}:${config.PORTS.darknet_mjpeg_stream}`).proxyRequest(req, res);
   });
 
   /**
@@ -258,10 +281,6 @@ app.prepare()
           "computed": {
             "a": 0.046349957976037706,
             "b": -527.0496981416069,
-            "xBounds": {
-              "xMin": 224.42666666666668,
-              "xMax": 402.7733333333333
-            },
             "lineBearings": [
               151.6353351530571,
               331.6353351530571
@@ -289,10 +308,6 @@ app.prepare()
           "computed": {
             "a": 0.029503983402006398,
             "b": -548.2275463758912,
-            "xBounds": {
-              "xMin": 453.97333333333336,
-              "xMax": 622.08
-            },
             "lineBearings": [
               151.6353351530571,
               331.6353351530571
@@ -475,11 +490,7 @@ app.prepare()
                   "name": "test",
                   "computed": {
                     "a": 0.06721747654390149,
-                    "b": -609.7129253605938,
-                    "xBounds": {
-                      "xMin": 241,
-                      "xMax": 820
-                    }
+                    "b": -609.7129253605938
                   }
                 }
               },
@@ -673,10 +684,6 @@ app.prepare()
                 "computed": {
                   "a": 0.06721747654390149,
                   "b": -609.7129253605938,
-                  "xBounds": {
-                    "xMin": 241,
-                    "xMax": 820
-                  },
                   "lineBearings": [
                     151.14243038407085,
                     331.14243038407085
@@ -823,7 +830,7 @@ app.prepare()
    *
    * @apiSuccessExample {json} Success Response:
    * {
-      "OPENDATACAM_VERSION": "3.0.0-beta.1",
+      "OPENDATACAM_VERSION": "3.0.0-beta.2",
       "PATH_TO_YOLO_DARKNET": "/darknet",
       "VIDEO_INPUT": "TO_REPLACE_VIDEO_INPUT",
       "NEURAL_NETWORK": "TO_REPLACE_NEURAL_NETWORK",

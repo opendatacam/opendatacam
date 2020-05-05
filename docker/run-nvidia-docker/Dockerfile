@@ -1,7 +1,4 @@
-FROM nvidia/cuda
-
-# TODO REPLACE CUDA_ARCH_BIN with your GPU value: https://developer.nvidia.com/cuda-gpus
-# For example my GeForce GTX 1050 is 6.1
+FROM nvidia/cuda:10.2-cudnn7-devel-ubuntu18.04
 
 # This is a dev image, needed to compile OpenCV with CUDA
 # Install  Gstreamer and OpenCV Pre-requisite libs
@@ -28,12 +25,12 @@ RUN apt-get install -y \
   gcc \
   git
 RUN apt-get update -y && apt-get install -y ffmpeg
-ENV OPENCV_RELEASE_TAG 3.3.1
+ENV OPENCV_RELEASE_TAG 4.1.1
 RUN git clone --depth 1 -b ${OPENCV_RELEASE_TAG}  https://github.com/opencv/opencv.git /var/local/git/opencv
 RUN cd /var/local/git/opencv
 RUN mkdir -p /var/local/git/opencv/build && \
     cd /var/local/git/opencv/build $$ && \
-    cmake -D CMAKE_INSTALL_PREFIX=/usr/local CMAKE_BUILD_TYPE=Release -D WITH_GSTREAMER=ON -D WITH_GSTREAMER_0_10=OFF -D WITH_CUDA=OFF -D WITH_TBB=ON -D WITH_LIBV4L=ON WITH_FFMPEG=ON .. 
+    cmake -D CMAKE_INSTALL_PREFIX=/usr/local CMAKE_BUILD_TYPE=Release -D WITH_GSTREAMER=ON -D WITH_GSTREAMER_0_10=OFF -D WITH_CUDA=OFF -D WITH_TBB=ON -D WITH_LIBV4L=ON WITH_FFMPEG=ON -DOPENCV_GENERATE_PKGCONFIG=ON ..
 RUN  cd /var/local/git/opencv/build && \ 
       make -j8 install
 
@@ -43,13 +40,12 @@ RUN  cd /var/local/git/opencv/build && \
 # for debug
 # apt-get install -y --no-install-recommends vim 
 
-RUN git clone --depth 1 -b opendatacamv3 https://github.com/opendatacam/darknet /var/local/darknet
+RUN git clone --depth 1 -b odc https://github.com/opendatacam/darknet /var/local/darknet
 
 WORKDIR /var/local/darknet
 RUN sed -i -e s/GPU=0/GPU=1/ Makefile;
-# For some reason no need for a CUDNN=1 on my CUDA_ARCH_BIN=6.1
+RUN sed -i -e s/CUDNN=0/CUDNN=1/ Makefile;
 RUN sed -i -e s/OPENCV=0/OPENCV=1/ Makefile;
-RUN sed -i -e s/LIBSO=0/LIBSO=1/ Makefile;
 RUN make
 
 RUN apt-get update; \
@@ -61,9 +57,10 @@ RUN apt-get update; \
 # Get weights files
 RUN wget https://pjreddie.com/media/files/yolov3.weights -O /var/local/darknet/yolov3.weights
 RUN wget https://pjreddie.com/media/files/yolov3-tiny.weights -O /var/local/darknet/yolov3-tiny.weights
-RUN mkdir /var/local/darknet/opendatacam_videos && wget https://github.com/opendatacam/opendatacam/raw/v3.0.0-beta.1/static/demo/demo.mp4 -O /var/local/darknet/opendatacam_videos/demo.mp4
+RUN wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights -O /var/local/darknet/yolov4.weights
+RUN mkdir /var/local/darknet/opendatacam_videos && wget https://github.com/opendatacam/opendatacam/raw/development/public/static/demo/demo.mp4 -O /var/local/darknet/opendatacam_videos/demo.mp4
 
-# wget -N https://github.com/opendatacam/opendatacam/raw/v3.0.0-beta.1/static/demo/demo.mp4
+# wget -N https://github.com/opendatacam/opendatacam/raw/v3.0.0-beta.2/static/demo/demo.mp4
 # Debug, test darknet : ./darknet detector demo cfg/coco.data cfg/yolov3.cfg yolov3.weights -ext_output -dont_show demo.mp4
 # Debug, test darknet : ./darknet detector demo cfg/coco.data cfg/yolov3-tiny.cfg yolov3-tiny.weights -ext_output -dont_show demo.mp4
 
@@ -81,13 +78,13 @@ VOLUME ["/data/db"]
 # Technique to rebuild the docker file from here : https://stackoverflow.com/a/49831094/1228937
 # Build using date > marker && docker build .
 # date > marker && sudo docker build -t opendatacam .
-COPY marker /dev/null
-RUN git clone --depth 1 -b v3.0.0-beta.1 https://github.com/opendatacam/opendatacam /var/local/opendatacam
+#COPY marker /dev/null
+RUN git clone --depth 1 -b development https://github.com/opendatacam/opendatacam /var/local/opendatacam
 
 WORKDIR /var/local/opendatacam
 RUN sed -i -e s+TO_REPLACE_PATH_TO_DARKNET+/var/local/darknet+ config.json
 RUN sed -i -e s+TO_REPLACE_VIDEO_INPUT+file+ config.json
-RUN sed -i -e s+TO_REPLACE_NEURAL_NETWORK+yolov3+ config.json
+RUN sed -i -e s+TO_REPLACE_NEURAL_NETWORK+yolov4+ config.json
 
 # Build
 RUN npm install

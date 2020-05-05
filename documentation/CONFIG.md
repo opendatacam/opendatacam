@@ -111,7 +111,7 @@ For example if you have a `myvideo.mp4` file in your `darknet` directory, the se
 
 - Opendatacam will restart the video file when it reaches the end
 - When you click on record, Opendatacam will reload the file to start the recording at the beggining
-- **LIMITATION: it will only record from frame nº50**
+- **LIMITATION: it will only record from frame nº25**
 
 
 ### Change neural network weights
@@ -194,7 +194,7 @@ If you want to customize it you should modify the `DISPLAY_CLASSES` config.
 ]
 ```
 
-You can associate any icon that are in the `/static/icons/openmojis` folder. (they are from https://openmoji.org/, you can search the unicode icon name directly there)
+You can associate any icon that are in the `public/static/icons/openmojis` folder. (they are from https://openmoji.org/, you can search the unicode icon name directly there)
 
 For example:
 
@@ -406,6 +406,20 @@ For example, if you want to use [yolov3-openimages](https://pjreddie.com/media/f
 If you want to persist the data on a remote mongodb instance, you can change the setting `MONGODB_URL` .
 
 By default the Mongodb will be persisted in the `/data/db` directory of your host machine
+
+#### Ports
+
+You can modify the default ports used by OpenDataCam. 
+
+```json
+"PORTS": {
+  "app": 8080,
+  "darknet_json_stream": 8070,
+  "darknet_mjpeg_stream": 8090
+}
+```
+
+TODO DOCUMENT for docker image run, will need to update EXPOSE, and the commands 
 
 #### Tracker accuracy display
 

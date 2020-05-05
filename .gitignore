@@ -6,8 +6,8 @@ node_modules/
 *.bak
 prototype/video
 history.db
-static/trackerHistory.json
+public/static/trackerHistory.json
 yarn-error.log
-static/lastwebcamframe.jpg
-static/trackerHistoryExport.json
+public/static/lastwebcamframe.jpg
+public/static/trackerHistoryExport.json
 # static/placeholder/frames/

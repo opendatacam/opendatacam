@@ -1,8 +1,14 @@
-## How to use opendatacam v3 without docker
+## How to use OpenDataCam v3 without docker
 
-### 1. Flash jetson to jetpack 4.3
+### 1. Install dependencies
+
+**For Jetsons:** Flash jetson to jetpack 4.3+
 
 https://developer.nvidia.com/embedded/jetpack
+
+**For GNU/Linux x86_64 machine with a CUDA compatible GPU:** Install nvidia drivers and CUDA
+
+https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html
 
 ### 2. Install Darknet (Neural network framework running YOLO)
 
@@ -11,9 +17,9 @@ https://developer.nvidia.com/embedded/jetpack
 _NB: Make sure you reinstall darknet entirely if you were on ODC v2.x, for v3 the version has changed._
 
 ```bash
-git clone --depth 1 -b opendatacamv3 https://github.com/opendatacam/darknet
+git clone --depth 1 -b odc https://github.com/opendatacam/darknet
 
-#NB: the changes from https://github.com/alexeyab/darknet are documented here : https://github.com/opendatacam/darknet/pull/5
+#NB: the changes from https://github.com/alexeyab/darknet are documented here : https://github.com/opendatacam/darknet/pull/6
 ```
 
 #### Modify the Makefile before compiling
@@ -27,11 +33,13 @@ Open the `Makefile` in the darknet folder and make these changes:
 GPU=1
 CUDNN=1
 OPENCV=1
-LIBSO=1
 
 # Uncomment the following line
 # For Jetson TX1, Tegra X1, DRIVE CX, DRIVE PX - uncomment:
 ARCH= -gencode arch=compute_53,code=[sm_53,compute_53]
+
+# Replace NVCC path
+NVCC=/usr/local/cuda/bin/nvcc
 ```
 
 *For Jetson TX2*
@@ -41,7 +49,6 @@ ARCH= -gencode arch=compute_53,code=[sm_53,compute_53]
 GPU=1
 CUDNN=1
 OPENCV=1
-LIBSO=1
 
 # Uncomment the following line
 # For Jetson Tx2 or Drive-PX2 uncomment
@@ -56,7 +63,6 @@ GPU=1
 CUDNN=1
 CUDNN_HALF=1
 OPENCV=1
-LIBSO=1
 
 # Uncomment the following line
 # Jetson XAVIER
@@ -74,14 +80,13 @@ nvcc --version
 # If it returns Command 'nvcc' not found , you need to install cuda properly: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#package-manager-installation and also add cuda to your PATH with the post install instructions: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#post-installation-actions
 ```
 
-
 Make change to Makefile:
 
 ```Makefile
 # Set these variable to 1:
 GPU=1
+CUDNN=1
 OPENCV=1
-LIBSO=1
 ```
 
 #### Compile darknet
@@ -115,6 +120,16 @@ wget https://pjreddie.com/media/files/yolo-voc.weights --no-check-certificate
 wget https://pjreddie.com/media/files/yolov3-tiny.weights --no-check-certificate
 # YOLOv3
 wget https://pjreddie.com/media/files/yolov3.weights --no-check-certificate
+# YOLOv3-tiny-prn , see https://github.com/alexeyab/darknet#pre-trained-models
+https://drive.google.com/file/d/18yYZWyKbo4XSDVyztmsEcF9B_6bxrhUY/view?usp=sharing
+# YOLOv4
+wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights --no-check-certificate
+```
+
+Or if you want to copy them over SSH from your main machine with scp
+
+```
+scp yolov3-tiny.weights nvidia@192.168.1.210:/home/nvidia/Documents/darknet
 ```
 
 #### (Optional) Test darknet
@@ -123,10 +138,13 @@ wget https://pjreddie.com/media/files/yolov3.weights --no-check-certificate
 # Go to darknet folder
 cd darknet 
 # Run darknet (yolo) on webcam
-LD_LIBRARY_PATH=./:$LD_LIBRARY_PATH ./uselib data/coco.names cfg/yolov3-tiny.cfg yolov3-tiny.weights "v4l2src device=/dev/video0 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink"
+./darknet detector demo cfg/coco.data cfg/yolov3-tiny.cfg yolov3-tiny.weights "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink" -ext_output -dont_show
 
 # Run darknet on file
-LD_LIBRARY_PATH=./:$LD_LIBRARY_PATH ./uselib data/coco.names cfg/yolov3-tiny.cfg yolov3-tiny.weights opendatacam_videos/demo.mp4
+./darknet detector demo cfg/coco.data cfg/yolov3-tiny.cfg yolov3-tiny.weights opendatacam_videos/demo.mp4 -ext_output -dont_show
+
+# Run darknet on raspberrycam
+./darknet detector demo cfg/coco.data cfg/yolov3-tiny.cfg yolov3-tiny.weights "nvarguscamerasrc ! video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12 ! nvvidconv ! video/x-raw, format=BGRx, width=640, height=360 ! videoconvert ! video/x-raw, format=BGR ! appsink" -ext_output -dont_show
 ```
 
 ### 3. Install node.js, mongodb
@@ -288,7 +306,7 @@ cd build
 # Note here you need to set both FFMPEG and GSTREAMER to ON
 # Running this command should output a summary of which dependencies are gonna be build with opencv
 # Double check that both gstreamer and ffmpeg are ON
-cmake -D CMAKE_INSTALL_PREFIX=/usr/local CMAKE_BUILD_TYPE=Release -D WITH_GSTREAMER=ON -D WITH_GSTREAMER_0_10=OFF -D WITH_CUDA=OFF -D WITH_TBB=ON -D WITH_LIBV4L=ON WITH_FFMPEG=ON .. 
+cmake -D CMAKE_INSTALL_PREFIX=/usr/local CMAKE_BUILD_TYPE=Release -D WITH_GSTREAMER=ON -D WITH_GSTREAMER_0_10=OFF -D WITH_CUDA=OFF -D WITH_TBB=ON -D WITH_LIBV4L=ON WITH_FFMPEG=ON -DOPENCV_GENERATE_PKGCONFIG=ON ..
 
 sudo make install
 

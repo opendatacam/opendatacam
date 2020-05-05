@@ -79,9 +79,9 @@ class UIControls extends Component {
                 className={`btn btn-default shadow ml-2 py-0 px-3 rounded border border-default-soft border-solid`}
                 onClick={() => this.props.dispatch(showMenu())}
               >
-                <SVG 
+                <SVG
                   className="w-5 h-5 svg-icon flex items-center" 
-                  cacheGetRequests={true}
+                  cacheRequests={true}
                   src={`/static/icons/ui/menu.svg`} 
                   aria-label="icon menu"
                 />

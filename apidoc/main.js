@@ -12,7 +12,9 @@ require.config({
         semver: './vendor/semver.min',
         utilsSampleRequest: './utils/send_sample_request',
         webfontloader: './vendor/webfontloader',
-        list: './vendor/list.min'
+        list: './vendor/list.min',
+        apiData: './api_data',
+        apiProject: './api_project',
     },
     shim: {
         bootstrap: {
@@ -41,8 +43,8 @@ require([
     'lodash',
     'locales',
     'handlebarsExtended',
-    './api_project.js',
-    './api_data.js',
+    'apiProject',
+    'apiData',
     'prettify',
     'utilsSampleRequest',
     'semver',
@@ -83,6 +85,9 @@ require([
 
     if (apiProject.template.forceLanguage)
         locale.setLanguage(apiProject.template.forceLanguage);
+
+    if (apiProject.template.aloneDisplay == null)
+        apiProject.template.aloneDisplay = false;
 
     // Setup jQuery Ajax
     $.ajaxSetup(apiProject.template.jQueryAjaxSetup);
@@ -186,7 +191,8 @@ require([
                         group: group,
                         name: entry.name,
                         type: entry.type,
-                        version: entry.version
+                        version: entry.version,
+                        url: entry.url
                     });
                 } else {
                     nav.push({
@@ -195,7 +201,8 @@ require([
                         hidden: true,
                         name: entry.name,
                         type: entry.type,
-                        version: entry.version
+                        version: entry.version,
+                        url: entry.url
                     });
                 }
                 oldName = entry.name;
@@ -341,9 +348,12 @@ require([
                     };
                 }
 
-                // add prefix URL for endpoint
-                if (apiProject.url)
-                    fields.article.url = apiProject.url + fields.article.url;
+                // add prefix URL for endpoint unless it's already absolute
+                if (apiProject.url) {
+                    if (fields.article.url.substr(0, 4).toLowerCase() !== 'http') {
+                        fields.article.url = apiProject.url + fields.article.url;
+                    }
+                }
 
                 addArticleSettings(fields, entry);
 
@@ -357,7 +367,8 @@ require([
                 articles.push({
                     article: templateArticle(fields),
                     group: entry.group,
-                    name: entry.name
+                    name: entry.name,
+                    aloneDisplay: apiProject.template.aloneDisplay
                 });
                 oldName = entry.name;
             }
@@ -368,7 +379,8 @@ require([
             group: groupEntry,
             title: title,
             description: description,
-            articles: articles
+            articles: articles,
+            aloneDisplay: apiProject.template.aloneDisplay
         };
         content += templateSections(fields);
     });
@@ -437,12 +449,71 @@ require([
         });
         $('.nav-tabs-examples').find('a:first').tab('show');
 
+        // sample header-content-type switch
+        $('.sample-header-content-type-switch').change(function () {
+            var paramName = '.' + $(this).attr('name') + '-fields';
+            var bodyName = '.' + $(this).attr('name') + '-body';
+            var selectName = 'select[name=' + $(this).attr('name') + ']';
+            if ($(this).val() == 'body-json') {
+                $(selectName).val('undefined');
+                $(this).val('body-json');
+                $(paramName).removeClass('hide');
+                $(this).parent().nextAll(paramName).first().addClass('hide');
+                $(bodyName).addClass('hide');
+                $(this).parent().nextAll(bodyName).first().removeClass('hide');
+            } else if ($(this).val() == "body-form-data") {
+                $(selectName).val('undefined');
+                $(this).val('body-form-data');
+                $(bodyName).addClass('hide');
+                $(paramName).removeClass('hide');
+            } else {
+                $(this).parent().nextAll(paramName).first().removeClass('hide')
+                $(this).parent().nextAll(bodyName).first().addClass('hide');
+            }
+            $(this).prev('.sample-request-switch').prop('checked', true);
+        });
+
         // sample request switch
         $('.sample-request-switch').click(function (e) {
-            var name = '.' + $(this).attr('name') + '-fields';
-            $(name).addClass('hide');
-            $(this).parent().next(name).removeClass('hide');
+            var paramName = '.' + $(this).attr('name') + '-fields';
+            var bodyName = '.' + $(this).attr('name') + '-body';
+            var select = $(this).next('.' + $(this).attr('name') + '-select').val();
+            if($(this).prop("checked")){
+                if (select == 'body-json'){
+                    $(this).parent().nextAll(bodyName).first().removeClass('hide');
+                }else {
+                    $(this).parent().nextAll(paramName).first().removeClass('hide');
+                }
+            }else {
+                if (select == 'body-json'){
+                    $(this).parent().nextAll(bodyName).first().addClass('hide');
+                }else {
+                    $(this).parent().nextAll(paramName).first().addClass('hide');
+                }
+            }
         });
+
+        if (apiProject.template.aloneDisplay){
+            //show group
+            $('.show-group').click(function () {
+                var apiGroup = '.' + $(this).attr('data-group') + '-group';
+                var apiGroupArticle = '.' + $(this).attr('data-group') + '-article';
+                $(".show-api-group").addClass('hide');
+                $(apiGroup).removeClass('hide');
+                $(".show-api-article").addClass('hide');
+                $(apiGroupArticle).removeClass('hide');
+            });
+
+            //show api
+            $('.show-api').click(function () {
+                var apiName = '.' + $(this).attr('data-name') + '-article';
+                var apiGroup = '.' + $(this).attr('data-group') + '-group';
+                $(".show-api-group").addClass('hide');
+                $(apiGroup).removeClass('hide');
+                $(".show-api-article").addClass('hide');
+                $(apiName).removeClass('hide');
+            });
+        }
 
         // call scrollspy refresh method
         $(window).scrollspy('refresh');
@@ -452,6 +523,13 @@ require([
     }
     initDynamic();
 
+    if (apiProject.template.aloneDisplay) {
+        var hashVal = window.location.hash;
+        if (hashVal != null && hashVal.length !== 0) {
+            $("." + hashVal.slice(1) + "-init").click();
+        }
+    }
+
     // Pre- / Code-Format
     prettyPrint();
 
@@ -459,11 +537,13 @@ require([
     // HTML-Template specific jQuery-Functions
     //
     // Change Main Version
-    $('#versions li.version a').on('click', function(e) {
-        e.preventDefault();
-
-        var selectedVersion = $(this).html();
-        $('#version strong').html(selectedVersion);
+    function setMainVersion(selectedVersion) {
+        if (typeof(selectedVersion) === 'undefined') {
+            selectedVersion = $('#version strong').html();
+        }
+        else {
+            $('#version strong').html(selectedVersion);
+        }
 
         // hide all
         $('article').addClass('hide');
@@ -499,6 +579,13 @@ require([
 
         initDynamic();
         return;
+    }
+    setMainVersion();
+
+    $('#versions li.version a').on('click', function(e) {
+        e.preventDefault();
+
+        setMainVersion($(this).html());
     });
 
     // compare all article with their predecessor
@@ -527,7 +614,7 @@ require([
      * Initialize search
      */
     var options = {
-      valueNames: [ 'nav-list-item' ]
+      valueNames: [ 'nav-list-item','nav-list-url-item']
     };
     var endpointsList = new List('scrollingNav', options);
 
@@ -769,7 +856,7 @@ require([
         $root.after(content);
         var $content = $root.next();
 
-        // Event on.click muss neu zugewiesen werden (sollte eigentlich mit on automatisch funktionieren... sollte)
+        // Event on.click needs to be reassigned (should actually work with on ... automatically)
         $content.find('.versions li.version a').on('click', changeVersionCompareTo);
 
         $('#sidenav li[data-group=\'' + group + '\'][data-name=\'' + name + '\'][data-version=\'' + version + '\']').removeClass('has-modifications');
@@ -806,8 +893,8 @@ require([
             if (splitBy)
                 elements.forEach (function(element) {
                     var parts = element.split(splitBy);
-                    var key = parts[1]; // reference keep for sorting
-                    if (key == name)
+                    var key = parts[0]; // reference keep for sorting
+                    if (key == name || parts[1] == name)
                         results.push(element);
                 });
             else

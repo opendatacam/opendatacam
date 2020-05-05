@@ -65,7 +65,7 @@ class PathView extends PureComponent {
             >
               <SVG 
                 className="w-10 h-10 svg-icon flex items-center" 
-                cacheGetRequests={true}
+                cacheRequests={true}
                 src={`/static/icons/ui/delete.svg`} 
                 aria-label="icon delete"
               />
@@ -78,7 +78,7 @@ class PathView extends PureComponent {
             >
               <SVG 
                 className="w-10 h-10 svg-icon flex items-center" 
-                cacheGetRequests={true}
+                cacheRequests={true}
                 src={`/static/icons/ui/download.svg`} 
                 aria-label="icon take screenshot"
               />

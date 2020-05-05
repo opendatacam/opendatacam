@@ -1,7 +1,7 @@
 
-## Install nvidia-docker (nvidia-container-toolkit)
+## Install nvidia-container-toolkit
 
-_You can also refer directly to the guides on [nvidia-container-toolkit](https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(Native-GPU-Support))_
+_You can also refer directly to the guides on [nvidia-container-toolkit](https://github.com/NVIDIA/nvidia-docker#ubuntu-16041804-debian-jessiestretchbuster)_
 
 
 ### 1. Hardware pre-requisite 

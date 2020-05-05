@@ -41,7 +41,7 @@ class DeleteModal extends Component {
           >
             <SVG 
               className="w-8 h-8 svg-icon flex items-center" 
-              cacheGetRequests={true}
+              cacheRequests={true}
               src={`/static/icons/ui/delete.svg`} 
               aria-label="icon close"
             />
