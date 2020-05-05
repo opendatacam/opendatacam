@@ -1,8 +1,14 @@
-## How to use opendatacam v3 without docker
+## How to use OpenDataCam v3 without docker
 
-### 1. Flash jetson to jetpack 4.3
+### 1. Install dependencies
+
+**For Jetsons:** Flash jetson to jetpack 4.3+
 
 https://developer.nvidia.com/embedded/jetpack
+
+**For GNU/Linux x86_64 machine with a CUDA compatible GPU:** Install nvidia drivers and CUDA
+
+https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html
 
 ### 2. Install Darknet (Neural network framework running YOLO)
 
@@ -72,12 +78,12 @@ nvcc --version
 # If it returns Command 'nvcc' not found , you need to install cuda properly: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#package-manager-installation and also add cuda to your PATH with the post install instructions: https://docs.nvidia.com/cuda/cuda-installation-guide-linux/index.html#post-installation-actions
 ```
 
-
 Make change to Makefile:
 
 ```Makefile
 # Set these variable to 1:
 GPU=1
+CUDNN=1
 OPENCV=1
 ```
 
