@@ -58,6 +58,8 @@ _Also see [In depth guide about compatible Cameras with Jetson](https://elinux.o
 
 #### For jetson: Flash Jetson board to jetpack 4.3 ⚡️
 
+🚨️ **Jetpack 4.4 DP doesn't work with OpenDataCam v3.0.0-beta , we are waiting Nvidia to solves an issue with cuDNN** 
+
 *Ignore this if you are not running on a jetson*
 
 [See How to find out your jetpack version](documentation/jetson/FLASH_JETSON.md#How-to-find-out-my-Jetpack-version)
