@@ -282,10 +282,58 @@ module.exports = {
     const nbItemsTrackedSinceRecordingStarted = biggestTrackedItemIdThisFrame - Opendatacam._refTrackedItemIdWhenRecordingStarted;
     Opendatacam.totalItemsTracked = nbItemsTrackedSinceRecordingStarted;
   
+
+    trackerDataForThisFrame = this.runCountingLogic(trackerDataForThisFrame, frameId);
+    // console.log('Tracker data');
+    // console.log('=========')
+    // console.log(JSON.stringify(trackerDataForThisFrame));
+    // console.log('=========')
+
+    // Increment frame number
+    Opendatacam.currentFrame++;
+
+    // Remember trackerData for last frame
+    Opendatacam.trackerDataForLastFrame = {
+      frameIndex: Opendatacam.currentFrame - 1,
+      data: trackerDataForThisFrame
+    }
+
+    let counterSummary = this.getCounterSummary();
+    let trackerSummary = this.getTrackerSummary();
+
+    // console.log(Opendatacam.zombiesAreas);
+
+    // Persist to db
+    if(Opendatacam.recordingStatus.isRecording) {
+      // Only record from frame 25 for files, we can't be sure darknet has hooked to opendatacam before
+      if(Opendatacam.recordingStatus.filename.length > 0 && frameId < 25) {
+        console.log('do not persist yet for file, wait for frameId 25')
+        // console.log(frameId);
+      } else {
+        // and send bad JSON objects
+        this.persistNewRecordingFrame(
+          frameId,
+          frameTimestamp,
+          counterSummary,
+          trackerSummary,
+          countedItemsForThisFrame,
+          trackerDataForThisFrame
+        );
+      }
+      
+    }
+
+    this.sendUpdateToClient();
+
+  },
+
+
+  runCountingLogic: function(trackerDataForThisFrame, frameId) {
+
     // Compute deltaYs for all tracked items (between the counting lines and the tracked items position)
-    // And check if trackedItem are going through some counting areas 
+    // And check if trackedItem are going through some counting areas
     // For each new tracked item
-    trackerDataForThisFrame = trackerDataForThisFrame.map((trackedItem) => {
+    return trackerDataForThisFrame.map((trackedItem) => {
 
       // For each counting areas
       var countingDeltas = Object.keys(Opendatacam.countingAreas).map((countingAreaKey) => {
@@ -322,8 +370,8 @@ module.exports = {
                 - trackerItemLastFrame.y,
                 trackedItem.x,
                 - trackedItem.y)
-  
-  
+
+
               // Object trajectory must intercept the counting line on the counting line
               if(intersection.onLine1) {
 
@@ -366,7 +414,7 @@ module.exports = {
                 // console.log(trackedItem)
               }
 
-              
+
             }
           }
         }
@@ -380,7 +428,7 @@ module.exports = {
 
       // Convert counting delta to a map
       var countingDeltaMap = {}
-      
+
       countingDeltas.map((countingDelta) => {
         countingDeltaMap[countingDelta.countingAreaKey] = countingDelta.deltaY
       })
@@ -390,48 +438,6 @@ module.exports = {
         countingDeltas: countingDeltaMap
       }
     })
-
-    // console.log('Tracker data');
-    // console.log('=========')
-    // console.log(JSON.stringify(trackerDataForThisFrame));
-    // console.log('=========')
-
-    // Increment frame number
-    Opendatacam.currentFrame++;
-
-    // Remember trackerData for last frame
-    Opendatacam.trackerDataForLastFrame = {
-      frameIndex: Opendatacam.currentFrame - 1,
-      data: trackerDataForThisFrame
-    }
-
-    let counterSummary = this.getCounterSummary();
-    let trackerSummary = this.getTrackerSummary();
-
-    // console.log(Opendatacam.zombiesAreas);
-
-    // Persist to db
-    if(Opendatacam.recordingStatus.isRecording) {
-      // Only record from frame 25 for files, we can't be sure darknet has hooked to opendatacam before
-      if(Opendatacam.recordingStatus.filename.length > 0 && frameId < 25) {
-        console.log('do not persist yet for file, wait for frameId 25')
-        // console.log(frameId);
-      } else {
-        // and send bad JSON objects
-        this.persistNewRecordingFrame(
-          frameId,
-          frameTimestamp,
-          counterSummary,
-          trackerSummary,
-          countedItemsForThisFrame,
-          trackerDataForThisFrame
-        );
-      }
-      
-    }
-
-    this.sendUpdateToClient();
-
   },
 
   sendUpdateToClient: function() {
