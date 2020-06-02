@@ -281,9 +281,10 @@ module.exports = {
     const biggestTrackedItemIdThisFrame = trackerDataForThisFrame.length > 0 ? trackerDataForThisFrame[trackerDataForThisFrame.length - 1].id : 0;
     const nbItemsTrackedSinceRecordingStarted = biggestTrackedItemIdThisFrame - Opendatacam._refTrackedItemIdWhenRecordingStarted;
     Opendatacam.totalItemsTracked = nbItemsTrackedSinceRecordingStarted;
-  
 
-    trackerDataForThisFrame = this.runCountingLogic(trackerDataForThisFrame, frameId);
+    let countingData = this.runCountingLogic(trackerDataForThisFrame, frameId);
+    trackerDataForThisFrame = countingData.trackerDataForThisFrame;
+    countedItemsForThisFrame = countingData.countedItemsForThisFrame;
     // console.log('Tracker data');
     // console.log('=========')
     // console.log(JSON.stringify(trackerDataForThisFrame));
@@ -330,27 +331,26 @@ module.exports = {
 
   runCountingLogic: function(trackerDataForThisFrame, frameId) {
 
-    // Compute deltaYs for all tracked items (between the counting lines and the tracked items position)
-    // And check if trackedItem are going through some counting areas
+    var countedItemsForThisFrame = [];
+
+    // Check if trackedItem are going through some counting areas
     // For each new tracked item
-    return trackerDataForThisFrame.map((trackedItem) => {
+    trackerDataForThisFrame = trackerDataForThisFrame.map((trackedItem) => {
 
       // For each counting areas
-      var countingDeltas = Object.keys(Opendatacam.countingAreas).map((countingAreaKey) => {
+      Object.keys(Opendatacam.countingAreas).map((countingAreaKey) => {
         let countingAreaProps = Opendatacam.countingAreas[countingAreaKey].computed;
         let countingAreaType = Opendatacam.countingAreas[countingAreaKey].type;
-        // deltaY = Y(detection) - Y(on-counting-line)
-        // NB: negating Y detection to get it in "normal" coordinates space
-        // deltaY = - Y(detection) - a X(detection) - b
-        let deltaY = - trackedItem.y - countingAreaProps.a * trackedItem.x - countingAreaProps.b;
+
+
 
         // If trackerDataForLastFrame exists, we can if we items are passing through the counting line
         if(Opendatacam.trackerDataForLastFrame) {
           // Find trackerItem data of last frame
           let trackerItemLastFrame = Opendatacam.trackerDataForLastFrame.data.find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
-          // If trackedItemLastFrame exist and deltaY was computed last frame
-          if(trackerItemLastFrame && trackerItemLastFrame.countingDeltas[countingAreaKey]) {
-            let lastDeltaY = trackerItemLastFrame.countingDeltas[countingAreaKey]
+
+          if(trackerItemLastFrame) {
+
             // Remind counted status
             if(trackerItemLastFrame.counted) {
               // console.log(`${trackerItemLastFrame.id} appear to have been counted on last frame`);
@@ -359,85 +359,73 @@ module.exports = {
               trackedItem.counted = [];
             }
 
-            if(Math.sign(lastDeltaY) !== Math.sign(deltaY)) {
-
-              let intersection = checkLineIntersection(
-                countingAreaProps.point1.x, 
-                countingAreaProps.point1.y, 
-                countingAreaProps.point2.x,
-                countingAreaProps.point2.y,
-                trackerItemLastFrame.x,
-                - trackerItemLastFrame.y,
-                trackedItem.x,
-                - trackedItem.y)
+            let intersection = checkLineIntersection(
+              countingAreaProps.point1.x,
+              countingAreaProps.point1.y,
+              countingAreaProps.point2.x,
+              countingAreaProps.point2.y,
+              trackerItemLastFrame.x,
+              - trackerItemLastFrame.y,
+              trackedItem.x,
+              - trackedItem.y)
 
 
-              // Object trajectory must intercept the counting line on the counting line
-              if(intersection.onLine1) {
+            // Object trajectory must intercept the counting line on the counting line
+            if(intersection.onLine1 && intersection.onLine2) {
 
-                // console.log("*****************************")
-                // console.log("COUNTING SOMETHING")
-                // console.log("*****************************")
-                // // console.log(trackedItem);
+              // console.log("*****************************")
+              // console.log("COUNTING SOMETHING")
+              // console.log("*****************************")
+              // // console.log(trackedItem);
 
-                // Do not count twice the same tracked item
-                if(trackedItem.counted.find((countedEvent) => countedEvent.areaKey === countingAreaKey)) {
-                  // already counted on this areaKey, do not count twice 
-                  Logger.log('Already counted, do not count it twice')
-                } else {
-                  // Tracked item has cross the {countingAreaKey} counting line
-                  // Count it
-                  // console.log(`Counting ${trackedItem.id}`);
-                  
-                  // Object comes from top to bottom or left to right of the counting line
-                  if(countingAreaProps.lineBearings[0] <= trackedItem.bearing && trackedItem.bearing <= countingAreaProps.lineBearings[1]) {
-                    if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM) {
-                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM);
-                      countedItemsForThisFrame.push(countedItem);
-                    } else {
-                      // do not count, comes from the wrong direction
-                      // console.log('not counting, from bottom to top, or right to left of the counting lines')
-                    }
+              // Do not count twice the same tracked item
+              if(trackedItem.counted.find((countedEvent) => countedEvent.areaKey === countingAreaKey)) {
+                // already counted on this areaKey, do not count twice
+                Logger.log('Already counted, do not count it twice')
+              } else {
+                // Tracked item has cross the {countingAreaKey} counting line
+                // Count it
+                // console.log(`Counting ${trackedItem.id}`);
+
+                // Object comes from top to bottom or left to right of the counting line
+                if(countingAreaProps.lineBearings[0] <= trackedItem.bearing && trackedItem.bearing <= countingAreaProps.lineBearings[1]) {
+                  if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM) {
+                    let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM);
+                    countedItemsForThisFrame.push(countedItem);
                   } else {
-                    // Object comes from bottom to top, or right to left of the counting lines
-                    if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP) {
-                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP);
-                      countedItemsForThisFrame.push(countedItem);
-                    } else {
-                      // do not count, comes from the wrong direction
-                      // console.log('not counting, comes from top to bottom or left to right of the counting line ')
-                    }
+                    // do not count, comes from the wrong direction
+                    // console.log('not counting, from bottom to top, or right to left of the counting lines')
+                  }
+                } else {
+                  // Object comes from bottom to top, or right to left of the counting lines
+                  if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP) {
+                    let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP);
+                    countedItemsForThisFrame.push(countedItem);
+                  } else {
+                    // do not count, comes from the wrong direction
+                    // console.log('not counting, comes from top to bottom or left to right of the counting line ')
                   }
                 }
-              } else {
-                // console.log('Intersection with object trajectory is NOT on counting line, do not count');
-                // console.log(trackedItem)
               }
-
-
+            } else {
+              // console.log('Intersection with object trajectory is NOT on counting line, do not count');
+              // console.log(trackedItem)
             }
+
           }
         }
-
-        return {
-          countingAreaKey: countingAreaKey,
-          deltaY: deltaY
-        }
-
       });
 
-      // Convert counting delta to a map
-      var countingDeltaMap = {}
-
-      countingDeltas.map((countingDelta) => {
-        countingDeltaMap[countingDelta.countingAreaKey] = countingDelta.deltaY
-      })
-
       return {
-        ...trackedItem,
-        countingDeltas: countingDeltaMap
+        ...trackedItem
       }
+
     })
+
+    return {
+      countedItemsForThisFrame,
+      trackerDataForThisFrame
+    }
   },
 
   sendUpdateToClient: function() {
@@ -533,7 +521,7 @@ module.exports = {
 
     // Store lowest ID of currently tracked item when start recording 
     // to be able to compute nbObjectTracked
-    const currentlyTrackedItems = Tracker.getJSONOfTrackedItems() 
+    const currentlyTrackedItems = Tracker.getJSONOfTrackedItems()
     const highestTrackedItemId = currentlyTrackedItems.length > 0 ? currentlyTrackedItems[currentlyTrackedItems.length - 1].id : 0;
     Opendatacam._refTrackedItemIdWhenRecordingStarted = highestTrackedItemId - currentlyTrackedItems.length;
 
