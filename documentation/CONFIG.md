@@ -10,25 +10,31 @@ We offer several customization options:
 
 ### Table of content
 
-- [⚙️ Customize OpenDataCam](#---customize-opendatacam)
-  * [Table of content](#table-of-content)
-  * [General](#general)
-  * [Run opendatacam on a video file](#run-opendatacam-on-a-video-file)
-  * [Change neural network weights](#change-neural-network-weights)
-  * [Track only specific classes](#track-only-specific-classes)
-  * [Display custom classes](#display-custom-classes)
-  * [Customize pathfinder colors](#customize-pathfinder-colors)
-  * [Customize Counter colors](#customize-counter-colors)
-  * [Advanced settings](#advanced-settings)
-    + [Video input](#video-input)
+- [⚙️ Customize OpenDataCam](#️-customize-opendatacam)
+  - [Table of content](#table-of-content)
+  - [General](#general)
+    - [For a standard install of OpenDataCam](#for-a-standard-install-of-opendatacam)
+    - [For a non-docker install of OpenDataCam](#for-a-non-docker-install-of-opendatacam)
+  - [Run opendatacam on a video file](#run-opendatacam-on-a-video-file)
+    - [Specificities of running on a file](#specificities-of-running-on-a-file)
+  - [Change neural network weights](#change-neural-network-weights)
+  - [Track only specific classes](#track-only-specific-classes)
+  - [Display custom classes](#display-custom-classes)
+  - [Customize pathfinder colors](#customize-pathfinder-colors)
+  - [Customize Counter colors](#customize-counter-colors)
+  - [Advanced settings](#advanced-settings)
+    - [Video input](#video-input)
+      - [Run from an usbcam](#run-from-an-usbcam)
       - [Run from a file](#run-from-a-file)
       - [Run from IP cam](#run-from-ip-cam)
       - [Run from Raspberry Pi cam (Jetson nano)](#run-from-raspberry-pi-cam-jetson-nano)
       - [Change webcam resolution](#change-webcam-resolution)
-    + [Use Custom Neural Network weights](#use-custom-neural-network-weights)
-    + [MongoDB URL](#mongodb-url)
-    + [Tracker accuracy display](#tracker-accuracy-display)
-  * [Limitation with docker setup](#limitation-with-docker-setup)
+    - [Use Custom Neural Network weights](#use-custom-neural-network-weights)
+    - [Tracker settings](#tracker-settings)
+    - [MongoDB URL](#mongodb-url)
+    - [Ports](#ports)
+    - [Tracker accuracy display](#tracker-accuracy-display)
+  - [Limitation with docker setup](#limitation-with-docker-setup)
 
 ### General
 
@@ -392,13 +398,34 @@ For example, if you want to use [yolov3-openimages](https://pjreddie.com/media/f
 }
 ```
 
-- change the `NEURAL_NETWORK` param to the key you defined in `NEURAL_NETWORK_PARAMS` 
+- change the `NEURAL_NETWORK` param to the key you defined in `NEURAL_NETWORK_PARAMS`
 
 ```json
 "NEURAL_NETWORK": "yolov3-openimages"
 ```
 
 - Restart the node.js app (not need to recompile)
+
+#### Tracker settings
+
+You can tweak some settings of the tracker to optimize OpenDataCam better for your needs
+
+```json
+"TRACKER_SETTINGS": {
+  "objectMaxAreaInPercentageOfFrame": 80,
+  "confidence_threshold": 0.2,
+  "iouLimit": 0.05,
+  "unMatchedFrameTolerance": 5
+}
+```
+
+- `objectMaxAreaInPercentageOfFrame`: Filters out Objects which area (width * height) is higher than a certain percentage of the total frame area
+
+- `confidence_threshold`: Filters out object that have less than this confidence value (value given by neural network)
+
+- `iouLimit`: When tracking from frame to frame exclude object from beeing matched as same object as previous frame (same id) if their IOU (Intersection over union) is lower than this. More details on how tracker works here: https://github.com/opendatacam/node-moving-things-tracker/blob/master/README.md#how-does-it-work
+
+- `unMatchedFrameTolerance`: This the number of frame we keep predicting the object trajectory if it is not matched by the next frame list of detections. Setting this higher will cause less ID switches, but more potential false positive with an ID going to another object.
 
 
 #### MongoDB URL
