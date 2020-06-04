@@ -191,23 +191,23 @@ If you want to customize it you should modify the `DISPLAY_CLASSES` config.
 
 ```json
 "DISPLAY_CLASSES": [
-  { "class": "bicycle", "icon": "1F6B2.svg"},
-  { "class": "person", "icon": "1F6B6.svg"},
-  { "class": "truck", "icon": "1F69B.svg"},
-  { "class": "motorbike", "icon": "1F6F5.svg"},
-  { "class": "car", "icon": "1F697.svg"},
-  { "class": "bus", "icon": "1F683.svg"}
+  { "class": "bicycle", "icon": "1F6B2"},
+  { "class": "person", "icon": "1F6B6"},
+  { "class": "truck", "icon": "1F69B"},
+  { "class": "motorbike", "icon": "1F6F5"},
+  { "class": "car", "icon": "1F697"},
+  { "class": "bus", "icon": "1F683"}
 ]
 ```
 
-You can associate any icon that are in the `public/static/icons/openmojis` folder. (they are from https://openmoji.org/, you can search the unicode icon name directly there)
+You can associate any icon that are in the `public/static/icons/openmojis` folder. (they are from https://openmoji.org/, you can search the hexcode / unicode icon id directly there)
 
 For example:
 
 ```json
 "DISPLAY_CLASSES": [
-    { "class": "dog", "icon": "1F415.svg"},
-    { "class": "cat", "icon": "1F431.svg"}
+    { "class": "dog", "icon": "1F415"},
+    { "class": "cat", "icon": "1F431"}
   ]
 ```
 

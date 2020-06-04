@@ -64,8 +64,8 @@ class SingleCounterArea extends Component {
                 {this.DISPLAY_CLASSES.slice(0, Math.min(this.DISPLAY_CLASSES.length, 6)).map((counterClass) =>
                   <div className="area-popover-item mb-1" key={counterClass.class}>
                     <div className="area-popover-count mr-2">{this.props.counterData.get(counterClass.class) || 0}</div>
-                    <OpenMoji 
-                      icon={counterClass.icon}
+                    <OpenMoji
+                      hexcode={counterClass.hexcode}
                       class={counterClass.class}
                     />
                   </div>

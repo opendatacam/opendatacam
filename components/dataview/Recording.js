@@ -110,8 +110,8 @@ class Recording extends PureComponent {
                           key={counterClass.class}
                         >
                           <h4 className="mr-2">{this.props.counterData && this.props.counterData.getIn([countingAreaId, counterClass.class]) || 0}</h4>
-                          <OpenMoji 
-                            icon={counterClass.icon}
+                          <OpenMoji
+                            hexcode={counterClass.hexcode}
                             class={counterClass.class}
                           />
                         </div>

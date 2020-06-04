@@ -1,0 +1,10 @@
+<svg id="emoji" viewBox="0 0 72 72" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <g id="line">
+    <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="1.5" stroke-width="1.675" d="m34.12 28.28 9.204-1.935c4.835 15.8-0.2415 26.69 0.5185 36.97-4.841 4.621-14.38 4.644-19.64 2.324 0 0-1.181-16.79-0.8739-24.95"/>
+    <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="1.5" stroke-width="1.675" d="m26.9 33.53c2.46-3.197 2.192-6.129 5.968-8.683 3.873-2.389 5.794-4.137 7.71-7.544 1.915-3.407 2.476-8.7 1.864-11.71-1.895-1.427-6.964-0.4846-8.14 0.3199-10.55 11.17-4.249 13.38-9.171 24.61-2.089 4.769-1.515 6.559-1.8 10.17 0.08298-2.994 2.288-5.338 3.569-7.162z"/>
+    <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="1.5" stroke-width="1.675" d="m36.6 22.48c5.541 0.1429 6.414-0.9615 7.361-3.341m3.101 2.29 2.734-0.7231c-0.8461-3.426-2.25-8.306-4.428-11.31"/>
+    <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="1.5" stroke-width="1.675" d="m27.27 21.99c-1.27-0.5516-2.236-1.788-2.462-2.738m-5.15 1.473c-0.06617-0.9363 0.2214-1.965 0.2214-1.965 1.313-7.245 5.705-13.48 8.444-12.36l1.667 0.5917m-7.935 14.41-2.398-0.6698"/>
+    <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="1.5" stroke-width="1.675" d="m48.07 38.86c5.159 1.14 4.208-5.481 4.208-5.481-4.155 0.9447-5.636-4.081-6.251-8.601"/>
+    <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="1.5" stroke-width="1.675" d="m38.93 40.04 0.4518 1.319c0.5193 1.738 0.941 3.426 1.066 5.257 0.2729 4.04-0.9243 8.002-0.2044 12.03 0.2284 1.28 1.848 4.207 2.41 5.351 0.369 0.7541-0.4219-0.7207 0 0"/>
+  </g>
+</svg>
