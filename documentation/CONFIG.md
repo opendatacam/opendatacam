@@ -191,12 +191,12 @@ If you want to customize it you should modify the `DISPLAY_CLASSES` config.
 
 ```json
 "DISPLAY_CLASSES": [
-  { "class": "bicycle", "icon": "1F6B2"},
-  { "class": "person", "icon": "1F6B6"},
-  { "class": "truck", "icon": "1F69B"},
-  { "class": "motorbike", "icon": "1F6F5"},
-  { "class": "car", "icon": "1F697"},
-  { "class": "bus", "icon": "1F683"}
+  { "class": "bicycle", "hexcode": "1F6B2"},
+  { "class": "person", "hexcode": "1F6B6"},
+  { "class": "truck", "hexcode": "1F69B"},
+  { "class": "motorbike", "hexcode": "1F6F5"},
+  { "class": "car", "hexcode": "1F697"},
+  { "class": "bus", "hexcode": "1F683"}
 ]
 ```
 
