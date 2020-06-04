@@ -11,7 +11,10 @@
     "remote_hls_gstreamer": "souphttpsrc location=http://YOUR_HLSSTREAM_URL_HERE.m3u8 ! hlsdemux ! decodebin ! videoconvert ! videoscale ! appsink"
   },
   "TRACKER_SETTINGS": {
-    "confidence_threshold": 0.2
+    "objectMaxAreaInPercentageOfFrame": 80,
+    "confidence_threshold": 0.2,
+    "iouLimit": 0.05,
+    "unMatchedFrameTolerance": 5
   },
   "VALID_CLASSES": ["*"],
   "DISPLAY_CLASSES": [

@@ -256,12 +256,32 @@ module.exports = {
       //console.log(`Filtered out ${detectionsOfThisFrame.length - detectionScaledOfThisFrame.length} detections that weren't valid classes`)
     }
 
-    // If confidence_threshold if set, we should keep only those and filter out the rest
+    // If confidence_threshold is set, we should keep only those and filter out the rest
     if(config.TRACKER_SETTINGS && config.TRACKER_SETTINGS.confidence_threshold) {
       detectionScaledOfThisFrame = detectionScaledOfThisFrame.filter((detection) => detection.confidence >= config.TRACKER_SETTINGS.confidence_threshold)
       //console.log(`Filtered out ${detectionsOfThisFrame.length - detectionScaledOfThisFrame.length} detections that didn't meet the confidence threshold`)
     }
 
+    // If objectMaxAreaInPercentageOfFrame is set, we should filter out detection that are too large
+    if(config.TRACKER_SETTINGS && config.TRACKER_SETTINGS.objectMaxAreaInPercentageOfFrame) {
+      detectionScaledOfThisFrame = detectionScaledOfThisFrame.filter((detection) => {
+        return (detection.w * detection.h) <= (Opendatacam.videoResolution.w * Opendatacam.videoResolution.h) * (config.TRACKER_SETTINGS.objectMaxAreaInPercentageOfFrame / 100)
+      })
+    }
+
+    // Set tracker params (todo move this to some init() function of OpenDataCam to avoid running it on each frame))
+    if(config.TRACKER_SETTINGS) {
+      if(config.TRACKER_SETTINGS.iouLimit) {
+        Tracker.setParams({
+          iouLimit: config.TRACKER_SETTINGS.iouLimit
+        })
+      }
+      if(config.TRACKER_SETTINGS.unMatchedFrameTolerance) {
+        Tracker.setParams({
+          unMatchedFrameTolerance: config.TRACKER_SETTINGS.unMatchedFrameTolerance
+        })
+      }
+    }
     // console.log(`Received Detection:`);
     // console.log('=========');
     // console.log(JSON.stringify(detectionScaledOfThisFrame));
