@@ -328,7 +328,7 @@ module.exports = {
     if(Opendatacam.recordingStatus.isRecording) {
       // Only record from frame 25 for files, we can't be sure darknet has hooked to opendatacam before
       if(Opendatacam.recordingStatus.filename.length > 0 && frameId < 25) {
-        console.log('do not persist yet for file, wait for frameId 25')
+        // console.log('do not persist yet for file, wait for frameId 25')
         // console.log(frameId);
       } else {
         // and send bad JSON objects

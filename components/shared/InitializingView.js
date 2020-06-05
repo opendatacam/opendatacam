@@ -33,11 +33,14 @@ class InitializingView extends Component {
   render () {
     return (
       <div className="initializing-view pt-20 pb-20 pr-12 pl-12">
-        {!this.props.requestedFileRecording &&
-          <h2 className="text-white text-3xl font-bold">Initializing Open Data Cam</h2>
+        {!this.props.requestedFileRecording && !this.props.droppedFile &&
+          <h2 className="text-white text-3xl font-bold">Initializing OpenDataCam</h2>
         }
         {this.props.requestedFileRecording &&
           <h2 className="text-white text-3xl font-bold">Restarting to process video file {this.props.fileName.split("/").pop()}</h2>
+        }
+        {this.props.droppedFile &&
+          <h2 className="text-white text-3xl font-bold">Uploading and restarting on dropped video file</h2>
         }
         <div className="w-1/5 mt-5 h-5 progress-bar rounded overflow-hidden">
           <div className="shadow w-full h-full bg-gray-900">

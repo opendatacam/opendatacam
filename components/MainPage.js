@@ -22,6 +22,14 @@ import TrackerAccuracyView from './shared/TrackerAccuracyView';
 
 class MainPage extends React.PureComponent {
 
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      droppedFile: false
+    }
+  }
+
   componentDidMount() {
     this.props.dispatch(initViewportListeners());
     // TODO Handle specifying canvas size + resizing here, copy from beatthetraffic
@@ -34,7 +42,9 @@ class MainPage extends React.PureComponent {
 
   onDrop(event) {
     event.preventDefault();
-    console.log('drop');
+    this.setState({
+      droppedFile: true
+    });
     var formData = new FormData();
     formData.append("video", event.dataTransfer.files[0]);
     axios.post('/files', formData, {
@@ -43,10 +53,16 @@ class MainPage extends React.PureComponent {
         }
     }).then(() => {
       console.log('success');
+      this.setState({
+        droppedFile: false
+      });
       // Todo here
       // Ping API endpoint to restart YOLO on this file
     },(error) => {
       console.log('error')
+      this.setState({
+        droppedFile: false
+      });
     })
   }
 
@@ -62,9 +78,18 @@ class MainPage extends React.PureComponent {
           <AskLandscape />
         }
         {!this.props.isListeningToYOLO &&
-          <InitializingView requestedFileRecording={this.props.requestedFileRecording} />
+          <InitializingView
+            requestedFileRecording={this.props.requestedFileRecording}
+            droppedFile={this.state.droppedFile}
+          />
         }
-        {this.props.isListeningToYOLO &&
+        {this.props.isListeningToYOLO && this.state.droppedFile &&
+          <InitializingView
+            requestedFileRecording={this.props.requestedFileRecording}
+            droppedFile={this.state.droppedFile}
+          />
+        }
+        {this.props.isListeningToYOLO && !this.state.droppedFile &&
           <>
             <UIControls />
             {this.props.showMenu &&  

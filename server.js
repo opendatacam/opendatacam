@@ -978,24 +978,30 @@ app.prepare()
         res.sendStatus(500);
         return;
       }
-  
+
       // Everything went fine.
       console.log('File upload done');
 
+
       // Restart YOLO
       console.log('Stop YOLO');
+      Opendatacam.stopRecording();
       YOLO.stop().then(() => {
         console.log('YOLO stopped');
-        // TODO set run on file 
+        // TODO set run on file
         console.log(req.file.path);
         YOLO.init(false, req.file.path);
         YOLO.start();
+        Opendatacam.recordingStatus.filename = req.file.filename;
       },(error) => {
         console.log('YOLO does not stop')
         console.log(error);
       });
 
       res.json(req.file.path);
+
+
+
     })
   })
 
