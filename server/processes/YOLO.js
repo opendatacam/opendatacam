@@ -35,7 +35,7 @@ module.exports = {
 
       var darknetCommand = [];
       var initialCommand = ['./darknet','detector','demo', yoloParams.data , yoloParams.cfg, yoloParams.weights]
-      var endCommand = ['-ext_output','-dont_show','-json_port', configHelper.getJsonStreamPort() , '-mjpeg_port', configHelper.getMjpegStreamPort()]
+      var endCommand = ['-ext_output','-dont_show', '-dontdraw_bbox','-json_port', configHelper.getJsonStreamPort() , '-mjpeg_port', configHelper.getMjpegStreamPort()]
 
       // Special case if input camera is specified as a -c flag as we need to add one arg
       if(videoParams.indexOf('-c') === 0) {
