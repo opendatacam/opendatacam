@@ -1,4 +1,4 @@
-# OpenDataCam 3.0.0-beta.2 – An open source tool to quantify the world
+# OpenDataCam 3.0.0-beta.3 – An open source tool to quantify the world
 
 OpenDataCam is an open source tool to quantify the world. It quantifies and tracks moving objects with live video analysis. It is designed to be an accessible, affordable and open-source solution to better understand interactions in urban environments. 
 
@@ -18,7 +18,7 @@ OpenDataCam is generously supported by [move lab](https://www.move-lab.com/) (on
 
 ## Table of content
 
-- [OpenDataCam 3.0.0-beta.2](#opendatacam-210)
+- [OpenDataCam 3.0.0-beta.3](#opendatacam-210)
   * [Table of content](#table-of-content)
   * [💻 Hardware pre-requisite](#-hardware-pre-requisite)
   * [🎬 Get Started, quick setup](#-get-started-quick-setup)
@@ -95,7 +95,7 @@ __Install commands:__
 
 ```bash
 # Download install script
-wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v3.0.0-beta.2/docker/install-opendatacam.sh
+wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v3.0.0-beta.3/docker/install-opendatacam.sh
 
 # Give exec permission
 chmod 777 install-opendatacam.sh
@@ -106,11 +106,11 @@ chmod 777 install-opendatacam.sh
 ./install-opendatacam.sh --platform nano
 
 # Install command for Jetson TX2
-# Build for v3.0.0-beta.2 isn't available yet for tx2, please try to install without docker (see in avanced use)  or install v2.1.0: https://github.com/opendatacam/opendatacam/tree/v2.1.0
+# Build for v3.0.0-beta.3 isn't available yet for tx2, please try to install without docker (see in avanced use)  or install v2.1.0: https://github.com/opendatacam/opendatacam/tree/v2.1.0
 #./install-opendatacam.sh --platform tx2
 
 # Install command for Jetson Xavier
-# Build for v3.0.0-beta.2 isn't available yet for xavier, please try to install without docker (see in avanced use) or install v2.1.0 : https://github.com/opendatacam/opendatacam/tree/v2.1.0
+# Build for v3.0.0-beta.3 isn't available yet for xavier, please try to install without docker (see in avanced use) or install v2.1.0 : https://github.com/opendatacam/opendatacam/tree/v2.1.0
 #./install-opendatacam.sh --platform xavier
 
 # Install command for a Nvidia-docker machine
