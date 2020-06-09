@@ -18,47 +18,43 @@ OpenDataCam is generously supported by [move lab](https://www.move-lab.com/) (on
 
 ## Table of content
 
-- [OpenDataCam 3.0.0-beta.3](#opendatacam-210)
-  * [Table of content](#table-of-content)
-  * [💻 Hardware pre-requisite](#-hardware-pre-requisite)
-  * [🎬 Get Started, quick setup](#-get-started-quick-setup)
-    + [1. Software pre-requisite 📦](#1-software-pre-requisite-)
-      - [For jetson: Flash Jetson board to jetpack 4.2 or 4.2.1 ⚡️](#for-jetson-flash-jetson-board-to-jetpack-42-or-421-️)
-      - [For non-jetson: Install nvidia-docker v2.0 🔧](#or-non-jetson-install-nvidia-docker-v20-)
-    + [2. Install and start OpenDataCam 🚀](#2-install-and-start-opendatacam-)
-    + [2. bis (optional) Upgrade OpenDataCam (from v2.x to another v2.x version)](#2-bis-optional-upgrade-opendatacam-from-v2x-to-another-v2x-version)
-    + [3. Use OpenDataCam 🖖](#3-use-opendatacam-)
-    + [4. Configure your Wifi hotspot 📲](#4-configure-your-wifi-hotspot-)
-    + [5. Customize OpenDataCam ️️⚙️](#5-customize-opendatacam-️️️)
-    + [6. Docker playbook ️📚](#6-docker-playbook-️)
-  * [🔌 API Documentation](#-api-documentation)
-  * [🗃 Data export documentation](#-data-export-documentation)
-  * [⁉️ Troubleshooting](#-troubleshooting)
-  * [🎛 Advanced uses](#-advanced-uses)
-    + [How to use opendatacam without docker](#how-to-use-opendatacam-without-docker)
-    + [How to create / update the docker image](#how-to-create--update-the-docker-image)
-  * [🎯 How accurate is OpenDataCam ?](#-how-accurate-is-opendatacam-)
-  * [🚤 How fast is OpenDataCam ?](#-how-fast-is-opendatacam-)
-  * [🛠 Development notes](#-development-notes)
-  * [💌 Acknowledgments](#-acknowledgments)
+- [OpenDataCam 3.0.0-beta.3 – An open source tool to quantify the world](#opendatacam-300-beta3--an-open-source-tool-to-quantify-the-world)
+  - [Table of content](#table-of-content)
+  - [💻 Hardware pre-requisite](#-hardware-pre-requisite)
+  - [🎬 Get Started, quick setup](#-get-started-quick-setup)
+    - [1. Software pre-requisite 📦](#1-software-pre-requisite-)
+      - [For jetson: Flash Jetson board to jetpack 4.3 ⚡️](#for-jetson-flash-jetson-board-to-jetpack-43-️)
+      - [For non-jetson: Install nvidia-docker v2.0 🔧](#for-non-jetson-install-nvidia-docker-v20-)
+    - [2. Install and start OpenDataCam 🚀](#2-install-and-start-opendatacam-)
+    - [2. bis (optional) Upgrade OpenDataCam (from v2.x to another v2.x version)](#2-bis-optional-upgrade-opendatacam-from-v2x-to-another-v2x-version)
+    - [3. Use OpenDataCam 🖖](#3-use-opendatacam-)
+    - [4. Configure your Wifi hotspot 📲](#4-configure-your-wifi-hotspot-)
+    - [5. Customize OpenDataCam ️️⚙️](#5-customize-opendatacam-️️️)
+    - [6. Docker playbook ️📚](#6-docker-playbook-️)
+  - [🔌 API Documentation](#-api-documentation)
+  - [🗃 Data export documentation](#-data-export-documentation)
+  - [⁉️ Troubleshooting](#️-troubleshooting)
+  - [🎛 Advanced uses](#-advanced-uses)
+    - [How to use opendatacam without docker](#how-to-use-opendatacam-without-docker)
+    - [How to create / update the docker image](#how-to-create--update-the-docker-image)
+  - [🎯 How accurate is OpenDataCam ?](#-how-accurate-is-opendatacam-)
+  - [🚤 How fast is OpenDataCam ?](#-how-fast-is-opendatacam-)
+  - [🛠 Development notes](#-development-notes)
+  - [💌 Acknowledgments](#-acknowledgments)
 
 ## 💻 Hardware pre-requisite
 
-- Nvidia Jetson Nano / TX2 / Xavier or any GNU/Linux x86_64 machine with a CUDA compatible GPU with [nvidia-docker v2.0](https://github.com/NVIDIA/nvidia-docker/wiki/Installation-(version-2.0)#prerequisites) (in the cloud or locally)
+- Nvidia Jetson Nano / TX2 / Xavier or any GNU/Linux x86_64 machine with a CUDA compatible GPU (nvidia)
 - Webcam Logitech C222, C270, C310, C920 / Rasberry Pi cam for Jetson nano / a Video file / IP camera
 - A smartphone / tablet / laptop that you will use to operate the system
 
-_If you have a Jetson Nano, [please read this specific documentation](documentation/jetson/JETSON_NANO.md)_
-
-_Also see [In depth guide about compatible Cameras with Jetson](https://elinux.org/Jetson/Cameras)_
-
 ## 🎬 Get Started, quick setup
+
+_If you have a Jetson Nano, [please read this specific documentation](documentation/jetson/JETSON_NANO.md)_
 
 ### 1. Software pre-requisite 📦
 
 #### For jetson: Flash Jetson board to jetpack 4.3 ⚡️
-
-🚨️ **Jetpack 4.4 DP doesn't work with OpenDataCam v3.0.0-beta , we are waiting Nvidia to solves an issue with cuDNN** 
 
 *Ignore this if you are not running on a jetson*
 

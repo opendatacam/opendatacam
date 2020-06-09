@@ -1,0 +1,23 @@
+version: "2.3"
+services:
+  opendatacam:
+    restart: always
+    build: .
+    runtime: nvidia
+    image: opendatacam:v3.0.0-beta.3-nano
+    privileged: true
+    volumes:
+      - './config.json:/var/local/opendatacam/config.json'
+    ports:
+      - "8080:8080"
+      - "8070:8070"
+      - "8090:8090"
+  mongo:
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data_container:/data/db
+volumes:
+  mongodb_data_container:

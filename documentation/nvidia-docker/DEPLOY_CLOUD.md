@@ -1,3 +1,0 @@
-
-
-TODO example with paperspace
