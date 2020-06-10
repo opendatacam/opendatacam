@@ -110,7 +110,7 @@ case $argument in
     sed -i'.bak' -e "s|TO_REPLACE_PATH_TO_DARKNET|$PATH_DARKNET|g" config.json
 
     echo "Download, install and run opendatacam docker container"
-    sudo docker-compose up
+    sudo docker-compose up -d
 
     # Message that docker container has been started and opendatacam will be available shorty on <IP>
     echo "OpenDataCam docker container installed successfully, it might take up to 1-2 min to start the node app and the webserver"

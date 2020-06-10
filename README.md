@@ -26,7 +26,7 @@ OpenDataCam is generously supported by [move lab](https://www.move-lab.com/) (on
       - [For Jetson: Flash Jetson board to jetpack 4.3 ⚡️](#for-jetson-flash-jetson-board-to-jetpack-43-️)
       - [For Desktop machine: Nvidia container toolkit 🔧](#for-desktop-machine-nvidia-container-toolkit-)
     - [2. Install and start OpenDataCam 🚀](#2-install-and-start-opendatacam-)
-    - [2. bis (optional) Upgrade OpenDataCam (from v2.x to another v2.x version)](#2-bis-optional-upgrade-opendatacam-from-v2x-to-another-v2x-version)
+    - [2. bis (optional) Upgrade OpenDataCam](#2-bis-optional-upgrade-opendatacam)
     - [3. Use OpenDataCam 🖖](#3-use-opendatacam-)
     - [4. Configure your Wifi hotspot 📲](#4-configure-your-wifi-hotspot-)
     - [5. Customize OpenDataCam ️️⚙️](#5-customize-opendatacam-️️️)
@@ -125,15 +125,15 @@ chmod 777 install-opendatacam.sh
 # NB: You will be asked for sudo password when installing the docker container
 
 # Install command for Jetson Nano
-#./install-opendatacam.sh --platform nano
+# NB: Will run from demo file, you can change this after install, see "5. Customize OpenDataCam"
+./install-opendatacam.sh --platform nano
 
 # Install command for Jetson TX2
-# Build for v3.0.0-beta.3 isn't available yet for tx2, please try to install without docker (see in avanced use)  or install v2.1.0: https://github.com/opendatacam/opendatacam/tree/v2.1.0
-#./install-opendatacam.sh --platform tx2
+# Docker build for Jetson TX2 isn't available please install without docker (see in avanced use)
 
 # Install command for Jetson Xavier
-# Build for v3.0.0-beta.3 isn't available yet for xavier, please try to install without docker (see in avanced use) or install v2.1.0 : https://github.com/opendatacam/opendatacam/tree/v2.1.0
-#./install-opendatacam.sh --platform xavier
+# NB: Will run from demo file, you can change this after install, see "5. Customize OpenDataCam"
+./install-opendatacam.sh --platform xavier
 
 # Install command for a Desktop machine
 # NB: Will run from demo file, you can change this after install, see "5. Customize OpenDataCam"
@@ -146,10 +146,10 @@ The docker container is started in auto-restart mode, so if you reboot your mach
 
 You can also [use opendatacam without docker](#how-to-use-opendatacam-without-docker)
 
-### 2. bis (optional) Upgrade OpenDataCam (from v2.x to another v2.x version)
+### 2. bis (optional) Upgrade OpenDataCam
 
 - If you have modified the `config.json`, save it somewhere
-- Remove `config.json`, `install-opendatacam.sh`, `run-docker.sh`, `run-opendatacam.sh` _(To improve, make install script remove them)_
+- Remove `config.json`, `docker-compose.yml`
 - Run the install steps again (previous section), this will download a new default `config.json` file compatible with the opendatacam version you are installing and setup a new docker container
 - Open the newly downloaded config.json script and modify with the things you had changed previously
 
@@ -185,32 +185,28 @@ We offer several customization options:
 
 ### 6. Docker playbook ️📚
 
-**Docker specificities on jetson**
-
-Docker doesn't support GPU usage on Jetson _(see [issue #214 on docker-nvidia official repo](https://github.com/NVIDIA/nvidia-docker/issues/214) , support should be landing around Q3-Q4 2019)_
-
-Meanwhile we need to give to the docker container access to the host platform GPU. We do so by mounting several volumes with [this script](https://github.com/opendatacam/opendatacam/blob/master/docker/run-jetson/run-docker.sh).
-
-That is why you need to use our install script to install a container. We have [an open issue](https://github.com/opendatacam/opendatacam/issues/89) to simplify setup once nvidia-docker support lands for jetson devices.
-
 **How to show OpenDataCam logs**
 
 ```bash
+# Go to the directory you ran install script (where is your docker-compose.yml file)
+
 # List containers
-sudo docker logs -f -t opendatacam
+sudo docker-compose logs
 ```
 
 **How to  stop / restart OpenDataCam**
 
 ```bash
-# Stop container
-sudo docker stop opendatacam
+# Go to the directory you ran install script (where is your docker-compose.yml file)
 
-# Start container (will mount the opendatacam_videos/ and the config.json + mount CUDA necessary stuff)
-sudo ./run-opendatacam.sh
+# Stop container
+sudo docker-compose down
+
+# Start container
+sudo docker-compose up -d
 
 # Restart container (after modifying the config.json file for example)
-sudo docker restart opendatacam
+sudo docker-compose restart
 
 # Install a newer version of opendatacam
 # Follow the 1. Install and start OpenDataCam
@@ -252,18 +248,18 @@ We host our docker images on [Dockerhub](https://cloud.docker.com/repository/doc
 
 *For jetson devices:*
 
-See [How to create / update a docker image for a jetson device](documentation/jetson/CREATE_DOCKER_IMAGE.md)
+See [How to create / update a docker image for a jetson device](documentation/jetson/CREATE_DOCKER_IMAGE_JETSON.md)
 
 *For nvidia-docker machine:*
 
-See [How to create / update a docker image for a nvidia-docker machine](documentation/nvidia-docker/CREATE_NVIDIADOCKER_IMAGE.md)
+See [How to create / update a docker image for a nvidia-docker machine](documentation/CREATE_DOCKER_IMAGE_DESKTOP.md)
 
 
 ## 🎯 How accurate is OpenDataCam ?
 
-We are working on [adding a benchmark](https://github.com/opendatacam/opendatacam/issues/87) to rank OpenDataCam on the [MOT Challenge (Multiple Object Tracking Benchmark)](https://motchallenge.net/) for v2.1.
-
 Accuracy depends on which YOLO weights your hardware is capable of running.
+
+We are working on [adding a benchmark](https://github.com/opendatacam/opendatacam/issues/87) to rank OpenDataCam on the [MOT Challenge (Multiple Object Tracking Benchmark)](https://motchallenge.net/)
 
 ## 🚤 How fast is OpenDataCam ?
 

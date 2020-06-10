@@ -34,7 +34,6 @@ We offer several customization options:
     - [MongoDB URL](#mongodb-url)
     - [Ports](#ports)
     - [Tracker accuracy display](#tracker-accuracy-display)
-  - [Limitation with docker setup](#limitation-with-docker-setup)
 
 ### General
 
@@ -66,8 +65,6 @@ You need to modify the config.json file located the `opendatacam` folder.
 Once modified,  you just need to restart the node.js app (`npm run start`), no need to re-build it, it loads the config file at runtime.
 
 ### Run opendatacam on a video file
-
-_NB: if you are running with nvidiadocker and want to use an usbcam, please see [Run from an usbcam (step 4)](#run-from-an-usbcam)_
 
 By default, opendatacam will try to pickup the usb webcam connected to your jetson. The settings is `VIDEO_INPUT` in the `config.json` file.
 
@@ -502,8 +499,5 @@ For example, if you change the gradient with:
 ![Other gradient](https://user-images.githubusercontent.com/533590/59389118-ec66dc00-8d43-11e9-8310-309da6ab42e1.png)
 
 
-### Limitation with docker setup
-
-- In order to use the raspberrycam with the Jetson nano [follow this guide](jetson/JETSON_NANO.md)
 
 

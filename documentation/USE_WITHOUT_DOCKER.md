@@ -201,6 +201,14 @@ git clone --depth 1 https://github.com/opendatacam/opendatacam.git
 cd opendatacam
 ```
 
+- Change `"MONGODB_URL"` in `opendatacam/config.json` (default is the docker service mongo URL)
+
+```json
+{
+  "MONGODB_URL": "mongodb://127.0.0.1:27017"
+}
+```
+
 - Specify **ABSOLUTE** `PATH_TO_YOLO_DARKNET` path in `opendatacam/config.json`
 
 ```json
