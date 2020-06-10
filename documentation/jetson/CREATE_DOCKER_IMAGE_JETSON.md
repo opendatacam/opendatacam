@@ -67,3 +67,56 @@ sudo docker push opendatacam/opendatacam:v3.0.0-beta.3-nano
 # (optional) Useful Untag image (if you made a tipo)
 sudo docker rmi opendatacam/opendatacam:v3.0.0-beta.3-nano
 ```
+
+
+### Note about Darknet Makefile differences for docker build
+
+Change:
+
+```Makefile
+NVCC=nvcc
+# to
+NVCC=/usr/local/cuda-10.0/bin/nvcc
+```
+
+Change:
+
+```Makefile
+COMMON+= -DGPU -I/usr/local/cuda/include/
+# to
+COMMON+= -DGPU -I/usr/local/cuda-10.0/include/
+```
+Change:
+
+```Makefile
+LDFLAGS+= -L/usr/local/cuda/lib -lcuda -lcudart -lcublas -lcurand
+# to
+LDFLAGS+= -L/usr/local/cuda-10.0/lib -lcuda -lcudart -lcublas -lcurand
+```
+Change:
+
+```Makefile
+LDFLAGS+= -L/usr/local/cuda/lib64 -lcuda -lcudart -lcublas -lcurand
+# to
+LDFLAGS+= -L/usr/local/cuda-10.0/lib64 -lcuda -lcudart -lcublas -lcurand
+```
+
+Change:
+
+```Makefile
+CFLAGS+= -DCUDNN -I/usr/local/cuda/include
+LDFLAGS+= -L/usr/local/cuda/lib -lcudnn
+# to
+CFLAGS+= -DCUDNN -I/usr/local/cuda-10.0/include
+LDFLAGS+= -L/usr/local/cuda-10.0/lib -lcudnn
+```
+
+Change:
+
+```Makefile
+CFLAGS+= -DCUDNN -I/usr/local/cudnn/include
+LDFLAGS+= -L/usr/local/cudnn/lib64 -lcudnn
+# to
+CFLAGS+= -DCUDNN -I/usr/local/cuda-10.0/include
+LDFLAGS+= -L/usr/local/cuda-10.0/lib64 -lcudnn
+```
