@@ -123,6 +123,8 @@ wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v3.0.0-beta.3/
 chmod 777 install-opendatacam.sh
 
 # NB: You will be asked for sudo password when installing the docker container
+# You might want to stop all docker container running before starting OpenDataCam
+# sudo docker stop $(sudo docker ps -aq)
 
 # Install command for Jetson Nano
 # NB: Will run from demo file, you can change this after install, see "5. Customize OpenDataCam"
@@ -202,8 +204,14 @@ sudo docker-compose logs
 # Stop container
 sudo docker-compose down
 
+# Stop all docker container
+sudo docker stop $(sudo docker ps -aq)
+
 # Start container
+# detached mode
 sudo docker-compose up -d
+# interactive mode
+sudo docker-compose up
 
 # Restart container (after modifying the config.json file for example)
 sudo docker-compose restart
