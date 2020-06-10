@@ -76,6 +76,34 @@ sudo pip3 install docker-compose
 - [Nvidia drivers installed](https://developer.nvidia.com/cuda-downloads) (you don't need all CUDA but we didn't found a easy install process for only the drivers)
 - [Nvidia Container toolkit installed](https://github.com/NVIDIA/nvidia-docker)
 
+
+For desktop there is a workaround to add with docker-compose to give access to the nvidia runtime. At the time of writing this documentation, GPUs for docker-compose aren't well supported yet, see [https://github.com/docker/compose/issues/6691](https://github.com/docker/compose/issues/6691)
+
+- Open the daemon.json
+
+```
+sudo vim /etc/docker/daemon.json
+```
+
+- Copy this inside and save the file
+
+```json
+{
+    "runtimes": {
+        "nvidia": {
+            "path": "/usr/bin/nvidia-container-runtime",
+            "runtimeArgs": []
+        }
+    }
+}
+```
+
+- Restart docker
+
+```
+systemctl restart docker
+```
+
 ### 2. Install and start OpenDataCam 🚀
 
 Open a terminal or ssh to you machine and run the following commands depending on your platform.
@@ -83,6 +111,7 @@ Open a terminal or ssh to you machine and run the following commands depending o
 The install script will download a `docker-compose.yml` file and setup a default `config.json` depending on your platform.
 
 _Make sure you have previously installed `docker-compose` by running `docker-compose --version`_
+
 
 __Install commands:__
 
