@@ -3,22 +3,22 @@
 # exit when any command fails
 set -e
 
-# Each opendatacam release should set the correct version here and tag appropriatly on github
+# Each OpenDataCam release should set the correct version here and tag appropriatly on github
 VERSION=v3.0.0-beta.3
 # PLATFORM in ["nano","xavier","tx2","nvidiadocker"]
 PLATFORM=undefined
 VIDEO_INPUT=undefined
 INDEX=undefined
 
-PLATFORM_OPTIONS=("nano" "tx2" "xavier" "nvidiadocker")
-DEFAUT_VIDEO_INPUT_OPTIONS=("usbcam" "usbcam" "usbcam" "file")
-DEFAUT_NEURAL_NETWORK_OPTIONS=("yolov3-tiny" "yolov2-voc" "yolov4" "yolov4")
+PLATFORM_OPTIONS=("nano" "xavier" "desktop")
+DEFAUT_VIDEO_INPUT_OPTIONS=("file" "file" "file")
+DEFAUT_NEURAL_NETWORK_OPTIONS=("yolov3-tiny-prn" "yolov4" "yolov4")
 
-# PATH TO DARKNET
-PATH_DARKNET_JETSON=/var/local/darknet
-PATH_DARKNET_NVIDIA_DOCKER=/var/local/darknet
+# PATH TO DARKNET in docker container
+PATH_DARKNET=/var/local/darknet
 
-echo "Installing opendatacam docker image"
+echo "Installing OpenDataCam docker image"
+command -v docker-compose >/dev/null 2>&1 || { echo >&2 "OpenDataCam requires docker-compose, please install and retry"; }
 
 display_usage() {
   echo
@@ -78,44 +78,26 @@ case $argument in
     echo index : $INDEX
     
     # Stop any current docker container from running
-    echo "Stop any running docker container..."
+    echo "Stop any running OpenDataCam docker container..."
     set +e
-    sudo docker stop $(sudo docker ps -a -q)
+    sudo docker stop opendatacams
     set -e
 
     # Platform is specified 
     PLATFORM=$2
     
-    echo "Installing opendatacam $VERSION for platform: $2 ..."
-    
-    echo "Download run script for docker ..."
-    # Get the run-docker script
+    echo "Installing OpenDataCam $VERSION for platform: $2 ..."
 
-    if [[ "$PLATFORM" != ${PLATFORM_OPTIONS[3]} ]]; then
-      wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/$VERSION/docker/run-jetson/run-docker.sh
-      # Chmod to give exec permissions
-      chmod 777 run-docker.sh
-    else
-      wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/$VERSION/docker/run-nvidia-docker/run-nvidiadocker.sh
-      # Chmod to give exec permissions
-      chmod 777 run-nvidiadocker.sh
-    fi
-    
+    # Get the docker compose file
+    wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/$VERSION/docker/run/$PLATFORM/docker-compose.yml
+
     # Get the config file
     echo "Download config file ..."
     wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/$VERSION/config.json
 
-    # Create the directory to run on files
-    echo "Create the directory to run on files ..."
-    mkdir -p opendatacam_videos
-    echo "Download demo video ..."
-    wget -N https://github.com/opendatacam/opendatacam/raw/$VERSION/public/static/demo/demo.mp4 -O opendatacam_videos/demo.mp4
-
     # Replace VIDEO_INPUT and NEURAL_NETWORK with default config for this platform
     VIDEO_INPUT=${DEFAUT_VIDEO_INPUT_OPTIONS[$INDEX]}
     NEURAL_NETWORK=${DEFAUT_NEURAL_NETWORK_OPTIONS[$INDEX]}
-    #echo videoInput = $VIDEO_INPUT
-    #echo neuralNetwork = $NEURAL_NETWORK
 
     echo "Replace config file with platform default params ... (you can change those later)"
     echo "NEURAL_NETWORK : $NEURAL_NETWORK"
@@ -125,32 +107,10 @@ case $argument in
     sed -i'.bak' -e "s/TO_REPLACE_VIDEO_INPUT/$VIDEO_INPUT/g" config.json
     sed -i'.bak' -e "s/TO_REPLACE_NEURAL_NETWORK/$NEURAL_NETWORK/g" config.json
 
-    # For nvidia-docker, darknet path is /var/local/darknet
-    if [[ "$PLATFORM" != ${PLATFORM_OPTIONS[3]} ]]; then
-      sed -i'.bak' -e "s|TO_REPLACE_PATH_TO_DARKNET|$PATH_DARKNET_JETSON|g" config.json
-      echo "PATH_TO_YOLO_DARKNET : $PATH_DARKNET_JETSON"
-    else
-      sed -i'.bak' -e "s|TO_REPLACE_PATH_TO_DARKNET|$PATH_DARKNET_NVIDIA_DOCKER|g" config.json
-      echo "PATH_TO_YOLO_DARKNET : $PATH_DARKNET_NVIDIA_DOCKER"
-    fi
+    sed -i'.bak' -e "s|TO_REPLACE_PATH_TO_DARKNET|$PATH_DARKNET|g" config.json
 
     echo "Download, install and run opendatacam docker container"
-    
-    if [[ "$PLATFORM" != ${PLATFORM_OPTIONS[3]} ]]; then
-      # Create the run-opendatacam.sh script
-      echo "./run-docker.sh run -d --name opendatacam --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM" > run-opendatacam.sh
-      chmod 777 run-opendatacam.sh
-      echo "Create a run-opendatacam.sh script for easy container start"
-      # Pull, install and run opendatacam container when docker starts (on boot with --restart unless-stopped, -d is for detached mode)
-      sudo ./run-opendatacam.sh
-    else
-      # Create the run-opendatacam.sh script
-      echo "./run-nvidiadocker.sh run -d --name opendatacam --restart unless-stopped opendatacam/opendatacam:$VERSION-$PLATFORM" > run-opendatacam.sh
-      chmod 777 run-opendatacam.sh
-      echo "Create a run-opendatacam.sh script for easy container start"
-      # Pull, install and run opendatacam container when docker starts (on boot with --restart unless-stopped, -d is for detached mode)
-      sudo ./run-opendatacam.sh
-    fi
+    sudo docker-compose up
 
     # Message that docker container has been started and opendatacam will be available shorty on <IP>
     echo "OpenDataCam docker container installed successfully, it might take up to 1-2 min to start the node app and the webserver"

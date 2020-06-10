@@ -23,8 +23,8 @@ OpenDataCam is generously supported by [move lab](https://www.move-lab.com/) (on
   - [💻 Hardware pre-requisite](#-hardware-pre-requisite)
   - [🎬 Get Started, quick setup](#-get-started-quick-setup)
     - [1. Software pre-requisite 📦](#1-software-pre-requisite-)
-      - [For jetson: Flash Jetson board to jetpack 4.3 ⚡️](#for-jetson-flash-jetson-board-to-jetpack-43-️)
-      - [For non-jetson: Install nvidia-docker v2.0 🔧](#for-non-jetson-install-nvidia-docker-v20-)
+      - [For Jetson: Flash Jetson board to jetpack 4.3 ⚡️](#for-jetson-flash-jetson-board-to-jetpack-43-️)
+      - [For Desktop machine: Nvidia container toolkit 🔧](#for-desktop-machine-nvidia-container-toolkit-)
     - [2. Install and start OpenDataCam 🚀](#2-install-and-start-opendatacam-)
     - [2. bis (optional) Upgrade OpenDataCam (from v2.x to another v2.x version)](#2-bis-optional-upgrade-opendatacam-from-v2x-to-another-v2x-version)
     - [3. Use OpenDataCam 🖖](#3-use-opendatacam-)
@@ -44,48 +44,45 @@ OpenDataCam is generously supported by [move lab](https://www.move-lab.com/) (on
 
 ## 💻 Hardware pre-requisite
 
-- Nvidia Jetson Nano / TX2 / Xavier or any GNU/Linux x86_64 machine with a CUDA compatible GPU (nvidia)
+- Nvidia Jetson Nano / Xavier NX / Xavier or any GNU/Linux x86_64 machine with a CUDA compatible GPU (Nvidia)
 - Webcam Logitech C222, C270, C310, C920 / Rasberry Pi cam for Jetson nano / a Video file / IP camera
 - A smartphone / tablet / laptop that you will use to operate the system
 
 ## 🎬 Get Started, quick setup
 
-_If you have a Jetson Nano, [please read this specific documentation](documentation/jetson/JETSON_NANO.md)_
+_For Jetson Nano, [you can follow this dedicated quick start guide](documentation/jetson/JETSON_NANO.md)_
 
 ### 1. Software pre-requisite 📦
 
-#### For jetson: Flash Jetson board to jetpack 4.3 ⚡️
+#### For Jetson: Flash Jetson board to jetpack 4.3 ⚡️
 
-*Ignore this if you are not running on a jetson*
+- [Jetpack 4.3](https://developer.nvidia.com/embedded/jetpack) : [How to find out your jetpack version](documentation/jetson/FLASH_JETSON.md#How-to-find-out-my-Jetpack-version), [Guide to flash your jetson](documentation/jetson/FLASH_JETSON.md)
 
-[See How to find out your jetpack version](documentation/jetson/FLASH_JETSON.md#How-to-find-out-my-Jetpack-version)
+- [Docker compose](https://blog.hypriot.com/post/nvidia-jetson-nano-install-docker-compose/) (no official installer available for ARM64 devices)
 
-If your jetson does not have jetpack 4.3
+```bash
+sudo apt-get install -y libffi-dev
+sudo apt-get install -y python-openssl
+sudo apt-get install libssl-dev
 
-[Follow this guide to flash your jetson](documentation/jetson/FLASH_JETSON.md)
+sudo pip3 install docker-compose
+```
 
-#### For non-jetson: Install nvidia-docker v2.0 🔧
 
-*Ignore this if you are running on a jetson, nvidia-docker isn't necessary with jetpack 4.2*
+#### For Desktop machine: Nvidia container toolkit 🔧
 
-Nvidia-docker v2.0 is only compatible with GNU/Linux x86_64 machine with a [CUDA compatible GPU](https://developer.nvidia.com/cuda-gpus)
-
-[Follow this guide to install nvidia-docker v2.0 on your machine](documentation/nvidia-docker/INSTALL_NVIDIADOCKER.md)
+- [Docker installed](https://docs.docker.com/install/linux/docker-ce/ubuntu/)  
+- [Docker compose installed](https://docs.docker.com/compose/install/)
+- [Nvidia drivers installed](https://developer.nvidia.com/cuda-downloads) (you don't need all CUDA but we didn't found a easy install process for only the drivers)
+- [Nvidia Container toolkit installed](https://github.com/NVIDIA/nvidia-docker)
 
 ### 2. Install and start OpenDataCam 🚀
 
-Open a terminal or ssh to you machine and run the following commands depending on your platform
+Open a terminal or ssh to you machine and run the following commands depending on your platform.
 
-- _For a Jetson:_ make sure an usb webcam is connected on `video0`
+The install script will download a `docker-compose.yml` file and setup a default `config.json` depending on your platform.
 
-```bash
-ls /dev/video*
-# Output should be: /dev/video0
-```
-
-_If this isn't the case, run the install script anyway, and after you will need to [modify the config.json](documentation/CONFIG.md) file to select your desired VIDEO_INPUT (file, usbcam, raspberrycam, remote IP cam), [we will improve setup / install process for v2.1](https://github.com/opendatacam/opendatacam/issues/89) 💪_
-
-- _For a nvidia-docker compatible machine:_ it will run on a demo file
+_Make sure you have previously installed `docker-compose` by running `docker-compose --version`_
 
 __Install commands:__
 
@@ -99,7 +96,7 @@ chmod 777 install-opendatacam.sh
 # NB: You will be asked for sudo password when installing the docker container
 
 # Install command for Jetson Nano
-./install-opendatacam.sh --platform nano
+#./install-opendatacam.sh --platform nano
 
 # Install command for Jetson TX2
 # Build for v3.0.0-beta.3 isn't available yet for tx2, please try to install without docker (see in avanced use)  or install v2.1.0: https://github.com/opendatacam/opendatacam/tree/v2.1.0
@@ -109,9 +106,9 @@ chmod 777 install-opendatacam.sh
 # Build for v3.0.0-beta.3 isn't available yet for xavier, please try to install without docker (see in avanced use) or install v2.1.0 : https://github.com/opendatacam/opendatacam/tree/v2.1.0
 #./install-opendatacam.sh --platform xavier
 
-# Install command for a Nvidia-docker machine
+# Install command for a Desktop machine
 # NB: Will run from demo file, you can change this after install, see "5. Customize OpenDataCam"
-./install-opendatacam.sh --platform nvidiadocker
+./install-opendatacam.sh --platform desktop
 ```
 
 This command will download and start a docker container on the machine. After it finishes the docker container starts a webserver on port 8080 (ports 8070 and 8090 are also used).
