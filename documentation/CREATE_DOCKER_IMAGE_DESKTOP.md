@@ -16,8 +16,8 @@
 ### 2. Build the image
 
 ```bash
-# Go to the opendatacam-desktop directory
-cd opendatacam/docker/build/opendatacam-desktop
+# Go to the docker/build/desktop directory
+cd opendatacam/docker/build/desktop
 # Download the weights you want to include ( currently yolov4 )
 wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights
 # Build
@@ -30,9 +30,9 @@ sudo docker build -t opendatacam .
 date > marker && sudo docker build -t opendatacam .
 
 # Test the image with docker-compose
-cd opendatacam/run/desktop
+cd opendatacam/docker/run/desktop
 # copy config.json and edit with the parameters you need
-cp ../../config.json .
+cp ../../../config.json .
 # change
 # PATH_TO_YOLO_DARKNET=/var/local/darknet
 # VIDEO_INPUTS_PARAMS=file

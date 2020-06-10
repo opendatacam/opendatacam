@@ -1,4 +1,4 @@
-FROM base-nvidia-cuda-opencv-gstreamer
+FROM resinplayground/jetson-nano-cuda-cudnn-opencv:v0.2-slim
 
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -9,15 +9,14 @@ RUN git clone --depth 1 -b odc https://github.com/opendatacam/darknet /var/local
 
 WORKDIR /var/local/darknet
 
-RUN sed -i -e s/GPU=0/GPU=1/ Makefile;
-RUN sed -i -e s/CUDNN=0/CUDNN=1/ Makefile;
-RUN sed -i -e s/OPENCV=0/OPENCV=1/ Makefile;
+# COPY Makefile
+COPY Makefile Makefile
 
 RUN make
 
 # COPY weights, get them localy in the Dockerfile folder previously as they are slow to download each time
 # Links: https://github.com/AlexeyAB/darknet#pre-trained-models
-COPY yolov4.weights yolov4.weights
+COPY yolov3-tiny-prn.weights yolov3-tiny-prn.weights
 
 # Include demo.mp4 file
 RUN mkdir opendatacam_videos && cd opendatacam_videos && wget https://github.com/opendatacam/opendatacam/raw/development/public/static/demo/demo.mp4
@@ -36,7 +35,7 @@ RUN npm run build
 # Set default settings for Desktop run
 RUN sed -i -e 's+TO_REPLACE_PATH_TO_DARKNET+/var/local/darknet+g' config.json;
 RUN sed -i -e 's+TO_REPLACE_VIDEO_INPUT+file+g' config.json;
-RUN sed -i -e 's+TO_REPLACE_NEURAL_NETWORK+yolov4+g' config.json;
+RUN sed -i -e 's+TO_REPLACE_NEURAL_NETWORK+yolov3-tiny-prn+g' config.json;
 
 EXPOSE 8080 8070 8090
 
