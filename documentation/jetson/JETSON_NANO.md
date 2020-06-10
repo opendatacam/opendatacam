@@ -8,18 +8,13 @@
     - [2. Set correct Powermode according to your Power supply](#2-set-correct-powermode-according-to-your-power-supply)
       - [Using microUSB](#using-microusb)
       - [Using barrel jack (5V - 4A)](#using-barrel-jack-5v---4a)
-    - [3. Setup a swap partition:](#3-setup-a-swap-partition-)
+    - [3. Setup a swap partition:](#3-setup-a-swap-partition)
     - [4. Verify your if your USB Camera is connected](#4-verify-your-if-your-usb-camera-is-connected)
     - [5. Install Opendatacam](#5-install-opendatacam)
     - [6. Test Opendatacam](#6-test-opendatacam)
     - [7. Access Opendatacam via Wifi hotspot](#7-access-opendatacam-via-wifi-hotspot)
     - [8. Tips](#8-tips)
-    - [9. Housing](./HOUSING.md)
-  - [Advanced usage](#advanced-usage)
-    - [Use Raspberry Pi Cam with a non-docker installation of Opendatacam](#use-raspberry-pi-cam-with-a-non-docker-installation-of-opendatacam)
-    - [(EXPERIMENTAL) Use Raspberry Pi Cam with Opendatacam default installation](#-experimental--use-raspberry-pi-cam-with-opendatacam-default-installation)
-      - [Setup](#setup)
-      - [Why](#why)
+    - [9. Build a case](#9-build-a-case)
 
 ### Limitations
 
@@ -113,8 +108,6 @@ ls /dev/video*
 
 If this isn't the case, run the install script anyway, and after you will need to [modify the config.json](documentation/CONFIG.md) file to select your desired VIDEO_INPUT
 
-_If you have a Raspberry Pi Cam, [see advanced usage](#use-with-raspberry-pi-cam-v2-or-any-CSI-cam)._
-
 #### 5. Install Opendatacam
 
 ```bash
@@ -165,12 +158,5 @@ You should be able to operate Opendatacam without lag issues.
 #### 9. Build a case
 
 [Here are the steps to set up the Jetson NANO in the Wildlife Cam Casing from Naturebytes.](HOUSING.md)
-
-### Use with raspberry pi cam v2 or any CSI cam
-
-**IMPORTANT:** Unplug any usb webcam before plugging the raspberry pi cam or reboot after unpluging / plugin things.
-
-If you use a raspberry pi cam, just change the `"VIDEO_INPUT"` to `"raspberrycam"` in `config.json`
-
 
 
