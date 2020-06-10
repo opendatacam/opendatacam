@@ -35,13 +35,18 @@ date > marker && sudo docker build -t opendatacam .
 # nano
 cd opendatacam/docker/run/nano
 # xavier
-cd opendatacam/docker/run/nano
+cd opendatacam/docker/run/xavier
 # copy config.json and edit with the parameters you need
 cp ../../../config.json .
 # change
 # PATH_TO_YOLO_DARKNET=/var/local/darknet
 # VIDEO_INPUTS_PARAMS=file
 # NEURAL_NETWORK=yolov4 (xavier) | yolov3-tiny-prn (nano)
+
+# Tag the local image
+sudo docker tag <IMAGEID> opendatacam/opendatacam:v3.0.0-beta.3-nano
+sudo docker tag <IMAGEID> opendatacam/opendatacam:v3.0.0-beta.3-xavier
+# Spin containers
 sudo docker-compose up
 ```
 

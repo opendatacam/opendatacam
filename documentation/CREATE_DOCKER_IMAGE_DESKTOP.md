@@ -37,6 +37,11 @@ cp ../../../config.json .
 # PATH_TO_YOLO_DARKNET=/var/local/darknet
 # VIDEO_INPUTS_PARAMS=file
 # NEURAL_NETWORK=yolov4
+
+#tag the local image
+sudo docker tag 7ef920844953 opendatacam/opendatacam:v3.0.0-beta.3-desktop
+
+# start containers
 sudo docker-compose up
 ```
 
