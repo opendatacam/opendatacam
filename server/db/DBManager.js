@@ -1,8 +1,8 @@
-var MongoClient = require('mongodb').MongoClient
-var ObjectID = require('mongodb').ObjectID
+var MongoClient = require('mongodb').MongoClient;
+var ObjectID = require('mongodb').ObjectID;
 const config = require('../../config.json');
-
-var mongoURL = config.MONGODB_URL;
+const { getMongoUrl } = require('../utils/configHelper');
+var mongoURL = getMongoUrl();
 
 var RECORDING_COLLECTION = 'recordings';
 var TRACKER_COLLECTION = 'tracker';
@@ -10,42 +10,42 @@ var APP_COLLECTION = 'app';
 
 
 class DBManager {
-  constructor () {
-    this.db = null
+  constructor() {
+    this.db = null;
   }
 
-  init () {
+  init() {
     return new Promise((resolve, reject) => {
       MongoClient.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
         if (err) {
-          reject(err)
+          reject(err);
         } else {
-          let db = client.db('opendatacam')
-          this.db = db
+          let db = client.db('opendatacam');
+          this.db = db;
 
           // Get the collection
-          const recordingCollection = db.collection(RECORDING_COLLECTION)
+          const recordingCollection = db.collection(RECORDING_COLLECTION);
           // Create the index
-          recordingCollection.createIndex({ dateStart: -1 })
+          recordingCollection.createIndex({ dateStart: -1 });
 
-          const trackerCollection = db.collection(TRACKER_COLLECTION)
+          const trackerCollection = db.collection(TRACKER_COLLECTION);
           // Create the index
-          trackerCollection.createIndex({ recordingId : 1})
+          trackerCollection.createIndex({ recordingId: 1 });
 
-          resolve(db)
+          resolve(db);
         }
-      })
-    })
+      });
+    });
   }
 
-  getDB () {
+  getDB() {
     return new Promise((resolve, reject) => {
       if (this.db) {
-        resolve(this.db)
+        resolve(this.db);
       } else {
-        resolve(this.init())
+        resolve(this.init());
       }
-    })
+    });
   }
 
   persistAppSettings(settings) {
@@ -58,15 +58,15 @@ class DBManager {
             id: 'settings',
             countingAreas: settings.countingAreas
           }
-        }, { upsert: true}, (err, r) => {
+        }, { upsert: true }, (err, r) => {
           if (err) {
-            reject(err)
+            reject(err);
           } else {
-            resolve(r)
+            resolve(r);
           }
-        })
-      })
-    })
+        });
+      });
+    });
   }
 
   getAppSettings() {
@@ -75,53 +75,53 @@ class DBManager {
         db
           .collection(APP_COLLECTION)
           .findOne(
-            { id : 'settings'},
+            { id: 'settings' },
             (err, doc) => {
               if (err) {
-                reject(err)
+                reject(err);
               } else {
-                resolve(doc)
+                resolve(doc);
               }
             }
-          )
-      })
-    })
+          );
+      });
+    });
   }
 
-  insertRecording (recording) {
+  insertRecording(recording) {
     return new Promise((resolve, reject) => {
       this.getDB().then(db => {
         db.collection(RECORDING_COLLECTION).insertOne(recording, (err, r) => {
           if (err) {
-            reject(err)
+            reject(err);
           } else {
-            resolve(r)
+            resolve(r);
           }
-        })
-      })
-    })
+        });
+      });
+    });
   }
 
-  deleteRecording (recordingId) {
+  deleteRecording(recordingId) {
     return new Promise((resolve, reject) => {
       this.getDB().then(db => {
-        db.collection(RECORDING_COLLECTION).remove({ _id : ObjectID(recordingId)}, (err, r) => {
+        db.collection(RECORDING_COLLECTION).remove({ _id: ObjectID(recordingId) }, (err, r) => {
           if (err) {
-            reject(err)
+            reject(err);
           } else {
-            resolve(r)
+            resolve(r);
           }
-        })
-      })
-    })
+        });
+      });
+    });
   }
 
   // TODO For larges array like the one we are using, we can't do that, perfs are terrible
-  // we need to push trackerEntry in another collection and ref it 
+  // we need to push trackerEntry in another collection and ref it
   // Or maybe try to batch update not on every frame
   // I think a simple fix would be to store trackerData in it's own collection
   // db.collection(recordingId.toString()).insertOne(trackerEntry);
-  updateRecordingWithNewframe (
+  updateRecordingWithNewframe(
     recordingId,
     frameDate,
     counterSummary,
@@ -131,48 +131,48 @@ class DBManager {
   ) {
     return new Promise((resolve, reject) => {
 
-        // let itemsToAdd = {
-        //   trackerHistory: trackerEntry
-        // };
+      // let itemsToAdd = {
+      //   trackerHistory: trackerEntry
+      // };
 
-        let updateRequest = {
-          $set: {
-            dateEnd: frameDate,
-            counterSummary: counterSummary,
-            trackerSummary: trackerSummary
-          }
-          // Only add $push if we have a counted item
+      let updateRequest = {
+        $set: {
+          dateEnd: frameDate,
+          counterSummary: counterSummary,
+          trackerSummary: trackerSummary
         }
+        // Only add $push if we have a counted item
+      };
 
-        let itemsToAdd = {}
+      let itemsToAdd = {};
 
-        // Add counterHistory when somethings counted 
-        if(counterEntry.length > 0) {
-          itemsToAdd['counterHistory'] = {
-            $each: counterEntry
+      // Add counterHistory when somethings counted
+      if (counterEntry.length > 0) {
+        itemsToAdd['counterHistory'] = {
+          $each: counterEntry
+        };
+        updateRequest['$push'] = itemsToAdd;
+      }
+
+      this.getDB().then(db => {
+        db.collection(RECORDING_COLLECTION).update(
+          { _id: recordingId },
+          updateRequest,
+          (err, r) => {
+            if (err) {
+              reject(err);
+            } else {
+              resolve(r);
+            }
           }
-          updateRequest['$push'] = itemsToAdd;
-        }
+        );
 
-        this.getDB().then(db => {
-            db.collection(RECORDING_COLLECTION).update(
-                { _id: recordingId },
-                updateRequest,
-                (err, r) => {
-                    if (err) {
-                        reject(err)
-                    } else {
-                        resolve(r)
-                    }
-                }
-            )
-
-            db.collection(TRACKER_COLLECTION).insertOne(trackerEntry)
-        })
-    })
+        db.collection(TRACKER_COLLECTION).insertOne(trackerEntry);
+      });
+    });
   }
 
-  getRecordings (limit = 30, offset = 0) {
+  getRecordings(limit = 30, offset = 0) {
     return new Promise((resolve, reject) => {
       this.getDB().then(db => {
         db
@@ -184,68 +184,68 @@ class DBManager {
           .skip(offset)
           .toArray(function (err, docs) {
             if (err) {
-              reject(err)
+              reject(err);
             } else {
-              resolve(docs)
+              resolve(docs);
             }
-          })
-      })
-    })
+          });
+      });
+    });
   }
 
-  getRecording (recordingId) {
+  getRecording(recordingId) {
     return new Promise((resolve, reject) => {
       this.getDB().then(db => {
         db
           .collection(RECORDING_COLLECTION)
           .findOne(
-            { _id : ObjectID(recordingId)},
-            { projection : { counterHistory: 0, areas: 0 } },
+            { _id: ObjectID(recordingId) },
+            { projection: { counterHistory: 0, areas: 0 } },
             (err, doc) => {
               if (err) {
-                reject(err)
+                reject(err);
               } else {
-                resolve(doc)
+                resolve(doc);
               }
             }
-          )
-      })
-    })
+          );
+      });
+    });
   }
 
-  getRecordingsCount () {
+  getRecordingsCount() {
     return new Promise((resolve, reject) => {
       this.getDB().then(db => {
         db
           .collection(RECORDING_COLLECTION)
-          .countDocuments({},(err, res) => {
+          .countDocuments({}, (err, res) => {
             if (err) {
-              reject(err)
+              reject(err);
             } else {
-              resolve(res)
+              resolve(res);
             }
           });
-      })
-    })
+      });
+    });
   }
 
-  getTrackerHistoryOfRecording (recordingId) {
+  getTrackerHistoryOfRecording(recordingId) {
     return new Promise((resolve, reject) => {
       this.getDB().then(db => {
         db
           .collection(TRACKER_COLLECTION)
           .find(
-            { recordingId : ObjectID(recordingId)}
+            { recordingId: ObjectID(recordingId) }
           )
           .toArray(function (err, docs) {
             if (err) {
-              reject(err)
+              reject(err);
             } else {
-              resolve(docs)
+              resolve(docs);
             }
-          })
+          });
       });
-    })
+    });
   }
 
   getCounterHistoryOfRecording(recordingId) {
@@ -254,25 +254,25 @@ class DBManager {
         db
           .collection(RECORDING_COLLECTION)
           .find(
-            { _id : ObjectID(recordingId)}
+            { _id: ObjectID(recordingId) }
           )
           .toArray(function (err, docs) {
             if (err) {
-              reject(err)
+              reject(err);
             } else {
-              if(docs.length === 0) {
+              if (docs.length === 0) {
                 resolve({});
               } else {
-                resolve(docs[0])
-              } 
+                resolve(docs[0]);
+              }
             }
-          })
+          });
       });
-    })
+    });
   }
 
 }
 
-var DBManagerInstance = new DBManager()
+var DBManagerInstance = new DBManager();
 
-module.exports = DBManagerInstance
+module.exports = DBManagerInstance;
