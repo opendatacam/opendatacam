@@ -1,5 +1,5 @@
-require("dotenv").config();
-const config = require("../../config.json");
+require('dotenv').config();
+const config = require('../../config.json');
 
 //  logic is:
 // - Get the desired env variables (using dotenv)
@@ -60,7 +60,7 @@ module.exports = {
   getPortFromConfig,
   parseAndTestIsNumber,
   getMjpegStreamPort: () => {
-    let port = getPortFromConfig(config, "darknet_mjpeg_stream", 8090);
+    let port = getPortFromConfig(config, 'darknet_mjpeg_stream', 8090);
     if (
       envDarknetJsonStreamPort &&
       parseAndTestIsNumber(envDarknetJsonStreamPort)
@@ -71,7 +71,7 @@ module.exports = {
     }
   },
   getJsonStreamPort: () => {
-    let port = getPortFromConfig(config, "darknet_json_stream", 8070);
+    let port = getPortFromConfig(config, 'darknet_json_stream', 8070);
     if (
       envDarknetJsonStreamPort &&
       parseAndTestIsNumber(envDarknetJsonStreamPort)
@@ -82,7 +82,7 @@ module.exports = {
     }
   },
   getAppPort: () => {
-    let port = getPortFromConfig(config, "app", 8080);
+    let port = getPortFromConfig(config, 'app', 8080);
     if (envAppPort && parseAndTestIsNumber(envAppPort)) {
       return parseInt(envAppPort, 10);
     } else {
@@ -92,8 +92,8 @@ module.exports = {
   getMongoUrl: () => {
     const url = getKeyFromConfig(
       config,
-      "MONGODB_URL",
-      "mongodb://mongo:27017"
+      'MONGODB_URL',
+      'mongodb://mongo:27017'
     );
     if (envMongodbUrl) {
       return envMongodbUrl;
