@@ -5,7 +5,7 @@ const {
   getJsonStreamPort,
   getMjpegStreamPort,
   getMongoUrl,
-} = require("./configHelper");
+} = require('./configHelper');
 
 function test(title, callback) {
   try {
@@ -27,44 +27,44 @@ function expect(actual) {
   };
 }
 
-test("parseAndTestIsNumber function should parse string to number", () => {
+test('parseAndTestIsNumber function should parse string to number', () => {
   expect(parseAndTestIsNumber("123")).toBe(true);
 });
 
-test("parseAndTestIsNumber function should return false on non number s string", () => {
+test('parseAndTestIsNumber function should return false on non number s string', () => {
   expect(parseAndTestIsNumber("abc")).toBe(false);
 });
 
-test("parseAndTestIsNumber function should return true when passed a number", () => {
+test('parseAndTestIsNumber function should return true when passed a number', () => {
   expect(parseAndTestIsNumber(123)).toBe(true);
 });
 
-test("getPortFromConfig should return actual port by defined key", () => {
+test('getPortFromConfig should return actual port by defined key', () => {
   const config = {
     PORTS: {
       app: 8888,
     },
   };
-  expect(getPortFromConfig(config, "app")).toBe(8888);
+  expect(getPortFromConfig(config, 'app')).toBe(8888);
 });
 
-test("getPortFromConfig should return defined defaultPort because key does not exist", () => {
+test('getPortFromConfig should return defined defaultPort because key does not exist', () => {
   const config = {
     PORTS: {
       app: 1234,
     },
   };
-  expect(getPortFromConfig(config, "foo", 3000)).toBe(3000);
+  expect(getPortFromConfig(config, 'foo', 3000)).toBe(3000);
 });
 
-test("getPortFromConfig should return defaultPort because key does not hold a number", () => {
+test('getPortFromConfig should return defaultPort because key does not hold a number', () => {
   const config = {
     PORTS: {
-      app: "ABC",
+      app: 'ABC',
     },
   };
 
-  expect(getPortFromConfig(config, "app", 3000)).toBe(3000);
+  expect(getPortFromConfig(config, 'app', 3000)).toBe(3000);
 });
 
 test(`Get the values from process.env instead of config
@@ -77,5 +77,5 @@ fish:       env MONGODB_URL=foo env PORT_APP=1234 env PORT_DARKNET_MJPEG_STREAM=
   expect(getAppPort()).toBe(1234);
   expect(getJsonStreamPort()).toBe(1234);
   expect(getMjpegStreamPort()).toBe(1234);
-  expect(getMongoUrl()).toBe("foo");
+  expect(getMongoUrl()).toBe('foo');
 });
