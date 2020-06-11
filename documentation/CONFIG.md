@@ -96,7 +96,7 @@ Once you do have the video file inside the `opendatacam_videos` folder, you can 
 
 Once `config.json` is saved, you only need to restart the docker container or restart your jetson and next time you access opendatacam, it will run on this file.
 
-[Learn more about the others video inputs available (IP camera, Rasberry Pi in the Advanced use section)](#video_input)
+[Learn more about the others video inputs available (IP camera, Rasberry Pi in the Advanced use section)](#video-input)
 
 **For a non-docker install of OpenDataCam:**
 
@@ -145,11 +145,11 @@ In order to switch to another one, you need to change the setting `NEURAL_NETWOR
 }
 ```
 
-The settings available are: `"yolov3"` , `"yolov3-tiny"`, `"yolov2-voc"`, if you want to run from others weights like [yolov3-openimages](https://pjreddie.com/media/files/yolov3-openimages.weights), [yolov3-spp](https://pjreddie.com/media/files/yolov3-spp.weights).. or custom trained ones, please refer to the [advanced use section below](#neural_network_params).
+The settings available are: `"yolov3"` , `"yolov3-tiny"`, `"yolov2-voc"`, if you want to run from others weights like [yolov3-openimages](https://pjreddie.com/media/files/yolov3-openimages.weights), [yolov3-spp](https://pjreddie.com/media/files/yolov3-spp.weights).. or custom trained ones, please refer to the [advanced use section below](#neural-network-params).
 
 **For a non-docker install of opendatacam:**
 
-The settings are the same as with the docker install, but you can also run from other weights file, [see advanced use section below](#neural_network_params)
+The settings are the same as with the docker install, but you can also run from other weights file, [see advanced use section below](#neural-network-params)
 
 
 ### Track only specific classes
