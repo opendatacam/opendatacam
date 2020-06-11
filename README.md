@@ -104,6 +104,12 @@ sudo vim /etc/docker/daemon.json
 systemctl restart docker
 ```
 
+You also need to install `nvidia-container-runtime`
+
+```
+sudo apt install nvidia-container-runtime
+```
+
 ### 2. Install and start OpenDataCam 🚀
 
 Open a terminal or ssh to you machine and run the following commands depending on your platform.
