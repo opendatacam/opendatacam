@@ -34,6 +34,9 @@ We offer several customization options:
     - [MongoDB URL](#mongodb-url)
     - [Ports](#ports)
     - [Tracker accuracy display](#tracker-accuracy-display)
+    - [Use Environment Variables](#use-environment-variables)
+      - [Without Docker](#without-docker)
+      - [With docker-compose](#with-docker-compose)
 
 ### General
 
@@ -461,7 +464,7 @@ _Behind the hoods, it displays a metric of the tracker called "zombies" which re
 You can tweak all the settings of this display with the `TRACKER_ACCURACY_DISPLAY` setting.
 
 | nbFrameBuffer          | Number of previous frames displayed on the heatmap                                                                                                                                                                       |
-|------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | radius                 | Radius of the points displayed on the heatmap (in % of the width of the canvas)                                                                                                                                          |
 | blur                   | Blur of the points displayed on the heatmap (in % of the width of the canvas)                                                                                                                                            |
 | step                   | For each point displayed, how much the point should contribute to the increase of the heapmap value (the range is between 0-1), increasing this will cause the heatmap to reach the higher values of the gradient faster |
@@ -498,6 +501,58 @@ For example, if you change the gradient with:
 
 ![Other gradient](https://user-images.githubusercontent.com/533590/59389118-ec66dc00-8d43-11e9-8310-309da6ab42e1.png)
 
+#### Use Environment Variables
+
+Some of the entries in `config.json` can be overwritten using environment variables. Currently this is the `PORTS` object and the setting for the `MONGODB_URL`. See the file [.env.example](../.env.example) as an example how to set them. Make sure the use the exact same names or opendatacam will fall back to `config.json`, and if that is not present the general defaults.
+
+##### Without Docker
+
+If you are running opendatacam without docker you can set these by:
+
+- adding a file called `.env` to the root of the project, 
+  then these will be picked up by the [dotenv](https://www.npmjs.com/package/dotenv) package.
+- adding these variables to your `.bashrc` or `.zshrc` depending on what shell you are using or any other configuration file that gets loaded into your shell sessions.
+- adding them to the command you use to start the opendatacam,
+  for example in bash `MONGODB_URL=mongodb://mongo:27017 PORT_APP=8080 PORT_DARKNET_MJPEG_STREAM=8090 PORT_DARKNET_JSON_STREAM=8070 node server.js`
+   If you are on windows we suggest using the [`cross-env` package](https://www.npmjs.com/package/cross-env) to set these variables.
+
+##### With docker-compose
+
+If you are running opendatacam with `docker-compose.yml` you can set them as [environment section](https://docs.docker.com/compose/environment-variables/) to the service opendatacam like shown below.
+
+```yml
+service:
+  opendatacam:
+    environment:
+      - PORT_APP=8080
+```
+
+You also can can declare these environment variables [in a `.env` file](https://docs.docker.com/compose/env-file/) in the folder where the `docker-compose` command is invoked. Then these will be available within the `docker-compose.yml` file and you can pass them through to the container like shown below.
+
+The `.env` file.
+```env
+PORT_APP=8080
+```
+
+the `docker-compose.yml` file.
+
+```yml
+service:
+  opendatacam:
+    environment:
+      - PORT_APP
+```
+
+There is also the possibility the have the `.env` in the directory where the `docker-compose` command is executed and add the `env_file` section to the docker-compose.yml configuration.
+
+```yml
+service:
+  opendatacam:
+    env_file:
+      - ./.env
+```
+
+You also can add these variables to the call of  the `docker-compose` command. For example like this `docker-compose up -e PORT_APP=8080`. 
 
 
 
