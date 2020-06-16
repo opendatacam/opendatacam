@@ -445,6 +445,8 @@ You can tweak some settings of the tracker to optimize OpenDataCam better for yo
 
 ![CounterBuffer](https://user-images.githubusercontent.com/533590/84810794-1ebcb080-b00c-11ea-9cae-065fc066e10f.jpg)
 
+NB: if the object has changed ID in the past frames, it will take the last past frame known with the same ID.
+
 #### MongoDB URL
 
 If you want to persist the data on a remote mongodb instance, you can change the setting `MONGODB_URL` .
