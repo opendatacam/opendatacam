@@ -31,6 +31,7 @@ We offer several customization options:
       - [Change webcam resolution](#change-webcam-resolution)
     - [Use Custom Neural Network weights](#use-custom-neural-network-weights)
     - [Tracker settings](#tracker-settings)
+    - [Counter settings](#counter-settings)
     - [MongoDB URL](#mongodb-url)
     - [Ports](#ports)
     - [Tracker accuracy display](#tracker-accuracy-display)
@@ -427,6 +428,15 @@ You can tweak some settings of the tracker to optimize OpenDataCam better for yo
 
 - `unMatchedFrameTolerance`: This the number of frame we keep predicting the object trajectory if it is not matched by the next frame list of detections. Setting this higher will cause less ID switches, but more potential false positive with an ID going to another object.
 
+#### Counter settings
+
+```json
+"COUNTER_SETTINGS": {
+  "minAngleWithCountingLineThreshold": 5,
+}
+```
+
+- `minAngleWithCountingLineThreshold`: Count items crossing the counting line only if the angle between their trajectory and the counting line is superior to this angle (in degree). 90 degree would count nothing (or only perfectly perpendicular object) whereas 0 will count everything.
 
 #### MongoDB URL
 

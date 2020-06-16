@@ -142,7 +142,7 @@ module.exports = {
     }
   },
 
-  countItem: function(trackedItem, countingAreaKey, frameId, countingDirection) {
+  countItem: function(trackedItem, countingAreaKey, frameId, countingDirection, angleWithCountingLine) {
     if(Opendatacam.recordingStatus.isRecording) {
       var countedItem = {
         frameId: frameId,
@@ -150,8 +150,9 @@ module.exports = {
         area: countingAreaKey,
         name: trackedItem.name,
         id: trackedItem.id,
-        bearing: trackedItem.bearing, 
-        countingDirection: countingDirection  
+        bearing: trackedItem.bearing,
+        countingDirection: countingDirection,
+        angleWithCountingLine: angleWithCountingLine
       }
       // Add it to the history
       Opendatacam.countedItemsHistory.push(countedItem)
@@ -389,14 +390,22 @@ module.exports = {
               trackedItem.x,
               - trackedItem.y)
 
+            var MIN_ANGLE_THRESHOLD = 0;
+            if(config.COUNTER_SETTINGS && config.COUNTER_SETTINGS.minAngleWithCountingLineThreshold) {
+              MIN_ANGLE_THRESHOLD = config.COUNTER_SETTINGS.minAngleWithCountingLineThreshold
+            }
 
-            // Object trajectory must intercept the counting line on the counting line
-            if(intersection.onLine1 && intersection.onLine2) {
+            // To be counted, Object trajectory must intercept the counting line
+            // -> on the counting line
+            // -> with an angle superior at the angle threshold (which is the smallest angle between object trajectory and counting line)
+            if(intersection.onLine1 && intersection.onLine2 && intersection.angle >= MIN_ANGLE_THRESHOLD) {
 
               // console.log("*****************************")
               // console.log("COUNTING SOMETHING")
               // console.log("*****************************")
               // // console.log(trackedItem);
+              // console.log(intersection.angle)
+
 
               // Do not count twice the same tracked item
               if(trackedItem.counted.find((countedEvent) => countedEvent.areaKey === countingAreaKey)) {
@@ -410,7 +419,7 @@ module.exports = {
                 // Object comes from top to bottom or left to right of the counting line
                 if(countingAreaProps.lineBearings[0] <= trackedItem.bearing && trackedItem.bearing <= countingAreaProps.lineBearings[1]) {
                   if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM) {
-                    let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM);
+                    let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM, intersection.angle);
                     countedItemsForThisFrame.push(countedItem);
                   } else {
                     // do not count, comes from the wrong direction
@@ -419,7 +428,7 @@ module.exports = {
                 } else {
                   // Object comes from bottom to top, or right to left of the counting lines
                   if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP) {
-                    let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP);
+                    let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP, intersection.angle);
                     countedItemsForThisFrame.push(countedItem);
                   } else {
                     // do not count, comes from the wrong direction
