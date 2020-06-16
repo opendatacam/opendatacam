@@ -30,6 +30,7 @@ const initialState = {
   videoResolution: null,
   countingAreas: {},
   trackerDataForLastFrame: null,
+  trackerDataBuffer: [],
   nbItemsTrackedThisFrame: 0,
   totalItemsTracked: 0,
   _refTrackedItemIdWhenRecordingStarted: 0,
@@ -114,7 +115,7 @@ module.exports = {
     let b = - point1.y - a * point1.x;
 
     // Compute bearing
-    let lineBearing = computeLineBearing(point1.x, point1.y, point2.x, point2.y);
+    let lineBearing = computeLineBearing(point1.x, -point1.y, point2.x, -point2.y);
     // in both directions
     let lineBearings = [0,0];
     if(lineBearing >= 180) {
@@ -354,6 +355,20 @@ module.exports = {
 
     var countedItemsForThisFrame = [];
 
+    var NBFRAME_TO_BUFFER_FOR_COUNTER = 2;
+    if(config.COUNTER_SETTINGS && config.COUNTER_SETTINGS.computeTrajectoryBasedOnNbOfPastFrame) {
+      NBFRAME_TO_BUFFER_FOR_COUNTER = config.COUNTER_SETTINGS.computeTrajectoryBasedOnNbOfPastFrame
+    }
+
+    // Populate trackerDataBuffer
+    if(Opendatacam.trackerDataBuffer.length > NBFRAME_TO_BUFFER_FOR_COUNTER) {
+      // Remove first element (oldest) to keep buffer at max size
+      Opendatacam.trackerDataBuffer.shift();
+    }
+    Opendatacam.trackerDataBuffer.push(trackerDataForThisFrame);
+    // console.log(`Trackerdata buffer length:  ${Opendatacam.trackerDataBuffer.length}`)
+
+
     // Check if trackedItem are going through some counting areas
     // For each new tracked item
     trackerDataForThisFrame = trackerDataForThisFrame.map((trackedItem) => {
@@ -363,58 +378,82 @@ module.exports = {
         let countingAreaProps = Opendatacam.countingAreas[countingAreaKey].computed;
         let countingAreaType = Opendatacam.countingAreas[countingAreaKey].type;
 
-
-
         // If trackerDataForLastFrame exists, we can if we items are passing through the counting line
         if(Opendatacam.trackerDataForLastFrame) {
-          // Find trackerItem data of last frame
-          let trackerItemLastFrame = Opendatacam.trackerDataForLastFrame.data.find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
+          // Find trackedItem data of last frame
+          let trackedItemLastFrame = Opendatacam.trackerDataForLastFrame.data.find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
 
-          if(trackerItemLastFrame) {
+          if(trackedItemLastFrame) {
 
-            // Remind counted status
-            if(trackerItemLastFrame.counted) {
-              // console.log(`${trackerItemLastFrame.id} appear to have been counted on last frame`);
-              trackedItem.counted = trackerItemLastFrame.counted;
+            // Remind counted status (could be already counted for another area but not this one)
+            if(trackedItemLastFrame.counted) {
+              trackedItem.counted = trackedItemLastFrame.counted;
             } else {
+              // init setup an empty counting history
               trackedItem.counted = [];
             }
 
-            let intersection = checkLineIntersection(
-              countingAreaProps.point1.x,
-              countingAreaProps.point1.y,
-              countingAreaProps.point2.x,
-              countingAreaProps.point2.y,
-              trackerItemLastFrame.x,
-              - trackerItemLastFrame.y,
-              trackedItem.x,
-              - trackedItem.y)
+            // Do not count twice the same tracked item
+            if(trackedItem.counted.find((countedEvent) => countedEvent.areaKey === countingAreaKey)) {
+              // already counted on this areaKey, do not count twice
+              Logger.log('Already counted, do not count it twice')
+            } else {
+              // Build history of the past buffered frame for this object
+              let trackedItemHistoryForPastBufferedFrame = [];
+              for (var i = Opendatacam.trackerDataBuffer.length - 1; i >= 0; i--) {
+                let trackedItemDataForThisBufferedFrame = Opendatacam.trackerDataBuffer[i].find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
+                if (!trackedItemDataForThisBufferedFrame) {
+                  // console.log(`this tracked item id ${trackedItem.id} didnt exist in frame -${i} from this frame`)
+                  break;
+                } else {
+                  // console.log(`this tracked item id ${trackedItem.id} exist in frame -${i} from this frame`)
+                  trackedItemHistoryForPastBufferedFrame.push(trackedItemDataForThisBufferedFrame);
+                }
+              }
 
-            var MIN_ANGLE_THRESHOLD = 0;
-            if(config.COUNTER_SETTINGS && config.COUNTER_SETTINGS.minAngleWithCountingLineThreshold) {
-              MIN_ANGLE_THRESHOLD = config.COUNTER_SETTINGS.minAngleWithCountingLineThreshold
-            }
+              // Take Oldest item
+              trackedItemLastFrame = trackedItemHistoryForPastBufferedFrame[trackedItemHistoryForPastBufferedFrame.length - 1];
 
-            // To be counted, Object trajectory must intercept the counting line
-            // -> on the counting line
-            // -> with an angle superior at the angle threshold (which is the smallest angle between object trajectory and counting line)
-            if(intersection.onLine1 && intersection.onLine2 && intersection.angle >= MIN_ANGLE_THRESHOLD) {
+              let intersection = checkLineIntersection(
+                countingAreaProps.point1.x,
+                countingAreaProps.point1.y,
+                countingAreaProps.point2.x,
+                countingAreaProps.point2.y,
+                trackedItemLastFrame.x,
+                - trackedItemLastFrame.y,
+                trackedItem.x,
+                - trackedItem.y)
 
-              // console.log("*****************************")
-              // console.log("COUNTING SOMETHING")
-              // console.log("*****************************")
-              // // console.log(trackedItem);
-              // console.log(intersection.angle)
+              var MIN_ANGLE_THRESHOLD = 0;
+              if(config.COUNTER_SETTINGS && config.COUNTER_SETTINGS.minAngleWithCountingLineThreshold) {
+                MIN_ANGLE_THRESHOLD = config.COUNTER_SETTINGS.minAngleWithCountingLineThreshold
+              }
+
+              // To be counted, Object trajectory must intercept the counting line
+              // -> on the counting line
+              // -> with an angle superior at the angle threshold (which is the smallest angle between object trajectory and counting line)
+              if(intersection.onLine1 && intersection.onLine2 && intersection.angle >= MIN_ANGLE_THRESHOLD) {
+
+                // console.log("*****************************")
+                // console.log("COUNTING SOMETHING")
+                // console.log("*****************************")
+                // // console.log(trackedItem);
+                // console.log(intersection.angle)
 
 
-              // Do not count twice the same tracked item
-              if(trackedItem.counted.find((countedEvent) => countedEvent.areaKey === countingAreaKey)) {
-                // already counted on this areaKey, do not count twice
-                Logger.log('Already counted, do not count it twice')
-              } else {
                 // Tracked item has cross the {countingAreaKey} counting line
                 // Count it
                 // console.log(`Counting ${trackedItem.id}`);
+                // console.log(`(${trackedItemLastFrame.x}, ${trackedItemLastFrame.y})`);
+                // console.log(`(${trackedItem.x}, ${trackedItem.y})`);
+                // console.log(`Angle: ${intersection.angle} º`)
+                // console.log(`(${countingAreaProps.point1.x}, ${countingAreaProps.point1.y})`);
+                // console.log(`(${countingAreaProps.point2.x}, ${countingAreaProps.point2.y})`);
+
+                // Compute trackedItem bearing based on more buffered frame (tracker does it only frame to frame)
+                // console.log(`Bearing given by tracker ${trackedItem.bearing}`)
+                trackedItem.bearing = computeLineBearing(trackedItemLastFrame.x, - trackedItemLastFrame.y, trackedItem.x, - trackedItem.y)
+                // console.log(`Bearing given by counting algo ${trackedItem.bearing}`)
 
                 // Object comes from top to bottom or left to right of the counting line
                 if(countingAreaProps.lineBearings[0] <= trackedItem.bearing && trackedItem.bearing <= countingAreaProps.lineBearings[1]) {
@@ -435,12 +474,11 @@ module.exports = {
                     // console.log('not counting, comes from top to bottom or left to right of the counting line ')
                   }
                 }
+              } else {
+                // console.log('Intersection with object trajectory is NOT on counting line, do not count');
+                // console.log(trackedItem)
               }
-            } else {
-              // console.log('Intersection with object trajectory is NOT on counting line, do not count');
-              // console.log(trackedItem)
             }
-
           }
         }
       });

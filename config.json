@@ -17,7 +17,8 @@
     "unMatchedFrameTolerance": 5
   },
   "COUNTER_SETTINGS": {
-    "minAngleWithCountingLineThreshold": 5
+    "minAngleWithCountingLineThreshold": 5,
+    "computeTrajectoryBasedOnNbOfPastFrame": 5
   },
   "VALID_CLASSES": ["*"],
   "DISPLAY_CLASSES": [
