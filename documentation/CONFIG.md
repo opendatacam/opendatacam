@@ -438,6 +438,8 @@ You can tweak some settings of the tracker to optimize OpenDataCam better for yo
 
 - `minAngleWithCountingLineThreshold`: Count items crossing the counting line only if the angle between their trajectory and the counting line is superior to this angle (in degree). 90 degree would count nothing (or only perfectly perpendicular object) whereas 0 will count everything.
 
+![Counting line angle illustration](https://user-images.githubusercontent.com/533590/84757717-c3b39b00-afc4-11ea-8aef-e4900d7f6352.jpg)
+
 #### MongoDB URL
 
 If you want to persist the data on a remote mongodb instance, you can change the setting `MONGODB_URL` .
