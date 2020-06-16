@@ -433,12 +433,17 @@ You can tweak some settings of the tracker to optimize OpenDataCam better for yo
 ```json
 "COUNTER_SETTINGS": {
   "minAngleWithCountingLineThreshold": 5,
+  "computeTrajectoryBasedOnNbOfPastFrame": 5
 }
 ```
 
 - `minAngleWithCountingLineThreshold`: Count items crossing the counting line only if the angle between their trajectory and the counting line is superior to this angle (in degree). 90 degree would count nothing (or only perfectly perpendicular object) whereas 0 will count everything.
 
 ![Counting line angle illustration](https://user-images.githubusercontent.com/533590/84757717-c3b39b00-afc4-11ea-8aef-e4900d7f6352.jpg)
+
+- `computeTrajectoryBasedOnNbOfPastFrame`: This tells the counting algorithm to compute the trajectory to determine if an object crosses the line based on this number of past frame. As you can see below in reality the trajectory of the center of the bbox given by YOLO is moving a little bit from frame to frame, so this can smooth out and be more reliable to determine if object is crossing the line and the value of the angle of crossing
+
+![CounterBuffer](https://user-images.githubusercontent.com/533590/84810794-1ebcb080-b00c-11ea-9cae-065fc066e10f.jpg)
 
 #### MongoDB URL
 
