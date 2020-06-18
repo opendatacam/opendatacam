@@ -241,7 +241,7 @@ app.prepare()
                     "h": 666
                   }
                 },
-                "name": "Counter line 1"
+                "name": "Counter line 1",
                 "type": "bidirectional"
               }
             }
