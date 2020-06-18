@@ -139,7 +139,7 @@
       "examples": [
         {
           "title": "Request Example:",
-          "content": "{\n        \"countingAreas\": {\n          \"5287124a-4598-44e7-abaf-394018a7278b\": {\n            \"color\": \"yellow\",\n            \"location\": {\n              \"point1\": {\n                \"x\": 221,\n                \"y\": 588\n              },\n              \"point2\": {\n                \"x\": 673,\n                \"y\": 546\n              },\n              \"refResolution\": {\n                \"w\": 1280,\n                \"h\": 666\n              }\n            },\n            \"name\": \"Counter line 1\"\n            \"type\": \"bidirectional\"\n          }\n        }\n      }",
+          "content": "{\n        \"countingAreas\": {\n          \"5287124a-4598-44e7-abaf-394018a7278b\": {\n            \"color\": \"yellow\",\n            \"location\": {\n              \"point1\": {\n                \"x\": 221,\n                \"y\": 588\n              },\n              \"point2\": {\n                \"x\": 673,\n                \"y\": 546\n              },\n              \"refResolution\": {\n                \"w\": 1280,\n                \"h\": 666\n              }\n            },\n            \"name\": \"Counter line 1\",\n            \"type\": \"bidirectional\"\n          }\n        }\n      }",
           "type": "json"
         }
       ]
