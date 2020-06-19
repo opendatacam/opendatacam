@@ -213,6 +213,9 @@ sudo docker-compose down
 # Stop all docker container
 sudo docker stop $(sudo docker ps -aq)
 
+# If docker (and opendatacam) doesn't start at startup enable it
+sudo systemctl enable docker
+
 # Start container
 # detached mode
 sudo docker-compose up -d
