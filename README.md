@@ -61,6 +61,8 @@ _For Jetson Nano, [you can follow this dedicated quick start guide](documentatio
 - [Docker compose](https://blog.hypriot.com/post/nvidia-jetson-nano-install-docker-compose/) (no official installer available for ARM64 devices)
 
 ```bash
+sudo apt install python3-pip
+
 sudo apt-get install -y libffi-dev
 sudo apt-get install -y python-openssl
 sudo apt-get install libssl-dev
