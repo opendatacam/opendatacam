@@ -10,7 +10,7 @@
       - [Using barrel jack (5V - 4A)](#using-barrel-jack-5v---4a)
     - [3. Setup a swap partition:](#3-setup-a-swap-partition)
     - [4. Install Opendatacam](#4-install-opendatacam)
-    - [5. (optional) Run from USB Camera](#5-optional-run-from-usb-camera)
+    - [5. (optional) Run on USB Camera](#5-optional-run-on-usb-camera)
     - [6. Test Opendatacam](#6-test-opendatacam)
     - [7. Access Opendatacam via Wifi hotspot](#7-access-opendatacam-via-wifi-hotspot)
     - [8. Tips](#8-tips)
@@ -128,7 +128,7 @@ chmod 777 install-opendatacam.sh
 ./install-opendatacam.sh --platform nano
 ```
 
-#### 5. (optional) Run from USB Camera
+#### 5. (optional) Run on USB Camera
 
 By default, OpenDataCam will start on a demo file, but if you want to run from an usbcam you should
 
@@ -145,12 +145,19 @@ ls /dev/video*
 "VIDEO_INPUT": "usbcam"
 ```
 
+- Change `"usbcam"` device in `config.json` depending on the result of `ls /dev/video*`
+
+For example:
+
+```json
+"v4l2src device=/dev/video1 ..."
+```
+
 - Restart docker
 
 ```
 sudo docker-compose restart
 ```
-
 
 #### 6. Test Opendatacam
 

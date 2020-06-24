@@ -26,10 +26,9 @@ OpenDataCam is generously supported by [move lab](https://www.move-lab.com/) (on
       - [For Jetson: Flash Jetson board to jetpack 4.3 ⚡️](#for-jetson-flash-jetson-board-to-jetpack-43-️)
       - [For Desktop machine: Nvidia container toolkit 🔧](#for-desktop-machine-nvidia-container-toolkit-)
     - [2. Install and start OpenDataCam 🚀](#2-install-and-start-opendatacam-)
-    - [2. bis (optional) Upgrade OpenDataCam](#2-bis-optional-upgrade-opendatacam)
     - [3. Use OpenDataCam 🖖](#3-use-opendatacam-)
-    - [4. Configure your Wifi hotspot 📲](#4-configure-your-wifi-hotspot-)
-    - [5. Customize OpenDataCam ️️⚙️](#5-customize-opendatacam-️️️)
+    - [4. Customize OpenDataCam ️️⚙️](#4-customize-opendatacam-️️️)
+    - [5. Configure your Wifi hotspot 📲](#5-configure-your-wifi-hotspot-)
     - [6. Docker playbook ️📚](#6-docker-playbook-️)
   - [🔌 API Documentation](#-api-documentation)
   - [🗃 Data export documentation](#-data-export-documentation)
@@ -138,16 +137,16 @@ chmod 777 install-opendatacam.sh
 # NB: Will run from demo file, you can change this after install, see "5. Customize OpenDataCam"
 ./install-opendatacam.sh --platform nano
 
-# Install command for Jetson TX2
-# Docker build for Jetson TX2 isn't available please install without docker (see in avanced use)
-
-# Install command for Jetson Xavier
+# Install command for Jetson Xavier / Xavier NX
 # NB: Will run from demo file, you can change this after install, see "5. Customize OpenDataCam"
 ./install-opendatacam.sh --platform xavier
 
 # Install command for a Desktop machine
 # NB: Will run from demo file, you can change this after install, see "5. Customize OpenDataCam"
 ./install-opendatacam.sh --platform desktop
+
+# Install command for Jetson TX2
+# Docker build for Jetson TX2 isn't available please install without docker (see in avanced use)
 ```
 
 This command will download and start a docker container on the machine. After it finishes the docker container starts a webserver on port 8080 (ports 8070 and 8090 are also used).
@@ -156,7 +155,7 @@ The docker container is started in auto-restart mode, so if you reboot your mach
 
 You can also [use opendatacam without docker](#how-to-use-opendatacam-without-docker)
 
-### 2. bis (optional) Upgrade OpenDataCam
+__(optional) Upgrade OpenDataCam__
 
 - If you have modified the `config.json`, save it somewhere
 - Remove `config.json`, `docker-compose.yml`
@@ -175,23 +174,50 @@ _NB: OpenDataCam only supports one client at a time, if you open the UI on two d
 
 See [Docker playbook ️📚](#6-docker-playbook-️) how to restart / stop OpenDataCam.
 
-### 4. Configure your Wifi hotspot 📲
+__(optional) Run on USB Camera__
 
-In order to operate opendatacam from your phone / tablet / computer.
+By default, OpenDataCam will start on a demo file, but if you want to run from an usbcam you should
 
-See [Make jetson device / machine accessible via WIFI](documentation/WIFI_HOTSPOT_SETUP.md)
+- Verify an USB Camera is connected
 
-### 5. Customize OpenDataCam ️️⚙️
+```bash
+ls /dev/video*
+# Output should be: /dev/video1
+```
+
+- Change `"VIDEO_INPUT"` in `config.json`
+
+```json
+"VIDEO_INPUT": "usbcam"
+```
+
+- Restart docker
+
+```
+sudo docker-compose restart
+```
+
+__(optional) Change file__
+
+To run on another file, just drag & drop it on the UI
+
+### 4. Customize OpenDataCam ️️⚙️
 
 We offer several customization options:
 
 - **Video input:** run from a file, change webcam resolution, change camera type (raspberry cam, usb cam...)
 
-- **Neural network:** change YOLO weights files depending on your hardware capacity, desired FPS (tinyYOLO, full yolov3, yolov3-openimages ...)
+- **Neural network:** change YOLO weights files depending on your hardware capacity, desired FPS
 
 - **Change display classes:** We default to mobility classes (car, bus, person...), but you can change this
 
 [Learn how to customize OpenDataCam](documentation/CONFIG.md)
+
+### 5. Configure your Wifi hotspot 📲
+
+In order to operate opendatacam from your phone / tablet / computer.
+
+See [Make jetson device / machine accessible via WIFI](documentation/WIFI_HOTSPOT_SETUP.md)
 
 ### 6. Docker playbook ️📚
 
