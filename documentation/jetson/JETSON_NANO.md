@@ -9,8 +9,8 @@
       - [Using microUSB](#using-microusb)
       - [Using barrel jack (5V - 4A)](#using-barrel-jack-5v---4a)
     - [3. Setup a swap partition:](#3-setup-a-swap-partition)
-    - [4. Verify your if your USB Camera is connected](#4-verify-your-if-your-usb-camera-is-connected)
-    - [5. Install Opendatacam](#5-install-opendatacam)
+    - [4. Install Opendatacam](#4-install-opendatacam)
+    - [5. (optional) Run from USB Camera](#5-optional-run-from-usb-camera)
     - [6. Test Opendatacam](#6-test-opendatacam)
     - [7. Access Opendatacam via Wifi hotspot](#7-access-opendatacam-via-wifi-hotspot)
     - [8. Tips](#8-tips)
@@ -99,16 +99,21 @@ chmod 777 installSwapfile.sh
 
 Reboot the Jetson nano
 
-#### 4. Verify your if your USB Camera is connected
+#### 4. Install Opendatacam
+
+You need to install [Docker compose](https://blog.hypriot.com/post/nvidia-jetson-nano-install-docker-compose/) (no official installer available for ARM64 devices)
 
 ```bash
-ls /dev/video*
-# Output should be: /dev/video0
+sudo apt install python3-pip
+
+sudo apt-get install -y libffi-dev
+sudo apt-get install -y python-openssl
+sudo apt-get install libssl-dev
+
+sudo pip3 install docker-compose
 ```
 
-If this isn't the case, run the install script anyway, and after you will need to [modify the config.json](documentation/CONFIG.md) file to select your desired VIDEO_INPUT
-
-#### 5. Install Opendatacam
+And then install OpenDataCam
 
 ```bash
 # Download install script
@@ -122,6 +127,30 @@ chmod 777 install-opendatacam.sh
 # Install command for Jetson Nano
 ./install-opendatacam.sh --platform nano
 ```
+
+#### 5. (optional) Run from USB Camera
+
+By default, OpenDataCam will start on a demo file, but if you want to run from an usbcam you should
+
+- Verify an USB Camera is connected
+
+```bash
+ls /dev/video*
+# Output should be: /dev/video1
+```
+
+- Change `"VIDEO_INPUT"` in `config.json`
+
+```json
+"VIDEO_INPUT": "usbcam"
+```
+
+- Restart docker
+
+```
+sudo docker-compose restart
+```
+
 
 #### 6. Test Opendatacam
 
