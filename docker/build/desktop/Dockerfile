@@ -1,4 +1,4 @@
-FROM base-nvidia-cuda-opencv-gstreamer
+FROM opendatacam/base-desktop-nvidia-cuda-opencv-gstreamer:1.0
 
 ENV DEBIAN_FRONTEND noninteractive
 
