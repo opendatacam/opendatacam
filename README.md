@@ -160,7 +160,7 @@ If you have a fleet of one or more devices, you can use [balena](https://www.bal
 
 [![](https://www.balena.io/deploy.png)](https://dashboard.balena-cloud.com/deploy?repoUrl=https://github.com/balenalabs-incubator/opendatacam)
 
-You can learn more about this deployment option in a [recent blog post](https://www.balena.io/blog/), or [view a screencast](https://www.youtube.com/balenaio) of the deployment in action.
+You can learn more about this deployment option along with a step-by-step guide in this [recent blog post](https://www.balena.io/blog/), or [view a screencast](https://www.youtube.com/balenaio) of the deployment in action.
 
 
 ### 2. bis (optional) Upgrade OpenDataCam
