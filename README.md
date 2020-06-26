@@ -24,7 +24,7 @@ OpenDataCam is generously supported by [move lab](https://www.move-lab.com/) (on
 
 ## Table of content
 
-- [OpenDataCam 3.0.1 – An open source tool to quantify the world](#opendatacam-300--an-open-source-tool-to-quantify-the-world)
+- [OpenDataCam 3.0.1 – An open source tool to quantify the world](#opendatacam-301--an-open-source-tool-to-quantify-the-world)
   - [Demo Videos](#demo-videos)
   - [Table of content](#table-of-content)
   - [💻 Hardware pre-requisite](#-hardware-pre-requisite)
@@ -46,6 +46,7 @@ OpenDataCam is generously supported by [move lab](https://www.move-lab.com/) (on
   - [🎯 How accurate is OpenDataCam ?](#-how-accurate-is-opendatacam-)
   - [🚤 How fast is OpenDataCam ?](#-how-fast-is-opendatacam-)
   - [🛠 Development notes](#-development-notes)
+  - [📫️ Contact](#️-contact)
   - [💌 Acknowledgments](#-acknowledgments)
 
 ## 💻 Hardware pre-requisite
@@ -341,7 +342,7 @@ Technical architecture overview:
 
 ![Technical architecture](https://user-images.githubusercontent.com/533590/60489282-3f2d1700-9ca4-11e9-932c-19bf84e04f9a.png)
 
-## Contact
+## 📫️ Contact
 
 Issues should be raised directly in the repository. For business inquiries or professional support requests please contact [@tdurand](https://github.com/tdurand)
 
