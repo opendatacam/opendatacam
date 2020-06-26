@@ -341,6 +341,10 @@ Technical architecture overview:
 
 ![Technical architecture](https://user-images.githubusercontent.com/533590/60489282-3f2d1700-9ca4-11e9-932c-19bf84e04f9a.png)
 
+## Contact
+
+Issues should be raised directly in the repository. For business inquiries or professional support requests please contact [@tdurand](https://github.com/tdurand)
+
 ## 💌 Acknowledgments
 
 - Original darknet @pjreddie  : [https://pjreddie.com/darknet/](https://pjreddie.com/darknet/)
