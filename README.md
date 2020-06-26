@@ -65,7 +65,7 @@ _For Jetson Nano, [you can follow this dedicated quick start guide](documentatio
 
 - [Jetpack 4.3](https://developer.nvidia.com/embedded/jetpack) : [How to find out your jetpack version](documentation/jetson/FLASH_JETSON.md#How-to-find-out-my-Jetpack-version), [Guide to flash your jetson](documentation/jetson/FLASH_JETSON.md)
 
-Note that there is a performance drop if you use Jetpack 4.4 DP : https://forums.developer.nvidia.com/t/darknet-slower-using-jetpack-4-4-cudnn-8-0-0-cuda-10-2-than-jetpack-4-3-cudnn-7-6-3-cuda-10-0/121579
+_Note that there is a performance drop if you use Jetpack 4.4 DP : https://forums.developer.nvidia.com/t/darknet-slower-using-jetpack-4-4-cudnn-8-0-0-cuda-10-2-than-jetpack-4-3-cudnn-7-6-3-cuda-10-0/121579_
 
 - [Docker compose](https://blog.hypriot.com/post/nvidia-jetson-nano-install-docker-compose/) (no official installer available for ARM64 devices)
 
