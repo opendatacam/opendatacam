@@ -114,14 +114,8 @@ The .weights files that need to be in the root of the `/darknet` folder
 ```bash
 cd darknet #if you are not already in the darknet folder
 
-# YOLOv2-VOC
-wget https://pjreddie.com/media/files/yolo-voc.weights --no-check-certificate
-# YOLOv3-tiny
-wget https://pjreddie.com/media/files/yolov3-tiny.weights --no-check-certificate
-# YOLOv3
-wget https://pjreddie.com/media/files/yolov3.weights --no-check-certificate
-# yolov4-tiny , see https://github.com/alexeyab/darknet#pre-trained-models
-https://drive.google.com/file/d/18yYZWyKbo4XSDVyztmsEcF9B_6bxrhUY/view?usp=sharing
+# YOLOv4-tiny
+wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.weights --no-check-certificate
 # YOLOv4
 wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights --no-check-certificate
 ```
@@ -129,7 +123,7 @@ wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optim
 Or if you want to copy them over SSH from your main machine with scp
 
 ```
-scp yolov3-tiny.weights nvidia@192.168.1.210:/home/nvidia/Documents/darknet
+scp yolov4-tiny.weights nvidia@192.168.1.210:/home/nvidia/Documents/darknet
 ```
 
 #### (Optional) Test darknet
@@ -138,13 +132,13 @@ scp yolov3-tiny.weights nvidia@192.168.1.210:/home/nvidia/Documents/darknet
 # Go to darknet folder
 cd darknet 
 # Run darknet (yolo) on webcam
-./darknet detector demo cfg/coco.data cfg/yolov3-tiny.cfg yolov3-tiny.weights "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink" -ext_output -dont_show
+./darknet detector demo cfg/coco.data cfg/yolov4-tiny.cfg yolov4-tiny.weights "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink" -ext_output -dont_show
 
 # Run darknet on file
-./darknet detector demo cfg/coco.data cfg/yolov3-tiny.cfg yolov3-tiny.weights opendatacam_videos/demo.mp4 -ext_output -dont_show
+./darknet detector demo cfg/coco.data cfg/yolov4-tiny.cfg yolov4-tiny.weights opendatacam_videos/demo.mp4 -ext_output -dont_show
 
 # Run darknet on raspberrycam
-./darknet detector demo cfg/coco.data cfg/yolov3-tiny.cfg yolov3-tiny.weights "nvarguscamerasrc ! video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12 ! nvvidconv ! video/x-raw, format=BGRx, width=640, height=360 ! videoconvert ! video/x-raw, format=BGR ! appsink" -ext_output -dont_show
+./darknet detector demo cfg/coco.data cfg/yolov4-tiny.cfg yolov4-tiny.weights "nvarguscamerasrc ! video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12 ! nvvidconv ! video/x-raw, format=BGRx, width=640, height=360 ! videoconvert ! video/x-raw, format=BGR ! appsink" -ext_output -dont_show
 ```
 
 ### 3. Install node.js, mongodb
@@ -152,7 +146,7 @@ cd darknet
 ```bash
 # Install node.js
 sudo apt-get install curl
-curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash -
+curl -sL https://deb.nodesource.com/setup_12.x | sudo -E bash -
 sudo apt-get install -y nodejs
 ```
 
@@ -229,16 +223,7 @@ pwd .
 ```json
 {
   "VIDEO_INPUT": "usbcam",
-  "NEURAL_NETWORK": "yolov3-tiny"
-}
-```
-
-*For Jetson TX2 (recommanded)*
-
-```json
-{
-  "VIDEO_INPUT": "usbcam",
-  "NEURAL_NETWORK": "yolov2-voc"
+  "NEURAL_NETWORK": "yolov4-tiny"
 }
 ```
 
@@ -247,7 +232,7 @@ pwd .
 ```json
 {
   "VIDEO_INPUT": "usbcam",
-  "NEURAL_NETWORK": "yolov3"
+  "NEURAL_NETWORK": "yolov4"
 }
 ```
 

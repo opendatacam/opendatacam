@@ -24,7 +24,8 @@ OpenDataCam is generously supported by [move lab](https://www.move-lab.com/) (on
 
 ## Table of content
 
-- [OpenDataCam 3.0.0 – An open source tool to quantify the world](#opendatacam-300-beta3--an-open-source-tool-to-quantify-the-world)
+- [OpenDataCam 3.0.0 – An open source tool to quantify the world](#opendatacam-300--an-open-source-tool-to-quantify-the-world)
+  - [Demo Videos](#demo-videos)
   - [Table of content](#table-of-content)
   - [💻 Hardware pre-requisite](#-hardware-pre-requisite)
   - [🎬 Get Started, quick setup](#-get-started-quick-setup)
@@ -342,7 +343,7 @@ Technical architecture overview:
 
 ## 💌 Acknowledgments
 
-- Original darknet + YOLOv3 @pjreddie  : [https://pjreddie.com/darknet/](https://pjreddie.com/darknet/)
-- Darknet fork by @alexeyab : [https://github.com/alexeyab/darknet](https://github.com/alexeyab/darknet)
+- Original darknet @pjreddie  : [https://pjreddie.com/darknet/](https://pjreddie.com/darknet/)
+- Darknet fork + YOLOv4 by @alexeyab : [https://github.com/alexeyab/darknet](https://github.com/alexeyab/darknet)
 - IOU / V-IOU Tracker by @bochinski : [https://github.com/bochinski/iou-tracker/](https://github.com/bochinski/iou-tracker/)
 - Next.js by @zeit : [https://github.com/zeit/next.js](https://github.com/zeit/next.js)

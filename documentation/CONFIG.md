@@ -4,7 +4,7 @@ We offer several customization options:
 
 - **Video input:** run from a file, change webcam resolution, change camera type (raspberry cam, usb cam...)
 
-- **Neural network:** change YOLO weights files depending on your hardware capacity, desired FPS (tinyYOLO, full yolov3, yolov3-openimages ...)
+- **Neural network:** change YOLO weights files depending on your hardware capacity, desired FPS (tinyYOLOv4, full yolov4 ...)
 
 - **Change display classes:** We default to mobility classes (car, bus, person...), but you can change this.
 
@@ -108,7 +108,7 @@ By default, the opendatacam will track all the classes that the neural network i
 
 You can restrict the opendatacam to some specific classes with the VALID_CLASSES option in the [config.json file](https://github.com/opendatacam/opendatacam/blob/master/config.json) .
 
-_Find which classes YOLO is tracking depending on the weights you are running. For example [yolov3 trained on COCO dataset classes](https://github.com/AlexeyAB/darknet/blob/master/data/coco.names)_
+_Find which classes YOLO is tracking depending on the weights you are running. For example [yolov4 trained on COCO dataset classes](https://github.com/AlexeyAB/darknet/blob/master/data/coco.names)_
 
 Here is a way to only track buses and person:
 
@@ -397,9 +397,9 @@ In order to switch to another one you need:
 
 - change the `config.json` accordingly
 
-For example, if you want to use `yolov3-tiny` , you need to:
+For example, if you want to use `yolov3-tiny-prn` , you need to:
 
-- download `yolov3-tiny.weights` the same directory as the `docker-compose.yml` file
+- download `yolov3-tiny-prn.weights` the same directory as the `docker-compose.yml` file
 
 - (optional) download the `.cfg` and `.data` files if they are custom (not default darknet)
 
@@ -408,7 +408,7 @@ For example, if you want to use `yolov3-tiny` , you need to:
 ```yaml
 volumes:
   - './config.json:/var/local/opendatacam/config.json'
-  - './yolov3-tiny.weights:/var/local/darknet/yolov3-tiny.weights'
+  - './yolov3-tiny-prn.weights:/var/local/darknet/yolov3-tiny-prn.weights'
 ```
 
 - (optional) if you have custom `.cfg` and `.data` files you should mount them too
@@ -417,9 +417,9 @@ volumes:
 ```yaml
 volumes:
   - './config.json:/var/local/opendatacam/config.json'
-  - './yolov3-tiny.weights:/var/local/darknet/yolov3-tiny.weights'
+  - './yolov3-tiny-prn.weights:/var/local/darknet/yolov3-tiny-prn.weights'
   - './coco.data:/var/local/darknet/cfg/coco.data'
-  - './yolov3-tiny.cfg:/var/local/darknet/cfg/yolov3-tiny.cfg'
+  - './yolov3-tiny-prn.cfg:/var/local/darknet/cfg/yolov3-tiny-prn.cfg'
 ```
 
 - change the `config.json`
@@ -427,17 +427,17 @@ volumes:
 - add an entry to the `NEURAL_NETWORK_PARAMS` setting in `config.json`.
 
 ```json
-"yolov3-tiny": {
+"yolov3-tiny-prn": {
   "data": "cfg/coco.data",
-  "cfg": "cfg/yolov3.cfg",
-  "weights": "yolov3-tiny.weights"
+  "cfg": "cfg/yolov3-tiny-prn.cfg",
+  "weights": "yolov3-tiny-prn.weights"
 }
 ```
 
 - change the `NEURAL_NETWORK` param to the key you defined in `NEURAL_NETWORK_PARAMS`
 
 ```json
-"NEURAL_NETWORK": "yolov3-tiny"
+"NEURAL_NETWORK": "yolov3-tiny-prn"
 ```
 
 - restart the container

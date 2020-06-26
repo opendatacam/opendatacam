@@ -898,20 +898,15 @@ app.prepare()
         "red": "#AB4435"
       },
       "NEURAL_NETWORK_PARAMS": {
-        "yolov3": {
+        "yolov4": {
           "data": "cfg/coco.data",
-          "cfg": "cfg/yolov3.cfg",
-          "weights": "yolov3.weights"
+          "cfg": "cfg/yolov4-416x416.cfg",
+          "weights": "yolov4.weights"
         },
-        "yolov3-tiny": {
+        "yolov4-tiny": {
           "data": "cfg/coco.data",
-          "cfg": "cfg/yolov3-tiny.cfg",
-          "weights": "yolov3-tiny.weights"
-        },
-        "yolov2-voc": {
-          "data": "cfg/voc.data",
-          "cfg": "cfg/yolo-voc.cfg",
-          "weights": "yolo-voc.weights"
+          "cfg": "cfg/yolov4-tiny.cfg",
+          "weights": "yolov4-tiny.weights"
         }
       },
       "TRACKER_ACCURACY_DISPLAY": {

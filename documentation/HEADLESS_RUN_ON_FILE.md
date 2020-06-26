@@ -1,12 +1,14 @@
 ## How run OpenDataCam Tracker on a video file
 
-- [1. Install Darknet (Neural network framework running YOLO)](#1-install-darknet--neural-network-framework-running-yolo-)
-  * [Get the source files](#get-the-source-files)
-  * [Modify the Makefile before compiling](#modify-the-makefile-before-compiling)
-  * [Compile darknet](#compile-darknet)
-  * [Download weight file](#download-weight-file)
-- [2. Run darknet on your video file to generate the yolo-detections.json](#2-run-darknet-on-your-video-file-to-generate-the-yolo-detectionsjson)
-- [3. Run the tracker on the yolo-detections.json](#3-run-the-tracker-on-the-yolo-detectionsjson)
+- [How run OpenDataCam Tracker on a video file](#how-run-opendatacam-tracker-on-a-video-file)
+  - [1. Install Darknet with run on file support (Neural network framework running YOLO)](#1-install-darknet-with-run-on-file-support-neural-network-framework-running-yolo)
+    - [Dependency needed:](#dependency-needed)
+    - [Get the source files](#get-the-source-files)
+    - [Modify the Makefile before compiling](#modify-the-makefile-before-compiling)
+    - [Compile darknet](#compile-darknet)
+    - [Download weight file](#download-weight-file)
+  - [2. Run darknet on your video file to generate the yolo-detections.json](#2-run-darknet-on-your-video-file-to-generate-the-yolo-detectionsjson)
+  - [3. Run the tracker on the yolo-detections.json](#3-run-the-tracker-on-the-yolo-detectionsjson)
 
 
 ### 1. Install Darknet with run on file support (Neural network framework running YOLO)
@@ -113,12 +115,10 @@ The .weights files that need to be in the root of the `/darknet` folder
 ```bash
 cd darknet #if you are not already in the darknet folder
 
-# YOLOv2-VOC
-wget https://pjreddie.com/media/files/yolo-voc.weights --no-check-certificate
-# YOLOv3-tiny
-wget https://pjreddie.com/media/files/yolov3-tiny.weights --no-check-certificate
-# YOLOv3
-wget https://pjreddie.com/media/files/yolov3.weights --no-check-certificate
+# YOLOv4-tiny
+wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.weights --no-check-certificate
+# YOLOv4
+wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights --no-check-certificate
 ```
 
 ### 2. Run darknet on your video file to generate the yolo-detections.json 
@@ -130,14 +130,11 @@ cd darknet
 cp path-to-your-videofile/video.mp4 .
 # Run darknet
 # Depending on your machine capabilities
-# With YOLOv3 weights
-./darknet detector demo cfg/coco.data cfg/yolov3.cfg yolov3.weights video.mp4 -dont_show -json_file_output yolo-detections.json
+# With YOLOv4 weights
+./darknet detector demo cfg/coco.data cfg/yolov4.cfg yolov4.weights video.mp4 -dont_show -json_file_output yolo-detections.json
 
-# With YOLOv2-voc
-./darknet detector demo cfg/voc.data cfg/yolo-voc.cfg yolo-voc.weights video.mp4 -dont_show -json_file_output yolo-detections.json
-
-# With YOLOv3-tiny
-./darknet detector demo cfg/coco.data cfg/yolov3-tiny.cfg yolov3-tiny.weights video.mp4 -dont_show -json_file_output yolo-detections.json
+# With YOLOv4-tiny
+./darknet detector demo cfg/coco.data cfg/yolov4-tiny.cfg yolov4-tiny.weights video.mp4 -dont_show -json_file_output yolo-detections.json
 ```
 
 ### 3. Run the tracker on the yolo-detections.json
