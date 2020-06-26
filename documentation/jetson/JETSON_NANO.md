@@ -159,6 +159,8 @@ For example:
 sudo docker-compose restart
 ```
 
+_N.B : there is some issue to support out of the box (docker install) run from the CSI cam (raspberry pi cam), please see: https://github.com/opendatacam/opendatacam/blob/master/documentation/CONFIG.md#run-from-raspberry-pi-cam-jetson-nano for more info, you need to do a manual install for this_
+
 #### 6. Test Opendatacam
 
 Open `http://localhost:8080`.
