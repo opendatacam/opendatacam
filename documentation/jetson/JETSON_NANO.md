@@ -117,7 +117,7 @@ And then install OpenDataCam
 
 ```bash
 # Download install script
-wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v3.0.0/docker/install-opendatacam.sh
+wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v3.0.1/docker/install-opendatacam.sh
 
 # Give exec permission
 chmod 777 install-opendatacam.sh

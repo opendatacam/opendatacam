@@ -1,4 +1,4 @@
-# OpenDataCam 3.0.0 – An open source tool to quantify the world
+# OpenDataCam 3.0.1 – An open source tool to quantify the world
 
 OpenDataCam is an open source tool to quantify the world. It quantifies and tracks moving objects with live video analysis. It is designed to be an accessible, affordable and open-source solution to better understand interactions in urban environments.
 
@@ -24,7 +24,7 @@ OpenDataCam is generously supported by [move lab](https://www.move-lab.com/) (on
 
 ## Table of content
 
-- [OpenDataCam 3.0.0 – An open source tool to quantify the world](#opendatacam-300--an-open-source-tool-to-quantify-the-world)
+- [OpenDataCam 3.0.1 – An open source tool to quantify the world](#opendatacam-300--an-open-source-tool-to-quantify-the-world)
   - [Demo Videos](#demo-videos)
   - [Table of content](#table-of-content)
   - [💻 Hardware pre-requisite](#-hardware-pre-requisite)
@@ -131,7 +131,7 @@ __Install commands:__
 
 ```bash
 # Download install script
-wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v3.0.0/docker/install-opendatacam.sh
+wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v3.0.1/docker/install-opendatacam.sh
 
 # Give exec permission
 chmod 777 install-opendatacam.sh

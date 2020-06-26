@@ -39,7 +39,7 @@ cp ../../../config.json .
 # NEURAL_NETWORK=yolov4
 
 #tag the local image
-sudo docker tag 7ef920844953 opendatacam/opendatacam:v3.0.0-desktop
+sudo docker tag 7ef920844953 opendatacam/opendatacam:v3.0.1-desktop
 
 # start containers
 sudo docker-compose up
@@ -57,11 +57,11 @@ sudo docker images
 # opendatacam             latest    023ab91c6291     3 minutes ago     1.975 GB
 
 # Tag your image
-sudo docker tag 7ef920844953 opendatacam/opendatacam:v3.0.0-desktop
+sudo docker tag 7ef920844953 opendatacam/opendatacam:v3.0.1-desktop
 
 # Untag image (if you made a tipo)
-sudo docker rmi opendatacam/opendatacam:v3.0.0-desktop
+sudo docker rmi opendatacam/opendatacam:v3.0.1-desktop
 
 # Push image
-sudo docker push opendatacam/opendatacam:v3.0.0-desktop
+sudo docker push opendatacam/opendatacam:v3.0.1-desktop
 ```
