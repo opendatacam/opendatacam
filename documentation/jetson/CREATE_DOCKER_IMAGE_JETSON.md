@@ -15,10 +15,9 @@ cd opendatacam/docker/build/nano
 # Xavier
 cd opendatacam/docker/build/xavier
 
-# Download the weights you want to include ( currently yolov3-tiny-prn for Nano and yolov4 for xavier )
+# Download the weights you want to include ( currently yolov4-tiny for Nano and yolov4 for xavier )
 # Nano
-go to https://drive.google.com/file/d/18yYZWyKbo4XSDVyztmsEcF9B_6bxrhUY/view (or https://github.com/AlexeyAB/darknet#pre-trained-models)
-and download yolov3-tiny-prn.weights
+wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.weights
 # Xavier
 wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights
 
@@ -41,7 +40,7 @@ cp ../../../config.json .
 # change
 # PATH_TO_YOLO_DARKNET=/var/local/darknet
 # VIDEO_INPUTS_PARAMS=file
-# NEURAL_NETWORK=yolov4 (xavier) | yolov3-tiny-prn (nano)
+# NEURAL_NETWORK=yolov4 (xavier) | yolov4-tiny (nano)
 
 # Tag the local image
 sudo docker tag <IMAGEID> opendatacam/opendatacam:v3.0.0-nano

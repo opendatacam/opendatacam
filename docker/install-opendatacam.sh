@@ -12,7 +12,7 @@ INDEX=undefined
 
 PLATFORM_OPTIONS=("nano" "xavier" "desktop")
 DEFAUT_VIDEO_INPUT_OPTIONS=("file" "file" "file")
-DEFAUT_NEURAL_NETWORK_OPTIONS=("yolov3-tiny-prn" "yolov4" "yolov4")
+DEFAUT_NEURAL_NETWORK_OPTIONS=("yolov4-tiny" "yolov4" "yolov4")
 
 # PATH TO DARKNET in docker container
 PATH_DARKNET=/var/local/darknet

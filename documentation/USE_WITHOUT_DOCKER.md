@@ -120,7 +120,7 @@ wget https://pjreddie.com/media/files/yolo-voc.weights --no-check-certificate
 wget https://pjreddie.com/media/files/yolov3-tiny.weights --no-check-certificate
 # YOLOv3
 wget https://pjreddie.com/media/files/yolov3.weights --no-check-certificate
-# YOLOv3-tiny-prn , see https://github.com/alexeyab/darknet#pre-trained-models
+# yolov4-tiny , see https://github.com/alexeyab/darknet#pre-trained-models
 https://drive.google.com/file/d/18yYZWyKbo4XSDVyztmsEcF9B_6bxrhUY/view?usp=sharing
 # YOLOv4
 wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights --no-check-certificate

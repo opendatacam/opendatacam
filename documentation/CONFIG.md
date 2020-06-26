@@ -96,7 +96,7 @@ In order to have good enough tracking accuracy for cars and mobility objects, fr
 
 For a standard install of opendatacam, these are the default weights we pick depending on your hardware:
 
-- Jetson Nano: `yolov3-tiny-prn`
+- Jetson Nano: `yolov4-tiny`
 - Jetson Xavier: `yolov4`
 - Desktop install: `yolov4`
 
@@ -387,7 +387,7 @@ _NOTE: Increasing webcam resolution won't increase OpenDataCam accuracy, the inp
 
 We ship inside the docker container those YOLO weights:
 
-- Jetson Nano: `yolov3-tiny-prn`
+- Jetson Nano: `yolov4-tiny`
 - Jetson Xavier: `yolov4`
 - Desktop install: `yolov4`
 
