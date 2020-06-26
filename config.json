@@ -1,5 +1,5 @@
 {
-  "OPENDATACAM_VERSION": "3.0.0-beta.3",
+  "OPENDATACAM_VERSION": "3.0.0",
   "PATH_TO_YOLO_DARKNET" : "TO_REPLACE_PATH_TO_DARKNET",
   "VIDEO_INPUT": "TO_REPLACE_VIDEO_INPUT",
   "NEURAL_NETWORK": "TO_REPLACE_NEURAL_NETWORK",
@@ -15,6 +15,10 @@
     "confidence_threshold": 0.2,
     "iouLimit": 0.05,
     "unMatchedFrameTolerance": 5
+  },
+  "COUNTER_SETTINGS": {
+    "minAngleWithCountingLineThreshold": 5,
+    "computeTrajectoryBasedOnNbOfPastFrame": 5
   },
   "VALID_CLASSES": ["*"],
   "DISPLAY_CLASSES": [

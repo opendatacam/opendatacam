@@ -21,7 +21,7 @@ const self = module.exports = {
   },
 
   computeLineBearing: function(x1,y1,x2,y2) {
-    var angle = Math.atan((x2-x1)/(y1-y2))/(Math.PI/180)
+    var angle = Math.atan((x2-x1)/(y2-y1))/(Math.PI/180)
     if ( angle > 0 ) {
       if (y1 < y2)
         return angle;
@@ -35,13 +35,15 @@ const self = module.exports = {
     }
   },
 
-  // Reference: https://jsfiddle.net/justin_c_rounds/Gd2S2/light/ 
+  // Reference: https://jsfiddle.net/justin_c_rounds/Gd2S2/light/
+  // Explanation: https://stackoverflow.com/a/24392281/1228937
   checkLineIntersection(line1StartX, line1StartY, line1EndX, line1EndY, line2StartX, line2StartY, line2EndX, line2EndY) {
-    // if the lines intersect, the result contains the x and y of the intersection (treating the lines as infinite) 
+    // if the lines intersect, the result contains the x and y of the intersection (treating the lines as infinite)
     // and booleans for whether line segment 1 or line segment 2 contain the point
     var denominator, a, b, numerator1, numerator2, result = {
         x: null,
         y: null,
+        angle: null,
         onLine1: false,
         onLine2: false
     };
@@ -59,11 +61,11 @@ const self = module.exports = {
     // if we cast these lines infinitely in both directions, they intersect here:
     result.x = line1StartX + (a * (line1EndX - line1StartX));
     result.y = line1StartY + (a * (line1EndY - line1StartY));
-/*
-        // it is worth noting that this should be the same as:
-        x = line2StartX + (b * (line2EndX - line2StartX));
-        y = line2StartX + (b * (line2EndY - line2StartY));
-        */
+    /*
+      // it is worth noting that this should be the same as:
+      x = line2StartX + (b * (line2EndX - line2StartX));
+      y = line2StartX + (b * (line2EndY - line2StartY));
+    */
     // if line1 is a segment and line2 is infinite, they intersect if:
     if (a > 0 && a < 1) {
         result.onLine1 = true;
@@ -73,6 +75,22 @@ const self = module.exports = {
         result.onLine2 = true;
     }
     // if line1 and line2 are segments, they intersect if both of the above are true
+    if(result.onLine1 && result.onLine2) {
+      // compute angle of intersection
+      // TODO ADD case one of the line is vertical, compute with an horizontal line and do alpha = 90 - gamma
+      // So, we have two line formula, and a mutual interval. Your line formulas are:
+      // f1(x) = A1*x + b1 = y
+      // f2(x) = A2*x + b2 = y
+      // As we got two points by segment, we are able to determine A1, A2, b1 and b2:
+      var A1 = (line1StartY-line1EndY)/(line1StartX-line1EndX);
+      var A2 = (line2StartY-line2EndY)/(line2StartX-line2EndX);
+
+      var tanAlpha = Math.abs((A2 - A1) / (1 + A1 * A2));
+      var angle = Math.atan(tanAlpha) * 180/Math.PI;
+
+      result.angle = angle;
+    }
+
     return result;
   }
 }

@@ -128,7 +128,7 @@ export function saveCountingAreaLocation(id, location) {
   return (dispatch, getState) => {
 
     // Compute bearing
-    let lineBearing = computeLineBearing(location.point1.x, location.point1.y, location.point2.x, location.point2.y);
+    let lineBearing = computeLineBearing(location.point1.x, -location.point1.y, location.point2.x, -location.point2.y);
     // in both directions
     let lineBearings = [0,0];
     if(lineBearing >= 180) {

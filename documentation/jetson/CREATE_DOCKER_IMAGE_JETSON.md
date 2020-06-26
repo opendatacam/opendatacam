@@ -44,8 +44,8 @@ cp ../../../config.json .
 # NEURAL_NETWORK=yolov4 (xavier) | yolov3-tiny-prn (nano)
 
 # Tag the local image
-sudo docker tag <IMAGEID> opendatacam/opendatacam:v3.0.0-beta.3-nano
-sudo docker tag <IMAGEID> opendatacam/opendatacam:v3.0.0-beta.3-xavier
+sudo docker tag <IMAGEID> opendatacam/opendatacam:v3.0.0-nano
+sudo docker tag <IMAGEID> opendatacam/opendatacam:v3.0.0-xavier
 # Spin containers
 sudo docker-compose up
 ```
@@ -62,15 +62,15 @@ sudo docker images
 # opendatacam             latest    023ab91c6291     3 minutes ago     1.975 GB
 
 # Tag your image
-sudo docker tag <IMAGEID> opendatacam/opendatacam:v3.0.0-beta.3-nano
+sudo docker tag <IMAGEID> opendatacam/opendatacam:v3.0.0-nano
 
-# Or for xavier : opendatacam/opendatacam:v3.0.0-beta.3-xavier
+# Or for xavier : opendatacam/opendatacam:v3.0.0-xavier
 
 # Push image
-sudo docker push opendatacam/opendatacam:v3.0.0-beta.3-nano
+sudo docker push opendatacam/opendatacam:v3.0.0-nano
 
 # (optional) Useful Untag image (if you made a tipo)
-sudo docker rmi opendatacam/opendatacam:v3.0.0-beta.3-nano
+sudo docker rmi opendatacam/opendatacam:v3.0.0-nano
 ```
 
 

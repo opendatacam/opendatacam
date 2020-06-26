@@ -17,7 +17,7 @@ We offer several customization options:
     - [For a non-docker install of OpenDataCam](#for-a-non-docker-install-of-opendatacam)
   - [Run opendatacam on a video file](#run-opendatacam-on-a-video-file)
     - [Specificities of running on a file](#specificities-of-running-on-a-file)
-  - [Change neural network weights](#change-neural-network-weights)
+  - [Neural network weights](#neural-network-weights)
   - [Track only specific classes](#track-only-specific-classes)
   - [Display custom classes](#display-custom-classes)
   - [Customize pathfinder colors](#customize-pathfinder-colors)
@@ -31,9 +31,13 @@ We offer several customization options:
       - [Change webcam resolution](#change-webcam-resolution)
     - [Use Custom Neural Network weights](#use-custom-neural-network-weights)
     - [Tracker settings](#tracker-settings)
+    - [Counter settings](#counter-settings)
     - [MongoDB URL](#mongodb-url)
     - [Ports](#ports)
     - [Tracker accuracy display](#tracker-accuracy-display)
+    - [Use Environment Variables](#use-environment-variables)
+      - [Without Docker](#without-docker)
+      - [With docker-compose](#with-docker-compose)
 
 ### General
 
@@ -44,14 +48,19 @@ All settings are in the [`config.json`](https://github.com/opendatacam/opendatac
 When you modify a setting, you will need to restart the docker container, you can do so by:
 
 ```
-# List containers
-sudo docker container list
+# Go to the directory you ran install script (where is your docker-compose.yml file)
 
-# Restart container (find id from previous command)
-sudo docker restart <containerID>
+# Stop container
+sudo docker-compose down
 
-# Or if you have stopped it
-sudo ./run-opendatacam.sh
+# Restart container (after modifying the config.json file for example)
+sudo docker-compose restart
+
+# Start container
+# detached mode
+sudo docker-compose up -d
+# interactive mode
+sudo docker-compose up
 ```
 
 #### For a non-docker install of OpenDataCam
@@ -66,49 +75,9 @@ Once modified,  you just need to restart the node.js app (`npm run start`), no n
 
 ### Run opendatacam on a video file
 
-By default, opendatacam will try to pickup the usb webcam connected to your jetson. The settings is `VIDEO_INPUT` in the `config.json` file.
-
-```json
-"VIDEO_INPUT": "usbcam"
-```
-
-You can change this to run it on a pre-recorded file.
-
-If you installed opendatacam through the default setup process you should have a `opendatacam_videos` folder where you ran the install script. Inside this folder you should also find a demo video: `demo.mp4`
-
-You will need to copy the videos you want inside this folder. _(this folder gets mounted when running the container and docker has access to it)_
-
-Once you do have the video file inside the `opendatacam_videos` folder, you can modify the `config.json` the following way:
-
-1. Change `VIDEO_INPUT` to `"file"`
-
-```json
-"VIDEO_INPUT": "file"
-```
-
-2. Change `VIDEO_INPUTS_PARAMS > file` with the path to your file
-
-```json
-"VIDEO_INPUTS_PARAMS": {
-  "file": "opendatacam_videos/demo.mp4"
-}
-```
-
-Once `config.json` is saved, you only need to restart the docker container or restart your jetson and next time you access opendatacam, it will run on this file.
+By default, OpenDataCam will run on a demo video file, if you want to change it, you should just drag & drop on the UI the new file.
 
 [Learn more about the others video inputs available (IP camera, Rasberry Pi in the Advanced use section)](#video-input)
-
-**For a non-docker install of OpenDataCam:**
-
-Follow the same instruction but note the path you will put in `VIDEO_INPUTS_PARAMS > file` if relative to your `darknet` directory. 
-
-For example if you have a `myvideo.mp4` file in your `darknet` directory, the settings should be:
-
-```json
-"VIDEO_INPUTS_PARAMS": {
-  "file": "myvideo.mp4"
-}
-```
 
 #### Specificities of running on a file
 
@@ -117,40 +86,21 @@ For example if you have a `myvideo.mp4` file in your `darknet` directory, the se
 - **LIMITATION: it will only record from frame nº25**
 
 
-### Change neural network weights
+### Neural network weights
 
 You can change YOLO weights files depending on what objects you want to track and which hardware your are running opendatacam on.
 
-Lighters weights file results in speed improvements, but loss in accuracy, for example `yolov3` run at ~1-2 FPS on Jetson Nano, ~5-6 FPS on Jetson TX2, and ~22 FPS on Jetson Xavier, and `yolov2-voc` runs at ~4-5 FPS on Jetson Nano, ~11-12 FPS on Jetson TX2, and realtime on Jetson Xavier.
+Lighters weights file results in speed improvements, but loss in accuracy, for example `yolov4` run at ~1-2 FPS on Jetson Nano, ~5-6 FPS on Jetson TX2, and ~22 FPS on Jetson Xavier
 
 In order to have good enough tracking accuracy for cars and mobility objects, from our experiments we found out that the sweet spot was to be able to run YOLO at least at 8-9 FPS.
 
 For a standard install of opendatacam, these are the default weights we pick depending on your hardware:
 
-- Jetson Nano: `yolov3-tiny`
-- Jetson TX2: `yolov2-voc` _([yolov3-voc isn't available openly](https://github.com/AlexeyAB/darknet/issues/2557#issuecomment-473022989), if you trained it and want to share it, please ping us)_
-- Jetson Xavier: `yolov3`
+- Jetson Nano: `yolov3-tiny-prn`
+- Jetson Xavier: `yolov4`
+- Desktop install: `yolov4`
 
-We allow you to change those settings, here is how to do it:
-
-**For a docker (standard install) of OpenDataCam:**
-
-We ship inside the docker container those three YOLO weights: [yolov3-tiny](https://pjreddie.com/media/files/yolov3-tiny.weights), [yolov2-voc](https://pjreddie.com/media/files/yolo-voc.weights), [yolov3](https://pjreddie.com/media/files/yolov3.weights)
-
-In order to switch to another one, you need to change the setting `NEURAL_NETWORK` in `config.json`.
-
-```json
-{
-  "NEURAL_NETWORK": "yolov2-voc"
-}
-```
-
-The settings available are: `"yolov3"` , `"yolov3-tiny"`, `"yolov2-voc"`, if you want to run from others weights like [yolov3-openimages](https://pjreddie.com/media/files/yolov3-openimages.weights), [yolov3-spp](https://pjreddie.com/media/files/yolov3-spp.weights).. or custom trained ones, please refer to the [advanced use section below](#neural-network-params).
-
-**For a non-docker install of opendatacam:**
-
-The settings are the same as with the docker install, but you can also run from other weights file, [see advanced use section below](#neural-network-params)
-
+If you want to use other weights, please see [use custom weigths](#use-custom-neural-network-weights).
 
 ### Track only specific classes
 
@@ -180,7 +130,7 @@ In order to track all the classes (default value), you need to set it to:
 
 ### Display custom classes
 
-By default we are displaying the mobility classes: 
+By default we are displaying the mobility classes:
 
 ![Display classes](https://user-images.githubusercontent.com/533590/56987855-f0101c00-6b64-11e9-8bf4-afd83a53f991.png)
 
@@ -289,9 +239,9 @@ This is configurable via the `VIDEO_INPUT` ans `VIDEO_INPUTS_PARAMS` settings.
 "VIDEO_INPUTS_PARAMS": {
   "file": "opendatacam_videos/demo.mp4",
   "usbcam": "v4l2src device=/dev/video0 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink",
-  "experimental_raspberrycam_docker": "v4l2src device=/dev/video2 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink",
-  "raspberrycam_no_docker": "nvarguscamerasrc ! video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12 ! nvvidconv ! video/x-raw, format=BGRx, width=640, height=360 ! videoconvert ! video/x-raw, format=BGR ! appsink",
-  "remote_cam": "YOUR IP CAM STREAM (can be .m3u8, MJPEG ...), anything supported by opencv"
+  "raspberrycam": "nvarguscamerasrc ! video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12 ! nvvidconv ! video/x-raw, format=BGRx, width=640, height=360 ! videoconvert ! video/x-raw, format=BGR ! appsink",
+  "remote_cam": "YOUR IP CAM STREAM (can be .m3u8, MJPEG ...), anything supported by opencv",
+  "remote_hls_gstreamer": "souphttpsrc location=http://YOUR_HLSSTREAM_URL_HERE.m3u8 ! hlsdemux ! decodebin ! videoconvert ! videoscale ! appsink"
 }
 ```
 
@@ -329,15 +279,56 @@ ls /dev/video*
 }
 ```
 
-4. *(If running with nvidiadocker container)* You need allow docker to access your device when starting the container, to do this modify the `run-nvidiadocker.sh` script that should have been downloaded by the install script and set:
-
-```
-docker run --runtime=nvidia --device=/dev/video0:/dev/video0 -p 8080:8080 -p 8090:8090 -p 8070:8070 $DOCKER_VOLUMES -v /data/db:/data/db $@
-```
-
 ##### Run from a file
 
-See [Run opendatacam on a video file](#run-opendatacam-on-a-video-file)
+You have two options to run from a file:
+
+- EASY SOLUTION: Drag and drop the file on the UI , OpenDataCam will restart on it
+
+- Read a file from the filesystem directly by setting the path in the `config.json`
+
+
+For example, you have a `file.mp4` you want to run OpenDataCam on :
+
+**For a docker (standard install) of OpenDataCam:**
+
+You need to mount the file in the docker container, copy the file in the folder where you have the `docker-compose.yml` file
+
+- create a folder called `opendatacam_videos` and put the file in it
+
+- mount the `opendatacam_videos` folder using `volumes` in the `docker-compose.yml` file
+
+```yaml
+volumes:
+  - './config.json:/var/local/opendatacam/config.json'
+  - './opendatacam_videos:/var/local/darknet/opendatacam_videos'
+```
+
+Once you do have the video file inside the `opendatacam_videos` folder, you can modify the `config.json` the following way:
+
+1. Change `VIDEO_INPUT` to `"file"`
+
+```json
+"VIDEO_INPUT": "file"
+```
+ 
+2. Change `VIDEO_INPUTS_PARAMS > file` with the path to your file
+ 
+```json
+"VIDEO_INPUTS_PARAMS": {
+  "file": "opendatacam_videos/file.mp4"
+}
+```
+
+Once `config.json` is saved, you only need to restart the docker container using
+
+ ```
+sudo docker-compose restart
+```
+
+**For a non docker install of OpenDataCam:**
+
+Same steps as above but instead of mountin the `opendatacam_videos` you should just create in in the `/darknet` folder.
 
 ##### Run from IP cam
 
@@ -355,11 +346,24 @@ See [Run opendatacam on a video file](#run-opendatacam-on-a-video-file)
 }
 ```
 
-NB: this IP cam won't work, it is just an example. Only use IP Cam you own yourself, see CODE OF CONDUCT (TODO @b-g)
+NB: this IP cam won't work, it is just an example. Only use IP Cam you own yourself.
 
 ##### Run from Raspberry Pi cam (Jetson nano)
 
-See [dedicated documentation for Jetson nano](jetson/JETSON_NANO.md#advanced-usage)
+**For a docker (standard install) of OpenDataCam:**
+
+Not supported yet, follow https://github.com/opendatacam/opendatacam/issues/178 for updates
+
+**For a non docker install of OpenDataCam:**
+
+1. Change `VIDEO_INPUT` to `"raspberrycam"`
+
+```json
+"VIDEO_INPUT": "raspberrycam"
+```
+
+2. Restart node.js app
+
 
 ##### Change webcam resolution
 
@@ -379,27 +383,76 @@ _NOTE: Increasing webcam resolution won't increase OpenDataCam accuracy, the inp
 
 #### Use Custom Neural Network weights
 
-In order to use other weights like [yolov3-openimages](https://pjreddie.com/media/files/yolov3-openimages.weights), [yolov3-spp](https://pjreddie.com/media/files/yolov3-spp.weights), custom trained ones or  ["third party" weights](https://giou.stanford.edu/)
-you need to [install OpenDataCam without Docker](USE_WITHOUT_DOCKER.md) _(we will enable this for docker install at some point [#97](https://github.com/opendatacam/opendatacam/issues/97))_.
+**For a docker (standard install) of OpenDataCam:**
 
-For example, if you want to use [yolov3-openimages](https://pjreddie.com/media/files/yolov3-openimages.weights), you need to:
+We ship inside the docker container those YOLO weights:
 
-- copy `yolov3-openimages.weights` the weights file in `/darknet/yolov3-openimages.weights`
+- Jetson Nano: `yolov3-tiny-prn`
+- Jetson Xavier: `yolov4`
+- Desktop install: `yolov4`
+
+In order to switch to another one you need:
+
+- to mount the necessary files into the darknet folder of the docker container so OpenDataCam has access to those new weights.
+
+- change the `config.json` accordingly
+
+For example, if you want to use `yolov3-tiny` , you need to:
+
+- download `yolov3-tiny.weights` the same directory as the `docker-compose.yml` file
+
+- (optional) download the `.cfg` and `.data` files if they are custom (not default darknet)
+
+- mount the weights file using `volumes` in the `docker-compose.yml` file
+
+```yaml
+volumes:
+  - './config.json:/var/local/opendatacam/config.json'
+  - './yolov3-tiny.weights:/var/local/darknet/yolov3-tiny.weights'
+```
+
+- (optional) if you have custom `.cfg` and `.data` files you should mount them too
+
+
+```yaml
+volumes:
+  - './config.json:/var/local/opendatacam/config.json'
+  - './yolov3-tiny.weights:/var/local/darknet/yolov3-tiny.weights'
+  - './coco.data:/var/local/darknet/cfg/coco.data'
+  - './yolov3-tiny.cfg:/var/local/darknet/cfg/yolov3-tiny.cfg'
+```
+
+- change the `config.json`
+
 - add an entry to the `NEURAL_NETWORK_PARAMS` setting in `config.json`.
 
 ```json
-"yolov3-openimages": {
+"yolov3-tiny": {
   "data": "cfg/coco.data",
   "cfg": "cfg/yolov3.cfg",
-  "weights": "yolov3-openimages.weights"
+  "weights": "yolov3-tiny.weights"
 }
 ```
 
 - change the `NEURAL_NETWORK` param to the key you defined in `NEURAL_NETWORK_PARAMS`
 
 ```json
-"NEURAL_NETWORK": "yolov3-openimages"
+"NEURAL_NETWORK": "yolov3-tiny"
 ```
+
+- restart the container
+
+```
+sudo docker-compose restart
+```
+
+**For a non-docker install of opendatacam:**
+
+It is the same as above, but instead of mounting the files in the docker container you just need to directly copy them in the `/darknet` folder
+
+- copy `.weights` files , `.cfg` and `.data` file into the darknet folder
+
+- Sames steps at above
 
 - Restart the node.js app (not need to recompile)
 
@@ -424,6 +477,24 @@ You can tweak some settings of the tracker to optimize OpenDataCam better for yo
 
 - `unMatchedFrameTolerance`: This the number of frame we keep predicting the object trajectory if it is not matched by the next frame list of detections. Setting this higher will cause less ID switches, but more potential false positive with an ID going to another object.
 
+#### Counter settings
+
+```json
+"COUNTER_SETTINGS": {
+  "minAngleWithCountingLineThreshold": 5,
+  "computeTrajectoryBasedOnNbOfPastFrame": 5
+}
+```
+
+- `minAngleWithCountingLineThreshold`: Count items crossing the counting line only if the angle between their trajectory and the counting line is superior to this angle (in degree). 90 degree would count nothing (or only perfectly perpendicular object) whereas 0 will count everything.
+
+![Counting line angle illustration](https://user-images.githubusercontent.com/533590/84757717-c3b39b00-afc4-11ea-8aef-e4900d7f6352.jpg)
+
+- `computeTrajectoryBasedOnNbOfPastFrame`: This tells the counting algorithm to compute the trajectory to determine if an object crosses the line based on this number of past frame. As you can see below in reality the trajectory of the center of the bbox given by YOLO is moving a little bit from frame to frame, so this can smooth out and be more reliable to determine if object is crossing the line and the value of the angle of crossing
+
+![CounterBuffer](https://user-images.githubusercontent.com/533590/84810794-1ebcb080-b00c-11ea-9cae-065fc066e10f.jpg)
+
+NB: if the object has changed ID in the past frames, it will take the last past frame known with the same ID.
 
 #### MongoDB URL
 
@@ -443,8 +514,6 @@ You can modify the default ports used by OpenDataCam.
 }
 ```
 
-TODO DOCUMENT for docker image run, will need to update EXPOSE, and the commands 
-
 #### Tracker accuracy display
 
 The tracker accuracy layer shows a heatmap like this one:
@@ -461,7 +530,7 @@ _Behind the hoods, it displays a metric of the tracker called "zombies" which re
 You can tweak all the settings of this display with the `TRACKER_ACCURACY_DISPLAY` setting.
 
 | nbFrameBuffer          | Number of previous frames displayed on the heatmap                                                                                                                                                                       |
-|------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | radius                 | Radius of the points displayed on the heatmap (in % of the width of the canvas)                                                                                                                                          |
 | blur                   | Blur of the points displayed on the heatmap (in % of the width of the canvas)                                                                                                                                            |
 | step                   | For each point displayed, how much the point should contribute to the increase of the heapmap value (the range is between 0-1), increasing this will cause the heatmap to reach the higher values of the gradient faster |
@@ -498,6 +567,58 @@ For example, if you change the gradient with:
 
 ![Other gradient](https://user-images.githubusercontent.com/533590/59389118-ec66dc00-8d43-11e9-8310-309da6ab42e1.png)
 
+#### Use Environment Variables
+
+Some of the entries in `config.json` can be overwritten using environment variables. Currently this is the `PORTS` object and the setting for the `MONGODB_URL`. See the file [.env.example](../.env.example) as an example how to set them. Make sure the use the exact same names or opendatacam will fall back to `config.json`, and if that is not present the general defaults.
+
+##### Without Docker
+
+If you are running opendatacam without docker you can set these by:
+
+- adding a file called `.env` to the root of the project, 
+  then these will be picked up by the [dotenv](https://www.npmjs.com/package/dotenv) package.
+- adding these variables to your `.bashrc` or `.zshrc` depending on what shell you are using or any other configuration file that gets loaded into your shell sessions.
+- adding them to the command you use to start the opendatacam,
+  for example in bash `MONGODB_URL=mongodb://mongo:27017 PORT_APP=8080 PORT_DARKNET_MJPEG_STREAM=8090 PORT_DARKNET_JSON_STREAM=8070 node server.js`
+   If you are on windows we suggest using the [`cross-env` package](https://www.npmjs.com/package/cross-env) to set these variables.
+
+##### With docker-compose
+
+If you are running opendatacam with `docker-compose.yml` you can set them as [environment section](https://docs.docker.com/compose/environment-variables/) to the service opendatacam like shown below.
+
+```yml
+service:
+  opendatacam:
+    environment:
+      - PORT_APP=8080
+```
+
+You also can can declare these environment variables [in a `.env` file](https://docs.docker.com/compose/env-file/) in the folder where the `docker-compose` command is invoked. Then these will be available within the `docker-compose.yml` file and you can pass them through to the container like shown below.
+
+The `.env` file.
+```env
+PORT_APP=8080
+```
+
+the `docker-compose.yml` file.
+
+```yml
+service:
+  opendatacam:
+    environment:
+      - PORT_APP
+```
+
+There is also the possibility the have the `.env` in the directory where the `docker-compose` command is executed and add the `env_file` section to the docker-compose.yml configuration.
+
+```yml
+service:
+  opendatacam:
+    env_file:
+      - ./.env
+```
+
+You also can add these variables to the call of  the `docker-compose` command. For example like this `docker-compose up -e PORT_APP=8080`. 
 
 
 
