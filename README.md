@@ -156,7 +156,7 @@ You can also [use opendatacam without docker](#how-to-use-opendatacam-without-do
 
 __balenaCloud Install:__
 
-If you have a fleet of one or more devices, you can use [balena](https://www.balena.io/) to streamline deployment and mananagement of OpenDataCam. You can sign up for a free account [here](https://dashboard.balena-cloud.com/signup) and add up to ten devices at no charge. Use the button below to build OpenDataCam for a Jetson Nano, TX2, or Xavier. You can then download an image containing the OS, burn it to an SD card, and use balenaCloud to push OpenDataCam to your devices. 
+If you have a fleet of one or more devices, you can use [balena](https://www.balena.io/) to streamline deployment and management of OpenDataCam. You can sign up for a free account [here](https://dashboard.balena-cloud.com/signup) and add up to ten devices at no charge. Use the button below to build OpenDataCam for a Jetson Nano, TX2, or Xavier. You can then download an image containing the OS, burn it to an SD card, and use balenaCloud to push OpenDataCam to your devices. 
 
 [![](https://www.balena.io/deploy.png)](https://dashboard.balena-cloud.com/deploy?repoUrl=https://github.com/balenalabs-incubator/opendatacam)
 
