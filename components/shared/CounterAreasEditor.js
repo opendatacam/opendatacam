@@ -43,6 +43,14 @@ class CounterAreasEditor extends Component {
     }
   }
 
+
+
+  escFunction(event){
+    if(event.keyCode === 27) {
+      this.props.cancel()
+    }
+  }
+
   initListeners() {
 
     this.editorCanvas.on('mouse:down', (o) => {
@@ -59,17 +67,13 @@ class CounterAreasEditor extends Component {
       if(this.props.mode === EDITOR_MODE.EDIT_POLYGON) {
         if (this.checkIfClosedPolygon(pointer)) {
 
-          // this.points.push(this.points[0]);
-          console.log('TODO save polygon')
-          // this.props.dispatch(saveCountingPolygonLocation(this.props.selectedCountingPolygon, {
-          //   point1: this.points[0],
-          //   point2: this.points[1],
-          //   refResolution: {
-          //     w: this.editorCanvas.width,
-          //     h: this.editorCanvas.height
-          //   },
-          //   polygon: this.points
-          // }));
+          this.props.dispatch(saveCountingAreaLocation(this.props.selectedCountingArea, {
+            points: this.points,
+            refResolution: {
+              w: this.editorCanvas.width,
+              h: this.editorCanvas.height
+            }
+          }))
 
           this.isDrawing = false;
           this.points = []
@@ -219,6 +223,12 @@ class CounterAreasEditor extends Component {
 
       this.initListeners();
     }
+
+    document.addEventListener("keydown", this.escFunction, false);
+  }
+
+  componentWillUnmount(){
+    document.removeEventListener("keydown", this.escFunction, false);
   }
 
   reRenderCountingAreasInEditor(countingAreas) {
