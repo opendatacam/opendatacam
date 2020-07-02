@@ -35,7 +35,7 @@ html, body {
  
 body {
     --color-default: #fff;
-    --color-default-soft: #dedede;
+    --color-default-soft: #F3F3F3;
     --color-inverse: #000000;
     --color-inverse-soft: #303030;
 }
