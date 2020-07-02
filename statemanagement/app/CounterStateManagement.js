@@ -10,7 +10,8 @@ import { COUNTING_AREA_TYPE } from '../../utils/constants';
 // Rename this to CounterEditorStateManagement
 
 export const EDITOR_MODE = {
-  EDIT: 'edit',
+  EDIT_LINE: 'edit_line',
+  EDIT_POLYGON: 'edit_polygon',
   ASKNAME: 'askname',
   DELETE: 'delete',
   SHOW_INSTRUCTION: 'showinstruction'
@@ -20,7 +21,7 @@ export const EDITOR_MODE = {
 const initialState = fromJS({
   countingAreas: {},
   selectedCountingArea: null,
-  mode: EDITOR_MODE.EDIT, // oneOf EDITOR_MODE
+  mode: EDITOR_MODE.EDIT_LINE, // oneOf EDITOR_MODE
   counterSummary: {},
   trackerSummary: {} 
 })
@@ -86,7 +87,7 @@ export function deleteCountingArea(id) {
     });
 
     if(getState().counter.get('countingAreas').size === 0) {
-      dispatch(setMode(EDITOR_MODE.EDIT));
+      dispatch(setMode(EDITOR_MODE.EDIT_LINE));
     }
     dispatch(registerCountingAreasOnServer());
   }
@@ -191,7 +192,7 @@ export function saveCountingAreaName(id, name) {
     })
 
     dispatch(registerCountingAreasOnServer());
-    dispatch(setMode(EDITOR_MODE.EDIT));
+    dispatch(setMode(EDITOR_MODE.EDIT_LINE));
   }
 }
 

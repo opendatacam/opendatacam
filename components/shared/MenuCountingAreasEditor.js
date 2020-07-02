@@ -63,25 +63,35 @@ class MenuCountingAreasEditor extends Component {
               />
             </button>
             <button
-              className="btn btn-default p-0 shadow rounded-r btn-default--active"
+              className="btn btn-default p-0 shadow btn-default--active"
             >
-              <SVG 
-                className="w-10 h-10 svg-icon flex items-center" 
+              <SVG
+                className="w-10 h-10 svg-icon flex items-center"
                 cacheRequests={true}
-                src={`/static/icons/ui/addline.svg`} 
+                src={`/static/icons/ui/addline.svg`}
+                aria-label="icon edit"
+              />
+            </button>
+            <button
+              className="btn btn-default p-0 shadow rounded-r"
+            >
+              <SVG
+                className="w-10 h-10 svg-icon flex items-center"
+                cacheRequests={true}
+                src={`/static/icons/ui/addpolygon.svg`}
                 aria-label="icon edit"
               />
             </button>
             <a
-              href={`/counter/areas`} 
+              href={`/counter/areas`}
               target="_blank" 
               download
               className="btn btn-default p-0 ml-4 rounded-l shadow"
             >
               <SVG 
-                className="w-10 h-10 svg-icon flex items-center" 
+                className="w-10 h-10 svg-icon flex items-center"
                 cacheRequests={true}
-                src={`/static/icons/ui/download.svg`} 
+                src={`/static/icons/ui/download.svg`}
                 aria-label="icon download"
               />
             </a>
@@ -92,7 +102,7 @@ class MenuCountingAreasEditor extends Component {
               <SVG 
                 className="w-10 h-10 svg-icon flex items-center" 
                 cacheRequests={true}
-                src={`/static/icons/ui/upload.svg`} 
+                src={`/static/icons/ui/upload.svg`}
                 aria-label="icon upload"
               />
               <input type="file" id="upload" onChange={() => this.loadFile()} style={{"display":"none"}} />
@@ -102,7 +112,7 @@ class MenuCountingAreasEditor extends Component {
         {this.props.mode === EDITOR_MODE.DELETE &&
           <button
             className="btn btn-default p-0 rounded shadow"
-            onClick={() => this.props.dispatch(setMode(EDITOR_MODE.EDIT))}
+            onClick={() => this.props.dispatch(setMode(EDITOR_MODE.EDIT_LINE))}
           >
             <SVG 
               className="w-10 h-10 svg-icon flex items-center" 
