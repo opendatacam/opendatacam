@@ -93,7 +93,7 @@ export function deleteCountingArea(id) {
   }
 }
 
-export function addCountingArea() {
+export function addCountingArea(type = "bidirectional") {
   return (dispatch, getState) => {
 
     // TODO Before adding a counting area, verify if selectedCountingArea is complete, otherwise delete it
@@ -117,7 +117,7 @@ export function addCountingArea() {
       payload: {
         id: newCountingAreaId,
         color: color,
-        type: "bidirectional"
+        type: type
       }
     })
 
