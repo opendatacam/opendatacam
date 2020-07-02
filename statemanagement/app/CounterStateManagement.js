@@ -75,7 +75,7 @@ export function resetCountingAreas() {
       type: RESET_COUNTING_AREAS
     });
 
-    dispatch(registerCountingAreasOnServer());
+    // dispatch(registerCountingAreasOnServer());
   }
 }
 
@@ -90,7 +90,7 @@ export function deleteCountingArea(id) {
     if(getState().counter.get('countingAreas').size === 0) {
       dispatch(setMode(EDITOR_MODE.EDIT_LINE));
     }
-    dispatch(registerCountingAreasOnServer());
+    //  dispatch(registerCountingAreasOnServer());
   }
 }
 
@@ -187,7 +187,7 @@ export function toggleCountingAreaType(id, currentDirection) {
       }
     });
 
-    dispatch(registerCountingAreasOnServer());
+    // dispatch(registerCountingAreasOnServer());
   }
 }
 
@@ -202,7 +202,7 @@ export function saveCountingAreaName(id, name) {
       }
     })
 
-    dispatch(registerCountingAreasOnServer());
+    //  dispatch(registerCountingAreasOnServer());
     dispatch(setMode(EDITOR_MODE.EDIT_LINE));
   }
 }
@@ -213,7 +213,7 @@ export function restoreCountingAreasFromJSON(data) {
       type: RESTORE_COUNTING_AREAS,
       payload: data
     })
-    dispatch(registerCountingAreasOnServer());
+    // dispatch(registerCountingAreasOnServer());
   }
 }
 
