@@ -58,7 +58,7 @@ class CounterAreasEditor extends Component {
 
       if(this.props.mode === EDITOR_MODE.EDIT_POLYGON) {
         if (this.checkIfClosedPolygon(pointer)) {
-          this.isDrawing = false;
+
           // this.points.push(this.points[0]);
           console.log('TODO save polygon')
           // this.props.dispatch(saveCountingPolygonLocation(this.props.selectedCountingPolygon, {
@@ -70,10 +70,8 @@ class CounterAreasEditor extends Component {
           //   },
           //   polygon: this.points
           // }));
-  
-  
-          this.editorCanvas.clear();
-          this.polygons = {}
+
+          this.isDrawing = false;
           this.points = []
         }
         else {
@@ -97,6 +95,30 @@ class CounterAreasEditor extends Component {
 
       if(this.props.mode === EDITOR_MODE.EDIT_LINE) {
         this.points.push(pointer);
+        // We finished the line
+        if(this.points.length > 1) {
+          this.isDrawing = false;
+          let point1 = { x: this.points[0].x, y: this.points[0].y};
+          let point2 = { x: this.points[1].x, y: this.points[1].y};
+          // Only record if line distance if superior to some threshold to avoid single clicks
+          if(computeDistance(point1, point2) > 50) {
+            // Maybe use getCenterPoint to persist center
+            this.props.dispatch(saveCountingAreaLocation(this.props.selectedCountingArea, {
+              point1: point1,
+              point2: point2,
+              refResolution: {
+                w: this.editorCanvas.width,
+                h: this.editorCanvas.height
+              }
+            }))
+          } else {
+            // Cancel line, not long enough
+            this.props.dispatch(deleteCountingArea(this.props.selectedCountingArea));
+          }
+          this.points = [];
+          this.isDrawing = false;
+          return;
+        }
       }
 
       // Potential cause of bug if this.props.selectedCountingArea isn't
