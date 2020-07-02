@@ -63,23 +63,25 @@ class MenuCountingAreasEditor extends Component {
               />
             </button>
             <button
-              className="btn btn-default p-0 shadow btn-default--active"
+              className={`btn btn-default p-0 shadow ${this.props.mode === EDITOR_MODE.EDIT_LINE ? 'btn-default--active' : ''}`}
+              onClick={() => this.props.dispatch(setMode(EDITOR_MODE.EDIT_LINE))}
             >
               <SVG
                 className="w-10 h-10 svg-icon flex items-center"
                 cacheRequests={true}
                 src={`/static/icons/ui/addline.svg`}
-                aria-label="icon edit"
+                aria-label="icon addline"
               />
             </button>
             <button
-              className="btn btn-default p-0 shadow rounded-r"
+              className={`btn btn-default p-0 shadow rounded-r ${this.props.mode === EDITOR_MODE.EDIT_POLYGON ? 'btn-default--active' : ''}`}
+              onClick={() => this.props.dispatch(setMode(EDITOR_MODE.EDIT_POLYGON))}
             >
               <SVG
                 className="w-10 h-10 svg-icon flex items-center"
                 cacheRequests={true}
                 src={`/static/icons/ui/addpolygon.svg`}
-                aria-label="icon edit"
+                aria-label="icon addpolygon"
               />
             </button>
             <a
@@ -88,7 +90,7 @@ class MenuCountingAreasEditor extends Component {
               download
               className="btn btn-default p-0 ml-4 rounded-l shadow"
             >
-              <SVG 
+              <SVG
                 className="w-10 h-10 svg-icon flex items-center"
                 cacheRequests={true}
                 src={`/static/icons/ui/download.svg`}
