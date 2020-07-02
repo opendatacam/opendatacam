@@ -146,8 +146,8 @@ class LiveViewEngine {
       if(area.get('location') !== null) {
         let data = area.get('location').toJS();
         let color = area.get('color');
-        data.point1 = scalePoint(data.point1, canvasResolution, data.refResolution);
-        data.point2 = scalePoint(data.point2, canvasResolution, data.refResolution);
+        data.point1 = scalePoint(data.points[0], canvasResolution, data.refResolution);
+        data.point2 = scalePoint(data.points[1], canvasResolution, data.refResolution);
         context.strokeStyle = getCounterColor(color);
         context.fillStyle = getCounterColor(color);
         context.lineWidth = 5; // TODO Have those dynamic depending on canvas resolution
