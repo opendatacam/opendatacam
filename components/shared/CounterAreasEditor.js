@@ -73,6 +73,7 @@ class CounterAreasEditor extends Component {
 
           this.isDrawing = false;
           this.points = []
+          return;
         }
         else {
           this.points.push(pointer);
@@ -104,8 +105,7 @@ class CounterAreasEditor extends Component {
           if(computeDistance(point1, point2) > 50) {
             // Maybe use getCenterPoint to persist center
             this.props.dispatch(saveCountingAreaLocation(this.props.selectedCountingArea, {
-              point1: point1,
-              point2: point2,
+              points: this.points,
               refResolution: {
                 w: this.editorCanvas.width,
                 h: this.editorCanvas.height
@@ -148,7 +148,7 @@ class CounterAreasEditor extends Component {
         originY: 'center'
       }));
     });
-    
+
     this.editorCanvas.on('mouse:move', (o) => {
       console.log('mouse move');
       if (!this.isDrawing) return;
@@ -291,8 +291,8 @@ class CounterAreasEditor extends Component {
         }
         {this.props.countingAreasWithCenters.entrySeq().map(([id, countingArea]) =>
           <React.Fragment key={id}>
-            {countingArea.get('computed') &&
-              <SingleCounterDirection 
+            {countingArea.get('computed') && countingArea.get('location') &&
+              <SingleCounterDirection
                 key={id}
                 area={countingArea.toJS()}
                 toggleDirection={() => this.props.dispatch(toggleCountingAreaType(id, countingArea.get('type')))}
