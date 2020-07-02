@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import { connect } from 'react-redux';
 import { Map } from 'immutable'
 
-import { scalePoint } from '../../utils/resolution';
 import SingleCounterArea from './SingleCounterArea';
 import { computeCountingAreasCenters } from '../../statemanagement/app/CounterStateManagement';
 

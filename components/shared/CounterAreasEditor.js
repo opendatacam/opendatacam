@@ -234,7 +234,7 @@ class CounterAreasEditor extends Component {
         let color = area.get('color');
         let reScalingFactorX = width / data.refResolution.w;
         let reScalingFactorY = height / data.refResolution.h;
-        let points = [ data.point1.x * reScalingFactorX, data.point1.y * reScalingFactorY, data.point2.x * reScalingFactorX, data.point2.y * reScalingFactorY];
+        let points = [ data.points[0].x * reScalingFactorX, data.points[0].y * reScalingFactorY, data.points[1].x * reScalingFactorX, data.points[1].y * reScalingFactorY];
         this.lines[id] = new fabric.Line(points, {
           strokeWidth: 5,
           fill: getCounterColor(color),
@@ -246,16 +246,16 @@ class CounterAreasEditor extends Component {
         this.editorCanvas.add(new fabric.Circle({
           radius: 5,
           fill: getCounterColor(color),
-          top: data.point1.y * reScalingFactorY,
-          left: data.point1.x * reScalingFactorX,
+          top: data.points[0].y * reScalingFactorY,
+          left: data.points[0].x * reScalingFactorX,
           originX: 'center',
           originY: 'center'
         }));
         this.editorCanvas.add(new fabric.Circle({
           radius: 5,
           fill: getCounterColor(color),
-          top: data.point2.y * reScalingFactorY,
-          left: data.point2.x * reScalingFactorX,
+          top: data.points[1].y * reScalingFactorY,
+          left: data.points[1].x * reScalingFactorX,
           originX: 'center',
           originY: 'center'
         }));
