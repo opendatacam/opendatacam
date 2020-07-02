@@ -22,20 +22,93 @@ class CounterAreasEditor extends Component {
 
     // Fabric.js state
     this.lines = {}
-    this.mouseDown = false;
+    this.isDrawing = false;
+    this.polygon = {}
+    this.points = []
+  }
+
+  checkIfClosedPolygon(point) {
+    var radius = 6;
+    if (this.points.length > 2) {
+      var circleCenter = this.points[0];
+
+      var dist_points = (point.x - circleCenter.x) * (point.x - circleCenter.x) + (point.y - circleCenter.y) * (point.y - circleCenter.y);
+      radius *= radius;
+
+      if (dist_points < radius) {
+        return true;
+      }
+
+      return false;
+    }
   }
 
   initListeners() {
 
     this.editorCanvas.on('mouse:down', (o) => {
-      this.props.dispatch(addCountingArea());
+      console.log('mouse down');
+      if (!this.isDrawing) {
+        let areaType = this.props.mode === EDITOR_MODE.EDIT_LINE ? 'bidirectional' : 'polygon';
+        this.props.dispatch(addCountingArea(areaType));
+        console.log('add counting area')
+      }
 
-      this.mouseDown = true;
+      this.isDrawing = true;
       let pointer = this.editorCanvas.getPointer(o.e);
-      let points = [ pointer.x, pointer.y, pointer.x, pointer.y ];
+
+      if(this.props.mode === EDITOR_MODE.EDIT_POLYGON) {
+        if (this.checkIfClosedPolygon(pointer)) {
+          this.isDrawing = false;
+          // this.points.push(this.points[0]);
+          console.log('TODO save polygon')
+          // this.props.dispatch(saveCountingPolygonLocation(this.props.selectedCountingPolygon, {
+          //   point1: this.points[0],
+          //   point2: this.points[1],
+          //   refResolution: {
+          //     w: this.editorCanvas.width,
+          //     h: this.editorCanvas.height
+          //   },
+          //   polygon: this.points
+          // }));
+  
+  
+          this.editorCanvas.clear();
+          this.polygons = {}
+          this.points = []
+        }
+        else {
+          this.points.push(pointer);
+        }
+
+        this.editorCanvas.remove(this.polygon[this.props.selectedCountingArea]);
+        this.polygon[this.props.selectedCountingArea] = new fabric.Polygon(this.points, {
+          strokeWidth: 5,
+          fill: getCounterColor(this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])),
+          stroke: getCounterColor(this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])),
+          opacity: 0.3,
+          selectable: false,
+          hasBorders: false,
+          hasControls: false,
+        });
+
+        console.log('add polygon to canvas')
+        this.editorCanvas.add(this.polygon[this.props.selectedCountingArea]);
+      }
+
+      if(this.props.mode === EDITOR_MODE.EDIT_LINE) {
+        this.points.push(pointer);
+      }
+
       // Potential cause of bug if this.props.selectedCountingArea isn't
       // defined when we reach here
-      this.lines[this.props.selectedCountingArea] = new fabric.Line(points, {
+
+      // Draw line of last two points
+      var lineCoord = [pointer.x, pointer.y, pointer.x, pointer.y]
+      if(this.lines.length > 1) {
+        lineCoord = [this.points[this.lines.length - 2].x, this.points[this.lines.length - 2].y, this.points[this.lines.length - 1].x, this.points[this.lines.length - 1].y]
+      }
+
+      this.lines[this.props.selectedCountingArea] = new fabric.Line(lineCoord, {
         strokeWidth: 5,
         fill: getCounterColor(this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])),
         stroke: getCounterColor(this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])),
@@ -43,6 +116,7 @@ class CounterAreasEditor extends Component {
         originY: 'center'
       });
       this.editorCanvas.add(this.lines[this.props.selectedCountingArea]);
+
       this.editorCanvas.add(new fabric.Circle({
         radius: 5,
         fill: getCounterColor(this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])),
@@ -54,34 +128,39 @@ class CounterAreasEditor extends Component {
     });
     
     this.editorCanvas.on('mouse:move', (o) => {
-      if (!this.mouseDown) return;
+      console.log('mouse move');
+      if (!this.isDrawing) return;
+
       let pointer = this.editorCanvas.getPointer(o.e);
       this.lines[this.props.selectedCountingArea].set({ x2: pointer.x, y2: pointer.y });
       // TODO STORE LINE DATA POINTS
       this.editorCanvas.renderAll();
     });
-    
+
     this.editorCanvas.on('mouse:up', (o) => {
-      if (!this.mouseDown) return;
-      let { x1, y1, x2, y2 } = this.lines[this.props.selectedCountingArea];
-      let point1 = { x:x1, y:y1};
-      let point2 = { x:x2, y:y2};
+      console.log('mouse up');
+
+      console.log('do stuff on mouse up')
+
+      // let { x1, y1, x2, y2 } = this.lines[this.props.selectedCountingArea];
+      // let point1 = { x:x1, y:y1};
+      // let point2 = { x:x2, y:y2};
       // Only record if line distance if superior to some threshold to avoid single clicks
-      if(computeDistance(point1, point2) > 50) {
-        // Maybe use getCenterPoint to persist center
-        this.props.dispatch(saveCountingAreaLocation(this.props.selectedCountingArea, {
-          point1: point1,
-          point2: point2,
-          refResolution: {
-            w: this.editorCanvas.width,
-            h: this.editorCanvas.height
-          }
-        }))
-      } else {
-        // Cancel line, not long enough
-        this.props.dispatch(deleteCountingArea(this.props.selectedCountingArea));
-      }
-      this.mouseDown = false;
+      // if(computeDistance(point1, point2) > 50) {
+      //   // Maybe use getCenterPoint to persist center
+      //   this.props.dispatch(saveCountingAreaLocation(this.props.selectedCountingArea, {
+      //     point1: point1,
+      //     point2: point2,
+      //     refResolution: {
+      //       w: this.editorCanvas.width,
+      //       h: this.editorCanvas.height
+      //     }
+      //   }))
+      // } else {
+      //   // Cancel line, not long enough
+      //   this.props.dispatch(deleteCountingArea(this.props.selectedCountingArea));
+      // }
+      // this.mouseDown = false;
     });
   }
 
@@ -91,6 +170,8 @@ class CounterAreasEditor extends Component {
       this.reRenderCountingAreasInEditor(this.props.countingAreas)
     }
 
+    // We may have changed mode
+    // TODO
 
     // TODO later in order to fix bug if resizing windows while in counter editing mode
     // if(newProps.canvasResolution !== this.props.canvasResolution) {
@@ -210,7 +291,7 @@ class CounterAreasEditor extends Component {
             right: 0;
             left: 0;
             bottom: 0;
-            z-index: ${this.props.mode === EDITOR_MODE.ASKNAME || 
+            z-index: ${this.props.mode === EDITOR_MODE.ASKNAME ||
                        this.props.mode === EDITOR_MODE.SHOW_INSTRUCTION ||
                        this.props.mode === EDITOR_MODE.DELETE ? '7' : '2'};
           }
