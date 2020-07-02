@@ -30,6 +30,7 @@ const initialState = fromJS({
 const SELECT_COUNTING_AREA = 'Counter/SELECT_COUNTING_AREA'
 const DELETE_COUNTING_AREA = 'Counter/DELETE_COUNTING_AREA'
 const SAVE_COUNTING_AREA_LOCATION = 'Counter/SAVE_COUNTING_AREA_LOCATION'
+const SAVE_COUNTING_AREA_BEARING = 'Counter/SAVE_COUNTING_AREA_BEARING'
 const SAVE_COUNTING_AREA_TYPE = 'Counter/SAVE_COUNTING_AREA_TYPE'
 const SET_MODE = 'Counter/SET_MODE'
 const SAVE_COUNTING_AREA_NAME = 'Counter/SAVE_COUNTING_AREA_NAME'
@@ -128,32 +129,42 @@ export function addCountingArea(type = "bidirectional") {
 export function saveCountingAreaLocation(id, location) {
   return (dispatch, getState) => {
 
-    // Compute bearing
-    let lineBearing = computeLineBearing(location.point1.x, -location.point1.y, location.point2.x, -location.point2.y);
-    // in both directions
-    let lineBearings = [0,0];
-    if(lineBearing >= 180) {
-      lineBearings[0] = lineBearing - 180;
-      lineBearings[1] = lineBearing;
-    } else {
-      lineBearings[0] = lineBearing;
-      lineBearings[1] = lineBearing + 180;
-    }
+    // If it is a line, compute bearings
+    if(location.points.length === 2) {
+      // Compute bearing
+      let lineBearing = computeLineBearing(location.points[0].x, -location.points[0].y, location.points[1].x, -location.points[1].y);
+      // in both directions
+      let lineBearings = [0,0];
+      if(lineBearing >= 180) {
+        lineBearings[0] = lineBearing - 180;
+        lineBearings[1] = lineBearing;
+      } else {
+        lineBearings[0] = lineBearing;
+        lineBearings[1] = lineBearing + 180;
+      }
 
+      dispatch({
+        type: SAVE_COUNTING_AREA_BEARING,
+        payload: {
+          lineBearings,
+          id
+        }
+      })
+    }
 
     dispatch({
       type: SAVE_COUNTING_AREA_LOCATION,
       payload: {
         location,
-        id,
-        lineBearings
+        id
       }
     });
 
     if(!getState().counter.getIn(['countingAreas', id, 'name'])) {
       dispatch(setMode(EDITOR_MODE.ASKNAME));
     }
-    dispatch(registerCountingAreasOnServer());
+    // TODO UPDATE server side part to handle array of points instead of just point1, point2
+    // dispatch(registerCountingAreasOnServer());
   }
 }
 
@@ -272,11 +283,16 @@ export function computeCountingAreasCenters(countingAreas, canvasResolution) {
   return countingAreas.map((data, id) => {
     let location = data.get('location');
     if(location) {
+      let points = location.get('points');
+      let x1 = points.get(0).x
+      let y1 = points.get(0).y
+      let x2 = points.get(1).x
+      let y2 = points.get(1).y
       return data.setIn(['location','center'], scalePoint(
         {
-          x: Math.abs(location.getIn(['point2','x']) - location.getIn(['point1','x'])) / 2 + Math.min(location.getIn(['point1','x']), location.getIn(['point2','x'])),
-          y: Math.abs(location.getIn(['point2','y']) - location.getIn(['point1','y'])) / 2 + Math.min(location.getIn(['point1','y']), location.getIn(['point2','y']))
-        }, 
+          x: Math.abs(x2 - x1) / 2 + Math.min(x1, x2),
+          y: Math.abs(y2 - y1) / 2 + Math.min(y1, y2)
+        },
         canvasResolution.toJS(), 
         location.get('refResolution').toJS()
       ))
@@ -299,7 +315,8 @@ export default function CounterReducer (state = initialState, action = {}) {
       return state.deleteIn(['countingAreas', action.payload])
     case SAVE_COUNTING_AREA_LOCATION:
       return state.setIn(['countingAreas', action.payload.id, 'location'], fromJS(action.payload.location))
-                  .setIn(['countingAreas', action.payload.id, 'computed', 'lineBearings'], fromJS(action.payload.lineBearings))
+    case SAVE_COUNTING_AREA_BEARING:
+      return state.setIn(['countingAreas', action.payload.id, 'computed', 'lineBearings'], fromJS(action.payload.lineBearings))
     case SAVE_COUNTING_AREA_NAME:
       return state.setIn(['countingAreas', action.payload.id, 'name'], action.payload.name)
     case SAVE_COUNTING_AREA_TYPE:
