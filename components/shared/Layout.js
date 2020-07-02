@@ -17,7 +17,7 @@ class Layout extends Component {
           <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
           <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png"/>
           <link rel="manifest" href="/site.webmanifest"></link>
-          <script type="text/javascript" src="/static/js/fabric.min.js" />
+          <script type="text/javascript" src="/static/js/fabric-3.6.1.min.js" />
         </Head>
         {this.props.children}
       </div>

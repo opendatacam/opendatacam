@@ -167,7 +167,7 @@ class CounterAreasEditor extends Component {
       >
         {this.props.mode === EDITOR_MODE.SHOW_INSTRUCTION &&
           <InstructionsModal
-            close={() => this.props.dispatch(setMode(EDITOR_MODE.EDIT))}
+            close={() => this.props.dispatch(setMode(EDITOR_MODE.EDIT_LINE))}
           />
         }
         {this.props.mode === EDITOR_MODE.ASKNAME &&
@@ -175,7 +175,7 @@ class CounterAreasEditor extends Component {
             save={(name) => this.props.dispatch(saveCountingAreaName(this.props.selectedCountingArea, name))}
             cancel={(name) => {
               this.props.dispatch(deleteCountingArea(this.props.selectedCountingArea))
-              this.props.dispatch(setMode(EDITOR_MODE.EDIT))
+              this.props.dispatch(setMode(EDITOR_MODE.EDIT_LINE))
             }}
           />
         }
@@ -183,7 +183,7 @@ class CounterAreasEditor extends Component {
           <DeleteModal
             countingAreasWithCenters={this.props.countingAreasWithCenters}
             delete={(id) => this.props.dispatch(deleteCountingArea(id))}
-            cancel={() => { this.props.dispatch(setMode(EDITOR_MODE.EDIT)) }}
+            cancel={() => { this.props.dispatch(setMode(EDITOR_MODE.EDIT_LINE)) }}
           />
         }
         {this.props.countingAreasWithCenters.entrySeq().map(([id, countingArea]) =>
