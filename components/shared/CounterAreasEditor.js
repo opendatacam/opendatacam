@@ -245,8 +245,8 @@ class CounterAreasEditor extends Component {
           this.editorCanvas.add(new fabric.Circle({
             radius: 5,
             fill: getCounterColor(color),
-            top: point.y * reScalingFactorY,
-            left: point.x * reScalingFactorX,
+            top: point.y,
+            left: point.x,
             originX: 'center',
             originY: 'center'
           }))
