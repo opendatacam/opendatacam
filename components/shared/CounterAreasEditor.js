@@ -68,11 +68,9 @@ class CounterAreasEditor extends Component {
   initListeners() {
 
     this.editorCanvas.on('mouse:down', (o) => {
-      console.log('mouse down');
       if (!this.isDrawing) {
         let areaType = this.props.mode === EDITOR_MODE.EDIT_LINE ? 'bidirectional' : 'polygon';
         this.props.dispatch(addCountingArea(areaType));
-        console.log('add counting area')
       }
 
       this.isDrawing = true;
@@ -171,39 +169,12 @@ class CounterAreasEditor extends Component {
     });
 
     this.editorCanvas.on('mouse:move', (o) => {
-      console.log('mouse move');
       if (!this.isDrawing) return;
 
       let pointer = this.editorCanvas.getPointer(o.e);
       this.currentLine.set({ x2: pointer.x, y2: pointer.y });
       // TODO STORE LINE DATA POINTS
       this.editorCanvas.renderAll();
-    });
-
-    this.editorCanvas.on('mouse:up', (o) => {
-      console.log('mouse up');
-
-      console.log('do stuff on mouse up')
-
-      // let { x1, y1, x2, y2 } = this.lines[this.props.selectedCountingArea];
-      // let point1 = { x:x1, y:y1};
-      // let point2 = { x:x2, y:y2};
-      // Only record if line distance if superior to some threshold to avoid single clicks
-      // if(computeDistance(point1, point2) > 50) {
-      //   // Maybe use getCenterPoint to persist center
-      //   this.props.dispatch(saveCountingAreaLocation(this.props.selectedCountingArea, {
-      //     point1: point1,
-      //     point2: point2,
-      //     refResolution: {
-      //       w: this.editorCanvas.width,
-      //       h: this.editorCanvas.height
-      //     }
-      //   }))
-      // } else {
-      //   // Cancel line, not long enough
-      //   this.props.dispatch(deleteCountingArea(this.props.selectedCountingArea));
-      // }
-      // this.mouseDown = false;
     });
   }
 
@@ -213,9 +184,6 @@ class CounterAreasEditor extends Component {
       this.reRenderCountingAreasInEditor(this.props.countingAreas)
     }
 
-    // We may have changed mode
-    // TODO
-
     // TODO later in order to fix bug if resizing windows while in counter editing mode
     // if(newProps.canvasResolution !== this.props.canvasResolution) {
     //   this.editorCanvas.setDimensions({
@@ -224,7 +192,7 @@ class CounterAreasEditor extends Component {
     //   });
     //   // TODO Update counting areas with new refResolution
     // }
-  } 
+  }
 
   componentDidMount() {
     if(this.elCanvas) {
