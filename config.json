@@ -17,6 +17,7 @@
     "unMatchedFrameTolerance": 5
   },
   "COUNTER_SETTINGS": {
+    "countingAreaMinFramesInsideToBeCounted": 1,
     "minAngleWithCountingLineThreshold": 5,
     "computeTrajectoryBasedOnNbOfPastFrame": 5
   },
@@ -73,7 +74,7 @@
       "canvasResolutionFactor": 0.1
     }
   },
-  "MONGODB_URL": "mongodb://mongo:27017",
+  "MONGODB_URL": "mongodb://localhost:27017",
   "PORTS": {
     "app": 8080,
     "darknet_json_stream": 8070,
