@@ -23,14 +23,15 @@ class CounterAreasEditor extends Component {
     this.escFunction = this.escFunction.bind(this);
 
     // Fabric.js state
-    this.lines = {}
+    this.currentLine = null;
+    this.currentPolygon = null;
+
     this.isDrawing = false;
-    this.polygon = {}
     this.points = []
   }
 
   checkIfClosedPolygon(point) {
-    var radius = 6;
+    var radius = 15;
     if (this.points.length > 2) {
       var circleCenter = this.points[0];
 
@@ -46,10 +47,10 @@ class CounterAreasEditor extends Component {
   }
 
   resetDrawing() {
-    this.lines = {};
     this.isDrawing = false;
     this.points = [];
-    this.polygon = {};
+    this.currentPolygon = null;
+    this.currentLine = null;
   }
 
 
@@ -99,8 +100,8 @@ class CounterAreasEditor extends Component {
           this.points.push(pointer);
         }
 
-        this.editorCanvas.remove(this.polygon[this.props.selectedCountingArea]);
-        this.polygon[this.props.selectedCountingArea] = new fabric.Polygon(this.points, {
+        this.editorCanvas.remove(this.currentPolygon);
+        this.currentPolygon = new fabric.Polygon(this.points, {
           strokeWidth: 5,
           fill: getCounterColor(this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])),
           stroke: getCounterColor(this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])),
@@ -110,8 +111,7 @@ class CounterAreasEditor extends Component {
           hasControls: false,
         });
 
-        console.log('add polygon to canvas')
-        this.editorCanvas.add(this.polygon[this.props.selectedCountingArea]);
+        this.editorCanvas.add(this.currentPolygon);
       }
 
       if(this.props.mode === EDITOR_MODE.EDIT_LINE) {
@@ -144,20 +144,21 @@ class CounterAreasEditor extends Component {
       // Potential cause of bug if this.props.selectedCountingArea isn't
       // defined when we reach here
 
-      // Draw line of last two points
+      // Init line of last two points
       var lineCoord = [pointer.x, pointer.y, pointer.x, pointer.y]
-      if(this.lines.length > 1) {
-        lineCoord = [this.points[this.lines.length - 2].x, this.points[this.lines.length - 2].y, this.points[this.lines.length - 1].x, this.points[this.lines.length - 1].y]
+      // For touch devices, draw previous line
+      if(this.points.length > 1) {
+        this.currentLine.set({ x2: pointer.x, y2: pointer.y });
       }
 
-      this.lines[this.props.selectedCountingArea] = new fabric.Line(lineCoord, {
+      this.currentLine = new fabric.Line(lineCoord, {
         strokeWidth: 5,
         fill: getCounterColor(this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])),
         stroke: getCounterColor(this.props.countingAreas.getIn([this.props.selectedCountingArea, 'color'])),
         originX: 'center',
         originY: 'center'
       });
-      this.editorCanvas.add(this.lines[this.props.selectedCountingArea]);
+      this.editorCanvas.add(this.currentLine);
 
       this.editorCanvas.add(new fabric.Circle({
         radius: 5,
@@ -174,7 +175,7 @@ class CounterAreasEditor extends Component {
       if (!this.isDrawing) return;
 
       let pointer = this.editorCanvas.getPointer(o.e);
-      this.lines[this.props.selectedCountingArea].set({ x2: pointer.x, y2: pointer.y });
+      this.currentLine.set({ x2: pointer.x, y2: pointer.y });
       // TODO STORE LINE DATA POINTS
       this.editorCanvas.renderAll();
     });
@@ -250,7 +251,8 @@ class CounterAreasEditor extends Component {
   reRenderCountingAreasInEditor(countingAreas) {
     // Clear canvas
     this.editorCanvas.clear();
-    this.lines = {}
+    this.resetDrawing();
+
 
     const { width, height } = this.elCanvas.getBoundingClientRect();
 
@@ -291,6 +293,19 @@ class CounterAreasEditor extends Component {
               originY: 'center'
             }));
           }
+        }
+
+        // Draw polygon if length > 2
+        if(points.length > 2) {
+          this.editorCanvas.add(new fabric.Polygon(points, {
+            strokeWidth: 5,
+            fill: getCounterColor(color),
+            stroke: getCounterColor(color),
+            opacity: 0.3,
+            selectable: false,
+            hasBorders: false,
+            hasControls: false,
+          }));
         }
       }
     })
