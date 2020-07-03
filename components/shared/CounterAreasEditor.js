@@ -79,7 +79,9 @@ class CounterAreasEditor extends Component {
 
       if(this.props.mode === EDITOR_MODE.EDIT_POLYGON) {
         if (this.checkIfClosedPolygon(pointer)) {
-
+          // Close polygon
+          this.points.push(this.points[0]);
+          // Save polygon
           this.props.dispatch(saveCountingAreaLocation(this.props.selectedCountingArea, {
             points: this.points,
             refResolution: {
@@ -88,6 +90,7 @@ class CounterAreasEditor extends Component {
             }
           }))
 
+          // Reset editor
           this.isDrawing = false;
           this.points = []
           return;
@@ -257,31 +260,38 @@ class CounterAreasEditor extends Component {
         let color = area.get('color');
         let reScalingFactorX = width / data.refResolution.w;
         let reScalingFactorY = height / data.refResolution.h;
-        let points = [ data.points[0].x * reScalingFactorX, data.points[0].y * reScalingFactorY, data.points[1].x * reScalingFactorX, data.points[1].y * reScalingFactorY];
-        this.lines[id] = new fabric.Line(points, {
-          strokeWidth: 5,
-          fill: getCounterColor(color),
-          stroke: getCounterColor(color),
-          originX: 'center',
-          originY: 'center'
-        });
-        this.editorCanvas.add(this.lines[id]);
-        this.editorCanvas.add(new fabric.Circle({
-          radius: 5,
-          fill: getCounterColor(color),
-          top: data.points[0].y * reScalingFactorY,
-          left: data.points[0].x * reScalingFactorX,
-          originX: 'center',
-          originY: 'center'
-        }));
-        this.editorCanvas.add(new fabric.Circle({
-          radius: 5,
-          fill: getCounterColor(color),
-          top: data.points[1].y * reScalingFactorY,
-          left: data.points[1].x * reScalingFactorX,
-          originX: 'center',
-          originY: 'center'
-        }));
+
+        // Rescale points
+        let points = data.points.map((point) => {
+          return {
+            x: point.x * reScalingFactorX,
+            y: point.y * reScalingFactorY,
+          }
+        })
+
+        for (let index = 0; index < points.length; index++) {
+          let point = points[index];
+          // Draw circle
+          this.editorCanvas.add(new fabric.Circle({
+            radius: 5,
+            fill: getCounterColor(color),
+            top: point.y * reScalingFactorY,
+            left: point.x * reScalingFactorX,
+            originX: 'center',
+            originY: 'center'
+          }))
+
+          // Draw line connecting to previous point
+          if(index > 0) {
+            this.editorCanvas.add(new fabric.Line([points[index - 1].x, points[index - 1].y, points[index].x, points[index].y], {
+              strokeWidth: 5,
+              fill: getCounterColor(color),
+              stroke: getCounterColor(color),
+              originX: 'center',
+              originY: 'center'
+            }));
+          }
+        }
       }
     })
   }
