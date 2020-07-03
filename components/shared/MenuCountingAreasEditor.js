@@ -55,7 +55,7 @@ class MenuCountingAreasEditor extends Component {
               className="btn btn-default p-0 rounded-l shadow"
               onClick={() => this.handleDelete()}
             >
-              <SVG 
+              <SVG
                 className="w-10 h-10 svg-icon flex items-center" 
                 cacheRequests={true}
                 src={`/static/icons/ui/delete.svg`} 
@@ -116,10 +116,10 @@ class MenuCountingAreasEditor extends Component {
             className="btn btn-default p-0 rounded shadow"
             onClick={() => this.props.dispatch(setMode(this.props.lastEditingMode))}
           >
-            <SVG 
-              className="w-10 h-10 svg-icon flex items-center" 
+            <SVG
+              className="w-10 h-10 svg-icon flex items-center"
               cacheRequests={true}
-              src={`/static/icons/ui/close.svg`} 
+              src={`/static/icons/ui/close.svg`}
               aria-label="icon edit"
             />
           </button>
