@@ -28,6 +28,7 @@ const initialState = {
   indexLastFrameFPSComputed: 0,
   currentFrame: 0,
   countedItemsHistory: [],
+  counterBuffer: {},
   videoResolution: null,
   countingAreas: {},
   trackerDataForLastFrame: null,
@@ -162,7 +163,7 @@ module.exports = {
     countedItemsForThisFrame,
     trackerDataForThisFrame
   ) {
-    
+
     const trackerEntry = {
       recordingId: Opendatacam.recordingStatus.recordingId,
       frameId: frameId,
@@ -176,7 +177,8 @@ module.exports = {
           h: Math.round(trackerData.h),
           bearing: Math.round(trackerData.bearing),
           confidence: Math.round(trackerData.confidence * 100),
-          name: trackerData.name
+          name: trackerData.name,
+          area: trackerData.area || ""
         }
       })
     }
@@ -352,6 +354,11 @@ module.exports = {
       MIN_ANGLE_THRESHOLD = config.COUNTER_SETTINGS.minAngleWithCountingLineThreshold
     }
 
+    var COUNTING_AREA_MIN_FRAMES_INSIDE = 0;
+    if(config.COUNTER_SETTINGS && config.COUNTER_SETTINGS.countingAreaMinFramesInsideToBeCounted) {
+      COUNTING_AREA_MIN_FRAMES_INSIDE = config.COUNTER_SETTINGS.countingAreaMinFramesInsideToBeCounted
+    }
+
     // Populate trackerDataBuffer
     if(Opendatacam.trackerDataBuffer.length > NBFRAME_TO_BUFFER_FOR_COUNTER) {
       // Remove first element (oldest) to keep buffer at max size
@@ -378,6 +385,34 @@ module.exports = {
           if(countingAreaType === "polygon") {
             // Check if object is inside the zone
             isInsideZone = isInsidePolygon([trackedItem.x, -trackedItem.y], countingAreaProps.points.map((point) => [point.x, point.y]))
+
+
+            if(isInsideZone) {
+              // Mark object as inside this area
+              trackedItem.area = countingAreaKey;
+
+              // Look if it was marked for counting after a few frames
+              // increment nbOfFrames spent inside
+              // if we reached the countingAreaMinFramesInsideToBeCounted, count the object
+              if(Opendatacam.counterBuffer[trackedItem.id]) {
+                let bufferedItemToCount = Opendatacam.counterBuffer[trackedItem.id];
+                bufferedItemToCount.nbFramesInsideArea++
+                if(bufferedItemToCount.nbFramesInsideArea >= COUNTING_AREA_MIN_FRAMES_INSIDE) {
+                  console.log('count item')
+                  console.log(`Buffer size: ${Object.keys(Opendatacam.counterBuffer).length}`);
+                  let countedItem = this.countItem(
+                    bufferedItemToCount.trackedItem,
+                    countingAreaKey,
+                    bufferedItemToCount.frameId,
+                    "",
+                    bufferedItemToCount.intersection.angle
+                  );
+                  countedItemsForThisFrame.push(countedItem);
+                  // Deleted object from buffer
+                  delete Opendatacam.counterBuffer[trackedItem.id];
+                }
+              }
+            }
           }
 
           // Continue if
@@ -436,7 +471,6 @@ module.exports = {
                         trackedItem.x,
                         - trackedItem.y)
 
-                      console.log("check intersection")
                       if(intersection.onLine1 && intersection.onLine2) {
                         doesIntersect = true;
                         break;
@@ -491,8 +525,24 @@ module.exports = {
 
                   // FOR COUNTING POLYGON
                   if(countingAreaType === "polygon") {
-                    let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, "zone", intersection.angle);
-                    countedItemsForThisFrame.push(countedItem);
+                    // Add object to the buffer to make it countable if countingAreaMinFramesInsideToBeCounted is defined
+                    if(COUNTING_AREA_MIN_FRAMES_INSIDE > 1) {
+                      if(Opendatacam.counterBuffer[trackedItem.id]) {
+                        Opendatacam.counterBuffer[trackedItem.id].nbFramesInsideArea++
+                      } else {
+                        // init object buffer
+                        Opendatacam.counterBuffer[trackedItem.id] = {
+                          nbFramesInsideArea: 1,
+                          frameId: frameId,
+                          intersection: intersection,
+                          trackedItem: trackedItem
+                        }
+                      }
+                    } else {
+                      // count it directly, counting area behave like counting line, once it crosses inside we count it
+                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, "", intersection.angle);
+                      countedItemsForThisFrame.push(countedItem);
+                    }
                   }
 
 
@@ -549,7 +599,7 @@ module.exports = {
         trackerDataForLastFrame: Opendatacam.trackerDataForLastFrame,
         counterSummary: this.getCounterSummary(),
         trackerSummary: this.getTrackerSummary(),
-        videoResolution: Opendatacam.videoResolution, 
+        videoResolution: Opendatacam.videoResolution,
         appState: {
           yoloStatus: YOLO.getStatus(),
           isListeningToYOLO: Opendatacam.isListeningToYOLO,

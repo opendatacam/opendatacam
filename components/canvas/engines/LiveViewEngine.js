@@ -98,7 +98,7 @@ class LiveViewEngine {
       let y = objectTrackedScaled.y - objectTrackedScaled.h / 2
 
       // Counted status
-      // display counted color 4s after beeing counted
+      // display counted color during 4s after beeing counted
       let displayCountedArea = objectTracked.counted && objectTracked.counted.find((countedEvent) => {
         if(timeNow - countedEvent.timeMs < 1000) {
           return countedEvent.areaKey;
