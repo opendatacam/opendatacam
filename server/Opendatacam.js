@@ -10,6 +10,7 @@ const Recording = require('./model/Recording');
 const DBManager = require('./db/DBManager');
 const Logger = require('./utils/Logger');
 const configHelper = require('./utils/configHelper');
+const isInsidePolygon = require('point-in-polygon')
 
 // YOLO process max retries
 const HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS = 30;
@@ -363,6 +364,13 @@ module.exports = {
       Object.keys(Opendatacam.countingAreas).map((countingAreaKey) => {
         let countingAreaProps = Opendatacam.countingAreas[countingAreaKey].computed;
         let countingAreaType = Opendatacam.countingAreas[countingAreaKey].type;
+
+        if(countingAreaType === "polygon") {
+          // Check if object is inside the zone
+          let isInside = isInsidePolygon([trackedItem.x, -trackedItem.y], countingAreaProps.points.map((point) => [point.x, point.y]))
+
+          // TODO HERE
+        }
 
         // If trackerDataForLastFrame exists, we can if we items are passing through the counting line
         if(Opendatacam.trackerDataForLastFrame) {
