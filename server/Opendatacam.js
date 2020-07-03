@@ -347,6 +347,11 @@ module.exports = {
       NBFRAME_TO_BUFFER_FOR_COUNTER = config.COUNTER_SETTINGS.computeTrajectoryBasedOnNbOfPastFrame
     }
 
+    var MIN_ANGLE_THRESHOLD = 0;
+    if(config.COUNTER_SETTINGS && config.COUNTER_SETTINGS.minAngleWithCountingLineThreshold) {
+      MIN_ANGLE_THRESHOLD = config.COUNTER_SETTINGS.minAngleWithCountingLineThreshold
+    }
+
     // Populate trackerDataBuffer
     if(Opendatacam.trackerDataBuffer.length > NBFRAME_TO_BUFFER_FOR_COUNTER) {
       // Remove first element (oldest) to keep buffer at max size
@@ -365,112 +370,158 @@ module.exports = {
         let countingAreaProps = Opendatacam.countingAreas[countingAreaKey].computed;
         let countingAreaType = Opendatacam.countingAreas[countingAreaKey].type;
 
-        if(countingAreaType === "polygon") {
-          // Check if object is inside the zone
-          let isInside = isInsidePolygon([trackedItem.x, -trackedItem.y], countingAreaProps.points.map((point) => [point.x, point.y]))
-
-          // TODO HERE
-        }
-
-        // If trackerDataForLastFrame exists, we can if we items are passing through the counting line
+        // If trackerDataForLastFrame exists
         if(Opendatacam.trackerDataForLastFrame) {
-          // Find trackedItem data of last frame
-          let trackedItemLastFrame = Opendatacam.trackerDataForLastFrame.data.find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
 
-          if(trackedItemLastFrame) {
+          // For Polygon
+          let isInsideZone = false;
+          if(countingAreaType === "polygon") {
+            // Check if object is inside the zone
+            isInsideZone = isInsidePolygon([trackedItem.x, -trackedItem.y], countingAreaProps.points.map((point) => [point.x, point.y]))
+          }
 
-            // Remind counted status (could be already counted for another area but not this one)
-            if(trackedItemLastFrame.counted) {
-              trackedItem.counted = trackedItemLastFrame.counted;
-            } else {
-              // init setup an empty counting history
-              trackedItem.counted = [];
-            }
+          // Continue if
+          // - it is a counting line
+          // - it is a counting zone and the object is inside the zone
+          if(countingAreaType !== "polygon" || isInsideZone) {
 
-            // Do not count twice the same tracked item
-            if(trackedItem.counted.find((countedEvent) => countedEvent.areaKey === countingAreaKey)) {
-              // already counted on this areaKey, do not count twice
-              Logger.log('Already counted, do not count it twice')
-            } else {
-              // Build history of the past buffered frame for this object
-              let trackedItemHistoryForPastBufferedFrame = [];
-              for (var i = Opendatacam.trackerDataBuffer.length - 1; i >= 0; i--) {
-                let trackedItemDataForThisBufferedFrame = Opendatacam.trackerDataBuffer[i].find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
-                if (!trackedItemDataForThisBufferedFrame) {
-                  // console.log(`this tracked item id ${trackedItem.id} didnt exist in frame -${i} from this frame`)
-                  break;
-                } else {
-                  // console.log(`this tracked item id ${trackedItem.id} exist in frame -${i} from this frame`)
-                  trackedItemHistoryForPastBufferedFrame.push(trackedItemDataForThisBufferedFrame);
-                }
-              }
+            // Find trackedItem data of last frame
+            let trackedItemLastFrame = Opendatacam.trackerDataForLastFrame.data.find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
 
-              // Take Oldest item
-              trackedItemLastFrame = trackedItemHistoryForPastBufferedFrame[trackedItemHistoryForPastBufferedFrame.length - 1];
+            if(trackedItemLastFrame) {
 
-              let intersection = checkLineIntersection(
-                countingAreaProps.point1.x,
-                countingAreaProps.point1.y,
-                countingAreaProps.point2.x,
-                countingAreaProps.point2.y,
-                trackedItemLastFrame.x,
-                - trackedItemLastFrame.y,
-                trackedItem.x,
-                - trackedItem.y)
-
-              var MIN_ANGLE_THRESHOLD = 0;
-              if(config.COUNTER_SETTINGS && config.COUNTER_SETTINGS.minAngleWithCountingLineThreshold) {
-                MIN_ANGLE_THRESHOLD = config.COUNTER_SETTINGS.minAngleWithCountingLineThreshold
-              }
-
-              // To be counted, Object trajectory must intercept the counting line
-              // -> on the counting line
-              // -> with an angle superior at the angle threshold (which is the smallest angle between object trajectory and counting line)
-              if(intersection.onLine1 && intersection.onLine2 && intersection.angle >= MIN_ANGLE_THRESHOLD) {
-
-                // console.log("*****************************")
-                // console.log("COUNTING SOMETHING")
-                // console.log("*****************************")
-                // // console.log(trackedItem);
-                // console.log(intersection.angle)
-
-
-                // Tracked item has cross the {countingAreaKey} counting line
-                // Count it
-                // console.log(`Counting ${trackedItem.id}`);
-                // console.log(`(${trackedItemLastFrame.x}, ${trackedItemLastFrame.y})`);
-                // console.log(`(${trackedItem.x}, ${trackedItem.y})`);
-                // console.log(`Angle: ${intersection.angle} º`)
-                // console.log(`(${countingAreaProps.point1.x}, ${countingAreaProps.point1.y})`);
-                // console.log(`(${countingAreaProps.point2.x}, ${countingAreaProps.point2.y})`);
-
-                // Compute trackedItem bearing based on more buffered frame (tracker does it only frame to frame)
-                // console.log(`Bearing given by tracker ${trackedItem.bearing}`)
-                trackedItem.bearing = computeLineBearing(trackedItemLastFrame.x, - trackedItemLastFrame.y, trackedItem.x, - trackedItem.y)
-                // console.log(`Bearing given by counting algo ${trackedItem.bearing}`)
-
-                // Object comes from top to bottom or left to right of the counting line
-                if(countingAreaProps.lineBearings[0] <= trackedItem.bearing && trackedItem.bearing <= countingAreaProps.lineBearings[1]) {
-                  if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM) {
-                    let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM, intersection.angle);
-                    countedItemsForThisFrame.push(countedItem);
-                  } else {
-                    // do not count, comes from the wrong direction
-                    // console.log('not counting, from bottom to top, or right to left of the counting lines')
-                  }
-                } else {
-                  // Object comes from bottom to top, or right to left of the counting lines
-                  if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP) {
-                    let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP, intersection.angle);
-                    countedItemsForThisFrame.push(countedItem);
-                  } else {
-                    // do not count, comes from the wrong direction
-                    // console.log('not counting, comes from top to bottom or left to right of the counting line ')
-                  }
-                }
+              // Remind counted status (could be already counted for another area but not this one)
+              if(trackedItemLastFrame.counted) {
+                trackedItem.counted = trackedItemLastFrame.counted;
               } else {
-                // console.log('Intersection with object trajectory is NOT on counting line, do not count');
-                // console.log(trackedItem)
+                // init setup an empty counting history
+                trackedItem.counted = [];
+              }
+
+              // Do not count twice the same tracked item
+              if(trackedItem.counted.find((countedEvent) => countedEvent.areaKey === countingAreaKey)) {
+                // already counted on this areaKey, do not count twice
+                Logger.log('Already counted, do not count it twice')
+              } else {
+                // Build history of the past buffered frame for this object
+                let trackedItemHistoryForPastBufferedFrame = [];
+                for (var i = Opendatacam.trackerDataBuffer.length - 1; i >= 0; i--) {
+                  let trackedItemDataForThisBufferedFrame = Opendatacam.trackerDataBuffer[i].find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
+                  if (!trackedItemDataForThisBufferedFrame) {
+                    // console.log(`this tracked item id ${trackedItem.id} didnt exist in frame -${i} from this frame`)
+                    break;
+                  } else {
+                    // console.log(`this tracked item id ${trackedItem.id} exist in frame -${i} from this frame`)
+                    trackedItemHistoryForPastBufferedFrame.push(trackedItemDataForThisBufferedFrame);
+                  }
+                }
+
+                // Take Oldest item
+                trackedItemLastFrame = trackedItemHistoryForPastBufferedFrame[trackedItemHistoryForPastBufferedFrame.length - 1];
+
+                let doesIntersect = false;
+                let intersection = null;
+
+                // If polygon, check if it crosses one of the edges of the polygon
+                if(countingAreaType === "polygon") {
+                  for (let index = 0; index < countingAreaProps.points.length; index++) {
+                    if(index > 0) {
+                      intersection = checkLineIntersection(
+                        countingAreaProps.points[index - 1].x,
+                        countingAreaProps.points[index - 1].y,
+                        countingAreaProps.points[index].x,
+                        countingAreaProps.points[index].y,
+                        trackedItemLastFrame.x,
+                        - trackedItemLastFrame.y,
+                        trackedItem.x,
+                        - trackedItem.y)
+
+                      console.log("check intersection")
+                      if(intersection.onLine1 && intersection.onLine2) {
+                        doesIntersect = true;
+                        break;
+                      }
+                    }
+                  }
+                }
+
+                // If line, if it crosses the coumting line
+                if(countingAreaType !== "polygon") {
+                  intersection = checkLineIntersection(
+                    countingAreaProps.point1.x,
+                    countingAreaProps.point1.y,
+                    countingAreaProps.point2.x,
+                    countingAreaProps.point2.y,
+                    trackedItemLastFrame.x,
+                    - trackedItemLastFrame.y,
+                    trackedItem.x,
+                    - trackedItem.y)
+
+                  // To be counted, Object trajectory must intercept the counting line
+                  // -> on the counting line / edge
+                  // -> with an angle superior at the angle threshold (which is the smallest angle between object trajectory and counting line)
+                  if(intersection.onLine1 && intersection.onLine2 && intersection.angle >= MIN_ANGLE_THRESHOLD) {
+                    doesIntersect = true;
+                  }
+                }
+
+
+                if(doesIntersect) {
+
+                  // console.log("*****************************")
+                  // console.log("COUNTING SOMETHING")
+                  // console.log("*****************************")
+                  // // console.log(trackedItem);
+                  // console.log(intersection.angle)
+
+
+                  // Tracked item has cross the {countingAreaKey} counting line
+                  // Count it
+                  // console.log(`Counting ${trackedItem.id}`);
+                  // console.log(`(${trackedItemLastFrame.x}, ${trackedItemLastFrame.y})`);
+                  // console.log(`(${trackedItem.x}, ${trackedItem.y})`);
+                  // console.log(`Angle: ${intersection.angle} º`)
+                  // console.log(`(${countingAreaProps.point1.x}, ${countingAreaProps.point1.y})`);
+                  // console.log(`(${countingAreaProps.point2.x}, ${countingAreaProps.point2.y})`);
+
+                  // Compute trackedItem bearing based on more buffered frame (tracker does it only frame to frame)
+                  // console.log(`Bearing given by tracker ${trackedItem.bearing}`)
+                  trackedItem.bearing = computeLineBearing(trackedItemLastFrame.x, - trackedItemLastFrame.y, trackedItem.x, - trackedItem.y)
+                  // console.log(`Bearing given by counting algo ${trackedItem.bearing}`)
+
+                  // FOR COUNTING POLYGON
+                  if(countingAreaType === "polygon") {
+                    let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, "zone", intersection.angle);
+                    countedItemsForThisFrame.push(countedItem);
+                  }
+
+
+                  // FOR COUNTING LINE Object comes from top to bottom or left to right of the counting line
+                  if(countingAreaType !== "polygon") {
+                    if(countingAreaProps.lineBearings[0] <= trackedItem.bearing && trackedItem.bearing <= countingAreaProps.lineBearings[1]) {
+                      if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM) {
+                        let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM, intersection.angle);
+                        countedItemsForThisFrame.push(countedItem);
+                      } else {
+                        // do not count, comes from the wrong direction
+                        // console.log('not counting, from bottom to top, or right to left of the counting lines')
+                      }
+                    } else {
+                      // Object comes from bottom to top, or right to left of the counting lines
+                      if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP) {
+                        let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP, intersection.angle);
+                        countedItemsForThisFrame.push(countedItem);
+                      } else {
+                        // do not count, comes from the wrong direction
+                        // console.log('not counting, comes from top to bottom or left to right of the counting line ')
+                      }
+                    }
+                  }
+
+                } else {
+                  // console.log('Intersection with object trajectory is NOT on counting line, do not count');
+                  // console.log(trackedItem)
+                }
               }
             }
           }
