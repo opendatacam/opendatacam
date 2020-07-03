@@ -20,6 +20,8 @@ class CounterAreasEditor extends Component {
       editorInitialized: false
     }
 
+    this.escFunction = this.escFunction.bind(this);
+
     // Fabric.js state
     this.lines = {}
     this.isDrawing = false;
@@ -43,11 +45,22 @@ class CounterAreasEditor extends Component {
     }
   }
 
+  resetDrawing() {
+    this.lines = {};
+    this.isDrawing = false;
+    this.points = [];
+    this.polygon = {};
+  }
+
 
 
   escFunction(event){
-    if(event.keyCode === 27) {
-      this.props.cancel()
+    // Prevent catching esc key press from delete or ask name modal
+    if(this.props.mode === EDITOR_MODE.EDIT_LINE || this.props.mode === EDITOR_MODE.EDIT_POLYGON) {
+      if(event.keyCode === 27) {
+        this.props.dispatch(deleteCountingArea(this.props.selectedCountingArea))
+        this.resetDrawing();
+      }
     }
   }
 
@@ -232,7 +245,7 @@ class CounterAreasEditor extends Component {
   }
 
   reRenderCountingAreasInEditor(countingAreas) {
-    // Clear canvas 
+    // Clear canvas
     this.editorCanvas.clear();
     this.lines = {}
 
@@ -288,7 +301,7 @@ class CounterAreasEditor extends Component {
             save={(name) => this.props.dispatch(saveCountingAreaName(this.props.selectedCountingArea, name))}
             cancel={(name) => {
               this.props.dispatch(deleteCountingArea(this.props.selectedCountingArea))
-              this.props.dispatch(setMode(EDITOR_MODE.EDIT_LINE))
+              this.props.dispatch(setMode(this.props.lastEditingMode));
             }}
           />
         }
@@ -296,7 +309,7 @@ class CounterAreasEditor extends Component {
           <DeleteModal
             countingAreasWithCenters={this.props.countingAreasWithCenters}
             delete={(id) => this.props.dispatch(deleteCountingArea(id))}
-            cancel={() => { this.props.dispatch(setMode(EDITOR_MODE.EDIT_LINE)) }}
+            cancel={() => this.props.dispatch(setMode(this.props.lastEditingMode))}
           />
         }
         {this.props.countingAreasWithCenters.entrySeq().map(([id, countingArea]) =>
@@ -356,6 +369,7 @@ export default connect((state) => {
     countingAreasWithCenters: countingAreasWithCenters,
     selectedCountingArea: state.counter.get('selectedCountingArea'),
     canvasResolution: state.viewport.get('canvasResolution'),
-    mode: state.counter.get('mode')
+    mode: state.counter.get('mode'),
+    lastEditingMode: state.counter.get('lastEditingMode')
   }
 })(CounterAreasEditor)
