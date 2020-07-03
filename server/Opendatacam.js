@@ -91,31 +91,18 @@ module.exports = {
 
     // Remap coordinates to image reference size
     // The editor canvas can be smaller / bigger
-    let resizedData = {
-      point1: {
-        x: data.location.point1.x * Opendatacam.videoResolution.w / data.location.refResolution.w,
-        y: data.location.point1.y * Opendatacam.videoResolution.h / data.location.refResolution.h,
-      },
-      point2: {
-        x: data.location.point2.x * Opendatacam.videoResolution.w / data.location.refResolution.w,
-        y: data.location.point2.y * Opendatacam.videoResolution.h / data.location.refResolution.h,
-      }
-    }
 
-    // Determine the linear function for this counting area
-    // Y = aX + b
-    // -> a = dY / dX
-    // -> b = Y1 - aX1
     // NOTE: We need to invert the Y coordinates to be in a classic Cartesian coordinate system
-    // The coordinates in inputs are from the canvas coordinates system 
-
-    let { point1, point2 } = resizedData;
-
-    let a = (- point2.y + point1.y) / (point2.x - point1.x);
-    let b = - point1.y - a * point1.x;
+    // The coordinates in inputs are from the canvas coordinates system
+    let points = data.location.points.map((point) => {
+      return {
+        x: point.x * Opendatacam.videoResolution.w / data.location.refResolution.w,
+        y: -(point.y * Opendatacam.videoResolution.h / data.location.refResolution.h),
+      }
+    });
 
     // Compute bearing
-    let lineBearing = computeLineBearing(point1.x, -point1.y, point2.x, -point2.y);
+    let lineBearing = computeLineBearing(points[0].x, points[0].y, points[1].x, points[1].y);
     // in both directions
     let lineBearings = [0,0];
     if(lineBearing >= 180) {
@@ -129,17 +116,16 @@ module.exports = {
     Opendatacam.countingAreas[key] = data;
 
     Opendatacam.countingAreas[key]['computed'] = {
-      a: a,
-      b: b,
       lineBearings: lineBearings,
       point1: {
-        x: point1.x,
-        y: - point1.y
+        x: points[0].x,
+        y: points[0].y
       },
       point2: {
-        x: point2.x,
-        y: - point2.y
-      }
+        x: points[1].x,
+        y: points[1].y
+      },
+      points: points
     }
   },
 

@@ -47,7 +47,7 @@ class AskNameModal extends Component {
             className="appearance-none rounded-l py-2 px-3" 
             value={this.state.name}
             onChange={this.handleChange} 
-            placeholder='Counting line name'
+            placeholder='Counter name'
             autoFocus
           />
           <input 
