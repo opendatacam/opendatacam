@@ -99,6 +99,7 @@ class LiveViewEngine {
 
       // Counted status
       let displayCountedArea = null
+      // get last counted event
       let countedEvent = objectTracked.counted && objectTracked.counted[objectTracked.counted.length - 1];
 
       // For lines, display online during 4s after beeing counted
