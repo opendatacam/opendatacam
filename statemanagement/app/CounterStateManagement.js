@@ -22,6 +22,7 @@ const initialState = fromJS({
   countingAreas: {},
   selectedCountingArea: null,
   mode: EDITOR_MODE.EDIT_LINE, // oneOf EDITOR_MODE
+  lastEditingMode: EDITOR_MODE.EDIT_LINE,
   counterSummary: {},
   trackerSummary: {} 
 })
@@ -33,6 +34,7 @@ const SAVE_COUNTING_AREA_LOCATION = 'Counter/SAVE_COUNTING_AREA_LOCATION'
 const SAVE_COUNTING_AREA_BEARING = 'Counter/SAVE_COUNTING_AREA_BEARING'
 const SAVE_COUNTING_AREA_TYPE = 'Counter/SAVE_COUNTING_AREA_TYPE'
 const SET_MODE = 'Counter/SET_MODE'
+const SET_LAST_EDITING_MODE = 'Counter/SET_LAST_EDITING_MODE'
 const SAVE_COUNTING_AREA_NAME = 'Counter/SAVE_COUNTING_AREA_NAME'
 const ADD_COUNTING_AREA = 'Counter/ADD_COUNTING_AREA'
 const RESTORE_COUNTING_AREAS = 'Counter/RESTORE_COUNTING_AREAS'
@@ -42,9 +44,28 @@ const UPDATE_TRACKERSUMMARY = 'Counter/UPDATE_TRACKERSUMMARY'
 
 
 export function setMode(mode) {
-  return {
-    type: SET_MODE,
-    payload: mode
+  return (dispatch, getState) => {
+    // If leaving editing mode, store last editing mode for when we go back
+    if(getState().counter.get('mode') === EDITOR_MODE.EDIT_LINE || getState().counter.get('mode') === EDITOR_MODE.EDIT_POLYGON) {
+
+      // If new mode is also editing, store new mode
+      if(mode === EDITOR_MODE.EDIT_LINE || mode === EDITOR_MODE.EDIT_POLYGON) {
+        dispatch({
+          type: SET_LAST_EDITING_MODE,
+          payload: mode
+        });
+      } else {
+        dispatch({
+          type: SET_LAST_EDITING_MODE,
+          payload: getState().counter.get('mode')
+        });
+      }
+    }
+
+    dispatch({
+      type: SET_MODE,
+      payload: mode
+    });
   }
 }
 
@@ -88,7 +109,7 @@ export function deleteCountingArea(id) {
     });
 
     if(getState().counter.get('countingAreas').size === 0) {
-      dispatch(setMode(EDITOR_MODE.EDIT_LINE));
+      dispatch(setMode(getState().counter.get('lastEditingMode')));
     }
     //  dispatch(registerCountingAreasOnServer());
   }
@@ -330,6 +351,8 @@ export default function CounterReducer (state = initialState, action = {}) {
       return state.set('countingAreas', fromJS({}))
     case SET_MODE:
       return state.set('mode', action.payload)
+    case SET_LAST_EDITING_MODE:
+      return state.set('lastEditingMode', action.payload)
     case RESTORE_COUNTING_AREAS:
       return state.set('countingAreas', fromJS(action.payload))
     case UPDATE_COUNTERSUMMARY:

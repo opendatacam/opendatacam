@@ -114,7 +114,7 @@ class MenuCountingAreasEditor extends Component {
         {this.props.mode === EDITOR_MODE.DELETE &&
           <button
             className="btn btn-default p-0 rounded shadow"
-            onClick={() => this.props.dispatch(setMode(EDITOR_MODE.EDIT_LINE))}
+            onClick={() => this.props.dispatch(setMode(this.props.lastEditingMode))}
           >
             <SVG 
               className="w-10 h-10 svg-icon flex items-center" 
@@ -138,6 +138,7 @@ export default connect((state) => {
   return {
     countingAreas: state.counter.get('countingAreas'),
     selectedCountingArea: state.counter.get('selectedCountingArea'),
-    mode: state.counter.get('mode')
+    mode: state.counter.get('mode'),
+    lastEditingMode: state.counter.get('lastEditingMode')
   }
 })(MenuCountingAreasEditor)
