@@ -354,7 +354,7 @@ module.exports = {
       MIN_ANGLE_THRESHOLD = config.COUNTER_SETTINGS.minAngleWithCountingLineThreshold
     }
 
-    var COUNTING_AREA_MIN_FRAMES_INSIDE = 0;
+    var COUNTING_AREA_MIN_FRAMES_INSIDE = 1;
     if(config.COUNTER_SETTINGS && config.COUNTER_SETTINGS.countingAreaMinFramesInsideToBeCounted) {
       COUNTING_AREA_MIN_FRAMES_INSIDE = config.COUNTER_SETTINGS.countingAreaMinFramesInsideToBeCounted
     }
