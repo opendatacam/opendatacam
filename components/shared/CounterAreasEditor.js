@@ -310,7 +310,7 @@ class CounterAreasEditor extends Component {
         }
         {this.props.countingAreasWithCenters.entrySeq().map(([id, countingArea]) =>
           <React.Fragment key={id}>
-            {countingArea.get('computed') && countingArea.get('location') &&
+            {countingArea.get('type') !== "polygon" && countingArea.get('computed') && countingArea.get('location') &&
               <SingleCounterDirection
                 key={id}
                 area={countingArea.toJS()}
