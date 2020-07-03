@@ -394,6 +394,8 @@ module.exports = {
               // Look if it was marked for counting after a few frames
               // increment nbOfFrames spent inside
               // if we reached the countingAreaMinFramesInsideToBeCounted, count the object
+
+
               if(Opendatacam.counterBuffer[trackedItem.id]) {
                 let bufferedItemToCount = Opendatacam.counterBuffer[trackedItem.id];
                 bufferedItemToCount.nbFramesInsideArea++

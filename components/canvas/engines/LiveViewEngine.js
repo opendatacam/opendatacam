@@ -98,13 +98,30 @@ class LiveViewEngine {
       let y = objectTrackedScaled.y - objectTrackedScaled.h / 2
 
       // Counted status
-      // display counted color during 4s after beeing counted
-      let displayCountedArea = objectTracked.counted && objectTracked.counted.find((countedEvent) => {
-        if(timeNow - countedEvent.timeMs < 1000) {
-          return countedEvent.areaKey;
-        }
-      })
+      let displayCountedArea = null
+      let countedEvent = objectTracked.counted && objectTracked.counted[objectTracked.counted.length - 1];
 
+      // For lines, display online during 4s after beeing counted
+      if(countedEvent && countingAreas.getIn([countedEvent.areaKey, "type"]) !== "polygon") {
+        displayCountedArea = objectTracked.counted && objectTracked.counted.find((countedEvent) => {
+          if(timeNow - countedEvent.timeMs < 1000) {
+            return countedEvent.areaKey;
+          }
+        });
+      }
+
+      // For polygon, as long as it is still inside the area
+      if(countedEvent && countingAreas.getIn([countedEvent.areaKey, "type"]) === "polygon") {
+        displayCountedArea = objectTracked.counted && objectTracked.counted.find((countedEvent) => {
+          if(countedEvent.areaKey === objectTracked.area) {
+            return countedEvent.areaKey;
+          }
+        });
+      }
+
+      // Display counted status for lines & polygon
+      // => for lines : during 4s after beeing counted
+      // => for polygons: as long as it remains inside the area
       if(displayCountedArea) {
         // displayCountedArea contain countingareakey : see Opendatacam.js on server side
         context.strokeStyle = getCounterColor(countingAreas.getIn([displayCountedArea.areaKey, 'color']));
