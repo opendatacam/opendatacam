@@ -96,7 +96,7 @@ export function resetCountingAreas() {
       type: RESET_COUNTING_AREAS
     });
 
-    // dispatch(registerCountingAreasOnServer());
+    dispatch(registerCountingAreasOnServer());
   }
 }
 
@@ -111,7 +111,7 @@ export function deleteCountingArea(id) {
     if(getState().counter.get('countingAreas').size === 0) {
       dispatch(setMode(getState().counter.get('lastEditingMode')));
     }
-    //  dispatch(registerCountingAreasOnServer());
+    dispatch(registerCountingAreasOnServer());
   }
 }
 
@@ -185,7 +185,7 @@ export function saveCountingAreaLocation(id, location) {
       dispatch(setMode(EDITOR_MODE.ASKNAME));
     }
     // TODO UPDATE server side part to handle array of points instead of just point1, point2
-    // dispatch(registerCountingAreasOnServer());
+    dispatch(registerCountingAreasOnServer());
   }
 }
 
@@ -208,7 +208,7 @@ export function toggleCountingAreaType(id, currentDirection) {
       }
     });
 
-    // dispatch(registerCountingAreasOnServer());
+    dispatch(registerCountingAreasOnServer());
   }
 }
 
@@ -223,7 +223,7 @@ export function saveCountingAreaName(id, name) {
       }
     })
 
-    //  dispatch(registerCountingAreasOnServer());
+     dispatch(registerCountingAreasOnServer());
   }
 }
 
@@ -233,7 +233,7 @@ export function restoreCountingAreasFromJSON(data) {
       type: RESTORE_COUNTING_AREAS,
       payload: data
     })
-    // dispatch(registerCountingAreasOnServer());
+    dispatch(registerCountingAreasOnServer());
   }
 }
 
@@ -303,17 +303,18 @@ export function computeCountingAreasCenters(countingAreas, canvasResolution) {
   return countingAreas.map((data, id) => {
     let location = data.get('location');
     if(location) {
-      let points = location.get('points');
-      let x1 = points.get(0).x
-      let y1 = points.get(0).y
-      let x2 = points.get(1).x
-      let y2 = points.get(1).y
+      let points = location.get('points').toJS();
+      let x1 = points[0].x
+      let y1 = points[0].y
+      let x2 = points[1].x
+      let y2 = points[1].y
+
       return data.setIn(['location','center'], scalePoint(
         {
           x: Math.abs(x2 - x1) / 2 + Math.min(x1, x2),
           y: Math.abs(y2 - y1) / 2 + Math.min(y1, y2)
         },
-        canvasResolution.toJS(), 
+        canvasResolution.toJS(),
         location.get('refResolution').toJS()
       ))
     } else {
