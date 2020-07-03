@@ -150,28 +150,25 @@ export function addCountingArea(type = "bidirectional") {
 export function saveCountingAreaLocation(id, location) {
   return (dispatch, getState) => {
 
-    // If it is a line, compute bearings
-    if(location.points.length === 2) {
-      // Compute bearing
-      let lineBearing = computeLineBearing(location.points[0].x, -location.points[0].y, location.points[1].x, -location.points[1].y);
-      // in both directions
-      let lineBearings = [0,0];
-      if(lineBearing >= 180) {
-        lineBearings[0] = lineBearing - 180;
-        lineBearings[1] = lineBearing;
-      } else {
-        lineBearings[0] = lineBearing;
-        lineBearings[1] = lineBearing + 180;
-      }
-
-      dispatch({
-        type: SAVE_COUNTING_AREA_BEARING,
-        payload: {
-          lineBearings,
-          id
-        }
-      })
+    //Compute bearing of the line (if polygon of the first line)
+    let lineBearing = computeLineBearing(location.points[0].x, -location.points[0].y, location.points[1].x, -location.points[1].y);
+    // in both directions
+    let lineBearings = [0,0];
+    if(lineBearing >= 180) {
+      lineBearings[0] = lineBearing - 180;
+      lineBearings[1] = lineBearing;
+    } else {
+      lineBearings[0] = lineBearing;
+      lineBearings[1] = lineBearing + 180;
     }
+
+    dispatch({
+      type: SAVE_COUNTING_AREA_BEARING,
+      payload: {
+        lineBearings,
+        id
+      }
+    })
 
     dispatch({
       type: SAVE_COUNTING_AREA_LOCATION,
