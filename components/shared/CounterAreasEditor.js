@@ -323,7 +323,10 @@ class CounterAreasEditor extends Component {
         }
         {this.props.mode === EDITOR_MODE.ASKNAME &&
           <AskNameModal
-            save={(name) => this.props.dispatch(saveCountingAreaName(this.props.selectedCountingArea, name))}
+            save={(name) => {
+              this.props.dispatch(saveCountingAreaName(this.props.selectedCountingArea, name))
+              this.props.dispatch(setMode(this.props.lastEditingMode));
+            }}
             cancel={(name) => {
               this.props.dispatch(deleteCountingArea(this.props.selectedCountingArea))
               this.props.dispatch(setMode(this.props.lastEditingMode));
