@@ -224,7 +224,6 @@ export function saveCountingAreaName(id, name) {
     })
 
     //  dispatch(registerCountingAreasOnServer());
-    dispatch(setMode(EDITOR_MODE.EDIT_LINE));
   }
 }
 

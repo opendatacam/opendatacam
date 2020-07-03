@@ -146,25 +146,45 @@ class LiveViewEngine {
       if(area.get('location') !== null) {
         let data = area.get('location').toJS();
         let color = area.get('color');
-        data.point1 = scalePoint(data.points[0], canvasResolution, data.refResolution);
-        data.point2 = scalePoint(data.points[1], canvasResolution, data.refResolution);
         context.strokeStyle = getCounterColor(color);
         context.fillStyle = getCounterColor(color);
         context.lineWidth = 5; // TODO Have those dynamic depending on canvas resolution
         let edgeCircleRadius = 5;
-        // Draw line
-        context.beginPath();
-        context.moveTo(data.point1.x, data.point1.y);
-        context.lineTo(data.point2.x, data.point2.y);
-        context.stroke();
-        // Draw circles on edges
-        context.beginPath();
-        context.arc(data.point1.x, data.point1.y, edgeCircleRadius, 0, 2 * Math.PI, false);
-        context.fill();
-        context.beginPath();
-        context.arc(data.point2.x, data.point2.y, edgeCircleRadius, 0, 2 * Math.PI, false);
-        context.fill();
+
+        // Rescale points
+        let points = data.points.map((point) => scalePoint(point, canvasResolution, data.refResolution));
+
+        for (let index = 0; index < points.length; index++) {
+          let point = points[index];
+          // Draw circle
+          context.beginPath();
+          context.arc(point.x, point.y, edgeCircleRadius, 0, 2 * Math.PI, false);
+          context.fill();
+
+          // Draw line
+          // Draw line connecting to previous point
+          if(index > 0) {
+            context.beginPath();
+            context.moveTo(points[index - 1].x, points[index - 1].y);
+            context.lineTo(points[index].x, points[index].y);
+            context.stroke();
+          }
+        }
+
+        // Draw polygon if length > 2
+        if(points.length > 2) {
+          context.globalAlpha = 0.3;
+          context.beginPath();
+          context.moveTo(points[0].x, points[0].y);
+          points.map((point) => {
+            context.lineTo(point.x, point.y);
+            context.lineTo(point.x, point.y);
+          })
+          context.fill();
+          context.globalAlpha = 1;
+        }
       }
+
     });
   }
 
