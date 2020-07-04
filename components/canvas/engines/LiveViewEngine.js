@@ -111,7 +111,7 @@ class LiveViewEngine {
 
       // For polygon, as long as it is still inside the area
       if(countedEvent && countingAreas.getIn([countedEvent.areaKey, "type"]) === "polygon") {
-        if(countedEvent.areaKey === objectTracked.area) {
+        if(objectTracked.areas.indexOf(countedEvent.areaKey) > -1) {
           displayCountedArea = true;
         }
       }
