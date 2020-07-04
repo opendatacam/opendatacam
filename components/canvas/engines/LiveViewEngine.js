@@ -102,31 +102,27 @@ class LiveViewEngine {
       // get last counted event
       let countedEvent = objectTracked.counted && objectTracked.counted[objectTracked.counted.length - 1];
 
-      // For lines, display online during 4s after beeing counted
+      // For lines, display online during 1s after beeing counted
       if(countedEvent && countingAreas.getIn([countedEvent.areaKey, "type"]) !== "polygon") {
-        displayCountedArea = objectTracked.counted && objectTracked.counted.find((countedEvent) => {
-          if(timeNow - countedEvent.timeMs < 1000) {
-            return countedEvent.areaKey;
-          }
-        });
+        if(timeNow - countedEvent.timeMs < 1000) {
+          displayCountedArea = true;
+        }
       }
 
       // For polygon, as long as it is still inside the area
       if(countedEvent && countingAreas.getIn([countedEvent.areaKey, "type"]) === "polygon") {
-        displayCountedArea = objectTracked.counted && objectTracked.counted.find((countedEvent) => {
-          if(countedEvent.areaKey === objectTracked.area) {
-            return countedEvent.areaKey;
-          }
-        });
+        if(countedEvent.areaKey === objectTracked.area) {
+          displayCountedArea = true;
+        }
       }
 
       // Display counted status for lines & polygon
-      // => for lines : during 4s after beeing counted
+      // => for lines : during 1s after beeing counted
       // => for polygons: as long as it remains inside the area
       if(displayCountedArea) {
         // displayCountedArea contain countingareakey : see Opendatacam.js on server side
-        context.strokeStyle = getCounterColor(countingAreas.getIn([displayCountedArea.areaKey, 'color']));
-        context.fillStyle = getCounterColor(countingAreas.getIn([displayCountedArea.areaKey, 'color']));
+        context.strokeStyle = getCounterColor(countingAreas.getIn([countedEvent.areaKey, 'color']));
+        context.fillStyle = getCounterColor(countingAreas.getIn([countedEvent.areaKey, 'color']));
         context.strokeRect(
           x + 5,
           y + 5,

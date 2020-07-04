@@ -390,152 +390,155 @@ module.exports = {
           if(countingAreaType === "polygon") {
             // Check if object is inside the zone
             isInsideZone = isInsidePolygon([trackedItem.x, -trackedItem.y], countingAreaProps.points.map((point) => [point.x, point.y]))
-            // Mark object as inside this area
-            trackedItem.area = countingAreaKey;
+            if(isInsideZone) {
+              // Mark object as inside this area
+              trackedItem.area = countingAreaKey;
+            }
+          }
+
+          // Find trackedItem data of last frame
+          let trackedItemLastFrame = Opendatacam.trackerDataForLastFrame.data.find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
+
+          // Remind counted status (could be already counted for another area but not this one)
+          if(trackedItemLastFrame && trackedItemLastFrame.counted) {
+            trackedItem.counted = trackedItemLastFrame.counted;
+          } else {
+            // init setup an empty counting history
+            trackedItem.counted = [];
+          }
+
+          // Check if it has been already counted
+          let alreadyCountedForThisArea = false;
+          if(trackedItem.counted.find((countedEvent) => countedEvent.areaKey === countingAreaKey)) {
+            alreadyCountedForThisArea = true;
           }
 
           // Continue if
-          // - it is a counting line
-          // - it is a counting zone and the object is inside the zone
-          if(countingAreaType !== "polygon" || isInsideZone) {
-
-            // Find trackedItem data of last frame
-            let trackedItemLastFrame = Opendatacam.trackerDataForLastFrame.data.find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
+          // - it is a counting line OR it is a counting zone and the object is inside the zone
+          // - has not been counted
+          if(!alreadyCountedForThisArea && (countingAreaType !== "polygon" || isInsideZone)) {
 
             if(trackedItemLastFrame) {
 
-              // Remind counted status (could be already counted for another area but not this one)
-              if(trackedItemLastFrame.counted) {
-                trackedItem.counted = trackedItemLastFrame.counted;
-              } else {
-                // init setup an empty counting history
-                trackedItem.counted = [];
+              // Build history of the past buffered frame for this object
+              let trackedItemHistoryForPastBufferedFrame = [];
+              for (var i = Opendatacam.trackerDataBuffer.length - 1; i >= 0; i--) {
+                let trackedItemDataForThisBufferedFrame = Opendatacam.trackerDataBuffer[i].find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
+                if (!trackedItemDataForThisBufferedFrame) {
+                  // console.log(`this tracked item id ${trackedItem.id} didnt exist in frame -${i} from this frame`)
+                  break;
+                } else {
+                  // console.log(`this tracked item id ${trackedItem.id} exist in frame -${i} from this frame`)
+                  trackedItemHistoryForPastBufferedFrame.push(trackedItemDataForThisBufferedFrame);
+                }
               }
 
-              // Do not count twice the same tracked item
-              if(trackedItem.counted.find((countedEvent) => countedEvent.areaKey === countingAreaKey)) {
-                // already counted on this areaKey, do not count twice
-                Logger.log('Already counted, do not count it twice')
-              } else {
-                // Build history of the past buffered frame for this object
-                let trackedItemHistoryForPastBufferedFrame = [];
-                for (var i = Opendatacam.trackerDataBuffer.length - 1; i >= 0; i--) {
-                  let trackedItemDataForThisBufferedFrame = Opendatacam.trackerDataBuffer[i].find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
-                  if (!trackedItemDataForThisBufferedFrame) {
-                    // console.log(`this tracked item id ${trackedItem.id} didnt exist in frame -${i} from this frame`)
-                    break;
-                  } else {
-                    // console.log(`this tracked item id ${trackedItem.id} exist in frame -${i} from this frame`)
-                    trackedItemHistoryForPastBufferedFrame.push(trackedItemDataForThisBufferedFrame);
+              // Take Oldest item (could be X buffered frame ago)
+              trackedItemLastFrame = trackedItemHistoryForPastBufferedFrame[trackedItemHistoryForPastBufferedFrame.length - 1];
+
+              // IF POLYGON
+              if(countingAreaType === "polygon") {
+                // Add object to the buffer to make it countable if countingAreaMinFramesInsideToBeCounted is defined
+                if(Opendatacam.counterBuffer[trackedItem.id]) {
+                  Opendatacam.counterBuffer[trackedItem.id].nbFramesInsideArea++
+                } else {
+                  // init object counter buffer
+                  Opendatacam.counterBuffer[trackedItem.id] = {
+                    nbFramesInsideArea: 1,
+                    trackedItemBeforeEnteringArea: trackedItemLastFrame
                   }
                 }
 
-                // Take Oldest item (could be X buffered frame ago)
-                trackedItemLastFrame = trackedItemHistoryForPastBufferedFrame[trackedItemHistoryForPastBufferedFrame.length - 1];
+                // if we reached the countingAreaMinFramesInsideToBeCounted, see if we count the object
+                // otherwise, wait another frame
+                if(Opendatacam.counterBuffer[trackedItem.id].nbFramesInsideArea >= COUNTING_AREA_MIN_FRAMES_INSIDE) {
+                  let doCountItem = false;
+                  let intersectionWithPolygonEdge = null;
+                  // Check if [trackedItemBeforeEnteringZone - trackedItem] crosses one of the edges of the polygon
+                  if(COUNTING_AREA_VERIFY_IF_OBJECT_ENTERS_CROSSING_ONE_EDGE) {
+                    for (let index = 0; index < countingAreaProps.points.length; index++) {
+                      if(index > 0) {
+                        let trackedItemBeforeEnteringArea = Opendatacam.counterBuffer[trackedItem.id].trackedItemBeforeEnteringArea;
+                        let intersectionWithPolygonEdge = checkLineIntersection(
+                          countingAreaProps.points[index - 1].x,
+                          countingAreaProps.points[index - 1].y,
+                          countingAreaProps.points[index].x,
+                          countingAreaProps.points[index].y,
+                          trackedItemBeforeEnteringArea.x,
+                          - trackedItemBeforeEnteringArea.y,
+                          trackedItem.x,
+                          - trackedItem.y)
 
-                // IF POLYGON
-                if(countingAreaType === "polygon") {
-                  // Add object to the buffer to make it countable if countingAreaMinFramesInsideToBeCounted is defined
-                  if(Opendatacam.counterBuffer[trackedItem.id]) {
-                    Opendatacam.counterBuffer[trackedItem.id].nbFramesInsideArea++
-                  } else {
-                    // init object counter buffer
-                    Opendatacam.counterBuffer[trackedItem.id] = {
-                      nbFramesInsideArea: 1,
-                      trackedItemBeforeEnteringArea: trackedItemLastFrame
-                    }
-                  }
-
-                  // if we reached the countingAreaMinFramesInsideToBeCounted, see if we count the object
-                  // otherwise, wait another frame
-                  if(Opendatacam.counterBuffer[trackedItem.id].nbFramesInsideArea >= COUNTING_AREA_MIN_FRAMES_INSIDE) {
-                    let doCountItem = false;
-                    let intersectionWithPolygonEdge = null;
-                    // Check if [trackedItemBeforeEnteringZone - trackedItem] crosses one of the edges of the polygon
-                    if(COUNTING_AREA_VERIFY_IF_OBJECT_ENTERS_CROSSING_ONE_EDGE) {
-                      for (let index = 0; index < countingAreaProps.points.length; index++) {
-                        if(index > 0) {
-                          let trackedItemBeforeEnteringArea = Opendatacam.counterBuffer[trackedItem.id].trackedItemBeforeEnteringArea;
-                          let intersectionWithPolygonEdge = checkLineIntersection(
-                            countingAreaProps.points[index - 1].x,
-                            countingAreaProps.points[index - 1].y,
-                            countingAreaProps.points[index].x,
-                            countingAreaProps.points[index].y,
-                            trackedItemBeforeEnteringArea.x,
-                            - trackedItemBeforeEnteringArea.y,
-                            trackedItem.x,
-                            - trackedItem.y)
-
-                          if(intersectionWithPolygonEdge.onLine1 && intersectionWithPolygonEdge.onLine2) {
-                            // Flag item to be counted
-                            doCountItem = true;
-                            break;
-                          }
+                        if(intersectionWithPolygonEdge.onLine1 && intersectionWithPolygonEdge.onLine2) {
+                          // Flag item to be counted
+                          doCountItem = true;
+                          break;
                         }
                       }
-                    } else {
-                      // Do not check if it comes from outside the polygon
-                      doCountItem = true;
                     }
-
-                    if(doCountItem) {
-                      // Compute bearing
-                      trackedItem.bearing = computeLineBearing(trackedItemLastFrame.x, - trackedItemLastFrame.y, trackedItem.x, - trackedItem.y)
-                      // Count it
-                      let countedItem = this.countItem(
-                        trackedItem,
-                        countingAreaKey,
-                        frameId,
-                        "",
-                        intersectionWithPolygonEdge
-                      );
-                      countedItemsForThisFrame.push(countedItem);
-                      // Deleted object from buffer
-                      delete Opendatacam.counterBuffer[trackedItem.id];
-                    }
+                  } else {
+                    // Do not check if it comes from outside the polygon
+                    doCountItem = true;
                   }
-                }
 
-               // IF LINE, check if it crosses the counting line
-                if(countingAreaType !== "polygon") {
-                  let intersection = checkLineIntersection(
-                    countingAreaProps.point1.x,
-                    countingAreaProps.point1.y,
-                    countingAreaProps.point2.x,
-                    countingAreaProps.point2.y,
-                    trackedItemLastFrame.x,
-                    - trackedItemLastFrame.y,
-                    trackedItem.x,
-                    - trackedItem.y)
-
-                  // To be counted, Object trajectory must intercept the counting line
-                  // -> on the counting line / edge
-                  // -> with an angle superior at the angle threshold (which is the smallest angle between object trajectory and counting line)
-                  if(intersection.onLine1 && intersection.onLine2 && intersection.angle >= MIN_ANGLE_THRESHOLD) {
+                  if(doCountItem) {
                     // Compute bearing
                     trackedItem.bearing = computeLineBearing(trackedItemLastFrame.x, - trackedItemLastFrame.y, trackedItem.x, - trackedItem.y)
-                    // Object comes from top to bottom or left to right of the counting line
-                    if(countingAreaProps.lineBearings[0] <= trackedItem.bearing && trackedItem.bearing <= countingAreaProps.lineBearings[1]) {
-                      if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM) {
-                        let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM, intersection.angle);
-                        countedItemsForThisFrame.push(countedItem);
-                      } else {
-                        // do not count, comes from the wrong direction
-                        // console.log('not counting, from bottom to top, or right to left of the counting lines')
-                      }
+                    // Count it
+                    let countedItem = this.countItem(
+                      trackedItem,
+                      countingAreaKey,
+                      frameId,
+                      "",
+                      intersectionWithPolygonEdge
+                    );
+                    countedItemsForThisFrame.push(countedItem);
+                    // Deleted object from buffer
+                    delete Opendatacam.counterBuffer[trackedItem.id];
+                  }
+                }
+              }
+
+              // IF LINE, check if it crosses the counting line
+              if(countingAreaType !== "polygon") {
+                let intersection = checkLineIntersection(
+                  countingAreaProps.point1.x,
+                  countingAreaProps.point1.y,
+                  countingAreaProps.point2.x,
+                  countingAreaProps.point2.y,
+                  trackedItemLastFrame.x,
+                  - trackedItemLastFrame.y,
+                  trackedItem.x,
+                  - trackedItem.y)
+
+                // To be counted, Object trajectory must intercept the counting line
+                // -> on the counting line / edge
+                // -> with an angle superior at the angle threshold (which is the smallest angle between object trajectory and counting line)
+                if(intersection.onLine1 && intersection.onLine2 && intersection.angle >= MIN_ANGLE_THRESHOLD) {
+                  // Compute bearing
+                  trackedItem.bearing = computeLineBearing(trackedItemLastFrame.x, - trackedItemLastFrame.y, trackedItem.x, - trackedItem.y)
+                  // Object comes from top to bottom or left to right of the counting line
+                  if(countingAreaProps.lineBearings[0] <= trackedItem.bearing && trackedItem.bearing <= countingAreaProps.lineBearings[1]) {
+                    if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM) {
+                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM, intersection.angle);
+                      countedItemsForThisFrame.push(countedItem);
                     } else {
-                      // Object comes from bottom to top, or right to left of the counting lines
-                      if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP) {
-                        let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP, intersection.angle);
-                        countedItemsForThisFrame.push(countedItem);
-                      } else {
-                        // do not count, comes from the wrong direction
-                        // console.log('not counting, comes from top to bottom or left to right of the counting line ')
-                      }
+                      // do not count, comes from the wrong direction
+                      // console.log('not counting, from bottom to top, or right to left of the counting lines')
+                    }
+                  } else {
+                    // Object comes from bottom to top, or right to left of the counting lines
+                    if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP) {
+                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP, intersection.angle);
+                      countedItemsForThisFrame.push(countedItem);
+                    } else {
+                      // do not count, comes from the wrong direction
+                      // console.log('not counting, comes from top to bottom or left to right of the counting line ')
                     }
                   }
                 }
               }
+
             }
           }
         }
