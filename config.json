@@ -17,7 +17,7 @@
     "unMatchedFrameTolerance": 5
   },
   "COUNTER_SETTINGS": {
-    "countingAreaMinFramesInsideToBeCounted": 5,
+    "countingAreaMinFramesInsideToBeCounted": 1,
     "countingAreaVerifyIfObjectEntersCrossingOneEdge": true,
     "minAngleWithCountingLineThreshold": 5,
     "computeTrajectoryBasedOnNbOfPastFrame": 5
