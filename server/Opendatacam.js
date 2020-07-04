@@ -17,6 +17,10 @@ const HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS = 30;
 // Max wait time for YOLO to start is 3 min = 180s
 const HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES = 180 * (1000 / HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS);
 
+// How long should we keep a rolling buffer of the current counting
+// need to be capped otherwise can lead to a big memory leak after a few days
+const COUNTING_BUFFER_MAX_FRAMES_MEMORY = 10000;
+
 const COUNTING_AREA_TYPE = {
   BIDIRECTIONAL: "bidirectional",
   LEFTRIGHT_TOPBOTTOM: "leftright_topbottom",
@@ -382,6 +386,12 @@ module.exports = {
     }
     Opendatacam.trackerDataBuffer.push(trackerDataForThisFrame);
     // console.log(`Trackerdata buffer length:  ${Opendatacam.trackerDataBuffer.length}`)
+
+
+    // Keep counterBuffer under COUNTING_BUFFER_MAX_FRAMES_MEMORY
+    if(Object.keys(Opendatacam.counterBuffer).length > COUNTING_BUFFER_MAX_FRAMES_MEMORY) {
+      delete Opendatacam.counterBuffer[Object.keys(Opendatacam.counterBuffer)[0]];
+    }
 
     // Check if trackedItems are matching with some counting areas
     trackerDataForThisFrame = trackerDataForThisFrame.map((trackedItem) => {
