@@ -20,7 +20,15 @@ const HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES = 180 * (1000 / HTTP_REQUEST_LISTE
 const COUNTING_AREA_TYPE = {
   BIDIRECTIONAL: "bidirectional",
   LEFTRIGHT_TOPBOTTOM: "leftright_topbottom",
-  RIGHTLEFT_BOTTOMTOP: "rightleft_bottomtop"
+  RIGHTLEFT_BOTTOMTOP: "rightleft_bottomtop",
+  ZONE: "polygon"
+}
+
+const COUNTING_DIRECTION = {
+  LEFTRIGHT_TOPBOTTOM: "leftright_topbottom",
+  RIGHTLEFT_BOTTOMTOP: "rightleft_bottomtop",
+  ENTERING_ZONE: "entering_zone",
+  LEAVING_ZONE: "leaving_zone",
 }
 
 const initialState = {
@@ -146,11 +154,14 @@ module.exports = {
       // Add it to the history
       Opendatacam.countedItemsHistory.push(countedItem)
     }
-    // Mark tracked item as counted this frame for display
-    trackedItem.counted.push({
-      areaKey: countingAreaKey,
-      timeMs: new Date().getTime()
-    });
+    if(countingDirection !== COUNTING_DIRECTION.LEAVING_ZONE) {
+      // Mark tracked item as counted this frame for display
+      trackedItem.counted.push({
+        areaKey: countingAreaKey,
+        timeMs: new Date().getTime()
+      });
+    }
+
     return countedItem;
   },
 
@@ -412,9 +423,15 @@ module.exports = {
           let countingAreaProps = Opendatacam.countingAreas[countingAreaKey].computed;
           let countingAreaType = Opendatacam.countingAreas[countingAreaKey].type;
 
+          // Check if it has been already counted
+          let alreadyCountedForThisArea = false;
+          if(trackedItem.counted.find((countedEvent) => countedEvent.areaKey === countingAreaKey)) {
+            alreadyCountedForThisArea = true;
+          }
+
           // For Polygon
           let isInsideZone = false;
-          if(countingAreaType === "polygon") {
+          if(countingAreaType === COUNTING_AREA_TYPE.ZONE) {
             // Check if object is inside the zone
             isInsideZone = isInsidePolygon([trackedItem.x, -trackedItem.y], countingAreaProps.points.map((point) => [point.x, point.y]))
 
@@ -423,17 +440,25 @@ module.exports = {
               // could be inside several zone at the same time
               trackedItem.areas.push(countingAreaKey);
             } else {
-              // Look in the buffer if it was inside this zone previously and reset it if it leaved
+              // Look in the buffer if it was marked inside this zone previously
               if(Opendatacam.counterBuffer[trackedItem.id] && Opendatacam.counterBuffer[trackedItem.id][countingAreaKey]) {
+                // if it was counted entering the zone, count it as leaving the zone
+                // check this to avoid counting leaving events if the item was inside the zone without having beeing counted
+                if(alreadyCountedForThisArea) {
+                  // Count it (mark it as leaving_zone)
+                  let countedItem = this.countItem(
+                    trackedItem,
+                    countingAreaKey,
+                    frameId,
+                    COUNTING_DIRECTION.LEAVING_ZONE,
+                    null
+                  );
+                  countedItemsForThisFrame.push(countedItem);
+                }
+                // Remove from buffer
                 delete Opendatacam.counterBuffer[trackedItem.id][countingAreaKey];
               }
             }
-          }
-
-          // Check if it has been already counted
-          let alreadyCountedForThisArea = false;
-          if(trackedItem.counted.find((countedEvent) => countedEvent.areaKey === countingAreaKey)) {
-            alreadyCountedForThisArea = true;
           }
 
           // Continue if object has not been counted for this area yet
@@ -442,7 +467,7 @@ module.exports = {
             if(sameTrackedItemInPastFrame) {
 
               // IF POLYGON and the object is inside the zone
-              if(countingAreaType === "polygon" && isInsideZone) {
+              if(countingAreaType === COUNTING_AREA_TYPE.ZONE && isInsideZone) {
                 // Add object to the buffer to make it countable if countingAreaMinFramesInsideToBeCounted is defined
                 if(Opendatacam.counterBuffer[trackedItem.id] && Opendatacam.counterBuffer[trackedItem.id][countingAreaKey]) {
                   Opendatacam.counterBuffer[trackedItem.id][countingAreaKey].nbFramesInsideArea++
@@ -467,7 +492,7 @@ module.exports = {
                     for (let index = 0; index < countingAreaProps.points.length; index++) {
                       if(index > 0) {
                         let trackedItemBeforeEnteringArea = Opendatacam.counterBuffer[trackedItem.id][countingAreaKey].trackedItemBeforeEnteringArea;
-                        let intersectionWithPolygonEdge = checkLineIntersection(
+                        intersectionWithPolygonEdge = checkLineIntersection(
                           countingAreaProps.points[index - 1].x,
                           countingAreaProps.points[index - 1].y,
                           countingAreaProps.points[index].x,
@@ -497,12 +522,10 @@ module.exports = {
                       trackedItem,
                       countingAreaKey,
                       frameId,
-                      "",
-                      intersectionWithPolygonEdge
+                      COUNTING_DIRECTION.ENTERING_ZONE,
+                      null
                     );
                     countedItemsForThisFrame.push(countedItem);
-                    // Deleted object from buffer
-                    delete Opendatacam.counterBuffer[trackedItem.id][countingAreaKey];
                   }
                 }
               }
@@ -528,7 +551,7 @@ module.exports = {
                   // Object comes from top to bottom or left to right of the counting line
                   if(countingAreaProps.lineBearings[0] <= trackedItem.bearing && trackedItem.bearing <= countingAreaProps.lineBearings[1]) {
                     if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM) {
-                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM, intersection.angle);
+                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_DIRECTION.LEFTRIGHT_TOPBOTTOM, intersection.angle);
                       countedItemsForThisFrame.push(countedItem);
                     } else {
                       // do not count, comes from the wrong direction
@@ -537,7 +560,7 @@ module.exports = {
                   } else {
                     // Object comes from bottom to top, or right to left of the counting lines
                     if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP) {
-                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP, intersection.angle);
+                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_DIRECTION.RIGHTLEFT_BOTTOMTOP, intersection.angle);
                       countedItemsForThisFrame.push(countedItem);
                     } else {
                       // do not count, comes from the wrong direction
@@ -616,12 +639,14 @@ module.exports = {
         counterSummary[countedItem.area]['_total'] = 0;
       }
 
-      if(!counterSummary[countedItem.area][countedItem.name]) {
-        counterSummary[countedItem.area][countedItem.name] = 1;
-      } else {
-        counterSummary[countedItem.area][countedItem.name]++;
+      if(countedItem.countingDirection !== COUNTING_DIRECTION.LEAVING_ZONE) {
+        if(!counterSummary[countedItem.area][countedItem.name]) {
+          counterSummary[countedItem.area][countedItem.name] = 1;
+        } else {
+          counterSummary[countedItem.area][countedItem.name]++;
+        }
+        counterSummary[countedItem.area]['_total']++;
       }
-      counterSummary[countedItem.area]['_total']++;
     })
 
     return counterSummary;
