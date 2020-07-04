@@ -102,7 +102,7 @@ class LiveViewEngine {
       // get last counted event
       let countedEvent = objectTracked.counted && objectTracked.counted[objectTracked.counted.length - 1];
 
-      // For lines, display online during 1s after beeing counted
+      // For lines, display only during 1s after beeing counted
       if(countedEvent && countingAreas.getIn([countedEvent.areaKey, "type"]) !== "polygon") {
         if(timeNow - countedEvent.timeMs < 1000) {
           displayCountedArea = true;
