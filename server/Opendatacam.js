@@ -716,7 +716,7 @@ module.exports = {
     console.log('Stop recording');
     // Reset counters
     Opendatacam.recordingStatus.isRecording = false;
-
+    Opendatacam.counterBuffer = {};
     Opendatacam.countedItemsHistory = [];
     
     
