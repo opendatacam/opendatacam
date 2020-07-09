@@ -416,10 +416,12 @@ module.exports = {
 
         // Take Oldest item (max("1";"computeTrajectoryBasedOnNbOfPastFrame") buffered frame ago)
         let sameTrackedItemInPastFrame = trackedItemHistoryForPastBufferedFrame[trackedItemHistoryForPastBufferedFrame.length - 1];
+        // Item in last frame
+        let sameTrackedItemInLastFrame = Opendatacam.trackerDataForLastFrame.data.find((itemLastFrame) => itemLastFrame.id === trackedItem.id);
 
         // Remind counted status (could be already counted for another area but not this one)
-        if(sameTrackedItemInPastFrame && sameTrackedItemInPastFrame.counted) {
-          trackedItem.counted = sameTrackedItemInPastFrame.counted;
+        if(sameTrackedItemInLastFrame && sameTrackedItemInLastFrame.counted) {
+          trackedItem.counted = sameTrackedItemInLastFrame.counted;
         } else {
           // init setup an empty counting history
           trackedItem.counted = [];
