@@ -155,7 +155,7 @@ class DBManager {
       }
 
       this.getDB().then(db => {
-        db.collection(RECORDING_COLLECTION).update(
+        db.collection(RECORDING_COLLECTION).updateOne(
           { _id: recordingId },
           updateRequest,
           (err, r) => {
