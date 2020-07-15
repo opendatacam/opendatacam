@@ -369,7 +369,7 @@ module.exports = {
     // console.log(`Trackerdata buffer length:  ${Opendatacam.trackerDataBuffer.length}`)
 
 
-    // Check if trackedItem are going through some counting areas
+    // Check if every trackedItem from trackerDataForThisFrame is going through some counting areas
     // For each new tracked item
     trackerDataForThisFrame = trackerDataForThisFrame.map((trackedItem) => {
 
@@ -378,7 +378,7 @@ module.exports = {
         let countingAreaProps = Opendatacam.countingAreas[countingAreaKey].computed;
         let countingAreaType = Opendatacam.countingAreas[countingAreaKey].type;
 
-        // If trackerDataForLastFrame exists, we can if we items are passing through the counting line
+        // If trackerDataForLastFrame exists, we can count/record items passing through the counting line
         if(Opendatacam.trackerDataForLastFrame) {
           // Find trackedItem data of last frame
           let trackedItemLastFrame = Opendatacam.trackerDataForLastFrame.data.find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
@@ -513,7 +513,7 @@ module.exports = {
       })}\n\n`);
     } else {
       // Sending update to the client but it is not open
-      console.log('Sending update to the client but the SSE connexion is not open');
+      console.log('Sending update to the client but the SSE connection is not open');
     }
   },
 
