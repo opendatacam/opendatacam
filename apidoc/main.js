@@ -897,7 +897,7 @@ function init($, _, locale, Handlebars, apiProject, apiData, prettyPrint, sample
                         results.push(name);
                 });
         });
-        // Append all other entries that ar not defined in order
+        // Append all other entries that are not defined in order
         elements.forEach(function(element) {
             if (results.indexOf(element) === -1)
                 results.push(element);
