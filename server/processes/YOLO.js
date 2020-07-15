@@ -187,7 +187,7 @@ module.exports = {
         if(JSONStreamRes) {
           JSONStreamRes.write(JSON.stringify(simulation30FPSDetectionsData.find((detection) => detection.frame_id === frameNb)));
         } else {
-          console.log("JSONStream connexion not opened yet");
+          console.log("JSONStream connection isn't opened yet");
         }
       }, 34);
 
