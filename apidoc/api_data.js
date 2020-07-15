@@ -741,7 +741,7 @@ define({ "api": [
     "title": "Tracker data",
     "name": "Data",
     "group": "Tracker",
-    "description": "<p>From the browser, you can open a SSE (Server side event) connection to get data from Opendatacan on each frame.</p> <p><strong>How to open an SSE connexion</strong></p> <p><code>let eventSource = new EventSource(&quot;/tracker/sse&quot;)</code></p> <p><strong>How to get data on each frame</strong></p> <p><code>eventSource.onmessage = (msg) =&gt; { let message = JSON.parse(msg.data); }</code></p> <p>Then it works like websocket but only the server can push data.</p> <p><em>Limitation: Only support one client at a time, if another one connect, the first SSE connection is closed</em></p> <p>More doc on server side event, read <a href=\"https://medium.com/axiomzenteam/websockets-http-2-and-sse-5c24ae4d9d96\">What are SSE : Server Side Events</a></p>",
+    "description": "<p>From the browser, you can open a SSE (Server side event) connection to get data from Opendatacan on each frame.</p> <p><strong>How to open an SSE connection</strong></p> <p><code>let eventSource = new EventSource(&quot;/tracker/sse&quot;)</code></p> <p><strong>How to get data on each frame</strong></p> <p><code>eventSource.onmessage = (msg) =&gt; { let message = JSON.parse(msg.data); }</code></p> <p>Then it works like websocket but only the server can push data.</p> <p><em>Limitation: Only support one client at a time, if another one connect, the first SSE connection is closed</em></p> <p>More doc on server side event, read <a href=\"https://medium.com/axiomzenteam/websockets-http-2-and-sse-5c24ae4d9d96\">What are SSE : Server Side Events</a></p>",
     "success": {
       "examples": [
         {
