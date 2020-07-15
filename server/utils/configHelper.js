@@ -11,7 +11,7 @@ const envDarknetJsonStreamPort = process.env.PORT_DARKNET_JSON_STREAM;
 const envMongodbUrl = process.env.MONGODB_URL;
 
 /**
- * Gets a value by its key from the config.PORTS and define a default. Does some sanity checks if it is really a port we could use. Does not queck if a port is in use already
+ * Gets a value by its key from the config.PORTS and define a default. Does some sanity checks if it is really a port we could use. Doesn't check if a port is in use already
  * @param config {Object} the config object loaded from disk
  * @param key {String} The key to lookup
  * @param defaultPort {Number} The  default port ot assign if the value is not present
@@ -34,7 +34,7 @@ function getPortFromConfig(config, key, defaultPort) {
 }
 
 /**
- * Get any top level value by key from the config with a fallback if it does not exist
+ * Get any top level value by key from the config with a fallback if it doesn't exist
  *
  */
 function getKeyFromConfig(config, key, defaultValue) {
