@@ -12,6 +12,7 @@ class DeleteModal extends Component {
   }
 
   escFunction(event){
+    event.stopPropagation();
     if(event.keyCode === 27) {
       this.props.cancel()
     }

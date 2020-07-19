@@ -64,11 +64,12 @@ define({ "api": [
             "allowedValues": [
               "\"bidirectional\"",
               "\"leftright_topbottom\"",
-              "\"rightleft_bottomtop\""
+              "\"rightleft_bottomtop\"",
+              "\"polygon\""
             ],
             "optional": false,
-            "field": "Direction",
-            "description": "<p>of counting, if object passes the other direction, it won't be counted</p>"
+            "field": "type",
+            "description": "<p>Type of counting area [&quot;bidirectional&quot;,&quot;leftright_topbottom&quot;, &quot;rightleft_bottomtop&quot;] applies for a line, &quot;polygon&quot; applies for polygon</p>"
           },
           {
             "group": "Success 200",
@@ -82,7 +83,7 @@ define({ "api": [
       "examples": [
         {
           "title": "Response",
-          "content": "{\n       \"fbb8a65b-03cc-4c95-8d6f-663ac4bd9aa0\": {\n         \"color\": \"yellow\",\n         \"location\": {\n           \"point1\": {\n             \"x\": 263,\n             \"y\": 625\n           },\n           \"point2\": {\n             \"x\": 472,\n             \"y\": 615\n           },\n           \"refResolution\": {\n             \"w\": 1500,\n             \"h\": 871\n           }\n         },\n         \"name\": \"test\",\n         \"type\": \"bidirectional\",\n         \"computed\": {\n           \"a\": 0.046349957976037706,\n           \"b\": -527.0496981416069,\n           \"lineBearings\": [\n             151.6353351530571,\n             331.6353351530571\n           ]\n         }\n       },\n       \"a684ad42-d6fe-4be4-b77b-09b8473cc487\": {\n         \"color\": \"turquoise\",\n         \"location\": {\n           \"point1\": {\n             \"x\": 532,\n             \"y\": 647\n           },\n           \"point2\": {\n             \"x\": 729,\n             \"y\": 641\n           },\n           \"refResolution\": {\n             \"w\": 1500,\n             \"h\": 871\n           }\n         },\n         \"name\": \"area 2\",\n         \"type\": \"bidirectional\",\n         \"computed\": {\n           \"a\": 0.029503983402006398,\n           \"b\": -548.2275463758912,\n           \"lineBearings\": [\n             151.6353351530571,\n             331.6353351530571\n           ]\n         }\n       }\n     }",
+          "content": "{\n       \"cc8354b6-d8ec-41d3-ab12-38ced6811f7c\": {\n         \"color\": \"yellow\",\n         \"type\": \"polygon\",\n         \"location\": {\n           \"points\": [\n             {\n               \"x\": 176.8421173095703,\n               \"y\": 514.7368774414062\n             },\n             {\n               \"x\": 475.78948974609375,\n               \"y\": 476.8421325683594\n             },\n             {\n               \"x\": 586.3157958984375,\n               \"y\": 582.1052856445312\n             },\n             {\n               \"x\": 174.73684692382812,\n               \"y\": 609.4736938476562\n             },\n             {\n               \"x\": 176.8421173095703,\n               \"y\": 514.7368774414062\n             }\n           ],\n           \"refResolution\": {\n             \"w\": 862,\n             \"h\": 746\n           }\n         },\n         \"name\": \"test\"\n       },\n       \"a26acb82-4585-48d8-80ec-ef22247f0d7f\": {\n         \"color\": \"turquoise\",\n         \"type\": \"bidirectional\",\n         \"computed\": {\n           \"lineBearings\": [\n             84.10716225471819,\n             264.1071622547182\n           ],\n           \"point1\": {\n             \"x\": 265.7223163790603,\n             \"y\": -432.79246475996985\n           },\n           \"point2\": {\n             \"x\": 629.9182043938515,\n             \"y\": -395.2024927215985\n           },\n           \"points\": [\n             {\n               \"x\": 265.7223163790603,\n               \"y\": -432.79246475996985\n             },\n             {\n               \"x\": 629.9182043938515,\n               \"y\": -395.2024927215985\n             }\n           ]\n         },\n         \"location\": {\n           \"points\": [\n             {\n               \"x\": 178.94737243652344,\n               \"y\": 448.42108154296875\n             },\n             {\n               \"x\": 424.2105407714844,\n               \"y\": 409.47369384765625\n             }\n           ],\n           \"refResolution\": {\n             \"w\": 862,\n             \"h\": 746\n           }\n         },\n         \"name\": \"test\"\n       }\n     }",
           "type": "json"
         }
       ]
@@ -105,15 +106,8 @@ define({ "api": [
             "group": "Parameter",
             "type": "Object",
             "optional": false,
-            "field": "point1",
-            "description": "<p>First point of the counter line definition</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "Object",
-            "optional": false,
-            "field": "point2",
-            "description": "<p>Second point of the counter line definition</p>"
+            "field": "points",
+            "description": "<p>Array of coordinates reprensenting the counting area (if two points it is a line, if more than two, it is a polygon)</p>"
           },
           {
             "group": "Parameter",
@@ -128,18 +122,19 @@ define({ "api": [
             "allowedValues": [
               "\"bidirectional\"",
               "\"leftright_topbottom\"",
-              "\"rightleft_bottomtop\""
+              "\"rightleft_bottomtop\"",
+              "\"polygon\""
             ],
             "optional": false,
-            "field": "Direction",
-            "description": "<p>of counting, if object passes the other direction, it won't be counted</p>"
+            "field": "type",
+            "description": "<p>Type of counting area [&quot;bidirectional&quot;,&quot;leftright_topbottom&quot;, &quot;rightleft_bottomtop&quot;] applies for a line, &quot;polygon&quot; applies for polygon</p>"
           }
         ]
       },
       "examples": [
         {
           "title": "Request Example:",
-          "content": "{\n        \"countingAreas\": {\n          \"5287124a-4598-44e7-abaf-394018a7278b\": {\n            \"color\": \"yellow\",\n            \"location\": {\n              \"point1\": {\n                \"x\": 221,\n                \"y\": 588\n              },\n              \"point2\": {\n                \"x\": 673,\n                \"y\": 546\n              },\n              \"refResolution\": {\n                \"w\": 1280,\n                \"h\": 666\n              }\n            },\n            \"name\": \"Counter line 1\",\n            \"type\": \"bidirectional\"\n          }\n        }\n      }",
+          "content": "{\n        \"countingAreas\": {\n          \"cc8354b6-d8ec-41d3-ab12-38ced6811f7c\": {\n            \"color\": \"yellow\",\n            \"type\": \"polygon\",\n            \"computed\": {\n              \"lineBearings\": [\n                82.77568288711024,\n                262.77568288711024\n              ]\n            },\n            \"location\": {\n              \"points\": [\n                {\n                  \"x\": 176.8421173095703,\n                  \"y\": 514.7368774414062\n                },\n                {\n                  \"x\": 475.78948974609375,\n                  \"y\": 476.8421325683594\n                },\n                {\n                  \"x\": 586.3157958984375,\n                  \"y\": 582.1052856445312\n                },\n                {\n                  \"x\": 174.73684692382812,\n                  \"y\": 609.4736938476562\n                },\n                {\n                  \"x\": 176.8421173095703,\n                  \"y\": 514.7368774414062\n                }\n              ],\n              \"refResolution\": {\n                \"w\": 862,\n                \"h\": 746\n              }\n            },\n            \"name\": \"test\"\n          },\n          \"a26acb82-4585-48d8-80ec-ef22247f0d7f\": {\n            \"color\": \"turquoise\",\n            \"type\": \"bidirectional\",\n            \"computed\": {\n              \"lineBearings\": [\n                80.97686627298364,\n                260.97686627298367\n              ]\n            },\n            \"location\": {\n              \"points\": [\n                {\n                  \"x\": 178.94737243652344,\n                  \"y\": 448.42108154296875\n                },\n                {\n                  \"x\": 424.2105407714844,\n                  \"y\": 409.47369384765625\n                }\n              ],\n              \"refResolution\": {\n                \"w\": 862,\n                \"h\": 746\n              }\n            },\n            \"name\": \"test\"\n          }\n        }\n      }",
           "type": "json"
         }
       ]

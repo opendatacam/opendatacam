@@ -27,6 +27,7 @@
     "next": "^9.4.4",
     "next-redux-wrapper": "^5.0.0",
     "node-moving-things-tracker": "^0.7.5",
+    "point-in-polygon": "^1.0.1",
     "postcss-import": "^12.0.1",
     "raf": "^3.4.1",
     "react": "^16.13.1",

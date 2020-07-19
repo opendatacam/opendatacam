@@ -10,7 +10,8 @@ import { COUNTING_AREA_TYPE } from '../../utils/constants';
 // Rename this to CounterEditorStateManagement
 
 export const EDITOR_MODE = {
-  EDIT: 'edit',
+  EDIT_LINE: 'edit_line',
+  EDIT_POLYGON: 'edit_polygon',
   ASKNAME: 'askname',
   DELETE: 'delete',
   SHOW_INSTRUCTION: 'showinstruction'
@@ -20,7 +21,8 @@ export const EDITOR_MODE = {
 const initialState = fromJS({
   countingAreas: {},
   selectedCountingArea: null,
-  mode: EDITOR_MODE.EDIT, // oneOf EDITOR_MODE
+  mode: EDITOR_MODE.EDIT_LINE, // oneOf EDITOR_MODE
+  lastEditingMode: EDITOR_MODE.EDIT_LINE,
   counterSummary: {},
   trackerSummary: {} 
 })
@@ -29,8 +31,10 @@ const initialState = fromJS({
 const SELECT_COUNTING_AREA = 'Counter/SELECT_COUNTING_AREA'
 const DELETE_COUNTING_AREA = 'Counter/DELETE_COUNTING_AREA'
 const SAVE_COUNTING_AREA_LOCATION = 'Counter/SAVE_COUNTING_AREA_LOCATION'
+const SAVE_COUNTING_AREA_BEARING = 'Counter/SAVE_COUNTING_AREA_BEARING'
 const SAVE_COUNTING_AREA_TYPE = 'Counter/SAVE_COUNTING_AREA_TYPE'
 const SET_MODE = 'Counter/SET_MODE'
+const SET_LAST_EDITING_MODE = 'Counter/SET_LAST_EDITING_MODE'
 const SAVE_COUNTING_AREA_NAME = 'Counter/SAVE_COUNTING_AREA_NAME'
 const ADD_COUNTING_AREA = 'Counter/ADD_COUNTING_AREA'
 const RESTORE_COUNTING_AREAS = 'Counter/RESTORE_COUNTING_AREAS'
@@ -40,9 +44,28 @@ const UPDATE_TRACKERSUMMARY = 'Counter/UPDATE_TRACKERSUMMARY'
 
 
 export function setMode(mode) {
-  return {
-    type: SET_MODE,
-    payload: mode
+  return (dispatch, getState) => {
+    // If leaving editing mode, store last editing mode for when we go back
+    if(getState().counter.get('mode') === EDITOR_MODE.EDIT_LINE || getState().counter.get('mode') === EDITOR_MODE.EDIT_POLYGON) {
+
+      // If new mode is also editing, store new mode
+      if(mode === EDITOR_MODE.EDIT_LINE || mode === EDITOR_MODE.EDIT_POLYGON) {
+        dispatch({
+          type: SET_LAST_EDITING_MODE,
+          payload: mode
+        });
+      } else {
+        dispatch({
+          type: SET_LAST_EDITING_MODE,
+          payload: getState().counter.get('mode')
+        });
+      }
+    }
+
+    dispatch({
+      type: SET_MODE,
+      payload: mode
+    });
   }
 }
 
@@ -86,13 +109,13 @@ export function deleteCountingArea(id) {
     });
 
     if(getState().counter.get('countingAreas').size === 0) {
-      dispatch(setMode(EDITOR_MODE.EDIT));
+      dispatch(setMode(getState().counter.get('lastEditingMode')));
     }
     dispatch(registerCountingAreasOnServer());
   }
 }
 
-export function addCountingArea() {
+export function addCountingArea(type = "bidirectional") {
   return (dispatch, getState) => {
 
     // TODO Before adding a counting area, verify if selectedCountingArea is complete, otherwise delete it
@@ -116,7 +139,7 @@ export function addCountingArea() {
       payload: {
         id: newCountingAreaId,
         color: color,
-        type: "bidirectional"
+        type: type
       }
     })
 
@@ -127,8 +150,8 @@ export function addCountingArea() {
 export function saveCountingAreaLocation(id, location) {
   return (dispatch, getState) => {
 
-    // Compute bearing
-    let lineBearing = computeLineBearing(location.point1.x, -location.point1.y, location.point2.x, -location.point2.y);
+    //Compute bearing of the line (if polygon of the first line)
+    let lineBearing = computeLineBearing(location.points[0].x, -location.points[0].y, location.points[1].x, -location.points[1].y);
     // in both directions
     let lineBearings = [0,0];
     if(lineBearing >= 180) {
@@ -139,19 +162,26 @@ export function saveCountingAreaLocation(id, location) {
       lineBearings[1] = lineBearing + 180;
     }
 
+    dispatch({
+      type: SAVE_COUNTING_AREA_BEARING,
+      payload: {
+        lineBearings,
+        id
+      }
+    })
 
     dispatch({
       type: SAVE_COUNTING_AREA_LOCATION,
       payload: {
         location,
-        id,
-        lineBearings
+        id
       }
     });
 
     if(!getState().counter.getIn(['countingAreas', id, 'name'])) {
       dispatch(setMode(EDITOR_MODE.ASKNAME));
     }
+    // TODO UPDATE server side part to handle array of points instead of just point1, point2
     dispatch(registerCountingAreasOnServer());
   }
 }
@@ -190,8 +220,7 @@ export function saveCountingAreaName(id, name) {
       }
     })
 
-    dispatch(registerCountingAreasOnServer());
-    dispatch(setMode(EDITOR_MODE.EDIT));
+     dispatch(registerCountingAreasOnServer());
   }
 }
 
@@ -271,12 +300,18 @@ export function computeCountingAreasCenters(countingAreas, canvasResolution) {
   return countingAreas.map((data, id) => {
     let location = data.get('location');
     if(location) {
+      let points = location.get('points').toJS();
+      let x1 = points[0].x
+      let y1 = points[0].y
+      let x2 = points[1].x
+      let y2 = points[1].y
+
       return data.setIn(['location','center'], scalePoint(
         {
-          x: Math.abs(location.getIn(['point2','x']) - location.getIn(['point1','x'])) / 2 + Math.min(location.getIn(['point1','x']), location.getIn(['point2','x'])),
-          y: Math.abs(location.getIn(['point2','y']) - location.getIn(['point1','y'])) / 2 + Math.min(location.getIn(['point1','y']), location.getIn(['point2','y']))
-        }, 
-        canvasResolution.toJS(), 
+          x: Math.abs(x2 - x1) / 2 + Math.min(x1, x2),
+          y: Math.abs(y2 - y1) / 2 + Math.min(y1, y2)
+        },
+        canvasResolution.toJS(),
         location.get('refResolution').toJS()
       ))
     } else {
@@ -298,7 +333,8 @@ export default function CounterReducer (state = initialState, action = {}) {
       return state.deleteIn(['countingAreas', action.payload])
     case SAVE_COUNTING_AREA_LOCATION:
       return state.setIn(['countingAreas', action.payload.id, 'location'], fromJS(action.payload.location))
-                  .setIn(['countingAreas', action.payload.id, 'computed', 'lineBearings'], fromJS(action.payload.lineBearings))
+    case SAVE_COUNTING_AREA_BEARING:
+      return state.setIn(['countingAreas', action.payload.id, 'computed', 'lineBearings'], fromJS(action.payload.lineBearings))
     case SAVE_COUNTING_AREA_NAME:
       return state.setIn(['countingAreas', action.payload.id, 'name'], action.payload.name)
     case SAVE_COUNTING_AREA_TYPE:
@@ -312,6 +348,8 @@ export default function CounterReducer (state = initialState, action = {}) {
       return state.set('countingAreas', fromJS({}))
     case SET_MODE:
       return state.set('mode', action.payload)
+    case SET_LAST_EDITING_MODE:
+      return state.set('lastEditingMode', action.payload)
     case RESTORE_COUNTING_AREAS:
       return state.set('countingAreas', fromJS(action.payload))
     case UPDATE_COUNTERSUMMARY:

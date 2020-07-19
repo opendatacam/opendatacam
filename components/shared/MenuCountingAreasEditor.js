@@ -55,7 +55,7 @@ class MenuCountingAreasEditor extends Component {
               className="btn btn-default p-0 rounded-l shadow"
               onClick={() => this.handleDelete()}
             >
-              <SVG 
+              <SVG
                 className="w-10 h-10 svg-icon flex items-center" 
                 cacheRequests={true}
                 src={`/static/icons/ui/delete.svg`} 
@@ -63,25 +63,37 @@ class MenuCountingAreasEditor extends Component {
               />
             </button>
             <button
-              className="btn btn-default p-0 shadow rounded-r btn-default--active"
+              className={`btn btn-default p-0 shadow ${this.props.mode === EDITOR_MODE.EDIT_LINE ? 'btn-default--active' : ''}`}
+              onClick={() => this.props.dispatch(setMode(EDITOR_MODE.EDIT_LINE))}
             >
-              <SVG 
-                className="w-10 h-10 svg-icon flex items-center" 
+              <SVG
+                className="w-10 h-10 svg-icon flex items-center"
                 cacheRequests={true}
-                src={`/static/icons/ui/addline.svg`} 
-                aria-label="icon edit"
+                src={`/static/icons/ui/addline.svg`}
+                aria-label="icon addline"
+              />
+            </button>
+            <button
+              className={`btn btn-default p-0 shadow rounded-r ${this.props.mode === EDITOR_MODE.EDIT_POLYGON ? 'btn-default--active' : ''}`}
+              onClick={() => this.props.dispatch(setMode(EDITOR_MODE.EDIT_POLYGON))}
+            >
+              <SVG
+                className="w-10 h-10 svg-icon flex items-center"
+                cacheRequests={true}
+                src={`/static/icons/ui/addpolygon.svg`}
+                aria-label="icon addpolygon"
               />
             </button>
             <a
-              href={`/counter/areas`} 
+              href={`/counter/areas`}
               target="_blank" 
               download
               className="btn btn-default p-0 ml-4 rounded-l shadow"
             >
-              <SVG 
-                className="w-10 h-10 svg-icon flex items-center" 
+              <SVG
+                className="w-10 h-10 svg-icon flex items-center"
                 cacheRequests={true}
-                src={`/static/icons/ui/download.svg`} 
+                src={`/static/icons/ui/download.svg`}
                 aria-label="icon download"
               />
             </a>
@@ -92,7 +104,7 @@ class MenuCountingAreasEditor extends Component {
               <SVG 
                 className="w-10 h-10 svg-icon flex items-center" 
                 cacheRequests={true}
-                src={`/static/icons/ui/upload.svg`} 
+                src={`/static/icons/ui/upload.svg`}
                 aria-label="icon upload"
               />
               <input type="file" id="upload" onChange={() => this.loadFile()} style={{"display":"none"}} />
@@ -102,12 +114,12 @@ class MenuCountingAreasEditor extends Component {
         {this.props.mode === EDITOR_MODE.DELETE &&
           <button
             className="btn btn-default p-0 rounded shadow"
-            onClick={() => this.props.dispatch(setMode(EDITOR_MODE.EDIT))}
+            onClick={() => this.props.dispatch(setMode(this.props.lastEditingMode))}
           >
-            <SVG 
-              className="w-10 h-10 svg-icon flex items-center" 
+            <SVG
+              className="w-10 h-10 svg-icon flex items-center"
               cacheRequests={true}
-              src={`/static/icons/ui/close.svg`} 
+              src={`/static/icons/ui/close.svg`}
               aria-label="icon edit"
             />
           </button>
@@ -126,6 +138,7 @@ export default connect((state) => {
   return {
     countingAreas: state.counter.get('countingAreas'),
     selectedCountingArea: state.counter.get('selectedCountingArea'),
-    mode: state.counter.get('mode')
+    mode: state.counter.get('mode'),
+    lastEditingMode: state.counter.get('lastEditingMode')
   }
 })(MenuCountingAreasEditor)

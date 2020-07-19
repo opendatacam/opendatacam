@@ -13,7 +13,6 @@ OpenDataCam is very alpha and we do not provide any guarantee that this will wor
 OpenDataCam is generously supported by [move lab](https://www.move-lab.com/) (ongoing). OpenDataCam was supported in part by a [residency](http://studioforcreativeinquiry.org/people/benedikt-gros) at the Frank-Ratchye [STUDIO for Creative Inquiry](http://studioforcreativeinquiry.org/) at Carnegie Mellon University.
 
 
-
 ## Demo Videos
 
 | 👉 [UI Walkthrough (2 min, OpenDataCam 3.0)](https://vimeo.com/432747455) | 👉 [UI Walkthrough (4 min, OpenDataCam 2.0)](https://vimeo.com/346340651) | 👉 [IoT Happy Hour #13:  OpenDataCam 3.0](https://youtu.be/YfRvUeSLi0M?t=1000 ) |
@@ -46,6 +45,7 @@ OpenDataCam is generously supported by [move lab](https://www.move-lab.com/) (on
   - [🎯 How accurate is OpenDataCam ?](#-how-accurate-is-opendatacam-)
   - [🚤 How fast is OpenDataCam ?](#-how-fast-is-opendatacam-)
   - [🛠 Development notes](#-development-notes)
+  - [💰️ Funded by the community](#️-funded-by-the-community)
   - [📫️ Contact](#️-contact)
   - [💌 Acknowledgments](#-acknowledgments)
 
@@ -343,6 +343,11 @@ See [Development notes](documentation/DEVELOPMENT_NOTES.md)
 Technical architecture overview:
 
 ![Technical architecture](https://user-images.githubusercontent.com/533590/60489282-3f2d1700-9ca4-11e9-932c-19bf84e04f9a.png)
+
+
+## 💰️ Funded by the community
+
+- `@rantgithub` funded work to add Polygon counters and to improve the counting lines
 
 ## 📫️ Contact
 

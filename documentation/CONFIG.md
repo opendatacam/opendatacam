@@ -481,6 +481,8 @@ You can tweak some settings of the tracker to optimize OpenDataCam better for yo
 
 ```json
 "COUNTER_SETTINGS": {
+  "countingAreaMinFramesInsideToBeCounted": 1,
+  "countingAreaVerifyIfObjectEntersCrossingOneEdge": true,
   "minAngleWithCountingLineThreshold": 5,
   "computeTrajectoryBasedOnNbOfPastFrame": 5
 }
@@ -495,6 +497,16 @@ You can tweak some settings of the tracker to optimize OpenDataCam better for yo
 ![CounterBuffer](https://user-images.githubusercontent.com/533590/84810794-1ebcb080-b00c-11ea-9cae-065fc066e10f.jpg)
 
 NB: if the object has changed ID in the past frames, it will take the last past frame known with the same ID.
+
+
+- `countingAreaMinFramesInsideToBeCounted`: this is the minimum number of frames the object needs to remain in the area to be counted
+
+- `countingAreaVerifyIfObjectEntersCrossingOneEdge`: (default `true`)
+
+  - if `true`: in order to count the tracked item, the algorithm checks if the object trajectory crosses one of the edges of the polygon otherwise it won't count it.. this is to avoid to count id reassignment inside the polygon.
+
+  - if `false`: the algorithm for the counting won't check this.. it will be very dump and basically count the item if it remains more than `countingAreaMinFramesInsideToBeCounted` inside the zone.. but if its IDs reassigns inside it could count it twice...
+
 
 #### MongoDB URL
 

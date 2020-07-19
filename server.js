@@ -217,32 +217,78 @@ app.prepare()
    *
    * If you want to remove all counter areas, send an empty object
    *
-   * @apiParam {Object} point1 First point of the counter line definition
-   * @apiParam {Object} point2 Second point of the counter line definition
+   * @apiParam {Object} points Array of coordinates reprensenting the counting area (if two points it is a line, if more than two, it is a polygon)
    * @apiParam {Object} refResolution Resolution of client side canvas where the line is drawn
-   * @apiParam {string="bidirectional","leftright_topbottom", "rightleft_bottomtop"} Direction of counting, if object passes the other direction, it won't be counted
-   * 
+   * @apiParam {string="bidirectional","leftright_topbottom", "rightleft_bottomtop","polygon"} type Type of counting area ["bidirectional","leftright_topbottom", "rightleft_bottomtop"] applies for a line, "polygon" applies for polygon
+   *
    * @apiParamExample {json} Request Example:
    *     {
             "countingAreas": {
-              "5287124a-4598-44e7-abaf-394018a7278b": {
+              "cc8354b6-d8ec-41d3-ab12-38ced6811f7c": {
                 "color": "yellow",
+                "type": "polygon",
+                "computed": {
+                  "lineBearings": [
+                    82.77568288711024,
+                    262.77568288711024
+                  ]
+                },
                 "location": {
-                  "point1": {
-                    "x": 221,
-                    "y": 588
-                  },
-                  "point2": {
-                    "x": 673,
-                    "y": 546
-                  },
+                  "points": [
+                    {
+                      "x": 176.8421173095703,
+                      "y": 514.7368774414062
+                    },
+                    {
+                      "x": 475.78948974609375,
+                      "y": 476.8421325683594
+                    },
+                    {
+                      "x": 586.3157958984375,
+                      "y": 582.1052856445312
+                    },
+                    {
+                      "x": 174.73684692382812,
+                      "y": 609.4736938476562
+                    },
+                    {
+                      "x": 176.8421173095703,
+                      "y": 514.7368774414062
+                    }
+                  ],
                   "refResolution": {
-                    "w": 1280,
-                    "h": 666
+                    "w": 862,
+                    "h": 746
                   }
                 },
-                "name": "Counter line 1",
-                "type": "bidirectional"
+                "name": "test"
+              },
+              "a26acb82-4585-48d8-80ec-ef22247f0d7f": {
+                "color": "turquoise",
+                "type": "bidirectional",
+                "computed": {
+                  "lineBearings": [
+                    80.97686627298364,
+                    260.97686627298367
+                  ]
+                },
+                "location": {
+                  "points": [
+                    {
+                      "x": 178.94737243652344,
+                      "y": 448.42108154296875
+                    },
+                    {
+                      "x": 424.2105407714844,
+                      "y": 409.47369384765625
+                    }
+                  ],
+                  "refResolution": {
+                    "w": 862,
+                    "h": 746
+                  }
+                },
+                "name": "test"
               }
             }
           }
@@ -264,63 +310,87 @@ app.prepare()
    * @apiSuccess {Object} location Two points defining the counting line, along with reference frame resolution
    * @apiSuccess {String} color Color of the area (defined in config.json)
    * @apiSuccess {String} name Name of the area
-   * @apiSuccess {string="bidirectional","leftright_topbottom", "rightleft_bottomtop"} Direction of counting, if object passes the other direction, it won't be counted
+   * @apiSuccess {string="bidirectional","leftright_topbottom", "rightleft_bottomtop","polygon"} type Type of counting area ["bidirectional","leftright_topbottom", "rightleft_bottomtop"] applies for a line, "polygon" applies for polygon
    * @apiSuccess {Object} computed Computed linear function representing the counting line (used by the counting algorithm)
    * @apiSuccessExample {json} Response
    *  {
-        "fbb8a65b-03cc-4c95-8d6f-663ac4bd9aa0": {
+        "cc8354b6-d8ec-41d3-ab12-38ced6811f7c": {
           "color": "yellow",
+          "type": "polygon",
           "location": {
-            "point1": {
-              "x": 263,
-              "y": 625
-            },
-            "point2": {
-              "x": 472,
-              "y": 615
-            },
+            "points": [
+              {
+                "x": 176.8421173095703,
+                "y": 514.7368774414062
+              },
+              {
+                "x": 475.78948974609375,
+                "y": 476.8421325683594
+              },
+              {
+                "x": 586.3157958984375,
+                "y": 582.1052856445312
+              },
+              {
+                "x": 174.73684692382812,
+                "y": 609.4736938476562
+              },
+              {
+                "x": 176.8421173095703,
+                "y": 514.7368774414062
+              }
+            ],
             "refResolution": {
-              "w": 1500,
-              "h": 871
+              "w": 862,
+              "h": 746
             }
           },
-          "name": "test",
-          "type": "bidirectional",
-          "computed": {
-            "a": 0.046349957976037706,
-            "b": -527.0496981416069,
-            "lineBearings": [
-              151.6353351530571,
-              331.6353351530571
-            ]
-          }
+          "name": "test"
         },
-        "a684ad42-d6fe-4be4-b77b-09b8473cc487": {
+        "a26acb82-4585-48d8-80ec-ef22247f0d7f": {
           "color": "turquoise",
-          "location": {
-            "point1": {
-              "x": 532,
-              "y": 647
-            },
-            "point2": {
-              "x": 729,
-              "y": 641
-            },
-            "refResolution": {
-              "w": 1500,
-              "h": 871
-            }
-          },
-          "name": "area 2",
           "type": "bidirectional",
           "computed": {
-            "a": 0.029503983402006398,
-            "b": -548.2275463758912,
             "lineBearings": [
-              151.6353351530571,
-              331.6353351530571
+              84.10716225471819,
+              264.1071622547182
+            ],
+            "point1": {
+              "x": 265.7223163790603,
+              "y": -432.79246475996985
+            },
+            "point2": {
+              "x": 629.9182043938515,
+              "y": -395.2024927215985
+            },
+            "points": [
+              {
+                "x": 265.7223163790603,
+                "y": -432.79246475996985
+              },
+              {
+                "x": 629.9182043938515,
+                "y": -395.2024927215985
+              }
             ]
-          }
+          },
+          "location": {
+            "points": [
+              {
+                "x": 178.94737243652344,
+                "y": 448.42108154296875
+              },
+              {
+                "x": 424.2105407714844,
+                "y": 409.47369384765625
+              }
+            ],
+            "refResolution": {
+              "w": 862,
+              "h": 746
+            }
+          },
+          "name": "test"
         }
       }
    *
