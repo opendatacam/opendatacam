@@ -165,6 +165,39 @@ The docker container is started in auto-restart mode, so if you reboot your mach
 
 You can also [use opendatacam without docker](#how-to-use-opendatacam-without-docker)
 
+
+__Kubernetes Install:__
+
+If you prefer to deploy OpenDataCam on Kubernetes rather than with Docker Compose, use the `--orchestrator` flag for changing the engine.
+
+Apart from that, a Kubernetes distribution custom made for the embedded world would be [K3s](https://k3s.io/), which can be installed in 30 seconds by running:
+
+```
+curl -sfL https://get.k3s.io | sh -
+```
+
+Then, to automatically download and deploy the services:
+
+```bash
+# Download install script
+wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v3.0.1/docker/install-opendatacam.sh
+
+# Give exec permission
+chmod 777 install-opendatacam.sh
+
+# Install command for Jetson Nano
+./install-opendatacam.sh --platform nano --orchestrator k8s
+
+# Install command for Jetson Xavier / Xavier NX
+./install-opendatacam.sh --platform xavier --orchestrator k8s
+
+# Install command for a Desktop machine
+./install-opendatacam.sh --platform desktop --orchestrator k8s
+```
+
+**Note:** NVIDIA offers a [Kubernetes device plugin](https://github.com/NVIDIA/k8s-device-plugin) for detecting GPUs on nodes in case you are managing a heterogeneous cluster. Support for Jetson boards is being worked [here](https://gitlab.com/nvidia/kubernetes/device-plugin/-/merge_requests/20)
+
+
 __balenaCloud Install:__
 
 If you have a fleet of one or more devices, you can use [balena](https://www.balena.io/) to streamline deployment and management of OpenDataCam. You can sign up for a free account [here](https://dashboard.balena-cloud.com/signup) and add up to ten devices at no charge. Use the button below to build OpenDataCam for a Jetson Nano, TX2, or Xavier. You can then download an image containing the OS, burn it to an SD card, and use balenaCloud to push OpenDataCam to your devices. 
