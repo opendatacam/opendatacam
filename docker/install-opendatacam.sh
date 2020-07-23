@@ -75,8 +75,8 @@ function k8s_setup() {
 
   command -v kubectl >/dev/null 2>&1 || { echo >&2 "OpenDataCam requires Kubernetes, please install and retry.\nFor a Kubernetes for embedded go to https://k3s.io/"; }
 
-  wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/$VERSION/docker/run/$PLATFORM/kubernetes/0001-mongodb-deployment.yaml -P opendatacam
-  wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/$VERSION/docker/run/$PLATFORM/kubernetes/0002-opendatacam-deployment.yaml -P opendatacam
+  wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/master/docker/run/$PLATFORM/kubernetes/0001-mongodb-deployment.yaml -P opendatacam
+  wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/master/docker/run/$PLATFORM/kubernetes/0002-opendatacam-deployment.yaml -P opendatacam
 
   kubectl create configmap opendatacam --from-file=config.json --dry-run -o yaml | kubectl apply -f -
   kubectl apply -f opendatacam
