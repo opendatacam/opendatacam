@@ -24,6 +24,7 @@ If you have an error while doing `npm install` it is probably a problem with nod
 
 ### Release checklist
 
+- For next release only: Set $VERSION instead of master for the Kubernete install script, see: https://github.com/opendatacam/opendatacam/pull/247
 - Make sure that config.json has the TO_REPLACE_VIDEO_INPUT, TO_REPLACE_VIDEO_INPUT values that will be replaced by sed on installation
 - Search and replace OLD_VERSION with NEW_VERSION in all documentation
 - Make sure correct version in config.json > OPENDATACAM_VERSION
