@@ -112,7 +112,7 @@ app.prepare()
     YOLO.start(); // Inside yolo process will check is started
 
     const urlData = getURLData(req);
-    Opendatacam.listenToYOLO(urlData);
+    Opendatacam.listenToYOLO(YOLO, urlData);
 
     return app.render(req, res, '/')
   })
@@ -133,7 +133,7 @@ app.prepare()
   express.get('/start', (req, res) => {
     YOLO.start(); // Inside yolo process will check is started
     const urlData = getURLData(req);
-    Opendatacam.listenToYOLO(urlData);
+    Opendatacam.listenToYOLO(YOLO, urlData);
     res.sendStatus(200)
   });
 
@@ -1022,14 +1022,14 @@ app.prepare()
       cb(null, file.originalname)
     }
   })
-  var uploadMulter = multer({ 
-    storage: storage, 
+  var uploadMulter = multer({
+    storage: storage,
     fileFilter: function (req, file, cb) {
       if (!file.originalname.match(/\.(mp4|avi|mov)$/)) {
         return cb(new Error('Only video files are allowed!'));
       }
       cb(null, true);
-    } 
+    }
   }).single('video')
 
   // API to Upload file and restart yolo on that file
@@ -1070,7 +1070,7 @@ app.prepare()
     })
   })
 
-  
+
 
 
   /**
