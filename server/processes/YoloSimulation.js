@@ -204,7 +204,7 @@ function startStream(simulationState) {
     if (detectionsNb >= simulationParams.yolo_json.length) {
       // We've went through all frames. So now check if we simulate a live
       // source or if we need to stop.
-      if(isLive()) {
+      if (!isLive()) {
         restart();
         return;
       }
