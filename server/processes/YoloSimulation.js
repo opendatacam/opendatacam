@@ -186,13 +186,20 @@ function startStream(simulationState) {
         if (simulationState.mjpegReqHandler) {
           // simulationState.mjpegReqHandler.write(data, 'binary', () => {
           simulationState.mjpegReqHandler.write(data, 'binary', () => {
-            // XXX: For some reson the picture still lags behin significantly.
-            // Therefore give it some time to update the UI before we continue
-            // with the stream
-            setTimeout(() => {
+            if (simulationParams.isVideoDirectory) {
               isSendingJpeg = false;
-            }, 200);
+            } else {
+              // XXX: For some reson the picture still lags behin significantly.
+              // Therefore give it some time to update the UI before we continue
+              // with the stream
+
+              setTimeout(() => {
+                isSendingJpeg = false;
+              }, 200);
+            }
           });
+        } else {
+          isSendingJpeg = false;
         }
       }
     }
