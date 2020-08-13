@@ -7,7 +7,7 @@ const http = require('http');
 const next = require('next');
 const sse = require('server-sent-events');
 const ip = require('ip');
-const YOLO = require('./server/processes/YOLO');
+var YOLO;
 const Opendatacam = require('./server/Opendatacam');
 const flatten = require('lodash.flatten');
 const getURLData = require('./server/utils/urlHelper').getURLData;
@@ -40,12 +40,14 @@ if(SIMULATION_MODE) {
   console.log('-     Opendatacam initialized     -')
   console.log('- IN SIMULATION MODE              -')
   console.log('-----------------------------------')
+  YOLO = require('./server/processes/YoloSimulation');
 } else {
   console.log('-----------------------------------')
   console.log('-     Opendatacam initialized     -')
   console.log('- Config loaded:                  -')
   console.log(JSON.stringify(config, null, 2));
   console.log('-----------------------------------')
+  YOLO = require('./server/processes/YoloLive');
 }
 
 // Init processes
@@ -497,10 +499,10 @@ app.prepare()
    *   HTTP/1.1 200 OK
   */
   express.get('/recording/start', (req, res) => {
-    if(config.VIDEO_INPUT !== "file") {
+    if(YOLO.isLive()) {
       Opendatacam.startRecording();
     } else {
-      Opendatacam.requestFileRecording()
+      Opendatacam.requestFileRecording(YOLO);
     }
     res.sendStatus(200)
   });

@@ -3,6 +3,7 @@ const computeLineBearing = require('./tracker/utils').computeLineBearing;
 const checkLineIntersection = require('./tracker/utils').checkLineIntersection;
 const cloneDeep = require('lodash.clonedeep');
 const fs = require('fs');
+const path = require('path');
 const http = require('http');
 const config = require('../config.json');
 const Recording = require('./model/Recording');
@@ -845,7 +846,8 @@ module.exports = {
           // reset retries counter
           Opendatacam.isListeningToYOLO = false;
           Opendatacam.HTTPRequestListeningToYOLOMaxRetries = HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES;
-          if(config.VIDEO_INPUT === "file") {
+
+          if(!Opendatacam.yolo.isLive()) {
             self.stopRecording();
           }
           self.sendUpdateToClient();
@@ -898,11 +900,11 @@ module.exports = {
     return Opendatacam.recordingStatus.requestedFileRecording;
   },
 
-  requestFileRecording() {
+  requestFileRecording(YOLO) {
     Opendatacam.recordingStatus.requestedFileRecording = true;
-    const filename = YOLO.getVideoParams().split('/').pop();
+    const filename = path.basename(YOLO.getVideoParams());
     Opendatacam.recordingStatus.filename = filename;
-    console.log('Ask YOLO to restart to record on a file ');
+    console.log('Ask YOLO to restart to record on a file ' + filename);
     YOLO.restart();
   },
 
