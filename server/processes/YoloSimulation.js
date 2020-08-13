@@ -70,7 +70,7 @@ const init = function (simulationMode, videoParams = null) {
   });
 
   simulationParams.yolo_json = require(normalizePath(config.VIDEO_INPUTS_PARAMS.simulation.yolo_json));
-  simulationParams.video_file_or_folder = normalizePath(config.VIDEO_INPUTS_PARAMS.simulation.file_or_folder);
+  simulationParams.video_file_or_folder = normalizePath(config.VIDEO_INPUTS_PARAMS.simulation.video_file_or_folder);
 
   // We need this if the simulation should behave like a file recording
   simulationParams.currentVideoParams = normalizePath(config.VIDEO_INPUTS_PARAMS.simulation.yolo_json);
