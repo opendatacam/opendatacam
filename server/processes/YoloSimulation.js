@@ -88,8 +88,8 @@ const init = function (simulationMode, videoParams = null) {
   }
 }
 
-const isLive = function() {
-    return simulationParams.isLive;
+const isLive = function () {
+  return simulationParams.isLive;
 }
 
 const getStatus = function () {
