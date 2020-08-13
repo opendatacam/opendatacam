@@ -47,7 +47,7 @@ if(SIMULATION_MODE) {
   console.log('- Config loaded:                  -')
   console.log(JSON.stringify(config, null, 2));
   console.log('-----------------------------------')
-  YOLO = require('./server/processes/YoloLive');
+  YOLO = require('./server/processes/YoloDarknet');
 }
 
 // Init processes
