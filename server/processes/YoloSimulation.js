@@ -1,4 +1,3 @@
-const config = require('../../config.json');
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
@@ -6,7 +5,6 @@ const killable = require('killable');
 const mjpegServer = require('mjpeg-server');
 const { execFile, execFileSync } = require('child_process');
 const { performance } = require('perf_hooks');
-const { isObject } = require('util');
 
 let yoloSimulation = {
   // State Information

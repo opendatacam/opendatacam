@@ -1,6 +1,4 @@
 const forever = require('forever-monitor');
-const config = require('../../config.json');
-// const configHelper = require('../utils/configHelper');
 
 const {
   performance
