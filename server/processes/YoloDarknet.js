@@ -15,7 +15,7 @@ let YOLO = {
 };
 
 module.exports = {
-  init: function(simulationMode, videoParams = null) {
+  init: function(videoParams = null) {
 
     var yoloParams = config.NEURAL_NETWORK_PARAMS[config.NEURAL_NETWORK];
     var videoParams = videoParams || config.VIDEO_INPUTS_PARAMS[config.VIDEO_INPUT];

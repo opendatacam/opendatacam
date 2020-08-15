@@ -51,7 +51,7 @@ if(SIMULATION_MODE) {
 }
 
 // Init processes
-YOLO.init(SIMULATION_MODE);
+YOLO.init();
 
 // Init connection to db
 DBManager.init().then(
@@ -1057,7 +1057,7 @@ app.prepare()
         console.log('YOLO stopped');
         // TODO set run on file
         console.log(req.file.path);
-        YOLO.init(false, req.file.path);
+        YOLO.init(req.file.path);
         YOLO.start();
         Opendatacam.recordingStatus.filename = req.file.filename;
       },(error) => {

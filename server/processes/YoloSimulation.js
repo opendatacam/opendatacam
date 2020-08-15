@@ -36,7 +36,7 @@ let simulationParams = {
   isLive: true
 };
 
-const init = function (simulationMode, videoParams = null) {
+const init = function (videoParams = null) {
   // XXX: paths in the config are relative from node root. So make sure we
   // normalize before the include
   const normalizePath = function (p) {
