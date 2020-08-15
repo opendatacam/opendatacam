@@ -32,6 +32,7 @@ let yoloSimulation = {
   isVideoDirectory: null,
   videoFileOrFolderExists: false,
   videoFileFps: null,
+  detections : null,
 
   // Information for the Stream
   simulationMJPEGServer: null,
@@ -75,8 +76,9 @@ const init = function (config) {
 
   // Take the values form the config first and then normalize what you have to.
   copyConfig(yoloSimulation.config, config);
-  yoloSimulation.config.videoParams.yolo_json = require(normalizePath(config.videoParams.yolo_json));
+  yoloSimulation.config.videoParams.yolo_json = normalizePath(config.videoParams.yolo_json);
   yoloSimulation.config.videoParams.video_file_or_folder = normalizePath(config.videoParams.video_file_or_folder);
+  yoloSimulation.detections = require(yoloSimulation.config.videoParams.yolo_json);
 
 
   // Check if the video source is a file and determine the fps
@@ -221,7 +223,7 @@ function startStream(simulationState) {
       return;
     }
 
-    if (detectionsNb >= yoloSimulation.config.videoParams.yolo_json.length) {
+    if (detectionsNb >= yoloSimulation.detections.length) {
       // We've went through all frames. So now check if we simulate a live
       // source or if we need to stop.
       if (!isLive()) {
@@ -230,7 +232,7 @@ function startStream(simulationState) {
       }
       detectionsNb = 0;
     }
-    const detection = yoloSimulation.config.videoParams.yolo_json[detectionsNb];
+    const detection = yoloSimulation.detections[detectionsNb];
 
     // It could be that extracting the frame from a video file and
     // transmitting it, takes longer than for the callback to fire.
@@ -250,7 +252,7 @@ function startStream(simulationState) {
 
           // Seeking is not exact and updating the stream takes some time as
           // well, therefore jump a few frames ahead
-          const maxFrameId = yoloSimulation.config.videoParams.yolo_json[yoloSimulation.config.videoParams.yolo_json.length - 1].frame_id;
+          const maxFrameId = yoloSimulation.detections[yoloSimulation.detections.length - 1].frame_id;
           var frame_id = detection.frame_id + Math.ceil(yoloSimulation.videoFileFps / 10);
           if (frame_id > maxFrameId) {
             frame_id = maxFrameId;
@@ -261,7 +263,7 @@ function startStream(simulationState) {
     }
 
     // Update Yolo as well
-    sendYoloJson(simulationState.JSONStreamRes, yoloSimulation.config.videoParams.yolo_json[detectionsNb]);
+    sendYoloJson(simulationState.JSONStreamRes, yoloSimulation.detections[detectionsNb]);
 
     // Move on to next detection
     detectionsNb++;
