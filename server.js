@@ -16,7 +16,8 @@ const FileSystemManager = require('./server/fs/FileSystemManager')
 const MjpegProxy = require('./server/utils/mjpegproxy').MjpegProxy;
 const intercept = require("intercept-stdout");
 const config = require('./config.json');
-const configHelper = require('./server/utils/configHelper')
+const configHelper = require('./server/utils/configHelper');
+const cloneDeep = require('lodash.clonedeep');
 
 if(process.env.npm_package_version !== config.OPENDATACAM_VERSION) {
   console.log('-----------------------------------')
@@ -50,8 +51,16 @@ if(SIMULATION_MODE) {
   YOLO = require('./server/processes/YoloDarknet');
 }
 
-// Init processes
-YOLO.init();
+// Initial YOLO config
+const yoloConfig = {
+  yoloParams: config.NEURAL_NETWORK_PARAMS[config.NEURAL_NETWORK],
+  videoType: config.VIDEO_INPUT,
+  videoParams: config.VIDEO_INPUTS_PARAMS[config.VIDEO_INPUT],
+  jsonStreamPort: configHelper.getJsonStreamPort(),
+  mjpegStreamPort: configHelper.getMjpegStreamPort(),
+  darknetPath: config.PATH_TO_YOLO_DARKNET,
+};
+YOLO.init(yoloConfig);
 
 // Init connection to db
 DBManager.init().then(
@@ -1057,7 +1066,12 @@ app.prepare()
         console.log('YOLO stopped');
         // TODO set run on file
         console.log(req.file.path);
-        YOLO.init(req.file.path);
+
+        const yoloConfigClone = cloneDeep(yoloConfig);
+        yoloConfigClone.videoParams = req.file.path;
+        yoloConfigClone.videoType = "file";
+        YOLO.init(yoloConfigClone);
+
         YOLO.start();
         Opendatacam.recordingStatus.filename = req.file.filename;
       },(error) => {

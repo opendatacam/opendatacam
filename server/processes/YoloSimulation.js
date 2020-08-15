@@ -4,39 +4,43 @@ const path = require('path');
 const http = require('http');
 const killable = require('killable');
 const mjpegServer = require('mjpeg-server');
-const configHelper = require('../utils/configHelper');
 const { execFile, execFileSync } = require('child_process');
 const { performance } = require('perf_hooks');
-const { ignoreNullOrUndefined } = require('csv-express');
-const { isBoolean } = require('util');
+const { isObject } = require('util');
 
-let simulationParams = {
+let yoloSimulation = {
   // State Information
   isStarting: false,
   isStarted: false,
   isInitialized: false,
 
+  config: {
+    videoParams: {
+      yolo_json: null,
+      video_file_or_folder: null,
+      // If true, simulation will behave like a webcam and silently restart at
+      // the end. If false, it behaves like a file and will cause the streams
+      // to close and reopen.
+      isLive: true,
+      jsonFps: 20,
+      mjpgFps: 1.0 / 5, // One image every 5 seconds
+    },
+    jsonStreamPort: 8070,
+    mjpegStreamPort: 8090,
+  },
+
   // Store the path of the JSON file and the video files including some
   // metadata on the FPS if possible
-  currentVideoParams: "",
-  yolo_json: null,
-  video_file_or_folder: null,
   isVideoDirectory: null,
   videoFileOrFolderExists: false,
   videoFileFps: null,
 
   // Information for the Stream
   simulationMJPEGServer: null,
-  simulationJSONHTTPStreamServer: null,
-  jsonFps: 20,
-  mjpgFps: 1.0 / 5, // One image every 5 seconds
-  // If true, simulation will behave like a webcam and silently restart at the
-  // end. If false, it behaves like a file and will cause the streams to
-  // close and reopen
-  isLive: true
+  simulationJSONHTTPStreamServer: null
 };
 
-const init = function (videoParams = null) {
+const init = function (config) {
   // XXX: paths in the config are relative from node root. So make sure we
   // normalize before the include
   const normalizePath = function (p) {
@@ -58,49 +62,55 @@ const init = function (videoParams = null) {
     return fps;
   }
 
-  console.log('Process YOLO initialized');
-  simulationParams.isInitialized = true;
+  const copyConfig = function(target, newConfig) {
+    Object.keys(target).forEach((key) => {
+      if (key in newConfig) {
+        const isObject = target[key] !== null && typeof target[key] === 'object';
+        if(isObject) {
+          copyConfig(target[key], newConfig[key]);
+        } else {
+          target[key] = newConfig[key];
+        }
+      }
+    });
+  }
 
-  // Take the values form the config first and then normalize what you have
-  // to.
-  Object.keys(simulationParams).forEach((key) => {
-    if (key in config.VIDEO_INPUTS_PARAMS.simulation) {
-      simulationParams[key] = config.VIDEO_INPUTS_PARAMS.simulation[key];
-    }
-  });
+  // Take the values form the config first and then normalize what you have to.
+  copyConfig(yoloSimulation.config, config);
+  yoloSimulation.config.videoParams.yolo_json = require(normalizePath(config.videoParams.yolo_json));
+  yoloSimulation.config.videoParams.video_file_or_folder = normalizePath(config.videoParams.video_file_or_folder);
 
-  simulationParams.yolo_json = require(normalizePath(config.VIDEO_INPUTS_PARAMS.simulation.yolo_json));
-  simulationParams.video_file_or_folder = normalizePath(config.VIDEO_INPUTS_PARAMS.simulation.video_file_or_folder);
-
-  // We need this if the simulation should behave like a file recording
-  simulationParams.currentVideoParams = normalizePath(config.VIDEO_INPUTS_PARAMS.simulation.yolo_json);
 
   // Check if the video source is a file and determine the fps
   try {
-    simulationParams.isVideoDirectory = fs.lstatSync(simulationParams.video_file_or_folder).isDirectory();
-    simulationParams.videoFileOrFolderExists = true;
+    yoloSimulation.isVideoDirectory = fs.lstatSync(yoloSimulation.config.videoParams.video_file_or_folder).isDirectory();
+    yoloSimulation.videoFileOrFolderExists = true;
   } catch (err) {
-    console.warn('Could not open simulation video file or folder ' + simulationParams.video_file_or_folder);
-    simulationParams.videoFileOrFolderExists = false;
+    console.warn('Could not open simulation video file or folder ' + yoloSimulation.config.videoParams.video_file_or_folder);
+    yoloSimulation.videoFileOrFolderExists = false;
   }
-  if (simulationParams.videoFileOrFolderExists && !simulationParams.isVideoDirectory) {
-    simulationParams.videoFileFps = getFpsForFile(simulationParams.video_file_or_folder);
+  if (yoloSimulation.videoFileOrFolderExists && !yoloSimulation.isVideoDirectory) {
+    yoloSimulation.videoFileFps = getFpsForFile(yoloSimulation.config.videoParams.video_file_or_folder);
   }
+
+  console.log('Process YOLO initialized');
+  yoloSimulation.isInitialized = true;
+  console.debug(yoloSimulation);
 }
 
 const isLive = function () {
-  return simulationParams.isLive;
+  return yoloSimulation.config.videoParams.isLive;
 }
 
 const getStatus = function () {
   return {
-    isStarting: simulationParams.isStarting,
-    isStarted: simulationParams.isStarted
+    isStarting: yoloSimulation.isStarting,
+    isStarted: yoloSimulation.isStarted
   }
 }
 
 const getVideoParams = function () {
-  return simulationParams.currentVideoParams;
+  return yoloSimulation.config.videoParams.yolo_json;
 }
 
 const restart = function () {
@@ -110,29 +120,29 @@ const restart = function () {
 
 const start = function () {
   // Do not start it twice
-  if (simulationParams.isStarted || simulationParams.isStarting) {
+  if (yoloSimulation.isStarted || yoloSimulation.isStarting) {
     console.debug('already started');
     return;
   }
 
-  simulationParams.isStarting = true;
+  yoloSimulation.isStarting = true;
 
   setTimeout(() => {
     // Simulate 5s to start yolo
     startYOLOSimulation(() => {
       // When the simulation is up and running come back here to update
       // the state
-      simulationParams.isStarting = false;
-      simulationParams.isStarted = true;
+      yoloSimulation.isStarting = false;
+      yoloSimulation.isStarted = true;
     });
   }, 5000);
 }
 
 const stop = function () {
   return new Promise((resolve, reject) => {
-    simulationParams.simulationMJPEGServer.kill();
-    simulationParams.simulationJSONHTTPStreamServer.kill();
-    simulationParams.isStarted = false;
+    yoloSimulation.simulationMJPEGServer.kill();
+    yoloSimulation.simulationJSONHTTPStreamServer.kill();
+    yoloSimulation.isStarted = false;
     resolve();
   });
 }
@@ -146,30 +156,35 @@ const startYOLOSimulation = function (callback) {
   }
 
   console.debug("Start HTTP JSON Stream server");
-  simulationParams.simulationJSONHTTPStreamServer = http.createServer(function (req, res) {
+  yoloSimulation.simulationJSONHTTPStreamServer = http.createServer(function (req, res) {
     console.debug("Got request on JSON Stream server started");
     simulationState.JSONStreamRes = res;
     simulationState.timer = startStream(simulationState);
   });
-  simulationParams.simulationJSONHTTPStreamServer.on('close', (err, socket) => {
+  yoloSimulation.simulationJSONHTTPStreamServer.on('close', (err, socket) => {
     console.debug('closing JSON');
     simulationState.JSONStreamRes = null;
-    simulationState.mjpegReqHandler.close();
+    if(simulationState.mjpegReqHandler) {
+      simulationState.mjpegReqHandler.close();
+    }
   });
-  killable(simulationParams.simulationJSONHTTPStreamServer);
-  simulationParams.simulationJSONHTTPStreamServer.listen(configHelper.getJsonStreamPort());
+  killable(yoloSimulation.simulationJSONHTTPStreamServer);
+  console.debug(simulationState.config);
+  yoloSimulation.simulationJSONHTTPStreamServer.listen(yoloSimulation.config.jsonStreamPort);
 
   console.debug("Start MJPEG server");
-  simulationParams.simulationMJPEGServer = http.createServer(function (req, res) {
+  yoloSimulation.simulationMJPEGServer = http.createServer(function (req, res) {
     console.debug("Got request on MJPEG server");
     simulationState.mjpegReqHandler = mjpegServer.createReqHandler(req, res);
   });
-  simulationParams.simulationMJPEGServer.on('close', (err, socket) => {
+  yoloSimulation.simulationMJPEGServer.on('close', (err, socket) => {
     console.debug('closing MJGEG');
-    clearInterval(simulationState.timer);
+    if(simulationState.timer) {
+      clearInterval(simulationState.timer);
+    }
   });
-  simulationParams.simulationMJPEGServer.listen(configHelper.getMjpegStreamPort());
-  killable(simulationParams.simulationMJPEGServer);
+  killable(yoloSimulation.simulationMJPEGServer);
+  yoloSimulation.simulationMJPEGServer.listen(yoloSimulation.config.mjpegStreamPort);
 
   callback();
 }
@@ -186,7 +201,7 @@ function startStream(simulationState) {
         if (simulationState.mjpegReqHandler) {
           // simulationState.mjpegReqHandler.write(data, 'binary', () => {
           simulationState.mjpegReqHandler.write(data, 'binary', () => {
-            if (simulationParams.isVideoDirectory) {
+            if (yoloSimulation.isVideoDirectory) {
               isSendingJpeg = false;
             } else {
               // XXX: For some reson the picture still lags behin significantly.
@@ -208,7 +223,7 @@ function startStream(simulationState) {
       return;
     }
 
-    if (detectionsNb >= simulationParams.yolo_json.length) {
+    if (detectionsNb >= yoloSimulation.config.videoParams.yolo_json.length) {
       // We've went through all frames. So now check if we simulate a live
       // source or if we need to stop.
       if (!isLive()) {
@@ -217,7 +232,7 @@ function startStream(simulationState) {
       }
       detectionsNb = 0;
     }
-    const detection = simulationParams.yolo_json[detectionsNb];
+    const detection = yoloSimulation.config.videoParams.yolo_json[detectionsNb];
 
     // It could be that extracting the frame from a video file and
     // transmitting it, takes longer than for the callback to fire.
@@ -225,34 +240,34 @@ function startStream(simulationState) {
     //
     // In this simple form we have a mutex to check if we are still
     // transmitting a frame.
-    if (simulationParams.videoFileOrFolderExists && !isSendingJpeg) {
-      if (simulationParams.isVideoDirectory) {
+    if (yoloSimulation.videoFileOrFolderExists && !isSendingJpeg) {
+      if (yoloSimulation.isVideoDirectory) {
         isSendingJpeg = true;
-        getJpgForFrameFromFolder(simulationParams.video_file_or_folder, detection.frame_id, sendJPGData);
+        getJpgForFrameFromFolder(yoloSimulation.config.videoParams.video_file_or_folder, detection.frame_id, sendJPGData);
       } else {
         // Additonally for File extraction we put in a 1s delay to give the CPU some rest.
-        if (performance.now() - lastJpegTimestamp > (1000.0 / simulationParams.mjpgFps)) {
+        if (performance.now() - lastJpegTimestamp > (1000.0 / yoloSimulation.config.videoParams.mjpgFps)) {
           isSendingJpeg = true;
           lastJpegTimestamp = performance.now();
 
           // Seeking is not exact and updating the stream takes some time as
           // well, therefore jump a few frames ahead
-          const maxFrameId = simulationParams.yolo_json[simulationParams.yolo_json.length - 1].frame_id;
-          var frame_id = detection.frame_id + Math.ceil(simulationParams.videoFileFps / 10);
+          const maxFrameId = yoloSimulation.config.videoParams.yolo_json[yoloSimulation.config.videoParams.yolo_json.length - 1].frame_id;
+          var frame_id = detection.frame_id + Math.ceil(yoloSimulation.videoFileFps / 10);
           if (frame_id > maxFrameId) {
             frame_id = maxFrameId;
           }
-          getJpgForFrameFromFile(simulationParams.video_file_or_folder, simulationParams.videoFileFps, frame_id, sendJPGData);
+          getJpgForFrameFromFile(yoloSimulation.config.videoParams.video_file_or_folder, yoloSimulation.videoFileFps, frame_id, sendJPGData);
         }
       }
     }
 
     // Update Yolo as well
-    sendYoloJson(simulationState.JSONStreamRes, simulationParams.yolo_json[detectionsNb]);
+    sendYoloJson(simulationState.JSONStreamRes, yoloSimulation.config.videoParams.yolo_json[detectionsNb]);
 
     // Move on to next detection
     detectionsNb++;
-  }, 1000.0 / simulationParams.jsonFps);
+  }, 1000.0 / yoloSimulation.config.videoParams.jsonFps);
   return timer;
 }
 

@@ -1,6 +1,6 @@
 const forever = require('forever-monitor');
 const config = require('../../config.json');
-const configHelper = require('../utils/configHelper');
+// const configHelper = require('../utils/configHelper');
 
 const {
   performance
@@ -11,30 +11,39 @@ let YOLO = {
   isStarted: false,
   isInitialized: false,
   process: null,
-  currentVideoParams: ""
+  config: {
+    yoloParams: null,
+    videoType: null,
+    videoParams: null,
+    jsonStreamPort: null,
+    mjpegStreamPort: null,
+    darknetPath: null,
+  }
 };
 
 module.exports = {
-  init: function(videoParams = null) {
-
-    var yoloParams = config.NEURAL_NETWORK_PARAMS[config.NEURAL_NETWORK];
-    var videoParams = videoParams || config.VIDEO_INPUTS_PARAMS[config.VIDEO_INPUT];
-    YOLO.currentVideoParams = videoParams
+  init: function(config = null) {
+    // Copy the config first
+    Object.keys(YOLO.config).forEach((key) => {
+      if(key in config) {
+        YOLO.config[key] = config[key];
+      }
+    })
 
     var darknetCommand = [];
-    var initialCommand = ['./darknet','detector','demo', yoloParams.data , yoloParams.cfg, yoloParams.weights]
-    var endCommand = ['-ext_output','-dont_show', '-dontdraw_bbox','-json_port', configHelper.getJsonStreamPort() , '-mjpeg_port', configHelper.getMjpegStreamPort()]
+    var initialCommand = ['./darknet','detector','demo', YOLO.config.yoloParams.data , YOLO.config.yoloParams.cfg, YOLO.config.yoloParams.weights];
+    var endCommand = ['-ext_output','-dont_show', '-dontdraw_bbox','-json_port', YOLO.config.jsonStreamPort , '-mjpeg_port', YOLO.config.mjpegStreamPort];
 
     // Special case if input camera is specified as a -c flag as we need to add one arg
-    if(videoParams.indexOf('-c') === 0) {
-      darknetCommand = initialCommand.concat(videoParams.split(" ")).concat(endCommand);
+    if(YOLO.config.videoParams.indexOf('-c') === 0) {
+      darknetCommand = initialCommand.concat(YOLO.config.videoParams.split(" ")).concat(endCommand);
     } else {
-      darknetCommand = initialCommand.concat(videoParams).concat(endCommand);
+      darknetCommand = initialCommand.concat(YOLO.config.videoParams).concat(endCommand);
     }
 
     YOLO.process = new (forever.Monitor)(darknetCommand,{
       max: Number.POSITIVE_INFINITY,
-      cwd: config.PATH_TO_YOLO_DARKNET,
+      cwd: YOLO.config.darknetPath,
       env: { 'LD_LIBRARY_PATH': './' },
       killTree: true
     });
@@ -75,7 +84,7 @@ module.exports = {
   },
 
   getVideoParams: function() {
-    return YOLO.currentVideoParams;
+    return YOLO.config.videoParams;
   },
 
   start: function() {
@@ -114,6 +123,6 @@ module.exports = {
 
   isLive() {
     // Files are recorded, everything else is live
-    return config.VIDEO_INPUT !== "file";
+    return YOLO.config.videoType !== "file";
   }
 }
