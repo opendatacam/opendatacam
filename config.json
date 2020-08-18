@@ -80,5 +80,11 @@
     "app": 8080,
     "darknet_json_stream": 8070,
     "darknet_mjpeg_stream": 8090
+  },
+  "GPS": {
+    "port": 5947,
+    "hostname": "localhost",
+    "signalLossTimeoutSeconds": 60,
+    "csvExportOpenStreeetMapsUrl": true
   }
 }
