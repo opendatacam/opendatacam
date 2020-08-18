@@ -918,7 +918,7 @@ module.exports = {
       trackerSummary: this.getTrackerSummary(),
       videoResolution: Opendatacam.videoResolution,
       appState: {
-        yoloStatus: YOLO.getStatus(),
+        yoloStatus: Opendatacam.yolo ? Opendatacam.yolo.getStatus() : undefined,
         isListeningToYOLO: Opendatacam.isListeningToYOLO,
         recordingStatus: Opendatacam.recordingStatus
       }
