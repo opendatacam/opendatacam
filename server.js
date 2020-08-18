@@ -18,6 +18,7 @@ const intercept = require("intercept-stdout");
 const config = require('./config.json');
 const configHelper = require('./server/utils/configHelper')
 const Tracker = require('node-moving-things-tracker').Tracker;
+const GpsTracker = require('./server/tracker/GpsTracker');
 
 if(process.env.npm_package_version !== config.OPENDATACAM_VERSION) {
   console.log('-----------------------------------')
@@ -51,7 +52,8 @@ if(SIMULATION_MODE) {
 
 // Init processes
 YOLO.init(SIMULATION_MODE);
-Opendatacam.setTracker(Tracker);
+const gpsTracker = new GpsTracker(Tracker, config.GPS);
+Opendatacam.setTracker(gpsTracker);
 
 // Init connection to db
 DBManager.init().then(
