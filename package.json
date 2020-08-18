@@ -26,6 +26,7 @@
     "multer": "^1.4.2",
     "next": "^9.4.4",
     "next-redux-wrapper": "^5.0.0",
+    "node-gpsd": "^0.3.2",
     "node-moving-things-tracker": "^0.7.5",
     "point-in-polygon": "^1.0.1",
     "postcss-import": "^12.0.1",
