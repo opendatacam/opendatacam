@@ -140,8 +140,12 @@ const start = function () {
 
 const stop = function () {
   return new Promise((resolve, reject) => {
-    yoloSimulation.simulationMJPEGServer.kill();
-    yoloSimulation.simulationJSONHTTPStreamServer.kill();
+    if(yoloSimulation.simulationMJPEGServer) {
+      yoloSimulation.simulationMJPEGServer.kill();
+    }
+    if(yoloSimulation.simulationJSONHTTPStreamServer) {
+      yoloSimulation.simulationJSONHTTPStreamServer.kill();
+    }
     yoloSimulation.isStarted = false;
     resolve();
   });
