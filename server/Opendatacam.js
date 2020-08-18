@@ -1,4 +1,3 @@
-const Tracker = require('node-moving-things-tracker').Tracker;
 const YOLO = require('./processes/YOLO');
 const computeLineBearing = require('./tracker/utils').computeLineBearing;
 const checkLineIntersection = require('./tracker/utils').checkLineIntersection;
@@ -65,7 +64,7 @@ const initialState = {
   isListeningToYOLO: false,
   HTTPRequestListeningToYOLO: null,
   HTTPRequestListeningToYOLOMaxRetries: HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES,
-  tracker: Tracker,
+  tracker: null,
 }
 
 let Opendatacam = cloneDeep(initialState);
@@ -926,5 +925,9 @@ module.exports = {
     if(this.HTTPRequestListeningToYOLO) {
       this.HTTPRequestListeningToYOLO.destroy();
     }
+  },
+
+  setTracker(tracker) {
+    Opendatacam.tracker = tracker;
   }
 }

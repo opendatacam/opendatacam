@@ -17,6 +17,7 @@ const MjpegProxy = require('./server/utils/mjpegproxy').MjpegProxy;
 const intercept = require("intercept-stdout");
 const config = require('./config.json');
 const configHelper = require('./server/utils/configHelper')
+const Tracker = require('node-moving-things-tracker').Tracker;
 
 if(process.env.npm_package_version !== config.OPENDATACAM_VERSION) {
   console.log('-----------------------------------')
@@ -50,6 +51,7 @@ if(SIMULATION_MODE) {
 
 // Init processes
 YOLO.init(SIMULATION_MODE);
+Opendatacam.setTracker(Tracker);
 
 // Init connection to db
 DBManager.init().then(
@@ -1022,14 +1024,14 @@ app.prepare()
       cb(null, file.originalname)
     }
   })
-  var uploadMulter = multer({ 
-    storage: storage, 
+  var uploadMulter = multer({
+    storage: storage,
     fileFilter: function (req, file, cb) {
       if (!file.originalname.match(/\.(mp4|avi|mov)$/)) {
         return cb(new Error('Only video files are allowed!'));
       }
       cb(null, true);
-    } 
+    }
   }).single('video')
 
   // API to Upload file and restart yolo on that file
@@ -1070,7 +1072,7 @@ app.prepare()
     })
   })
 
-  
+
 
 
   /**
