@@ -64,7 +64,8 @@ const initialState = {
   },
   isListeningToYOLO: false,
   HTTPRequestListeningToYOLO: null,
-  HTTPRequestListeningToYOLOMaxRetries: HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES
+  HTTPRequestListeningToYOLOMaxRetries: HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES,
+  tracker: Tracker,
 }
 
 let Opendatacam = cloneDeep(initialState);
@@ -73,19 +74,24 @@ module.exports = {
 
   reset: function() {
     return new Promise((resolve, reject) => {
+      // We only want to reset the tracker, not delete it entirely so keep a
+      // reference that we can restore.
+      const trackerBackup = Opendatacam.tracker;
+      trackerBackup.reset();
+
       // Reset counter
       Opendatacam = cloneDeep(initialState);
-      // Reset tracker
-      Tracker.reset();
+      // Restore reference to the reseted tracker
+      Opendatacam.tracker = trackerBackup;
     })
   },
 
   /*
     Example countingAreas
 
-    { 
+    {
       yellow: { point1: { x: 35.05624790519486, y: 69.33333587646484 }, point2: { x: 111.38124638170021, y: 27.11111068725586 } },
-      turquoise: null 
+      turquoise: null
     }
   */
   registerCountingAreas : function(countingAreas) {
@@ -169,7 +175,7 @@ module.exports = {
     return countedItem;
   },
 
-  /* Persist in DB */ 
+  /* Persist in DB */
   persistNewRecordingFrame: function(
     frameId,
     frameTimestamp,
@@ -278,12 +284,12 @@ module.exports = {
     // Set tracker params (todo move this to some init() function of OpenDataCam to avoid running it on each frame))
     if(config.TRACKER_SETTINGS) {
       if(config.TRACKER_SETTINGS.iouLimit) {
-        Tracker.setParams({
+        Opendatacam.tracker.setParams({
           iouLimit: config.TRACKER_SETTINGS.iouLimit
         })
       }
       if(config.TRACKER_SETTINGS.unMatchedFrameTolerance) {
-        Tracker.setParams({
+        Opendatacam.tracker.setParams({
           unMatchedFrameTolerance: config.TRACKER_SETTINGS.unMatchedFrameTolerance
         })
       }
@@ -295,10 +301,10 @@ module.exports = {
     // console.log('Update tracker with this frame')
     // console.log(`Frame id: ${Opendatacam.currentFrame}`);
     // console.log('=========')
-     
-    Tracker.updateTrackedItemsWithNewFrame(detectionScaledOfThisFrame, Opendatacam.currentFrame);
 
-    let trackerDataForThisFrame = Tracker.getJSONOfTrackedItems();
+    Opendatacam.tracker.updateTrackedItemsWithNewFrame(detectionScaledOfThisFrame, Opendatacam.currentFrame);
+
+    let trackerDataForThisFrame = Opendatacam.tracker.getJSONOfTrackedItems();
     let countedItemsForThisFrame = [];
 
     Opendatacam.nbItemsTrackedThisFrame = trackerDataForThisFrame.length;
@@ -347,7 +353,7 @@ module.exports = {
           trackerDataForThisFrame
         );
       }
-      
+
     }
 
     this.sendUpdateToClient();
@@ -694,15 +700,15 @@ module.exports = {
     const filename = isFile ? YOLO.getVideoParams().split('/').pop() : '';
     Opendatacam.recordingStatus.filename = filename;
 
-    // Store lowest ID of currently tracked item when start recording 
+    // Store lowest ID of currently tracked item when start recording
     // to be able to compute nbObjectTracked
-    const currentlyTrackedItems = Tracker.getJSONOfTrackedItems()
+    const currentlyTrackedItems = Opendatacam.tracker.getJSONOfTrackedItems()
     const highestTrackedItemId = currentlyTrackedItems.length > 0 ? currentlyTrackedItems[currentlyTrackedItems.length - 1].id : 0;
     Opendatacam._refTrackedItemIdWhenRecordingStarted = highestTrackedItemId - currentlyTrackedItems.length;
 
     // Persist recording
     DBManager.insertRecording(new Recording(
-      Opendatacam.recordingStatus.dateStarted, 
+      Opendatacam.recordingStatus.dateStarted,
       Opendatacam.recordingStatus.dateStarted,
       Opendatacam.countingAreas,
       Opendatacam.videoResolution,
@@ -720,8 +726,8 @@ module.exports = {
     Opendatacam.recordingStatus.isRecording = false;
     Opendatacam.counterBuffer = {};
     Opendatacam.countedItemsHistory = [];
-    
-    
+
+
   },
 
   setVideoResolution(videoResolution) {
@@ -907,7 +913,7 @@ module.exports = {
     return {
       counterSummary: this.getCounterSummary(),
       trackerSummary: this.getTrackerSummary(),
-      videoResolution: Opendatacam.videoResolution, 
+      videoResolution: Opendatacam.videoResolution,
       appState: {
         yoloStatus: YOLO.getStatus(),
         isListeningToYOLO: Opendatacam.isListeningToYOLO,
