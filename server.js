@@ -852,11 +852,19 @@ app.prepare()
         data = flatten(data);
         // Map counting area name
         data = data.map((countedItem) => {
-          return {
+          const ret = {
             ...countedItem,
             timestamp: countedItem.timestamp.toISOString(),
             area: counterData.areas[countedItem.area].name
           }
+
+          const isExportOsmLink = config.GPS && config.GPS.csvExportOpenStreeetMapsUrl === true;
+          const isLatLonPresent = countedItem.lat !== null && countedItem.lon !== null;
+          if(isExportOsmLink && isLatLonPresent) {
+            ret.link = `https://www.openstreetmap.org/?mlat=${countedItem.lat}&mlon=${countedItem.lon}#map=19/${countedItem.lat}/${countedItem.lon}`
+          }
+
+          return ret;
         })
       } else {
         data = [];
