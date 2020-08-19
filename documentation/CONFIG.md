@@ -637,7 +637,7 @@ If present, OpenDataCam can obtain the current position via GPS and persist it a
 
 ```json
 "GPS": {
-  "port": 5947,
+  "port": 2947,
   "hostname": "localhost",
   "signalLossTimeoutSeconds": 60,
   "csvExportOpenStreeetMapsUrl": true
@@ -649,3 +649,13 @@ Whereas
 - `port` and `hostname`: Contain the location of the GPS Deamon
 - `signalLossTimeoutSeconds`: In case of temporary position loss, the old signal will remain valid for this many seconds.
 - `csvExportOpenStreeetMapsUrl`: Besides the raw `lat` and `lon` values, a link to OpenStreetMaps may be added to the exported CSV
+
+This will connect to GPSD using their JSON protocol.
+The easiest way to run GPSD is through docker using the [opensourcefoundries/gpsd](https://registry.hub.docker.com/r/opensourcefoundries/gpsd) image.
+To start execute the following command or add it to your `docker-compose.yml`.
+
+```
+docker run -d -p 2947:2947 --device=/dev/ttyAMA0 opensourcefoundries/gpsd /dev/ttyAMA0
+```
+
+Alternatively, GPSD can run on your machine without docker which offer some additional benefits such as using GPS as an NTP source.

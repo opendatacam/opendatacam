@@ -82,7 +82,7 @@
     "darknet_mjpeg_stream": 8090
   },
   "GPS": {
-    "port": 5947,
+    "port": 2947,
     "hostname": "localhost",
     "signalLossTimeoutSeconds": 60,
     "csvExportOpenStreeetMapsUrl": true
