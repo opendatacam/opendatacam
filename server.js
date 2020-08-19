@@ -52,8 +52,13 @@ if(SIMULATION_MODE) {
 
 // Init processes
 YOLO.init(SIMULATION_MODE);
-const gpsTracker = new GpsTracker(Tracker, config.GPS);
-Opendatacam.setTracker(gpsTracker);
+
+// Select tracker, based on GPS settings in config
+var tracker = Tracker;
+if(config.GPS) {
+  tracker = new GpsTracker(Tracker, config.GPS);
+}
+Opendatacam.setTracker(tracker);
 
 // Init connection to db
 DBManager.init().then(
