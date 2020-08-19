@@ -160,6 +160,15 @@ module.exports = {
         countingDirection: countingDirection,
         angleWithCountingLine: angleWithCountingLine
       }
+
+      // Persist GPS Position if available
+      const hasLat = 'lat' in trackedItem;
+      const hasLon = 'lon' in trackedItem;
+      if(hasLat && hasLon) {
+        countedItem.lat = trackedItem.lat;
+        countedItem.lon = trackedItem.lon;
+      }
+
       // Add it to the history
       Opendatacam.countedItemsHistory.push(countedItem)
     }
