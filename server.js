@@ -65,7 +65,8 @@ YOLO.init(yoloConfig);
 
 // Select tracker, based on GPS settings in config
 var tracker = Tracker;
-if(config.GPS) {
+const isGpsEnabled = config.GPS && config.GPS.enabled === true;
+if(isGpsEnabled) {
   tracker = new GpsTracker(Tracker, config.GPS);
 }
 Opendatacam.setTracker(tracker);
@@ -868,9 +869,10 @@ app.prepare()
             area: counterData.areas[countedItem.area].name
           }
 
+          const isGpsEnabled = config.GPS && config.GPS.enabled === true;
           const isExportOsmLink = config.GPS && config.GPS.csvExportOpenStreeetMapsUrl === true;
           const isLatLonPresent = countedItem.lat !== null && countedItem.lon !== null;
-          if(isExportOsmLink && isLatLonPresent) {
+          if(isGpsEnabled && isExportOsmLink && isLatLonPresent) {
             ret.link = `https://www.openstreetmap.org/?mlat=${countedItem.lat}&mlon=${countedItem.lon}#map=19/${countedItem.lat}/${countedItem.lon}`
           }
 

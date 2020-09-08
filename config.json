@@ -89,6 +89,7 @@
     "darknet_mjpeg_stream": 8090
   },
   "GPS": {
+    "enabled": false,
     "port": 2947,
     "hostname": "localhost",
     "signalLossTimeoutSeconds": 60,
