@@ -7,7 +7,7 @@ const http = require('http');
 const next = require('next');
 const sse = require('server-sent-events');
 const ip = require('ip');
-const YOLO = require('./server/processes/YOLO');
+var YOLO;
 const Opendatacam = require('./server/Opendatacam');
 const flatten = require('lodash.flatten');
 const getURLData = require('./server/utils/urlHelper').getURLData;
@@ -42,16 +42,26 @@ if(SIMULATION_MODE) {
   console.log('-     Opendatacam initialized     -')
   console.log('- IN SIMULATION MODE              -')
   console.log('-----------------------------------')
+  YOLO = require('./server/processes/YoloSimulation');
 } else {
   console.log('-----------------------------------')
   console.log('-     Opendatacam initialized     -')
   console.log('- Config loaded:                  -')
   console.log(JSON.stringify(config, null, 2));
   console.log('-----------------------------------')
+  YOLO = require('./server/processes/YoloDarknet');
 }
 
-// Init processes
-YOLO.init(SIMULATION_MODE);
+// Initial YOLO config
+const yoloConfig = {
+  yoloParams: config.NEURAL_NETWORK_PARAMS[config.NEURAL_NETWORK],
+  videoType: config.VIDEO_INPUT,
+  videoParams: config.VIDEO_INPUTS_PARAMS[config.VIDEO_INPUT],
+  jsonStreamPort: configHelper.getJsonStreamPort(),
+  mjpegStreamPort: configHelper.getMjpegStreamPort(),
+  darknetPath: config.PATH_TO_YOLO_DARKNET,
+};
+YOLO.init(yoloConfig);
 
 // Select tracker, based on GPS settings in config
 var tracker = Tracker;
@@ -121,7 +131,7 @@ app.prepare()
     YOLO.start(); // Inside yolo process will check is started
 
     const urlData = getURLData(req);
-    Opendatacam.listenToYOLO(urlData);
+    Opendatacam.listenToYOLO(YOLO, urlData);
 
     return app.render(req, res, '/')
   })
@@ -142,7 +152,7 @@ app.prepare()
   express.get('/start', (req, res) => {
     YOLO.start(); // Inside yolo process will check is started
     const urlData = getURLData(req);
-    Opendatacam.listenToYOLO(urlData);
+    Opendatacam.listenToYOLO(YOLO, urlData);
     res.sendStatus(200)
   });
 
@@ -506,10 +516,10 @@ app.prepare()
    *   HTTP/1.1 200 OK
   */
   express.get('/recording/start', (req, res) => {
-    if(config.VIDEO_INPUT !== "file") {
+    if(YOLO.isLive()) {
       Opendatacam.startRecording();
     } else {
-      Opendatacam.requestFileRecording()
+      Opendatacam.requestFileRecording(YOLO);
     }
     res.sendStatus(200)
   });
@@ -870,7 +880,7 @@ app.prepare()
         data = [];
       }
       console.log(`Exporting ${req.params.id} counter history to CSV`);
-      res.csv(data, false ,{'Content-disposition': `attachment; filename=counterData-${counterData.dateStart.toISOString().split("T")[0]}-${req.params.id}.csv`});
+      res.csv(data, true ,{'Content-disposition': `attachment; filename=counterData-${counterData.dateStart.toISOString().split("T")[0]}-${req.params.id}.csv`});
     });
   })
 
@@ -1072,7 +1082,12 @@ app.prepare()
         console.log('YOLO stopped');
         // TODO set run on file
         console.log(req.file.path);
-        YOLO.init(false, req.file.path);
+
+        const yoloConfigClone = cloneDeep(yoloConfig);
+        yoloConfigClone.videoParams = req.file.path;
+        yoloConfigClone.videoType = "file";
+        YOLO.init(yoloConfigClone);
+
         YOLO.start();
         Opendatacam.recordingStatus.filename = req.file.filename;
       },(error) => {
