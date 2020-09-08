@@ -1,9 +1,9 @@
 const Tracker = require('node-moving-things-tracker').Tracker;
-const YOLO = require('./processes/YOLO');
 const computeLineBearing = require('./tracker/utils').computeLineBearing;
 const checkLineIntersection = require('./tracker/utils').checkLineIntersection;
 const cloneDeep = require('lodash.clonedeep');
 const fs = require('fs');
+const path = require('path');
 const http = require('http');
 const config = require('../config.json');
 const Recording = require('./model/Recording');
@@ -64,7 +64,9 @@ const initialState = {
   },
   isListeningToYOLO: false,
   HTTPRequestListeningToYOLO: null,
-  HTTPRequestListeningToYOLOMaxRetries: HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES
+  HTTPRequestListeningToYOLOMaxRetries: HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES,
+  // A reference of the yolo object to work with
+  yolo: null
 }
 
 let Opendatacam = cloneDeep(initialState);
@@ -83,9 +85,9 @@ module.exports = {
   /*
     Example countingAreas
 
-    { 
+    {
       yellow: { point1: { x: 35.05624790519486, y: 69.33333587646484 }, point2: { x: 111.38124638170021, y: 27.11111068725586 } },
-      turquoise: null 
+      turquoise: null
     }
   */
   registerCountingAreas : function(countingAreas) {
@@ -169,7 +171,7 @@ module.exports = {
     return countedItem;
   },
 
-  /* Persist in DB */ 
+  /* Persist in DB */
   persistNewRecordingFrame: function(
     frameId,
     frameTimestamp,
@@ -295,7 +297,7 @@ module.exports = {
     // console.log('Update tracker with this frame')
     // console.log(`Frame id: ${Opendatacam.currentFrame}`);
     // console.log('=========')
-     
+
     Tracker.updateTrackedItemsWithNewFrame(detectionScaledOfThisFrame, Opendatacam.currentFrame);
 
     let trackerDataForThisFrame = Tracker.getJSONOfTrackedItems();
@@ -347,7 +349,7 @@ module.exports = {
           trackerDataForThisFrame
         );
       }
-      
+
     }
 
     this.sendUpdateToClient();
@@ -612,7 +614,7 @@ module.exports = {
         trackerSummary: this.getTrackerSummary(),
         videoResolution: Opendatacam.videoResolution,
         appState: {
-          yoloStatus: YOLO.getStatus(),
+          yoloStatus: Opendatacam.yolo ? Opendatacam.yolo.getStatus() : null,
           isListeningToYOLO: Opendatacam.isListeningToYOLO,
           recordingStatus: Opendatacam.recordingStatus
         }
@@ -691,10 +693,15 @@ module.exports = {
     Opendatacam.recordingStatus.isRecording = true;
     Opendatacam.recordingStatus.dateStarted = new Date();
     Opendatacam.totalItemsTracked = 0;
-    const filename = isFile ? YOLO.getVideoParams().split('/').pop() : '';
+
+    var filename = '';
+    const isYoloSet = Opendatacam.yolo;
+    if(isFile && isYoloSet) {
+      filename = Opendatacam.yolo.getVideoParams().split('/').pop();
+    }
     Opendatacam.recordingStatus.filename = filename;
 
-    // Store lowest ID of currently tracked item when start recording 
+    // Store lowest ID of currently tracked item when start recording
     // to be able to compute nbObjectTracked
     const currentlyTrackedItems = Tracker.getJSONOfTrackedItems()
     const highestTrackedItemId = currentlyTrackedItems.length > 0 ? currentlyTrackedItems[currentlyTrackedItems.length - 1].id : 0;
@@ -702,7 +709,7 @@ module.exports = {
 
     // Persist recording
     DBManager.insertRecording(new Recording(
-      Opendatacam.recordingStatus.dateStarted, 
+      Opendatacam.recordingStatus.dateStarted,
       Opendatacam.recordingStatus.dateStarted,
       Opendatacam.countingAreas,
       Opendatacam.videoResolution,
@@ -720,8 +727,8 @@ module.exports = {
     Opendatacam.recordingStatus.isRecording = false;
     Opendatacam.counterBuffer = {};
     Opendatacam.countedItemsHistory = [];
-    
-    
+
+
   },
 
   setVideoResolution(videoResolution) {
@@ -738,7 +745,8 @@ module.exports = {
   },
 
   // Listen to 8070 for Tracker data detections
-  listenToYOLO(urlData) {
+  listenToYOLO(yolo, urlData) {
+    Opendatacam.yolo = yolo;
     var self = this;
     // HTTPJSONSTREAM req
     if(Opendatacam.isListeningToYOLO) {
@@ -838,11 +846,12 @@ module.exports = {
           // reset retries counter
           Opendatacam.isListeningToYOLO = false;
           Opendatacam.HTTPRequestListeningToYOLOMaxRetries = HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES;
-          if(config.VIDEO_INPUT === "file") {
+
+          if(!Opendatacam.yolo.isLive()) {
             self.stopRecording();
           }
           self.sendUpdateToClient();
-          self.listenToYOLO(urlData);
+          self.listenToYOLO(Opendatacam.yolo, urlData);
         } else {
           // Counting stopped by user, keep yolo running
         }
@@ -859,7 +868,7 @@ module.exports = {
         // Retry, YOLO might not have started server just yet
         setTimeout(() => {
           Logger.log("Retry connect to YOLO");
-          self.listenToYOLO(urlData);
+          self.listenToYOLO(Opendatacam.yolo, urlData);
           Opendatacam.HTTPRequestListeningToYOLOMaxRetries--;
         }, HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS)
       } else {
@@ -891,11 +900,11 @@ module.exports = {
     return Opendatacam.recordingStatus.requestedFileRecording;
   },
 
-  requestFileRecording() {
+  requestFileRecording(YOLO) {
     Opendatacam.recordingStatus.requestedFileRecording = true;
-    const filename = YOLO.getVideoParams().split('/').pop();
+    const filename = path.basename(YOLO.getVideoParams());
     Opendatacam.recordingStatus.filename = filename;
-    console.log('Ask YOLO to restart to record on a file ');
+    console.log('Ask YOLO to restart to record on a file ' + filename);
     YOLO.restart();
   },
 
@@ -907,9 +916,9 @@ module.exports = {
     return {
       counterSummary: this.getCounterSummary(),
       trackerSummary: this.getTrackerSummary(),
-      videoResolution: Opendatacam.videoResolution, 
+      videoResolution: Opendatacam.videoResolution,
       appState: {
-        yoloStatus: YOLO.getStatus(),
+        yoloStatus: Opendatacam.yolo ? Opendatacam.yolo.getStatus() : undefined,
         isListeningToYOLO: Opendatacam.isListeningToYOLO,
         recordingStatus: Opendatacam.recordingStatus
       }

@@ -7,7 +7,7 @@ const http = require('http');
 const next = require('next');
 const sse = require('server-sent-events');
 const ip = require('ip');
-const YOLO = require('./server/processes/YOLO');
+var YOLO;
 const Opendatacam = require('./server/Opendatacam');
 const flatten = require('lodash.flatten');
 const getURLData = require('./server/utils/urlHelper').getURLData;
@@ -16,7 +16,8 @@ const FileSystemManager = require('./server/fs/FileSystemManager')
 const MjpegProxy = require('./server/utils/mjpegproxy').MjpegProxy;
 const intercept = require("intercept-stdout");
 const config = require('./config.json');
-const configHelper = require('./server/utils/configHelper')
+const configHelper = require('./server/utils/configHelper');
+const cloneDeep = require('lodash.clonedeep');
 
 if(process.env.npm_package_version !== config.OPENDATACAM_VERSION) {
   console.log('-----------------------------------')
@@ -40,16 +41,26 @@ if(SIMULATION_MODE) {
   console.log('-     Opendatacam initialized     -')
   console.log('- IN SIMULATION MODE              -')
   console.log('-----------------------------------')
+  YOLO = require('./server/processes/YoloSimulation');
 } else {
   console.log('-----------------------------------')
   console.log('-     Opendatacam initialized     -')
   console.log('- Config loaded:                  -')
   console.log(JSON.stringify(config, null, 2));
   console.log('-----------------------------------')
+  YOLO = require('./server/processes/YoloDarknet');
 }
 
-// Init processes
-YOLO.init(SIMULATION_MODE);
+// Initial YOLO config
+const yoloConfig = {
+  yoloParams: config.NEURAL_NETWORK_PARAMS[config.NEURAL_NETWORK],
+  videoType: config.VIDEO_INPUT,
+  videoParams: config.VIDEO_INPUTS_PARAMS[config.VIDEO_INPUT],
+  jsonStreamPort: configHelper.getJsonStreamPort(),
+  mjpegStreamPort: configHelper.getMjpegStreamPort(),
+  darknetPath: config.PATH_TO_YOLO_DARKNET,
+};
+YOLO.init(yoloConfig);
 
 // Init connection to db
 DBManager.init().then(
@@ -112,7 +123,7 @@ app.prepare()
     YOLO.start(); // Inside yolo process will check is started
 
     const urlData = getURLData(req);
-    Opendatacam.listenToYOLO(urlData);
+    Opendatacam.listenToYOLO(YOLO, urlData);
 
     return app.render(req, res, '/')
   })
@@ -133,7 +144,7 @@ app.prepare()
   express.get('/start', (req, res) => {
     YOLO.start(); // Inside yolo process will check is started
     const urlData = getURLData(req);
-    Opendatacam.listenToYOLO(urlData);
+    Opendatacam.listenToYOLO(YOLO, urlData);
     res.sendStatus(200)
   });
 
@@ -497,10 +508,10 @@ app.prepare()
    *   HTTP/1.1 200 OK
   */
   express.get('/recording/start', (req, res) => {
-    if(config.VIDEO_INPUT !== "file") {
+    if(YOLO.isLive()) {
       Opendatacam.startRecording();
     } else {
-      Opendatacam.requestFileRecording()
+      Opendatacam.requestFileRecording(YOLO);
     }
     res.sendStatus(200)
   });
@@ -1022,14 +1033,14 @@ app.prepare()
       cb(null, file.originalname)
     }
   })
-  var uploadMulter = multer({ 
-    storage: storage, 
+  var uploadMulter = multer({
+    storage: storage,
     fileFilter: function (req, file, cb) {
       if (!file.originalname.match(/\.(mp4|avi|mov)$/)) {
         return cb(new Error('Only video files are allowed!'));
       }
       cb(null, true);
-    } 
+    }
   }).single('video')
 
   // API to Upload file and restart yolo on that file
@@ -1055,7 +1066,12 @@ app.prepare()
         console.log('YOLO stopped');
         // TODO set run on file
         console.log(req.file.path);
-        YOLO.init(false, req.file.path);
+
+        const yoloConfigClone = cloneDeep(yoloConfig);
+        yoloConfigClone.videoParams = req.file.path;
+        yoloConfigClone.videoType = "file";
+        YOLO.init(yoloConfigClone);
+
         YOLO.start();
         Opendatacam.recordingStatus.filename = req.file.filename;
       },(error) => {
@@ -1070,7 +1086,7 @@ app.prepare()
     })
   })
 
-  
+
 
 
   /**
