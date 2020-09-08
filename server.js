@@ -853,7 +853,7 @@ app.prepare()
         data = [];
       }
       console.log(`Exporting ${req.params.id} counter history to CSV`);
-      res.csv(data, false ,{'Content-disposition': `attachment; filename=counterData-${counterData.dateStart.toISOString().split("T")[0]}-${req.params.id}.csv`});
+      res.csv(data, true ,{'Content-disposition': `attachment; filename=counterData-${counterData.dateStart.toISOString().split("T")[0]}-${req.params.id}.csv`});
     });
   })
 
