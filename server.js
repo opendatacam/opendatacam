@@ -16,8 +16,9 @@ const FileSystemManager = require('./server/fs/FileSystemManager')
 const MjpegProxy = require('./server/utils/mjpegproxy').MjpegProxy;
 const intercept = require("intercept-stdout");
 const config = require('./config.json');
-const configHelper = require('./server/utils/configHelper');
-const cloneDeep = require('lodash.clonedeep');
+const configHelper = require('./server/utils/configHelper')
+const Tracker = require('node-moving-things-tracker').Tracker;
+const GpsTracker = require('./server/tracker/GpsTracker');
 
 if(process.env.npm_package_version !== config.OPENDATACAM_VERSION) {
   console.log('-----------------------------------')
@@ -61,6 +62,14 @@ const yoloConfig = {
   darknetPath: config.PATH_TO_YOLO_DARKNET,
 };
 YOLO.init(yoloConfig);
+
+// Select tracker, based on GPS settings in config
+var tracker = Tracker;
+const isGpsEnabled = config.GPS && config.GPS.enabled === true;
+if(isGpsEnabled) {
+  tracker = new GpsTracker(Tracker, config.GPS);
+}
+Opendatacam.setTracker(tracker);
 
 // Init connection to db
 DBManager.init().then(
@@ -854,11 +863,20 @@ app.prepare()
         data = flatten(data);
         // Map counting area name
         data = data.map((countedItem) => {
-          return {
+          const ret = {
             ...countedItem,
             timestamp: countedItem.timestamp.toISOString(),
             area: counterData.areas[countedItem.area].name
           }
+
+          const isGpsEnabled = config.GPS && config.GPS.enabled === true;
+          const isExportOsmLink = config.GPS && config.GPS.csvExportOpenStreeetMapsUrl === true;
+          const isLatLonPresent = countedItem.lat !== null && countedItem.lon !== null;
+          if(isGpsEnabled && isExportOsmLink && isLatLonPresent) {
+            ret.link = `https://www.openstreetmap.org/?mlat=${countedItem.lat}&mlon=${countedItem.lon}#map=19/${countedItem.lat}/${countedItem.lon}`
+          }
+
+          return ret;
         })
       } else {
         data = [];
