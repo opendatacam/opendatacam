@@ -293,16 +293,17 @@ module.exports = {
 
     // Set tracker params (todo move this to some init() function of OpenDataCam to avoid running it on each frame))
     if(config.TRACKER_SETTINGS) {
-      if(config.TRACKER_SETTINGS.iouLimit) {
-        Opendatacam.tracker.setParams({
-          iouLimit: config.TRACKER_SETTINGS.iouLimit
-        })
-      }
-      if(config.TRACKER_SETTINGS.unMatchedFrameTolerance) {
-        Opendatacam.tracker.setParams({
-          unMatchedFrameTolerance: config.TRACKER_SETTINGS.unMatchedFrameTolerance
-        })
-      }
+      const trackerParams = {};
+
+      const paramKeys = ['iouLimit', 'unMatchedFrameTolerance', 'fastDelete'];
+
+      paramKeys.forEach((key) => {
+        if(key in config.TRACKER_SETTINGS) {
+          trackerParams[key] = config.TRACKER_SETTINGS[key];
+        }
+      });
+
+      Opendatacam.tracker.setParams(trackerParams);
     }
     // console.log(`Received Detection:`);
     // console.log('=========');
