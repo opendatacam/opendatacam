@@ -94,6 +94,6 @@
     "port": 2947,
     "hostname": "localhost",
     "signalLossTimeoutSeconds": 60,
-    "csvExportOpenStreeetMapsUrl": true
+    "csvExportOpenStreetMapsUrl": true
   }
 }

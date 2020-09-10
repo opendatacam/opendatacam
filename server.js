@@ -870,7 +870,7 @@ app.prepare()
           }
 
           const isGpsEnabled = config.GPS && config.GPS.enabled === true;
-          const isExportOsmLink = config.GPS && config.GPS.csvExportOpenStreeetMapsUrl === true;
+          const isExportOsmLink = config.GPS && config.GPS.csvExportOpenStreetMapsUrl === true;
           const isLatLonPresent = countedItem.lat !== null && countedItem.lon !== null;
           if(isGpsEnabled && isExportOsmLink && isLatLonPresent) {
             ret.link = `https://www.openstreetmap.org/?mlat=${countedItem.lat}&mlon=${countedItem.lon}#map=19/${countedItem.lat}/${countedItem.lon}`
