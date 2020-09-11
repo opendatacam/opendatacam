@@ -665,7 +665,7 @@ To enable GPS add the following section to your `config.json`
   "port": 2947,
   "hostname": "localhost",
   "signalLossTimeoutSeconds": 60,
-  "csvExportOpenStreeetMapsUrl": true
+  "csvExportOpenStreetMapsUrl": true
 }
 ```
 
@@ -674,4 +674,4 @@ Whereas
 - `enabled` is a flag to control the feature
 - `port` and `hostname`: Contain the location of the GPS Deamon. If GPSD is running on Linux outside of docker, the IP `172.17.0.1` will allow you to connect to it.
 - `signalLossTimeoutSeconds`: In case of temporary position loss, the old signal will remain valid for this many seconds.
-- `csvExportOpenStreeetMapsUrl`: Besides the raw `lat` and `lon` values, a link to OpenStreetMaps may be added to the exported CSV
+- `csvExportOpenStreetMapsUrl`: Besides the raw `lat` and `lon` values, a link to OpenStreetMaps may be added to the exported CSV
