@@ -60,7 +60,7 @@ var MjpegProxy = exports.MjpegProxy = function(mjpegUrl) {
       self._newClient(req, res);
     } else {
       // Send source MJPEG request
-      self.mjpegRequest = http.request(self.mjpegOptions, function(mjpegResponse) {
+      self.mjpegRequest = http.get(self.mjpegOptions, function(mjpegResponse) {
         // console.log('request');
         self.globalMjpegResponse = mjpegResponse;
         self.boundary = extractBoundary(mjpegResponse.headers['content-type']);
@@ -72,11 +72,10 @@ var MjpegProxy = exports.MjpegProxy = function(mjpegUrl) {
 
         mjpegResponse.on('data', function(chunk) {
           // Fix CRLF issue on iOS 6+: boundary should be preceded by CRLF.
-          var buff = Buffer.from(chunk);
           if (lastByte1 != null && lastByte2 != null) {
             var oldheader = '--' + self.boundary;
             
-            var p = buff.indexOf(oldheader);
+            var p = chunk.indexOf(oldheader);
 
             if (p == 0 && !(lastByte2 == 0x0d && lastByte1 == 0x0a) || p > 1 && !(chunk[p - 2] == 0x0d && chunk[p - 1] == 0x0a)) {
               var b1 = chunk.slice(0, p);
@@ -94,7 +93,7 @@ var MjpegProxy = exports.MjpegProxy = function(mjpegUrl) {
 
             // First time we push data... lets start at a boundary
             if (self.newAudienceResponses.indexOf(res) >= 0) {
-              var p = buff.indexOf('--' + self.boundary);
+              var p = chunk.indexOf('--' + self.boundary);
               if (p >= 0) {
                 res.write(chunk.slice(p));
                 self.newAudienceResponses.splice(self.newAudienceResponses.indexOf(res), 1); // remove from new
@@ -119,7 +118,6 @@ var MjpegProxy = exports.MjpegProxy = function(mjpegUrl) {
       self.mjpegRequest.on('error', function(e) {
         console.error('problem with request: ', e);
       });
-      self.mjpegRequest.end();
     }
   }
 
