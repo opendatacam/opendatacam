@@ -19,8 +19,9 @@ const config = require('./config.json');
 const configHelper = require('./server/utils/configHelper')
 const Tracker = require('node-moving-things-tracker').Tracker;
 const GpsTracker = require('./server/tracker/GpsTracker');
+const package_json = require('./package.json');
 
-if(process.env.npm_package_version !== config.OPENDATACAM_VERSION) {
+if(package_json.version !== config.OPENDATACAM_VERSION) {
   console.log('-----------------------------------')
   console.log(`- ERROR Config.json version doesn't match Opendatacam package.json version -`)
   console.log(`- Use a config.json file version matching: ${process.env.npm_package_version}`)
@@ -61,6 +62,7 @@ const yoloConfig = {
   mjpegStreamPort: configHelper.getMjpegStreamPort(),
   darknetPath: config.PATH_TO_YOLO_DARKNET,
 };
+
 YOLO.init(yoloConfig);
 
 // Select tracker, based on GPS settings in config
