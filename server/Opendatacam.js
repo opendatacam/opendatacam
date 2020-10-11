@@ -163,12 +163,15 @@ module.exports = {
         angleWithCountingLine: angleWithCountingLine
       }
 
-      // Persist GPS Position if available
+      // Persist GPS Position and timestamp if available
       const hasLat = 'lat' in trackedItem;
       const hasLon = 'lon' in trackedItem;
       if(hasLat && hasLon) {
         countedItem.lat = trackedItem.lat;
         countedItem.lon = trackedItem.lon;
+      }
+      if('gpsTimestamp' in trackedItem) {
+        countedItem.gpsTimestamp = trackedItem.gpsTimestamp;
       }
 
       // Add it to the history

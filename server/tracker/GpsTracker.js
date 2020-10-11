@@ -9,6 +9,8 @@ class GpsTracker {
 
   lat = null;
   lon = null;
+  /** The time obtained from GPS signals as JavaScript Date object */
+  gpsTimestamp = null;
   updateTime = null;
   signalLossTimeoutSeconds = null;
   gpsdListener = null;
@@ -85,6 +87,13 @@ class GpsTracker {
       this.lon = tpv.lon;
       this.updateTime = Date.now();
     }
+    if ("time" in tpv) {
+      try {
+        this.gpsTimestamp = new Date(tpv.time);
+      } catch (error) {
+        this.gpsTimestamp = null;
+      }
+    }
   }
 
   getJSONOfTrackedItems = function (roundInt = true) {
@@ -93,6 +102,7 @@ class GpsTracker {
     // Decorate with GPS data
     const isLatLonPresent = this.lat !== null && this.lon !== null;
     const isFresh = this.updateTime && (Date.now() - this.updateTime <= this.signalLossTimeoutSeconds * 1000);
+    const isGpsTimestampPresent = this.gpsTimestamp !== null;
     ret = ret.map((detectedObject) => {
       if (isLatLonPresent && isFresh) {
         detectedObject.lat = this.lat;
@@ -101,6 +111,13 @@ class GpsTracker {
         detectedObject.lat = null;
         detectedObject.lon = null;
       }
+
+      if(isGpsTimestampPresent && isFresh) {
+        detectedObject.gpsTimestamp = this.gpsTimestamp;
+      } else {
+        detectedObject.gpsTimestamp = null;
+      }
+
       return detectedObject;
     });
 

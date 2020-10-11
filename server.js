@@ -878,6 +878,11 @@ app.prepare()
             ret.link = `https://www.openstreetmap.org/?mlat=${countedItem.lat}&mlon=${countedItem.lon}#map=19/${countedItem.lat}/${countedItem.lon}`
           }
 
+          const isGpsTimestampPresent = countedItem.gpsTimestamp !== null;
+          if(isGpsEnabled && isGpsTimestampPresent) {
+            ret.gpsTimestamp = countedItem.gpsTimestamp.toISOString();
+          }
+
           return ret;
         })
       } else {
