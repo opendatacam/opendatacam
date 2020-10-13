@@ -676,12 +676,9 @@ app.prepare()
   */
   express.get('/recording/:id/tracker', (req, res) => {
     DBManager.getTrackerHistoryOfRecording(req.params.id).then((trackerData) => {
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-disposition', `attachment; filename=trackerData-${req.params.id}.json`);
       res.json(trackerData);
-      // res.setHeader('Content-disposition', 'attachment; filename= trackerData.json');
-      // res.setHeader('Content-type', 'application/json');
-      // res.write(JSON.stringify(trackerData), function (err) {
-      //     res.end();
-      // })
     });
   })
 
@@ -826,12 +823,9 @@ app.prepare()
   */
   express.get('/recording/:id/counter', (req, res) => {
     DBManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-disposition', `attachment; filename=counterData-${counterData.dateStart.toISOString().split("T")[0]}-${req.params.id}.json`);
       res.json(counterData);
-      // res.setHeader('Content-disposition', 'attachment; filename= trackerData.json');
-      // res.setHeader('Content-type', 'application/json');
-      // res.write(JSON.stringify(trackerData), function (err) {
-      //     res.end();
-      // })
     });
   })
 
