@@ -645,15 +645,41 @@ To receive GPS position a GPS enabled device must be connected to your Jetson or
 See [GPSD's list of supported devices](https://gpsd.gitlab.io/gpsd/hardware.html).
 
 Additionally you will need GPSD running.
+GPSD can either run in Docker or as a system service.
+
+###### Running GPSD in Docker
+
 The easiest way to run GPSD is through docker using the [opensourcefoundries/gpsd](https://registry.hub.docker.com/r/opensourcefoundries/gpsd) image.
-To start GPSD execute the following command:
 
-```
-# This assumes your device is /dev/ttyAMA0. Please Change accordingly to your setup.
-GPS_DEVICE=/dev/ttyAMA0; docker run -d -p 2947:2947 --device=$GPS_DEVICE opensourcefoundries/gpsd $GPS_DEVICE
+The easiest way is to add the GPSD service to your `docker-compose.yml` the following way.
+
+```yaml
+services:
+  # Add the following service to you docker compose file
+  gpsd:
+    image: opensourcefoundries/gpsd
+    # List your GPS device here and make sure that it matches the device in the entrypoint line
+    devices:
+      - /dev/ttyACM0
+    entrypoint: ["/bin/sh", "-c", "/sbin/syslogd -S -O - -n & exec /usr/sbin/gpsd -N -n -G /dev/ttyACM0", "--"]
+    ports:
+      - "2947:2947"
+    restart: always
 ```
 
-If you want GPSD to start automatically, add the GPSD to your `docker-compose.yml`, or GPSD can run on your machine without docker.
+If GPSD been added to your Docker compose file, please change your GPS `hostname` setting in `config.json` to the name of your GPSD service.
+In the example above this would be `"hostname": "gpsd"`.
+
+Alternatively, if you don't run OpenDataCam in docker you can only start GPSD via the following command:
+
+```bash
+# This assumes your device is /dev/ttyACM0. Please Change accordingly to your setup.
+GPS_DEVICE=/dev/ttyACM0; docker run -d -p 2947:2947 --device=$GPS_DEVICE opensourcefoundries/gpsd $GPS_DEVICE
+```
+
+###### Running GPSD as system service
+
+Please read your operating system documentation.
 
 ##### Configuration
 
@@ -672,6 +698,6 @@ To enable GPS add the following section to your `config.json`
 Whereas
 
 - `enabled` is a flag to control the feature
-- `port` and `hostname`: Contain the location of the GPS Deamon. If GPSD is running on Linux outside of docker, the IP `172.17.0.1` will allow you to connect to it.
+- `port` and `hostname`: Contain the location of the GPS Deamon.
 - `signalLossTimeoutSeconds`: In case of temporary position loss, the old signal will remain valid for this many seconds.
 - `csvExportOpenStreetMapsUrl`: Besides the raw `lat` and `lon` values, a link to OpenStreetMaps may be added to the exported CSV
