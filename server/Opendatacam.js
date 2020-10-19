@@ -48,6 +48,8 @@ const initialState = {
   totalItemsTracked: 0,
   _refTrackedItemIdWhenRecordingStarted: 0,
   sseConnexion: null,
+  // Can be true, false or `null` if unknown
+  isSseConnectionOpen = null,
   recordingStatus: {
     requestedFileRecording: false,
     isRecording: false,
@@ -621,8 +623,13 @@ module.exports = {
   sendUpdateToClient: function() {
     // Stream it to client if SSE request is open
     if(Opendatacam.sseConnexion) {
-      // console.log('sending message');
-      // console.log(`send frame ${Opendatacam.trackerDataForLastFrame.frameIndex}`);
+      // Client connection could be established so log this once!
+      const isClosedOrUnknown = Opendatacam.isSseConnectionOpen == false || Opendatacam.isSseConnectionOpen == null;
+      if(isClosedOrUnknown) {
+        console.info('SSE: Sending update to the client');
+      }
+      Opendatacam.isSseConnectionOpen = true;
+
       Opendatacam.sseConnexion(`data:${JSON.stringify({
         trackerDataForLastFrame: Opendatacam.trackerDataForLastFrame,
         counterSummary: this.getCounterSummary(),
@@ -635,8 +642,12 @@ module.exports = {
         }
       })}\n\n`);
     } else {
-      // Sending update to the client but it is not open
-      console.log('Sending update to the client but the SSE connexion is not open');
+      // The client is not open. Log a info message, but only once!
+      const isOpenOrUnknown = Opendatacam.isSseConnectionOpen == true || Opendatacam.isSseConnectionOpen == null;
+      if(isOpenOrUnknown) {
+        console.info('SSE: Failed sending update to the client');
+      }
+      Opendatacam.isSseConnectionOpen = false;
     }
   },
 
