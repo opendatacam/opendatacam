@@ -871,16 +871,25 @@ app.prepare()
             area: counterData.areas[countedItem.area].name
           }
 
+          // Adds GPS export fields to CSV
           const isGpsEnabled = config.GPS && config.GPS.enabled === true;
-          const isExportOsmLink = config.GPS && config.GPS.csvExportOpenStreetMapsUrl === true;
-          const isLatLonPresent = countedItem.lat !== null && countedItem.lon !== null;
-          if(isGpsEnabled && isExportOsmLink && isLatLonPresent) {
-            ret.link = `https://www.openstreetmap.org/?mlat=${countedItem.lat}&mlon=${countedItem.lon}#map=19/${countedItem.lat}/${countedItem.lon}`
-          }
+          if(isGpsEnabled) {
+            // Links
+            const isExportOsmLink = config.GPS && config.GPS.csvExportOpenStreetMapsUrl === true;
+            if(isExportOsmLink) {
+              const isLatLonPresent = countedItem.lat !== null && countedItem.lon !== null;
+              if(isLatLonPresent) {
+                ret.link = `https://www.openstreetmap.org/?mlat=${countedItem.lat}&mlon=${countedItem.lon}#map=19/${countedItem.lat}/${countedItem.lon}`;
+              } else {
+                ret.link = null;
+              }
+            }
 
-          const isGpsTimestampPresent = countedItem.gpsTimestamp !== null;
-          if(isGpsEnabled && isGpsTimestampPresent) {
-            ret.gpsTimestamp = countedItem.gpsTimestamp.toISOString();
+            // Timestamp
+            const isGpsTimestampPresent = countedItem.gpsTimestamp !== null;
+            if(isGpsTimestampPresent) {
+              ret.gpsTimestamp = countedItem.gpsTimestamp.toISOString();
+            }
           }
 
           return ret;
