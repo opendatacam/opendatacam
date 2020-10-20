@@ -20,23 +20,23 @@ class YoloDarknet {
   constructor(config = null) {
     // Copy the config first
     Object.keys(this.config).forEach((key) => {
-      if(key in config) {
+      if (key in config) {
         this.config[key] = config[key];
       }
     })
 
     var darknetCommand = [];
-    var initialCommand = ['./darknet','detector','demo', this.config.yoloParams.data , this.config.yoloParams.cfg, this.config.yoloParams.weights];
-    var endCommand = ['-ext_output','-dont_show', '-dontdraw_bbox','-json_port', this.config.jsonStreamPort , '-mjpeg_port', this.config.mjpegStreamPort];
+    var initialCommand = ['./darknet', 'detector', 'demo', this.config.yoloParams.data, this.config.yoloParams.cfg, this.config.yoloParams.weights];
+    var endCommand = ['-ext_output', '-dont_show', '-dontdraw_bbox', '-json_port', this.config.jsonStreamPort, '-mjpeg_port', this.config.mjpegStreamPort];
 
     // Special case if input camera is specified as a -c flag as we need to add one arg
-    if(this.config.videoParams.indexOf('-c') === 0) {
+    if (this.config.videoParams.indexOf('-c') === 0) {
       darknetCommand = initialCommand.concat(this.config.videoParams.split(" ")).concat(endCommand);
     } else {
       darknetCommand = initialCommand.concat(this.config.videoParams).concat(endCommand);
     }
 
-    this.process = new (forever.Monitor)(darknetCommand,{
+    this.process = new (forever.Monitor)(darknetCommand, {
       max: Number.POSITIVE_INFINITY,
       cwd: this.config.darknetPath,
       env: { 'LD_LIBRARY_PATH': './' },
@@ -84,21 +84,21 @@ class YoloDarknet {
 
   start() {
     // Do not start it twice
-    if(this.isStarted || this.isStarting) {
+    if (this.isStarted || this.isStarting) {
       console.log('already started');
       return;
     }
 
     this.isStarting = true;
 
-    if(!this.isStarted) {
+    if (!this.isStarted) {
       this.process.start();
     }
   }
 
   stop() {
     return new Promise((resolve, reject) => {
-      if(this.isStarted) {
+      if (this.isStarted) {
         this.process.once("stop", () => {
           console.log('Process YOLO stopped');
           this.isStarted = false;
