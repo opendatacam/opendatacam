@@ -20,6 +20,8 @@ const configHelper = require('./server/utils/configHelper')
 const Tracker = require('node-moving-things-tracker').Tracker;
 const GpsTracker = require('./server/tracker/GpsTracker');
 const package_json = require('./package.json');
+const { YoloDarknet } = require('./server/processes/YoloDarknet');
+const { YoloSimulation } = require('./server/processes/YoloSimulation');
 
 if(package_json.version !== config.OPENDATACAM_VERSION) {
   console.log('-----------------------------------')
@@ -38,20 +40,11 @@ const app = next({ dev })
 const handle = app.getRequestHandler()
 
 // Log config loaded
-if(SIMULATION_MODE) {
-  console.log('-----------------------------------')
-  console.log('-     Opendatacam initialized     -')
-  console.log('- IN SIMULATION MODE              -')
-  console.log('-----------------------------------')
-  YOLO = require('./server/processes/YoloSimulation');
-} else {
-  console.log('-----------------------------------')
-  console.log('-     Opendatacam initialized     -')
-  console.log('- Config loaded:                  -')
-  console.log(JSON.stringify(config, null, 2));
-  console.log('-----------------------------------')
-  YOLO = require('./server/processes/YoloDarknet').YoloDarknet;
-}
+console.log('-----------------------------------')
+console.log('-     Opendatacam initialized     -')
+console.log('- Config loaded:                  -')
+console.log(JSON.stringify(config, null, 2));
+console.log('-----------------------------------')
 
 // Initial YOLO config
 const yoloConfig = {
@@ -62,8 +55,11 @@ const yoloConfig = {
   mjpegStreamPort: configHelper.getMjpegStreamPort(),
   darknetPath: config.PATH_TO_YOLO_DARKNET,
 };
-
-YOLO.init(yoloConfig);
+if(config.VIDEO_INPUT == 'simulation') {
+  YOLO = new YoloSimulation(yoloConfig);
+} else {
+  YOLO = new YoloDarknet(yoloConfig);
+}
 
 // Select tracker, based on GPS settings in config
 var tracker = Tracker;
