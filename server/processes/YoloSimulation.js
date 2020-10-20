@@ -56,6 +56,11 @@ class YoloSimulation extends YoloDarknet {
       this.videoFileFps = YoloSimulation.getFpsForFile(this.config.videoParams.video_file_or_folder);
     }
 
+    // Fix Video Resolution
+    // TODO: Determine resolution from video or jpg files.
+    this.videoResolution.w = 1280;
+    this.videoResolution.h = 720;
+
     console.log('Process YOLO initialized');
     this.isInitialized = true;
     console.debug(this);
