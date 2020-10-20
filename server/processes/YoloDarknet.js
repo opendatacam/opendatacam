@@ -17,7 +17,20 @@ class YoloDarknet {
     darknetPath: null,
   };
 
+  /**
+   * Creates a YoloDarknet object
+   *
+   * @param {*} config The configuration to use
+   *
+   * If config is null, this constructor will still create an object instance, but calling start
+   * will fail.
+   */
   constructor(config = null) {
+    if(config == null) {
+      console.warn('YoloDarknet: Empty configuration passed, most likely because you are in Simulation mode.');
+      return;
+    }
+
     // Copy the config first
     Object.keys(this.config).forEach((key) => {
       if (key in config) {
