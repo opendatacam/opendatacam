@@ -138,18 +138,6 @@ class YoloDarknet {
     // Files are recorded, everything else is live
     return this.config.videoType !== "file";
   }
-
-  /**
-   * Creates a new YoloDarknet Object
-   *
-   * @param {*} config The config to use
-   * @returns {YoloDarknet} A new YoloDarknet Object
-   *
-   * @deprecated Use {@link YoloDarknet#constructor} instead
-   */
-  static init(config = null) {
-    return new YoloDarknet(config);
-  }
 }
 
 module.exports = { YoloDarknet };

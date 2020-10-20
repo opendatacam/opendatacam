@@ -300,18 +300,6 @@ class YoloSimulation extends YoloDarknet {
       callback(error, stdout);
     });
   }
-
-  /**
-   * Creates a new YoloSimulation Object
-   *
-   * @param {*} config The config to use
-   * @returns {YoloSimulation} A new YoloSimulation Object
-   *
-   * @deprecated Use {@link YoloSimulation#constructor} instead
-   */
-  static init(config = null) {
-    return new YoloSimulation(config);
-  }
 }
 
 module.exports = { YoloSimulation };
