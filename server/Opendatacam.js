@@ -762,6 +762,16 @@ module.exports = {
   // Listen to 8070 for Tracker data detections
   listenToYOLO(yolo, urlData) {
     Opendatacam.yolo = yolo;
+
+    const hasResolution = yolo.getVideoResolution().w > 0 && yolo.getVideoResolution().h > 0;
+    if(hasResolution) {
+      this.setVideoResolution(yolo.getVideoResolution());
+    } else {
+      yolo.once('videoresolution', (resolution) => {
+        this.setVideoResolution(resolution);
+      });
+    }
+
     var self = this;
     // HTTPJSONSTREAM req
     if(Opendatacam.isListeningToYOLO) {
