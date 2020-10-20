@@ -8,11 +8,6 @@ const { performance } = require('perf_hooks');
 const { YoloDarknet } = require('./YoloDarknet');
 
 class YoloSimulation extends YoloDarknet {
-  // State Information
-  isStarting = false;
-  isStarted = false;
-  isInitialized = false;
-
   config = {
     videoParams: {
       yolo_json: null,
@@ -104,20 +99,8 @@ class YoloSimulation extends YoloDarknet {
     return this.config.videoParams.isLive;
   }
 
-  getStatus() {
-    return {
-      isStarting: this.isStarting,
-      isStarted: this.isStarted
-    }
-  }
-
   getVideoParams() {
     return this.config.videoParams.yolo_json;
-  }
-
-  restart() {
-    // Stop returns a promise. Once it is resolved we call start again
-    this.stop().then(this.start);
   }
 
   start() {
