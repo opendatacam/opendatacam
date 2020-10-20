@@ -1,126 +1,135 @@
 const forever = require('forever-monitor');
+const { performance } = require('perf_hooks');
 
-const {
-  performance
-} = require('perf_hooks');
-
-let YOLO = {
-  isStarting: false,
-  isStarted: false,
-  isInitialized: false,
-  process: null,
-  config: {
+class YoloDarknet {
+  isStarting = false;
+  isStarted = false;
+  isInitialized = false;
+  process = null;
+  config = {
     yoloParams: null,
     videoType: null,
     videoParams: null,
     jsonStreamPort: null,
     mjpegStreamPort: null,
     darknetPath: null,
-  }
-};
+  };
 
-module.exports = {
-  init: function(config = null) {
+  constructor(config = null) {
     // Copy the config first
-    Object.keys(YOLO.config).forEach((key) => {
+    Object.keys(this.config).forEach((key) => {
       if(key in config) {
-        YOLO.config[key] = config[key];
+        this.config[key] = config[key];
       }
     })
 
     var darknetCommand = [];
-    var initialCommand = ['./darknet','detector','demo', YOLO.config.yoloParams.data , YOLO.config.yoloParams.cfg, YOLO.config.yoloParams.weights];
-    var endCommand = ['-ext_output','-dont_show', '-dontdraw_bbox','-json_port', YOLO.config.jsonStreamPort , '-mjpeg_port', YOLO.config.mjpegStreamPort];
+    var initialCommand = ['./darknet','detector','demo', this.config.yoloParams.data , this.config.yoloParams.cfg, this.config.yoloParams.weights];
+    var endCommand = ['-ext_output','-dont_show', '-dontdraw_bbox','-json_port', this.config.jsonStreamPort , '-mjpeg_port', this.config.mjpegStreamPort];
 
     // Special case if input camera is specified as a -c flag as we need to add one arg
-    if(YOLO.config.videoParams.indexOf('-c') === 0) {
-      darknetCommand = initialCommand.concat(YOLO.config.videoParams.split(" ")).concat(endCommand);
+    if(this.config.videoParams.indexOf('-c') === 0) {
+      darknetCommand = initialCommand.concat(this.config.videoParams.split(" ")).concat(endCommand);
     } else {
-      darknetCommand = initialCommand.concat(YOLO.config.videoParams).concat(endCommand);
+      darknetCommand = initialCommand.concat(this.config.videoParams).concat(endCommand);
     }
 
-    YOLO.process = new (forever.Monitor)(darknetCommand,{
+    this.process = new (forever.Monitor)(darknetCommand,{
       max: Number.POSITIVE_INFINITY,
-      cwd: YOLO.config.darknetPath,
+      cwd: this.config.darknetPath,
       env: { 'LD_LIBRARY_PATH': './' },
       killTree: true
     });
 
-    YOLO.process.on("start", () => {
+    this.process.on("start", () => {
       console.log('Process YOLO started');
-      YOLO.isStarted = true;
-      YOLO.isStarting = false;
+      this.isStarted = true;
+      this.isStarting = false;
     });
 
-    YOLO.process.on("restart", () => {
+    this.process.on("restart", () => {
       // Forever
       console.log("Restart YOLO");
     })
 
-    YOLO.process.on("error", (err) => {
+    this.process.on("error", (err) => {
       console.log('Process YOLO error');
       console.log(err);
     });
 
-    YOLO.process.on("exit", (err) => {
+    this.process.on("exit", (err) => {
       console.log('Process YOLO exit');
       //console.log(err);
     });
 
     console.log('Process YOLO initialized');
-    YOLO.isInitialized = true;
+    this.isInitialized = true;
 
     // TODO handle other kind of events
     // https://github.com/foreverjs/forever-monitor#events-available-when-using-an-instance-of-forever-in-nodejs
-  },
+  }
 
-  getStatus: function() {
+  getStatus() {
     return {
-      isStarting: YOLO.isStarting,
-      isStarted: YOLO.isStarted
+      isStarting: this.isStarting,
+      isStarted: this.isStarted
     }
-  },
+  }
 
-  getVideoParams: function() {
-    return YOLO.config.videoParams;
-  },
+  getVideoParams() {
+    return this.config.videoParams;
+  }
 
-  start: function() {
+  start() {
     // Do not start it twice
-    if(YOLO.isStarted || YOLO.isStarting) {
+    if(this.isStarted || this.isStarting) {
       console.log('already started');
       return;
     }
 
-    YOLO.isStarting = true;
+    this.isStarting = true;
 
-    if(!YOLO.isStarted) {
-      YOLO.process.start();
+    if(!this.isStarted) {
+      this.process.start();
     }
-  },
+  }
 
-  stop: function() {
+  stop() {
     return new Promise((resolve, reject) => {
-      if(YOLO.isStarted) {
-        YOLO.process.once("stop", () => {
+      if(this.isStarted) {
+        this.process.once("stop", () => {
           console.log('Process YOLO stopped');
-          YOLO.isStarted = false;
+          this.isStarted = false;
           resolve();
         });
-        YOLO.process.stop();
+        this.process.stop();
       }
     });
-  },
+  }
 
   restart() {
     console.log('Process YOLO restart');
     this.stop().then(() => {
       this.start();
     });
-  },
+  }
 
   isLive() {
     // Files are recorded, everything else is live
-    return YOLO.config.videoType !== "file";
+    return this.config.videoType !== "file";
+  }
+
+  /**
+   * Creates a new YoloDarknet Object
+   *
+   * @param {*} config The config to use
+   * @returns {YoloDarknet} A new YoloDarknet Object
+   *
+   * @deprecated Use {@link YoloDarknet#constructor} instead
+   */
+  static init(config = null) {
+    return new YoloDarknet(config);
   }
 }
+
+module.exports = { YoloDarknet };
