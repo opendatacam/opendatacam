@@ -6,6 +6,8 @@ class YoloDarknet {
   isStarted = false;
   isInitialized = false;
   process = null;
+
+  /** The configuration passed to the constructor. */
   config = {
     yoloParams: null,
     videoType: null,
@@ -114,6 +116,11 @@ class YoloDarknet {
     });
   }
 
+  /**
+   * Indicate wether the source is live or pre-recorded
+   *
+   * @returns {boolean} true if live; false if pre-recorded
+   */
   isLive() {
     // Files are recorded, everything else is live
     return this.config.videoType !== "file";
