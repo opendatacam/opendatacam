@@ -6,7 +6,7 @@
     "build": "next build",
     "start": "PORT=8080 NODE_ENV=production node server.js",
     "generateapidoc": "apidoc -i . -e node_modules/ -o apidoc/",
-    "test": "jasmine"
+    "test": "node --unhandled-rejections=strict ./node_modules/jasmine/bin/jasmine.js"
   },
   "dependencies": {
     "axios": "^0.19.2",
