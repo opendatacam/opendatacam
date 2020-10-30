@@ -11,13 +11,7 @@
     "raspberrycam": "nvarguscamerasrc ! video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12 ! nvvidconv ! video/x-raw, format=BGRx, width=640, height=360 ! videoconvert ! video/x-raw, format=BGR ! appsink",
     "remote_cam": "YOUR IP CAM STREAM (can be .m3u8, MJPEG ...), anything supported by opencv",
     "remote_hls_gstreamer": "souphttpsrc location=http://YOUR_HLSSTREAM_URL_HERE.m3u8 ! hlsdemux ! decodebin ! videoconvert ! videoscale ! appsink",
-    "simulation": {
-      "yolo_json": "public/static/placeholder/alexeydetections30FPS.json",
-      "video_file_or_folder": "public/static/placeholder/frames",
-      "isLive": true,
-      "jsonFps": 20,
-      "mjpgFps": 0.2
-    }
+    "simulation": "--yolo_json public/static/placeholder/alexeydetections30FPS.json --video_file_or_folder public/static/placeholder/frames --isLive true --jsonFps 20 --mjpgFps 0.2"
   },
   "TRACKER_SETTINGS": {
     "objectMaxAreaInPercentageOfFrame": 80,

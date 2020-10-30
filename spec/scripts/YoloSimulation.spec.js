@@ -1,4 +1,4 @@
-const { YoloSimulation } = require('../../../server/processes/YoloSimulation');
+const { YoloSimulation } = require('../../scripts/YoloSimulation');
 
 describe('YoloSimulation', function () {
   let yolo = null;

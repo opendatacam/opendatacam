@@ -5,7 +5,7 @@ const killable = require('killable');
 const mjpegServer = require('mjpeg-server');
 const { execFile, execFileSync } = require('child_process');
 const { performance } = require('perf_hooks');
-const { YoloDarknet } = require('./YoloDarknet');
+const { YoloDarknet } = require('../server/processes/YoloDarknet');
 const yargs = require('yargs');
 
 class YoloSimulation extends YoloDarknet {
@@ -68,7 +68,7 @@ class YoloSimulation extends YoloDarknet {
     // XXX: paths in the config are relative from node root. So make sure we
     // normalize before the include
     if (!path.isAbsolute(p)) {
-      return path.join(__dirname, '..', '..', p);
+      return path.join(__dirname, '..', p);
     }
 
     return p;
