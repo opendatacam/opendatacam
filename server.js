@@ -54,6 +54,7 @@ const yoloConfig = {
   jsonStreamPort: configHelper.getJsonStreamPort(),
   mjpegStreamPort: configHelper.getMjpegStreamPort(),
   darknetPath: config.PATH_TO_YOLO_DARKNET,
+  darknetCmd: config.CMD_TO_YOLO_DARKNET
 };
 if(config.VIDEO_INPUT == 'simulation') {
   YOLO = new YoloSimulation(yoloConfig);
