@@ -6,6 +6,7 @@ const mjpegServer = require('mjpeg-server');
 const { execFile, execFileSync } = require('child_process');
 const { performance } = require('perf_hooks');
 const { YoloDarknet } = require('./YoloDarknet');
+const yargs = require('yargs');
 
 class YoloSimulation extends YoloDarknet {
   config = {
@@ -21,7 +22,8 @@ class YoloSimulation extends YoloDarknet {
     },
     jsonStreamPort: 8070,
     mjpegStreamPort: 8090,
-    simulationStartupDelayMs: 5000
+    simulationStartupDelayMs: 5000,
+    darknetStdout: false
   };
 
   // Store the path of the JSON file and the video files including some
@@ -145,6 +147,11 @@ class YoloSimulation extends YoloDarknet {
   }
 
   startYOLOSimulation(callback) {
+    // Print Resolution Information
+    if(this.config.darknetStdout) {
+      console.log(`Video stream: ${this.videoResolution.w}x${this.videoResolution.h}`);
+    }
+
     // Contains the state of the simulation e.g. open connections
     const simulationState = {
       JSONStreamRes: null,
@@ -309,6 +316,58 @@ class YoloSimulation extends YoloDarknet {
       callback(error, stdout);
     });
   }
+}
+
+const isDirectExecution = __filename == process.argv[1];
+if(isDirectExecution) {
+  console.log('YoloSimulation Start with Arguments');
+
+  const simulationYargs = yargs
+    .option('yolo_json', {
+      requiresArg: true
+    })
+    .option('video_file_or_folder', {
+      requiresArg: true,
+      default: ''
+    })
+    .option('isLive', {
+      type: 'boolean',
+      default: true
+    })
+    .option('jsonFps', {
+      type: 'number',
+      requiresArg: true,
+      default: 20
+    })
+    .option('mjpgFps', {
+      type: 'number',
+      requiresArg: true,
+      default: 20
+    })
+    .option('darknetStdout', {
+      type: 'boolean',
+      default: true
+    })
+    .demandOption(['yolo_json'])
+    .help();
+  const simulationArgv = simulationYargs.parse(process.argv[7]);
+
+  const config = {
+    videoParams: {
+      yolo_json: simulationArgv.yolo_json,
+      video_file_or_folder: simulationArgv.video_file_or_folder,
+      isLive: simulationArgv.isLive,
+      jsonFps: simulationArgv.jsonFps,
+      mjpgFps: simulationArgv.mjpgFps,
+    },
+    jsonStreamPort: parseInt(process.argv[12]),
+    mjpegStreamPort: parseInt(process.argv[14]),
+    darknetStdout: simulationArgv.darknetStdout
+  };
+  console.log(config);
+
+  const yoloSim = new YoloSimulation(config);
+  yoloSim.start();
 }
 
 module.exports = { YoloSimulation };
