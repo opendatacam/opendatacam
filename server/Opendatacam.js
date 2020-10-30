@@ -50,7 +50,7 @@ const initialState = {
   _refTrackedItemIdWhenRecordingStarted: 0,
   sseConnexion: null,
   // Can be true, false or `null` if unknown
-  isSseConnectionOpen = null,
+  isSseConnectionOpen: null,
   recordingStatus: {
     requestedFileRecording: false,
     isRecording: false,
