@@ -369,10 +369,10 @@ module.exports = {
 
     this.sendUpdateToClient();
     if(countedItemsForThisFrame.length > 0 && countedItemsForThisFrame[0] != undefined) {
-      Opendatacam.eventEmitter.emit('count', countedItemsForThisFrame);
+      Opendatacam.eventEmitter.emit('count', countedItemsForThisFrame, frameId);
     }
     if(trackerDataForThisFrame.length > 0) {
-      Opendatacam.eventEmitter.emit('track', trackerDataForThisFrame);
+      Opendatacam.eventEmitter.emit('track', trackerDataForThisFrame, frameId);
     }
   },
 
