@@ -21,14 +21,27 @@ describe('YoloSimulation', function () {
       jsonStreamPort: 8070,
       mjpegStreamPort: 8090,
       darknetPath: './spec/scripts/',
+      simulationStartupDelayMs: 0
     };
     yolo = new YoloSimulation(yoloConfig);
   });
 
   describe('videoResolution', function () {
-    it('has fixed resolution on creation', function () {
+    it('has 0x0 on creation', function () {
+      expect(yolo.getVideoResolution()).toEqual({ w: 0, h: 0 });
+    });
+
+    it('parses emits videoresolutionevent', async function () {
+      let emittedResolution = null;
+      yolo.on('videoresolution', (resolution) => { emittedResolution = resolution });
+      yolo.start();
+
+      // Give yolo 100ms to start the subprocess
+      await new Promise(resolve => setTimeout(resolve, 100));
+
       const expectedResolution = { w: 1280, h: 720 };
       expect(yolo.getVideoResolution()).toEqual(expectedResolution);
+      expect(emittedResolution).toEqual(expectedResolution);
     });
   });
 });

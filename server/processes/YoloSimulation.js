@@ -21,6 +21,7 @@ class YoloSimulation extends YoloDarknet {
     },
     jsonStreamPort: 8070,
     mjpegStreamPort: 8090,
+    simulationStartupDelayMs: 5000
   };
 
   // Store the path of the JSON file and the video files including some
@@ -55,11 +56,6 @@ class YoloSimulation extends YoloDarknet {
     if (this.videoFileOrFolderExists && !this.isVideoDirectory) {
       this.videoFileFps = YoloSimulation.getFpsForFile(this.config.videoParams.video_file_or_folder);
     }
-
-    // Fix Video Resolution
-    // TODO: Determine resolution from video or jpg files.
-    this.videoResolution.w = 1280;
-    this.videoResolution.h = 720;
 
     console.log('Process YOLO initialized');
     this.isInitialized = true;
@@ -119,13 +115,20 @@ class YoloSimulation extends YoloDarknet {
 
     setTimeout(() => {
       // Simulate 5s to start yolo
+
+      // Fix Video Resolution
+      // TODO: Determine resolution from video or jpg files.
+      this.videoResolution.w = 1280;
+      this.videoResolution.h = 720;
+      this.emit('videoresolution', this.videoResolution);
+
       this.startYOLOSimulation(() => {
         // When the simulation is up and running come back here to update
         // the state
         this.isStarting = false;
         this.isStarted = true;
       });
-    }, 5000);
+    }, this.config.simulationStartupDelayMs);
   }
 
   stop() {
