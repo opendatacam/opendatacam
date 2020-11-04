@@ -9,11 +9,17 @@ class GpsTracker {
 
   lat = null;
   lon = null;
-  updateTime = null;
+  /** The time obtained from GPS signals as JavaScript Date object */
+  gpsTimestamp = null;
+  /** The system timestamp of the last GPS position fix as JavaScript Date object */
+  positionUpdateTime = null;
+  /** The system timestamp of the last GPS timestamp fix as JavaScript Date object */
+  timeUpdateTime = null;
   signalLossTimeoutSeconds = null;
   gpsdListener = null;
   gpsdReconnectBackoffMillis = this.DEFAULT_GPSD_RECONNECT_BACKUP_MILLIS;
   gpsdReconnectTimer = null;
+  logger = console;
 
   /**
    * Creates a new GPS Tracker to augment the given tracker.
@@ -40,7 +46,7 @@ class GpsTracker {
 
     // Set up the GPS listener and make it automatically reconnect
     this.gpsdListener.on('connected', () => {
-      console.debug('GPSD Connected');
+      this.logger.info('GPSD: Connected');
       this.gpsdReconnectBackoffMillis = this.DEFAULT_GPSD_RECONNECT_BACKUP_MILLIS;
       this.gpsdListener.watch();
     });
@@ -69,7 +75,15 @@ class GpsTracker {
       //    at Socket.emit (events.js:315:20)
       //    at TCP.<anonymous> (net.js:670:12)
       this.gpsdReconnectTimer = setTimeout(() => { this.gpsdListener.connect(); }, this.gpsdReconnectBackoffMillis);
-      console.debug(`GPSD Connection Failed. Retrying in ${this.gpsdReconnectBackoffMillis} milliseconds.`);
+      this.logger.warn(`GPSD: Connection Failed. Retrying in ${this.gpsdReconnectBackoffMillis} milliseconds.`);
+      this.logger.info(`GPSD: Lost GPS position. lat=${this.lat} lon=${this.lon}`);
+      if(this.gpsTimestamp !== null) {
+        this.logger.info(`GPSD: Lost GPS time. gpsTimestamp=${this.gpsTimestamp.toISOString()}`);
+      }
+      this.lon = null;
+      this.lat = null;
+      this.gpsTimestamp = null;
+
     });
     // XXX: Do not remove anonymous function.
     // Similar to above calling directly messes up the "this" reference.
@@ -81,9 +95,30 @@ class GpsTracker {
 
   handleGpsTpvUpdate = function (tpv) {
     if (tpv.lat && tpv.lon) {
+
+      // Log if this is the first position fix we get
+      if(this.lat == null) {
+        this.logger.info(`GPSD: Got GPS position. lat=${tpv.lat} lon=${tpv.lon}`);
+      }
+
       this.lat = tpv.lat;
       this.lon = tpv.lon;
-      this.updateTime = Date.now();
+      this.positionUpdateTime = Date.now();
+    }
+    if ("time" in tpv) {
+      try {
+        const gpsTimestamp = new Date(tpv.time);
+
+        // Log if this is the first time fix we get
+        if(this.gpsTimestamp == null) {
+          this.logger.info(`GPSD: Got GPS time. gpsTimestamp=${gpsTimestamp.toISOString()}`);
+        }
+
+        this.gpsTimestamp = gpsTimestamp;
+        this.timeUpdateTime = Date.now();
+      } catch (error) {
+        this.gpsTimestamp = null;
+      }
     }
   }
 
@@ -92,15 +127,39 @@ class GpsTracker {
 
     // Decorate with GPS data
     const isLatLonPresent = this.lat !== null && this.lon !== null;
-    const isFresh = this.updateTime && (Date.now() - this.updateTime <= this.signalLossTimeoutSeconds * 1000);
+    const isPositionFresh = this.positionUpdateTime && (Date.now() - this.positionUpdateTime <= this.signalLossTimeoutSeconds * 1000);
+    const isGpsTimestampPresent = this.gpsTimestamp !== null;
+    const isGpsTimestamFresh = this.timeUpdateTime && (Date.now() - this.timeUpdateTime <= this.signalLossTimeoutSeconds * 1000);
     ret = ret.map((detectedObject) => {
-      if (isLatLonPresent && isFresh) {
+      if (isLatLonPresent && isPositionFresh) {
         detectedObject.lat = this.lat;
         detectedObject.lon = this.lon;
       } else {
+
+        // Log if we lost the position
+        if(this.lat !== null) {
+          this.logger.info(`GPSD: Lost GPS position. lat=${this.lat} lon=${this.lon}`);
+          this.lat = null;
+          this.lon = null;
+        }
+
         detectedObject.lat = null;
         detectedObject.lon = null;
       }
+
+      if(isGpsTimestampPresent && isGpsTimestamFresh) {
+        detectedObject.gpsTimestamp = this.gpsTimestamp;
+      } else {
+
+        // Log if we lost the time
+        if(this.gpsTimestamp !== null) {
+          this.logger.info(`GPSD: Lost GPS time. gpsTimestamp=${this.gpsTimestamp.toISOString()}`);
+          this.gpsTimestamp = null;
+        }
+
+        detectedObject.gpsTimestamp = null;
+      }
+
       return detectedObject;
     });
 
