@@ -5,7 +5,8 @@
     "dev": "node server.js",
     "build": "next build",
     "start": "PORT=8080 NODE_ENV=production node server.js",
-    "generateapidoc": "apidoc -i . -e node_modules/ -o apidoc/"
+    "generateapidoc": "apidoc -i . -e node_modules/ -o apidoc/",
+    "test": "node --unhandled-rejections=strict ./node_modules/jasmine/bin/jasmine.js"
   },
   "dependencies": {
     "axios": "^0.19.2",
@@ -46,6 +47,7 @@
     "apidoc": "^0.23.0",
     "autoprefixer": "^9.8.0",
     "cssnano": "^4.1.10",
+    "jasmine": "^3.6.2",
     "redux-devtools-extension": "^2.13.8",
     "tailwindcss": "^1.4.6"
   }

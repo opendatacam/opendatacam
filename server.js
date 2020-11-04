@@ -20,6 +20,8 @@ const configHelper = require('./server/utils/configHelper')
 const Tracker = require('node-moving-things-tracker').Tracker;
 const GpsTracker = require('./server/tracker/GpsTracker');
 const package_json = require('./package.json');
+const { YoloDarknet } = require('./server/processes/YoloDarknet');
+const { YoloSimulation } = require('./server/processes/YoloSimulation');
 
 if(package_json.version !== config.OPENDATACAM_VERSION) {
   console.log('-----------------------------------')
@@ -38,20 +40,11 @@ const app = next({ dev })
 const handle = app.getRequestHandler()
 
 // Log config loaded
-if(SIMULATION_MODE) {
-  console.log('-----------------------------------')
-  console.log('-     Opendatacam initialized     -')
-  console.log('- IN SIMULATION MODE              -')
-  console.log('-----------------------------------')
-  YOLO = require('./server/processes/YoloSimulation');
-} else {
-  console.log('-----------------------------------')
-  console.log('-     Opendatacam initialized     -')
-  console.log('- Config loaded:                  -')
-  console.log(JSON.stringify(config, null, 2));
-  console.log('-----------------------------------')
-  YOLO = require('./server/processes/YoloDarknet');
-}
+console.log('-----------------------------------')
+console.log('-     Opendatacam initialized     -')
+console.log('- Config loaded:                  -')
+console.log(JSON.stringify(config, null, 2));
+console.log('-----------------------------------')
 
 // Initial YOLO config
 const yoloConfig = {
@@ -62,8 +55,11 @@ const yoloConfig = {
   mjpegStreamPort: configHelper.getMjpegStreamPort(),
   darknetPath: config.PATH_TO_YOLO_DARKNET,
 };
-
-YOLO.init(yoloConfig);
+if(config.VIDEO_INPUT == 'simulation') {
+  YOLO = new YoloSimulation(yoloConfig);
+} else {
+  YOLO = new YoloDarknet(yoloConfig);
+}
 
 // Select tracker, based on GPS settings in config
 var tracker = Tracker;
@@ -96,34 +92,11 @@ DBManager.init().then(
   }
 )
 
-// TODO Move the stdout code into it's own module
-var videoResolution = null;
-
-if(SIMULATION_MODE) {
-  videoResolution = {
-    w: 1280,
-    h: 720
-  }
-  Opendatacam.setVideoResolution(videoResolution)
-}
-
 var stdoutBuffer = "";
 var stdoutInterval = "";
 var bufferLimit = 30000;
 var unhook_intercept = intercept(function(text) {
   var stdoutText = text.toString();
-  // Hacky way to get the video resolution from YOLO
-  // We parse the stdout looking for "Video stream: 640 x 480"
-  // alternative would be to add this info to the JSON stream sent by YOLO, would need to send a PR to https://github.com/alexeyab/darknet
-  if(stdoutText.indexOf('Video stream:') > -1) {
-    var splitOnStream = stdoutText.toString().split("stream:")
-    var ratio = splitOnStream[1].split("\n")[0];
-    videoResolution = {
-      w : parseInt(ratio.split("x")[0].trim()),
-      h : parseInt(ratio.split("x")[1].trim())
-    }
-    Opendatacam.setVideoResolution(videoResolution);
-  }
   stdoutBuffer += stdoutText;
   stdoutInterval += stdoutText;
 

@@ -763,7 +763,23 @@ module.exports = {
 
   // Listen to 8070 for Tracker data detections
   listenToYOLO(yolo, urlData) {
+    const isSameYoloIntance = Opendatacam.yolo === yolo;
     Opendatacam.yolo = yolo;
+
+    if(Opendatacam.videoResolution == null) {
+      const hasResolution = yolo.getVideoResolution().w > 0 && yolo.getVideoResolution().h > 0;
+      if(hasResolution) {
+        this.setVideoResolution(yolo.getVideoResolution());
+      } else {
+        // Avoid re-registering to Yolo on reconnects.
+        if(!isSameYoloIntance) {
+          yolo.once('videoresolution', (resolution) => {
+            this.setVideoResolution(resolution);
+          });
+        }
+      }
+    }
+
     var self = this;
     // HTTPJSONSTREAM req
     if(Opendatacam.isListeningToYOLO) {
