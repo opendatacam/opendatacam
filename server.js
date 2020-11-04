@@ -159,7 +159,6 @@ app.prepare()
    * More on MJPEG over HTTP: https://en.wikipedia.org/wiki/Motion_JPEG#M-JPEG_over_HTTP
    *
   */
-  var mjpgProxy = null;
   express.get('/webcam/stream', (req, res) => {
     // Proxy MJPEG stream from darknet to avoid freezing issues
     if(mjpgProxy == null) {
@@ -168,6 +167,7 @@ app.prepare()
     }
     return mjpgProxy.proxyRequest(req, res);
   });
+  var mjpgProxy = null;
 
   /**
    * @api {get} /webcam/resolution Resolution
