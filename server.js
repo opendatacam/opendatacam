@@ -71,6 +71,19 @@ const isGpsEnabled = config.GPS && config.GPS.enabled === true;
 if(isGpsEnabled) {
   tracker = new GpsTracker(Tracker, config.GPS);
 }
+// Set tracker params
+if(config.TRACKER_SETTINGS) {
+  const trackerParams = {};
+  const paramKeys = ['iouLimit', 'unMatchedFrameTolerance', 'fastDelete', 'distanceFunc', 'distanceLimit'];
+
+  paramKeys.forEach((key) => {
+    if(key in config.TRACKER_SETTINGS) {
+      trackerParams[key] = config.TRACKER_SETTINGS[key];
+    }
+  });
+
+  tracker.setParams(trackerParams);
+}
 Opendatacam.setTracker(tracker);
 
 // Init connection to db
