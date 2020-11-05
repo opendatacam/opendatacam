@@ -4,6 +4,10 @@ const cloneDeep = require('lodash.clonedeep');
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
+const { promisify } = require('util');
+const { once } = require('events');
+const stream = require('stream');
+const StreamArray = require('stream-json/streamers/StreamArray');
 const config = require('../config.json');
 const Recording = require('./model/Recording');
 const DBManager = require('./db/DBManager');
@@ -11,6 +15,7 @@ const Logger = require('./utils/Logger');
 const configHelper = require('./utils/configHelper');
 const isInsidePolygon = require('point-in-polygon')
 const { EventEmitter } = require('events');
+const pipeline = promisify(stream.pipeline);
 
 // YOLO process max retries
 const HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS = 30;
@@ -807,82 +812,20 @@ module.exports = {
       method:   'GET'
     };
 
-
-    var noMessageReceivedYet = true;
-
     Logger.log('Send request to connect to YOLO JSON Stream')
-    self.HTTPRequestListeningToYOLO = http.request(options, function(res) {
-      Logger.log(`statusCode: ${res.statusCode}`)
-      var message = ""; // variable that collects chunks
-      var separator = "}"; // consider chunk complete if I see this char
+    self.HTTPRequestListeningToYOLO = http.get(options);
 
-      res.on('data', function(chunk) {
-        if(noMessageReceivedYet) {
-          noMessageReceivedYet = false;
-          console.log('Got first message from JSONStream')
-        }
-        var msgChunk = chunk.toString();
-        Logger.log('----')
-        Logger.log('----')
-        Logger.log('----')
-        Logger.log('----')
-        Logger.log('JSON Message received')
-        Logger.log('----')
-        Logger.log('----')
-        Logger.log('----')
-        Logger.log(msgChunk);
-        Logger.log('----')
-        Logger.log('----')
-        Logger.log('----')
-        Logger.log('----')
-        Logger.log('----')
-        Logger.log('----')
-        Logger.log('----')
+    once(self.HTTPRequestListeningToYOLO, 'response').then(([res]) => {
+      Logger.log(`statusCode: ${res.statusCode}`);
+      res.once('data', () => console.log('Got first JSON chunk'));
 
-        let lastChar = '';
-        let isMessageComplete = false;
+      const parser = StreamArray.withParser();
+      parser.on('data', ({ key, value }) =>
+        self.updateWithNewFrame(value.objects, value.frame_id));
+      return pipeline(res, parser);
+    }).then(onEnd, onError);
 
-        // This ignores the "," message of the stream separating the frame data
-        if(msgChunk.trim().length === 1) {
-          Logger.log('----')
-          Logger.log('----')
-          Logger.log('----')
-          Logger.log('------- IGNORE CHUNK , most likely a coma')
-          Logger.log('----')
-          Logger.log('----')
-        } else {
-          message += msgChunk;
-          lastChar = message[message.length -1];
-          isMessageComplete = lastChar === separator;
-        }
-
-        if(isMessageComplete) {
-          var detectionsOfThisFrame = null;
-          try {
-            Logger.log('Message complete, parse it')
-            if(message.charAt(0) === ',') {
-              Logger.log('First char is a comma, remove it')
-              message = message.substr(1);
-            }
-            detectionsOfThisFrame = JSON.parse(message);
-            message = '';
-            self.updateWithNewFrame(detectionsOfThisFrame.objects, detectionsOfThisFrame.frame_id);
-          } catch (error) {
-            console.log("Error with message send by YOLO, not valid JSON")
-            message = '';
-            Logger.log(message);
-            Logger.log(error);
-            // res.emit('close');
-          }
-
-          // Put this outside the try-catch loop to have proper error handling for updateWithNewFrame
-          if(detectionsOfThisFrame !== null) {
-            self.updateWithNewFrame(detectionsOfThisFrame.objects, detectionsOfThisFrame.frame_id);
-          }
-        }
-      });
-
-      res.on('close', () => {
+    function onEnd() {
         if(Opendatacam.isListeningToYOLO)  {
           console.log("==== HTTP Stream closed by darknet, reset UI ====")
           console.log("==== If you are running on a file, it is restarting  because you reached the end ====")
@@ -900,10 +843,9 @@ module.exports = {
         } else {
           // Counting stopped by user, keep yolo running
         }
-      });
-    });
+    }
 
-    self.HTTPRequestListeningToYOLO.on('error', function(e) {
+    function onError(e) {
       // TODO Need a YOLO.isRunning()
       if(
         !Opendatacam.isListeningToYOLO &&
@@ -921,10 +863,7 @@ module.exports = {
         console.log('Too much retries, YOLO took more than 3 min to start, likely an error')
         console.log(Opendatacam.HTTPRequestListeningToYOLOMaxRetries)
       }
-    });
-
-    // Actually send request
-    self.HTTPRequestListeningToYOLO.end();
+    }
   },
 
   setUISettings(settings) {
