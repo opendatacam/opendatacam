@@ -148,7 +148,7 @@ class YoloSimulation extends YoloDarknet {
 
   startYOLOSimulation(callback) {
     // Print Resolution Information
-    if(this.config.darknetStdout) {
+    if (this.config.darknetStdout) {
       console.log(`Video stream: ${this.videoResolution.w}x${this.videoResolution.h}`);
     }
 
@@ -316,58 +316,96 @@ class YoloSimulation extends YoloDarknet {
       callback(error, stdout);
     });
   }
+
+  /**
+   * Parses the command line to create a config object
+   *
+   * @param {*} argv String[] of the command line arguments
+   *
+   * @returns A command line object
+   *
+   * @throws Error if parsing failed
+   */
+  static parseCmdLine(argv) {
+    const simulationYargs = yargs
+      .option('yolo_json', {
+        requiresArg: true
+      })
+      .option('video_file_or_folder', {
+        requiresArg: true,
+        default: ''
+      })
+      .option('isLive', {
+        type: 'boolean',
+        default: true
+      })
+      .option('jsonFps', {
+        type: 'number',
+        requiresArg: true,
+        default: 20
+      })
+      .option('mjpgFps', {
+        type: 'number',
+        requiresArg: true,
+        default: 20
+      })
+      .option('darknetStdout', {
+        type: 'boolean',
+        default: true
+      })
+      .option('json_port', {
+        type: 'number',
+        requiresArg: true,
+        default: 8070
+      })
+      .option('mjpeg_port', {
+        type: 'number',
+        requiresArg: true,
+        default: 8090
+      })
+      .demandOption(['yolo_json'])
+      .fail((msg, err, yargs) => {
+        console.error(msg);
+        console.error();
+        console.error(yargs.help());
+        throw err;
+      });
+
+    // In order to take the JSON and MJPG port from the command line we need to add a '-' since
+    // original darknet arguments use '-', but yargs needs '--'
+    const argsvSane = argv.map((x) => {
+      if(x == '-json_port' || x == '-mjpeg_port') {
+        return '-' + x;
+      }
+      return x;
+    });
+    const simulationArgv = simulationYargs.parse(argsvSane);
+
+    return {
+      videoParams: {
+        yolo_json: simulationArgv.yolo_json,
+        video_file_or_folder: simulationArgv.video_file_or_folder,
+        isLive: simulationArgv.isLive,
+        jsonFps: simulationArgv.jsonFps,
+        mjpgFps: simulationArgv.mjpgFps,
+      },
+      jsonStreamPort: simulationArgv.json_port,
+      mjpegStreamPort: simulationArgv.mjpeg_port,
+      darknetStdout: simulationArgv.darknetStdout
+    };
+  }
 }
 
 const isDirectExecution = __filename == process.argv[1];
-if(isDirectExecution) {
-  console.log('YoloSimulation Start with Arguments');
-
-  const simulationYargs = yargs
-    .option('yolo_json', {
-      requiresArg: true
-    })
-    .option('video_file_or_folder', {
-      requiresArg: true,
-      default: ''
-    })
-    .option('isLive', {
-      type: 'boolean',
-      default: true
-    })
-    .option('jsonFps', {
-      type: 'number',
-      requiresArg: true,
-      default: 20
-    })
-    .option('mjpgFps', {
-      type: 'number',
-      requiresArg: true,
-      default: 20
-    })
-    .option('darknetStdout', {
-      type: 'boolean',
-      default: true
-    })
-    .demandOption(['yolo_json'])
-    .help();
-  const simulationArgv = simulationYargs.parse(process.argv[7]);
-
-  const config = {
-    videoParams: {
-      yolo_json: simulationArgv.yolo_json,
-      video_file_or_folder: simulationArgv.video_file_or_folder,
-      isLive: simulationArgv.isLive,
-      jsonFps: simulationArgv.jsonFps,
-      mjpgFps: simulationArgv.mjpgFps,
-    },
-    jsonStreamPort: parseInt(process.argv[12]),
-    mjpegStreamPort: parseInt(process.argv[14]),
-    darknetStdout: simulationArgv.darknetStdout
-  };
-  console.log(config);
-
-  const yoloSim = new YoloSimulation(config);
-  yoloSim.start();
+if (isDirectExecution) {
+  try {
+    const config = YoloSimulation.parseCmdLine(process.argv);
+    console.log('YoloSimulation Start with Arguments');
+    console.log(config);
+    const yoloSim = new YoloSimulation(config);
+    yoloSim.start();
+  }
+  catch(e) {}
 }
 
 module.exports = { YoloSimulation };

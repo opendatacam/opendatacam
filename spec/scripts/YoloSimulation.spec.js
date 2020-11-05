@@ -44,4 +44,83 @@ describe('YoloSimulation', function () {
       expect(emittedResolution).toEqual(expectedResolution);
     });
   });
+
+  describe('cmd line args', function() {
+    const expectedConfig = {
+      videoParams: {
+        yolo_json: "public/static/placeholder/alexeydetections30FPS.json",
+        video_file_or_folder: "public/static/placeholder/frames",
+        isLive: false,
+        jsonFps: 40,
+        mjpgFps: 4,
+      },
+      darknetStdout: false,
+      jsonStreamPort: 5070,
+      mjpegStreamPort: 5090
+    }
+
+    const argsDarknetPrefix = ['detector', 'demo', 'data', 'config', 'weights'];
+    const argsDarknetSuffix = [
+      '-ext_output',
+      '-dont_show',
+      '-dontdraw_bbox',
+      '-json_port', expectedConfig.jsonStreamPort,
+      '-mjpeg_port', expectedConfig.mjpegStreamPort
+    ];
+    const argsMissingRequiredNoDarknet = [
+      "--video_file_or_folder", expectedConfig.videoParams.video_file_or_folder,
+      "--isLive", expectedConfig.videoParams.isLive,
+      "--jsonFps", expectedConfig.videoParams.jsonFps,
+      "--mjpgFps", expectedConfig.videoParams.mjpgFps,
+      "--darknetStdout", expectedConfig.darknetStdout
+    ];
+    const argsValidNoDarknet = [
+      "--yolo_json", expectedConfig.videoParams.yolo_json,
+    ].concat(argsMissingRequiredNoDarknet);
+    const argsValidDarknet = argsDarknetPrefix.concat(argsValidNoDarknet).concat(argsDarknetSuffix);
+
+    /** The parsed config object */
+    var cfg = null;
+    /**
+     * Creates a function object that will call parse with the given arguments when called
+     *
+     * The configuration results will be stored in the cfg variable.
+     *
+     * @param {*} args The arguments to call YoloSimulation.parseCmdLine with
+     *
+     * @return A function that takes no arguments that will call YoloSimulation.parseCmdLine
+     */
+    const invokeParser = (args) => {
+      return () => {
+        cfg = YoloSimulation.parseCmdLine(args);
+      };
+    };
+
+    it('fails on empty command line args', () => {
+      expect(() => { YoloSimulation.parseCmdLine(); }).toThrow();
+    });
+
+    it('throws on missing yolo_json option', () => {
+      expect(invokeParser(argsMissingRequiredNoDarknet)).toThrow();
+    });
+
+    it('ignores missing darknet args', () => {
+      expect(invokeParser(argsValidNoDarknet)).not.toThrow();
+      expect(cfg).toEqual(
+        {
+          videoParams: expectedConfig.videoParams,
+          darknetStdout: expectedConfig.darknetStdout,
+
+          // expect default port numbers as arguments are missing
+          jsonStreamPort: 8070,
+          mjpegStreamPort: 8090
+        }
+      );
+    });
+
+    it('ignores darknet args', () => {
+      expect(invokeParser(argsValidDarknet)).not.toThrow();
+      expect(cfg).toEqual(expectedConfig);
+    });
+  });
 });
