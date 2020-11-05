@@ -1,22 +1,45 @@
 var MongoClient = require('mongodb').MongoClient;
 var ObjectID = require('mongodb').ObjectID;
-const config = require('../../config.json');
 const { getMongoUrl } = require('../utils/configHelper');
-var mongoURL = getMongoUrl();
 
-var RECORDING_COLLECTION = 'recordings';
-var TRACKER_COLLECTION = 'tracker';
-var APP_COLLECTION = 'app';
+const RECORDING_COLLECTION = 'recordings';
+const TRACKER_COLLECTION = 'tracker';
+const APP_COLLECTION = 'app';
 
 
 class DBManager {
+  /**
+   * The connection string used or null if a Db object was used for the connection or the
+   * connection has not been established yet.
+   */
+  connectionString = null;
+
   constructor() {
     this.db = null;
   }
 
-  init() {
+  /**
+   * Connect to the opendatacam database the MongoDB Server
+   *
+   * If connectionStringOrConnectionObject is a
+   *
+   * - Db object: the object will be used and no new connection will be created.
+   * - String: The string will be used to create a new connection to the database
+   *
+   * @param {*} connectionStringOrConnectionObject The connection to use or credentials to create one
+   *
+   * @returns A promise that if resolved returns the opendatacam database object
+   */
+  async connect(connectionStringOrConnectionObject) {
+    const isConnectionString = typeof connectionStringOrConnectionObject === 'string'
+      || connectionStringOrConnectionObject instanceof String;
+    if(!isConnectionString) {
+      throw new Error('not implemented');
+    }
+
+    this.connectionString = connectionStringOrConnectionObject;
     return new Promise((resolve, reject) => {
-      MongoClient.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
+      MongoClient.connect(this.connectionString, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
         if (err) {
           reject(err);
         } else {
@@ -36,6 +59,18 @@ class DBManager {
         }
       });
     });
+  }
+
+  /**
+   * Creates a new connection to the database with default credentials
+   *
+   * @returns A promise that if resolved returns the opendatacam database object
+   *
+   * @deprecated Use DBManager.connect instead
+   * @see DBManager.connect
+   */
+  async init() {
+    return this.connect(getMongoUrl());
   }
 
   getDB() {
