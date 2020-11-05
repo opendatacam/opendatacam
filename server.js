@@ -494,7 +494,7 @@ app.prepare()
    *
   */
   express.get('/tracker/sse', sse, function(req, res) {
-    Opendatacam.startStreamingData(res);
+    Opendatacam.addStreamClient(res);
   });
 
 

@@ -367,7 +367,8 @@ module.exports = {
 
     }
 
-    this.sendUpdateToClient();
+    this.sendUpdateToClients();
+
     if(countedItemsForThisFrame.length > 0 && countedItemsForThisFrame[0] != undefined) {
       Opendatacam.eventEmitter.emit('count', countedItemsForThisFrame, frameId);
     }
@@ -623,13 +624,13 @@ module.exports = {
     }
   },
 
-  sendUpdateToClient: function() {
+  sendUpdateToClients: function() {
     const newValue = (Opendatacam.sseResponses.size > 0);
     if (Opendatacam.isSseConnectionOpen === null || Opendatacam.isSseConnectionOpen !== newValue) {
       // Log connection changes only once
       console.info(newValue ?
-        'SSE: Sending update to the client' :
-        'SSE: Failed sending update to the client');
+        'SSE: Sending update to clients' :
+        'SSE: All clients disconnected, cannot send update');
     }
     Opendatacam.isSseConnectionOpen = newValue;
 
@@ -709,7 +710,7 @@ module.exports = {
     return Opendatacam.trackerDataForLastFrame;
   },
 
-  startStreamingData(res) {
+  addStreamClient(res) {
     Opendatacam.sseResponses.add(res);
     res.on('close', () =>
       Opendatacam.sseResponses.delete(res))
@@ -893,7 +894,7 @@ module.exports = {
           if(!Opendatacam.yolo.isLive()) {
             self.stopRecording();
           }
-          self.sendUpdateToClient();
+          self.sendUpdateToClients();
           self.listenToYOLO(Opendatacam.yolo, urlData);
         } else {
           // Counting stopped by user, keep yolo running
