@@ -1,10 +1,3 @@
-// Set the ENV before including the configHelper
-// otherwise they will not take effect.
-process.env.MONGODB_URL = 'foo';
-process.env.PORT_APP = '1234';
-process.env.PORT_DARKNET_MJPEG_STREAM = '1235';
-process.env.PORT_DARKNET_JSON_STREAM = '1236';
-
 const {
   parseAndTestIsNumber,
   getPortFromConfig,
@@ -60,9 +53,7 @@ describe('configHelper', () => {
   });
 
   describe('process env', () => {
-    // This test fails as soon as some other test suit includes the configHelper first they will no
-    // longer use the ENV values provided here but keep the other values
-    xit('takes ENV values by default', () => {
+    it('takes ENV values by default', () => {
       expect(getAppPort()).toBe(parseInt(process.env.PORT_APP));
       expect(getJsonStreamPort()).toBe(parseInt(process.env.PORT_DARKNET_JSON_STREAM));
       expect(getMjpegStreamPort()).toBe(parseInt(process.env.PORT_DARKNET_MJPEG_STREAM));
