@@ -10,6 +10,7 @@ const DBManager = require('./db/DBManager');
 const Logger = require('./utils/Logger');
 const configHelper = require('./utils/configHelper');
 const isInsidePolygon = require('point-in-polygon')
+const { EventEmitter } = require('events');
 
 // YOLO process max retries
 const HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS = 30;
@@ -49,7 +50,7 @@ const initialState = {
   _refTrackedItemIdWhenRecordingStarted: 0,
   sseConnexion: null,
   // Can be true, false or `null` if unknown
-  isSseConnectionOpen = null,
+  isSseConnectionOpen: null,
   recordingStatus: {
     requestedFileRecording: false,
     isRecording: false,
@@ -68,7 +69,9 @@ const initialState = {
   HTTPRequestListeningToYOLOMaxRetries: HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES,
   tracker: null,
   // A reference of the yolo object to work with
-  yolo: null
+  yolo: null,
+  /** The event emitter used for all events */
+  eventEmitter: new EventEmitter()
 }
 
 let Opendatacam = cloneDeep(initialState);
@@ -82,10 +85,14 @@ module.exports = {
       const trackerBackup = Opendatacam.tracker;
       trackerBackup.reset();
 
+      // Keep the eventEmitter to not lose subscriptions.
+      const emitterBackup = Opendatacam.eventEmitter;
+
       // Reset counter
       Opendatacam = cloneDeep(initialState);
-      // Restore reference to the reseted tracker
+      // Restore reference to the reseted tracker and event emitter
       Opendatacam.tracker = trackerBackup;
+      Opendatacam.eventEmitter = emitterBackup;
     })
   },
 
@@ -361,7 +368,12 @@ module.exports = {
     }
 
     this.sendUpdateToClient();
-
+    if(countedItemsForThisFrame.length > 0 && countedItemsForThisFrame[0] != undefined) {
+      Opendatacam.eventEmitter.emit('count', countedItemsForThisFrame, frameId);
+    }
+    if(trackerDataForThisFrame.length > 0) {
+      Opendatacam.eventEmitter.emit('track', trackerDataForThisFrame, frameId);
+    }
   },
 
 
@@ -966,5 +978,13 @@ module.exports = {
 
   setTracker(tracker) {
     Opendatacam.tracker = tracker;
+  },
+
+  on(event, listener) {
+    Opendatacam.eventEmitter.on(event, listener);
+  },
+
+  once(event, listener) {
+    Opendatacam.eventEmitter.once(event, listener);
   }
 }
