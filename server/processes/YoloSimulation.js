@@ -156,6 +156,7 @@ class YoloSimulation extends YoloDarknet {
     this.simulationJSONHTTPStreamServer = http.createServer((req, res) => {
       console.debug("Got request on JSON Stream server started");
       simulationState.JSONStreamRes = res;
+      res.write("[");
       simulationState.timer = this.startStream(simulationState);
     });
     this.simulationJSONHTTPStreamServer.on('close', (err, socket) => {
@@ -277,7 +278,7 @@ class YoloSimulation extends YoloDarknet {
    */
   static sendYoloJson(stream, detections) {
     if (stream) {
-      stream.write(JSON.stringify(detections));
+      stream.write(JSON.stringify(detections) + ",");
     } else {
       console.warn("JSONStream connection isn't opened yet");
     }
