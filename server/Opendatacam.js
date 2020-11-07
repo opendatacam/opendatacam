@@ -48,7 +48,7 @@ const initialState = {
   nbItemsTrackedThisFrame: 0,
   totalItemsTracked: 0,
   _refTrackedItemIdWhenRecordingStarted: 0,
-  sseConnexion: null,
+  sseResponses: new Set(),
   // Can be true, false or `null` if unknown
   isSseConnectionOpen: null,
   recordingStatus: {
@@ -367,7 +367,8 @@ module.exports = {
 
     }
 
-    this.sendUpdateToClient();
+    this.sendUpdateToClients();
+
     if(countedItemsForThisFrame.length > 0 && countedItemsForThisFrame[0] != undefined) {
       Opendatacam.eventEmitter.emit('count', countedItemsForThisFrame, frameId);
     }
@@ -623,35 +624,31 @@ module.exports = {
     }
   },
 
-  sendUpdateToClient: function() {
-    // Stream it to client if SSE request is open
-    if(Opendatacam.sseConnexion) {
-      // Client connection could be established so log this once!
-      const isClosedOrUnknown = Opendatacam.isSseConnectionOpen == false || Opendatacam.isSseConnectionOpen == null;
-      if(isClosedOrUnknown) {
-        console.info('SSE: Sending update to the client');
-      }
-      Opendatacam.isSseConnectionOpen = true;
-
-      Opendatacam.sseConnexion(`data:${JSON.stringify({
-        trackerDataForLastFrame: Opendatacam.trackerDataForLastFrame,
-        counterSummary: this.getCounterSummary(),
-        trackerSummary: this.getTrackerSummary(),
-        videoResolution: Opendatacam.videoResolution,
-        appState: {
-          yoloStatus: Opendatacam.yolo ? Opendatacam.yolo.getStatus() : null,
-          isListeningToYOLO: Opendatacam.isListeningToYOLO,
-          recordingStatus: Opendatacam.recordingStatus
-        }
-      })}\n\n`);
-    } else {
-      // The client is not open. Log a info message, but only once!
-      const isOpenOrUnknown = Opendatacam.isSseConnectionOpen == true || Opendatacam.isSseConnectionOpen == null;
-      if(isOpenOrUnknown) {
-        console.info('SSE: Failed sending update to the client');
-      }
-      Opendatacam.isSseConnectionOpen = false;
+  sendUpdateToClients: function() {
+    const newValue = (Opendatacam.sseResponses.size > 0);
+    if (Opendatacam.isSseConnectionOpen === null || Opendatacam.isSseConnectionOpen !== newValue) {
+      // Log connection changes only once
+      console.info(newValue ?
+        'SSE: Sending update to clients' :
+        'SSE: All clients disconnected, cannot send update');
     }
+    Opendatacam.isSseConnectionOpen = newValue;
+
+    if (!Opendatacam.sseResponses.size)
+      return;
+
+    const data = `data:${JSON.stringify({
+      trackerDataForLastFrame: Opendatacam.trackerDataForLastFrame,
+      counterSummary: this.getCounterSummary(),
+      trackerSummary: this.getTrackerSummary(),
+      videoResolution: Opendatacam.videoResolution,
+      appState: {
+        yoloStatus: Opendatacam.yolo ? Opendatacam.yolo.getStatus() : null,
+        isListeningToYOLO: Opendatacam.isListeningToYOLO,
+        recordingStatus: Opendatacam.recordingStatus
+      }
+    })}\n\n`;
+    Opendatacam.sseResponses.forEach(res => res.sse(data));
   },
 
   getCounterSummary: function() {
@@ -713,8 +710,10 @@ module.exports = {
     return Opendatacam.trackerDataForLastFrame;
   },
 
-  startStreamingData(sse) {
-    Opendatacam.sseConnexion = sse;
+  addStreamClient(res) {
+    Opendatacam.sseResponses.add(res);
+    res.on('close', () =>
+      Opendatacam.sseResponses.delete(res))
   },
 
   startRecording(isFile) {
@@ -895,7 +894,7 @@ module.exports = {
           if(!Opendatacam.yolo.isLive()) {
             self.stopRecording();
           }
-          self.sendUpdateToClient();
+          self.sendUpdateToClients();
           self.listenToYOLO(Opendatacam.yolo, urlData);
         } else {
           // Counting stopped by user, keep yolo running
