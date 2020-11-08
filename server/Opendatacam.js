@@ -815,6 +815,9 @@ module.exports = {
     self.HTTPRequestListeningToYOLO = http.get(options);
 
     once(self.HTTPRequestListeningToYOLO, 'response').then(([res]) => {
+      // re-emit request errors on response (so the pipeline fails, and we catch them)
+      self.HTTPRequestListeningToYOLO.on('error', e => res.emit('error', e));
+
       Logger.log(`statusCode: ${res.statusCode}`);
       res.once('data', () => console.log('Got first JSON chunk'));
 
@@ -825,43 +828,46 @@ module.exports = {
     }).then(onEnd, onError);
 
     function onEnd() {
-        if(Opendatacam.isListeningToYOLO)  {
-          console.log("==== HTTP Stream closed by darknet, reset UI ====")
-          console.log("==== If you are running on a file, it is restarting  because you reached the end ====")
-          console.log("==== If you are running on a camera, it might have crashed for some reason and we are trying to restart ====")
-          // YOLO process will auto-restart, so re-listen to it
-          // reset retries counter
-          Opendatacam.isListeningToYOLO = false;
-          Opendatacam.HTTPRequestListeningToYOLOMaxRetries = HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES;
+      if(!Opendatacam.isListeningToYOLO) {
+        // Counting stopped by user, keep yolo running
+        return;
+      }
+      
+      console.log("==== HTTP Stream closed by darknet, reset UI ====")
+      console.log("==== If you are running on a file, it is restarting  because you reached the end ====")
+      console.log("==== If you are running on a camera, it might have crashed for some reason and we are trying to restart ====")
+      // YOLO process will auto-restart, so re-listen to it
+      // reset retries counter
+      Opendatacam.isListeningToYOLO = false;
+      Opendatacam.HTTPRequestListeningToYOLOMaxRetries = HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES;
 
-          if(!Opendatacam.yolo.isLive()) {
-            self.stopRecording();
-          }
-          self.sendUpdateToClients();
-          self.listenToYOLO(Opendatacam.yolo, urlData);
-        } else {
-          // Counting stopped by user, keep yolo running
-        }
+      if(!Opendatacam.yolo.isLive()) {
+        self.stopRecording();
+      }
+      self.sendUpdateToClients();
+      self.listenToYOLO(Opendatacam.yolo, urlData);
     }
 
     function onError(e) {
+      if (err.code !== 'ECONNREFUSED')
+        console.debug(`YOLO stream error: ${e}`);
+
       // TODO Need a YOLO.isRunning()
       if(
-        !Opendatacam.isListeningToYOLO &&
-        Opendatacam.HTTPRequestListeningToYOLOMaxRetries > 0
+        Opendatacam.isListeningToYOLO ||
+        Opendatacam.HTTPRequestListeningToYOLOMaxRetries <= 0
       ) {
-        Logger.log(`Will retry in ${HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS} ms`)
-        // Retry, YOLO might not have started server just yet
-        setTimeout(() => {
-          Logger.log("Retry connect to YOLO");
-          self.listenToYOLO(Opendatacam.yolo, urlData);
-          Opendatacam.HTTPRequestListeningToYOLOMaxRetries--;
-        }, HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS)
-      } else {
-        console.log('Something went wrong: ' + e.message);
-        console.log('Too much retries, YOLO took more than 3 min to start, likely an error')
-        console.log(Opendatacam.HTTPRequestListeningToYOLOMaxRetries)
+        console.log('Too much retries, YOLO took more than 3 min to start, likely an error');
+        return;
       }
+
+      Logger.log(`Will retry in ${HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS} ms`);
+      // Retry, YOLO might not have started server just yet
+      setTimeout(() => {
+        Logger.log("Retry connect to YOLO");
+        self.listenToYOLO(Opendatacam.yolo, urlData);
+        Opendatacam.HTTPRequestListeningToYOLOMaxRetries--;
+      }, HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS);
     }
   },
 
