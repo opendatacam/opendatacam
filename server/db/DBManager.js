@@ -1,5 +1,4 @@
-var MongoClient = require('mongodb').MongoClient;
-var ObjectID = require('mongodb').ObjectID;
+const { MongoClient, ObjectID, Db } = require('mongodb');
 const { getMongoUrl } = require('../utils/configHelper');
 
 const RECORDING_COLLECTION = 'recordings';
@@ -21,44 +20,58 @@ class DBManager {
   /**
    * Connect to the opendatacam database the MongoDB Server
    *
-   * If connectionStringOrConnectionObject is a
+   * If connectionStringOrDbObject is a
    *
-   * - Db object: the object will be used and no new connection will be created.
-   * - String: The string will be used to create a new connection to the database
+   * - Db object: the object pointing to a database will be used and no new connection will be
+   *   created
+   * - String: The string will be used to create a new connection to the database and then the
+   *   "opendatacam" database will be used
    *
-   * @param {*} connectionStringOrConnectionObject The connection to use or credentials to create one
+   * @param {*} connectionStringOrDbObject The connection to use or credentials to create one
    *
    * @returns A promise that if resolved returns the opendatacam database object
+   *
+   * @throws Error if something else then a String or Db is passed
    */
-  async connect(connectionStringOrConnectionObject) {
-    const isConnectionString = typeof connectionStringOrConnectionObject === 'string'
-      || connectionStringOrConnectionObject instanceof String;
-    if(!isConnectionString) {
-      throw new Error('not implemented');
+  async connect(connectionStringOrDbObject) {
+    const createCollectionsAndIndex = function(db) {
+      const recordingCollection = db.collection(RECORDING_COLLECTION);
+      recordingCollection.createIndex({ dateStart: -1 });
+
+      const trackerCollection = db.collection(TRACKER_COLLECTION);
+      trackerCollection.createIndex({ recordingId: 1 });
     }
 
-    this.connectionString = connectionStringOrConnectionObject;
-    return new Promise((resolve, reject) => {
-      MongoClient.connect(this.connectionString, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
-        if (err) {
-          reject(err);
-        } else {
-          let db = client.db('opendatacam');
-          this.db = db;
+    const isConnectionString = typeof connectionStringOrDbObject === 'string'
+      || connectionStringOrDbObject instanceof String;
+    const isDbObject = typeof connectionStringOrDbObject === 'object';
 
-          // Get the collection
-          const recordingCollection = db.collection(RECORDING_COLLECTION);
-          // Create the index
-          recordingCollection.createIndex({ dateStart: -1 });
+    if (isConnectionString) {
+      return new Promise((resolve, reject) => {
+        this.connectionString = connectionStringOrDbObject;
+        MongoClient.connect(this.connectionString, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
+          if (err) {
+            reject(err);
+          } else {
+            let db = client.db('opendatacam');
+            this.db = db;
 
-          const trackerCollection = db.collection(TRACKER_COLLECTION);
-          // Create the index
-          trackerCollection.createIndex({ recordingId: 1 });
+            createCollectionsAndIndex(db);
 
-          resolve(db);
-        }
+            resolve(db);
+          }
+        });
       });
-    });
+    } else if (isDbObject) {
+      this.db = connectionStringOrDbObject;
+      createCollectionsAndIndex(this.db);
+      return Promise.resolve(this.db);
+    } else {
+      return new Error();
+    }
+
+    this.connectionString = connectionStringOrDbObject;
+
   }
 
   /**
