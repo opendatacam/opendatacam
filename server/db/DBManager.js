@@ -215,7 +215,9 @@ class DBManager {
           }
         );
 
-        db.collection(TRACKER_COLLECTION).insertOne(trackerEntry);
+        if(trackerEntry.objects != null && trackerEntry.objects.length > 0) {
+          db.collection(TRACKER_COLLECTION).insertOne(trackerEntry);
+        }
       });
     });
   }
