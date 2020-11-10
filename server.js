@@ -57,6 +57,13 @@ const yoloConfig = {
 if(config.VIDEO_INPUT == 'simulation') {
   yoloConfig.darknetPath = '.';
   yoloConfig.darknetCmd = 'node scripts/YoloSimulation.js'
+  if(yoloConfig.yoloParams == undefined) {
+    yoloConfig.yoloParams = {
+      data: 'data',
+      cfg: 'cfg',
+      weights: 'weights'
+    };
+  }
 }
 const YOLO = new YoloDarknet(yoloConfig);
 
