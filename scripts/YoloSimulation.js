@@ -7,6 +7,7 @@ const { execFile, execFileSync } = require('child_process');
 const { performance } = require('perf_hooks');
 const { YoloDarknet } = require('../server/processes/YoloDarknet');
 const yargs = require('yargs');
+const splitargs = require('splitargs');
 
 class YoloSimulation extends YoloDarknet {
   config = {
@@ -373,11 +374,21 @@ class YoloSimulation extends YoloDarknet {
 
     // In order to take the JSON and MJPG port from the command line we need to add a '-' since
     // original darknet arguments use '-', but yargs needs '--'
-    const argsvSane = argv.map((x) => {
+    const argsvSane = [];
+    argv.forEach((x) => {
       if(x == '-json_port' || x == '-mjpeg_port') {
-        return '-' + x;
+        argsvSane.push('-' + x);
+        return;
       }
-      return x;
+
+      if(typeof x == 'string' && x.startsWith('--') && x.indexOf(' ') >= 0) {
+        splitargs(x).forEach((s) => {
+          argsvSane.push(s);
+        });
+        return;
+      }
+
+      argsvSane.push(x);
     });
     const simulationArgv = simulationYargs.parse(argsvSane);
 

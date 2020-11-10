@@ -45,7 +45,7 @@ describe('YoloSimulation', function () {
     });
   });
 
-  describe('cmd line args', function() {
+  describe('cmd line args', function () {
     const expectedConfig = {
       videoParams: {
         yolo_json: "public/static/placeholder/alexeydetections30FPS.json",
@@ -78,6 +78,23 @@ describe('YoloSimulation', function () {
       "--yolo_json", expectedConfig.videoParams.yolo_json,
     ].concat(argsMissingRequiredNoDarknet);
     const argsValidDarknet = argsDarknetPrefix.concat(argsValidNoDarknet).concat(argsDarknetSuffix);
+    // YoloDarknet invokes it in a weird way that we have to handle separately
+    const yoloDarknetInvokation = [
+      '/usr/local/Cellar/node/14.4.0/bin/node',
+      '/Users/vsaw/Documents/Development/opendatacam/scripts/YoloSimulation.js',
+      'detector',
+      'demo',
+      'cfg/coco.data',
+      'cfg/yolov4-416x416.cfg',
+      'yolov4.weights',
+      `--yolo_json ${expectedConfig.videoParams.yolo_json} --video_file_or_folder ${expectedConfig.videoParams.video_file_or_folder} --isLive ${expectedConfig.videoParams.isLive} --jsonFps ${expectedConfig.videoParams.jsonFps} --mjpgFps ${expectedConfig.videoParams.mjpgFps} --darknetStdout ${expectedConfig.darknetStdout}`,
+      '-ext_output',
+      '-dont_show',
+      '-dontdraw_bbox',
+      '-json_port',
+      '5070',
+      '-mjpeg_port',
+      '5090'];
 
     /** The parsed config object */
     var cfg = null;
@@ -120,6 +137,11 @@ describe('YoloSimulation', function () {
 
     it('ignores darknet args', () => {
       expect(invokeParser(argsValidDarknet)).not.toThrow();
+      expect(cfg).toEqual(expectedConfig);
+    });
+
+    it('handles YoloDarknet invokation', () => {
+      expect(invokeParser(yoloDarknetInvokation)).not.toThrow();
       expect(cfg).toEqual(expectedConfig);
     });
   });
