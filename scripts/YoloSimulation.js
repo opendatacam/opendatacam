@@ -8,6 +8,7 @@ const { performance } = require('perf_hooks');
 const { YoloDarknet } = require('../server/processes/YoloDarknet');
 const yargs = require('yargs');
 const splitargs = require('splitargs');
+const os = require("os");
 
 class YoloSimulation extends YoloDarknet {
   config = {
@@ -366,10 +367,8 @@ class YoloSimulation extends YoloDarknet {
       })
       .demandOption(['yolo_json'])
       .fail((msg, err, yargs) => {
-        console.error(msg);
-        console.error();
-        console.error(yargs.help());
-        throw err;
+        const errMsg = msg + os.EOL + os.EOL + yargs.help();
+        throw new Error(errMsg);
       });
 
     // In order to take the JSON and MJPG port from the command line we need to add a '-' since
@@ -409,14 +408,20 @@ class YoloSimulation extends YoloDarknet {
 
 const isDirectExecution = __filename == process.argv[1];
 if (isDirectExecution) {
+  var config = null;
   try {
-    const config = YoloSimulation.parseCmdLine(process.argv);
+    config = YoloSimulation.parseCmdLine(process.argv);
+  }
+  catch(e) {
+    console.log(e.message);
+  }
+
+  if(config != null) {
     console.log('YoloSimulation Start with Arguments');
     console.log(config);
     const yoloSim = new YoloSimulation(config);
     yoloSim.start();
   }
-  catch(e) {}
 }
 
 module.exports = { YoloSimulation };
