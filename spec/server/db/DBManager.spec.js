@@ -11,7 +11,7 @@ describe('DBManager', () => {
 
   beforeEach(() => {
     collectionSpy = jasmine.createSpyObj('collection',
-      ['createIndex', 'deleteMany', 'updateOne', 'insertOne', 'remove']);
+      ['createIndex', 'deleteMany', 'deleteOne', 'updateOne', 'insertOne', 'remove']);
     collectionSpy.updateOne.and.callFake((arg0, arg1, callback) => {
       // Report success
       callback(null, null);
@@ -21,6 +21,10 @@ describe('DBManager', () => {
       callback(null, null);
     });
     collectionSpy.deleteMany.and.callFake((args, callback) => {
+      // Report success
+      callback(null, null);
+    });
+    collectionSpy.deleteOne.and.callFake((args, callback) => {
       // Report success
       callback(null, null);
     });
@@ -133,6 +137,11 @@ describe('DBManager', () => {
     it('deletes tracker data for recording', () => {
       expect(dbSpy.collection).toHaveBeenCalledWith(DBManager.TRACKER_COLLECTION);
       expect(collectionSpy.deleteMany.calls.mostRecent().args[0]).toEqual({ 'recordingId': ObjectID(RECORDING_ID) });
+    });
+
+    it('does not call obsolete methods', () => {
+      expect(collectionSpy.remove).not.toHaveBeenCalled();
+      expect(collectionSpy.deleteOne).toHaveBeenCalled();
     });
   });
 });

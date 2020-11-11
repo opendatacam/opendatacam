@@ -159,7 +159,7 @@ class DBManager {
   deleteRecording(recordingId) {
     const deleteRecordingPromise = new Promise((resolve, reject) => {
       this.getDB().then(db => {
-        db.collection(RECORDING_COLLECTION).remove({ _id: ObjectID(recordingId) }, (err, r) => {
+        db.collection(RECORDING_COLLECTION).deleteOne({ _id: ObjectID(recordingId) }, (err, r) => {
           if (err) {
             reject(err);
           } else {
