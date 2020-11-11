@@ -52,52 +52,52 @@ describe('DBManager', () => {
         expect(collectionSpy.createIndex).toHaveBeenCalled();
       });
     });
+  });
 
-    describe('updateRecordingWithNewframe', () => {
-      const argsWithDetection = [
-        '5faac7df863f7328a158c78e',
-        new Date('2020-11-10T17:03:36.477Z'),
-        {},
-        { totalItemsTracked: 63 },
-        [],
-        {
-          recordingId: '5faac7df863f7328a158c78e',
-          frameId: 377,
-          timestamp: new Date('2020-11-10T17:03:36.477Z'),
-          objects: [
-            {
-              id: 5,
-              x: 351,
-              y: 245,
-              w: 85,
-              h: 49,
-              bearing: 90,
-              confidence: 50,
-              name: 'car',
-              areas: []
-            }
-          ]
-        }
-      ];
+  describe('updateRecordingWithNewframe', () => {
+    const argsWithDetection = [
+      '5faac7df863f7328a158c78e',
+      new Date('2020-11-10T17:03:36.477Z'),
+      {},
+      { totalItemsTracked: 63 },
+      [],
+      {
+        recordingId: '5faac7df863f7328a158c78e',
+        frameId: 377,
+        timestamp: new Date('2020-11-10T17:03:36.477Z'),
+        objects: [
+          {
+            id: 5,
+            x: 351,
+            y: 245,
+            w: 85,
+            h: 49,
+            bearing: 90,
+            confidence: 50,
+            name: 'car',
+            areas: []
+          }
+        ]
+      }
+    ];
 
-      beforeEach(async () => {
-        await DBManager.connect(dbSpy);
-      });
+    beforeEach(async () => {
+      await DBManager.connect(dbSpy);
+    });
 
-      it('inserts tracker data with detections', async () => {
-        await DBManager.updateRecordingWithNewframe(...argsWithDetection);
+    it('inserts tracker data with detections', async () => {
+      await DBManager.updateRecordingWithNewframe(...argsWithDetection);
 
-        expect(collectionSpy.insertOne).toHaveBeenCalled();
-      });
+      expect(collectionSpy.insertOne).toHaveBeenCalled();
+    });
 
-      it('does not insert empty tracker frames', async () => {
-        const argsWithoutDetection = cloneDeep(argsWithDetection);
-        argsWithoutDetection[5].objects = [];
+    it('does not insert empty tracker frames', async () => {
+      const argsWithoutDetection = cloneDeep(argsWithDetection);
+      argsWithoutDetection[5].objects = [];
 
-        await DBManager.updateRecordingWithNewframe(...argsWithoutDetection);
+      await DBManager.updateRecordingWithNewframe(...argsWithoutDetection);
 
-        expect(collectionSpy.insertOne).not.toHaveBeenCalled();
-      });
+      expect(collectionSpy.insertOne).not.toHaveBeenCalled();
     });
   });
 });
