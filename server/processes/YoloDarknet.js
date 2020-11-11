@@ -20,6 +20,7 @@ class YoloDarknet extends EventEmitter {
     jsonStreamPort: null,
     mjpegStreamPort: null,
     darknetPath: null,
+    darknetCmd: null,
   };
 
   /**
@@ -46,7 +47,7 @@ class YoloDarknet extends EventEmitter {
     })
 
     var darknetCommand = [];
-    var initialCommand = ['./darknet', 'detector', 'demo', this.config.yoloParams.data, this.config.yoloParams.cfg, this.config.yoloParams.weights];
+    var initialCommand = [this.config.darknetCmd, 'detector', 'demo', this.config.yoloParams.data, this.config.yoloParams.cfg, this.config.yoloParams.weights];
     var endCommand = ['-ext_output', '-dont_show', '-dontdraw_bbox', '-json_port', this.config.jsonStreamPort, '-mjpeg_port', this.config.mjpegStreamPort];
 
     // Special case if input camera is specified as a -c flag as we need to add one arg

@@ -7,7 +7,6 @@ const http = require('http');
 const next = require('next');
 const sse = require('server-sent-events');
 const ip = require('ip');
-var YOLO;
 const Opendatacam = require('./server/Opendatacam');
 const flatten = require('lodash.flatten');
 const getURLData = require('./server/utils/urlHelper').getURLData;
@@ -21,7 +20,6 @@ const Tracker = require('node-moving-things-tracker').Tracker;
 const GpsTracker = require('./server/tracker/GpsTracker');
 const package_json = require('./package.json');
 const { YoloDarknet } = require('./server/processes/YoloDarknet');
-const { YoloSimulation } = require('./server/processes/YoloSimulation');
 
 if(package_json.version !== config.OPENDATACAM_VERSION) {
   console.log('-----------------------------------')
@@ -54,12 +52,20 @@ const yoloConfig = {
   jsonStreamPort: configHelper.getJsonStreamPort(),
   mjpegStreamPort: configHelper.getMjpegStreamPort(),
   darknetPath: config.PATH_TO_YOLO_DARKNET,
+  darknetCmd: config.CMD_TO_YOLO_DARKNET
 };
 if(config.VIDEO_INPUT == 'simulation') {
-  YOLO = new YoloSimulation(yoloConfig);
-} else {
-  YOLO = new YoloDarknet(yoloConfig);
+  yoloConfig.darknetPath = '.';
+  yoloConfig.darknetCmd = 'node scripts/YoloSimulation.js'
+  if(yoloConfig.yoloParams == undefined) {
+    yoloConfig.yoloParams = {
+      data: 'data',
+      cfg: 'cfg',
+      weights: 'weights'
+    };
+  }
 }
+const YOLO = new YoloDarknet(yoloConfig);
 
 // Select tracker, based on GPS settings in config
 var tracker = Tracker;

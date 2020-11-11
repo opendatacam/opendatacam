@@ -15,6 +15,7 @@ describe('YoloDarknet', function () {
       jsonStreamPort: 8070,
       mjpegStreamPort: 8090,
       darknetPath: './spec/scripts/',
+      darknetCmd: './darknet'
     };
     yolo = new YoloDarknet(yoloConfig);
   });
