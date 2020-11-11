@@ -1,12 +1,26 @@
+const { ObjectID } = require('mongodb');
 const DBManager = require('../../../server/db/DBManager');
 const { getMongoUrl } = require('../../../server/utils/configHelper');
 const cloneDeep = require('lodash.clonedeep');
 
+
 describe('DBManager', () => {
+  const RECORDING_ID = '5faac7df863f7328a158c78e';
+
   var dbSpy = null;
+
   beforeEach(() => {
-    collectionSpy = jasmine.createSpyObj('collection', ['createIndex', 'updateOne', 'insertOne']);
+    collectionSpy = jasmine.createSpyObj('collection',
+      ['createIndex', 'deleteMany', 'updateOne', 'insertOne', 'remove']);
     collectionSpy.updateOne.and.callFake((arg0, arg1, callback) => {
+      // Report success
+      callback(null, null);
+    });
+    collectionSpy.remove.and.callFake((args, callback) => {
+      // Report success
+      callback(null, null);
+    });
+    collectionSpy.deleteMany.and.callFake((args, callback) => {
       // Report success
       callback(null, null);
     });
@@ -56,13 +70,13 @@ describe('DBManager', () => {
 
   describe('updateRecordingWithNewframe', () => {
     const argsWithDetection = [
-      '5faac7df863f7328a158c78e',
+      RECORDING_ID,
       new Date('2020-11-10T17:03:36.477Z'),
       {},
       { totalItemsTracked: 63 },
       [],
       {
-        recordingId: '5faac7df863f7328a158c78e',
+        recordingId: RECORDING_ID,
         frameId: 377,
         timestamp: new Date('2020-11-10T17:03:36.477Z'),
         objects: [
@@ -98,6 +112,27 @@ describe('DBManager', () => {
       await DBManager.updateRecordingWithNewframe(...argsWithoutDetection);
 
       expect(collectionSpy.insertOne).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('deleteRecording', () => {
+    beforeEach(async () => {
+      await DBManager.connect(dbSpy);
+
+      dbSpy.collection.calls.reset();
+      collectionSpy.remove.calls.reset();
+
+      await DBManager.deleteRecording(RECORDING_ID);
+    });
+
+    it('resolves', async () => {
+      const deleteRecordingPromise = DBManager.deleteRecording(RECORDING_ID);
+      await expectAsync(deleteRecordingPromise).toBeResolved();
+    });
+
+    it('deletes tracker data for recording', () => {
+      expect(dbSpy.collection).toHaveBeenCalledWith(DBManager.TRACKER_COLLECTION);
+      expect(collectionSpy.deleteMany.calls.mostRecent().args[0]).toEqual({ 'recordingId': ObjectID(RECORDING_ID) });
     });
   });
 });
