@@ -849,7 +849,7 @@ module.exports = {
     }
 
     function onError(e) {
-      if (err.code !== 'ECONNREFUSED')
+      if (e.code !== 'ECONNREFUSED')
         console.debug(`YOLO stream error: ${e}`);
 
       // TODO Need a YOLO.isRunning()
