@@ -832,7 +832,7 @@ module.exports = {
         // Counting stopped by user, keep yolo running
         return;
       }
-      
+
       console.log("==== HTTP Stream closed by darknet, reset UI ====")
       console.log("==== If you are running on a file, it is restarting  because you reached the end ====")
       console.log("==== If you are running on a camera, it might have crashed for some reason and we are trying to restart ====")
