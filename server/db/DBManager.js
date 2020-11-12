@@ -75,9 +75,6 @@ class DBManager {
     } else {
       return new Error();
     }
-
-    this.connectionString = connectionStringOrDbObject;
-
   }
 
   /**
