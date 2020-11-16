@@ -1,41 +1,92 @@
-var MongoClient = require('mongodb').MongoClient;
-var ObjectID = require('mongodb').ObjectID;
-const config = require('../../config.json');
+const { MongoClient, ObjectID, Db } = require('mongodb');
 const { getMongoUrl } = require('../utils/configHelper');
-var mongoURL = getMongoUrl();
 
-var RECORDING_COLLECTION = 'recordings';
-var TRACKER_COLLECTION = 'tracker';
-var APP_COLLECTION = 'app';
+const RECORDING_COLLECTION = 'recordings';
+const TRACKER_COLLECTION = 'tracker';
+const APP_COLLECTION = 'app';
 
 
 class DBManager {
+  // XXX: This is a hacky way to export the collections without changing the module structure to
+  // much
+  RECORDING_COLLECTION = RECORDING_COLLECTION;
+  TRACKER_COLLECTION = TRACKER_COLLECTION;
+  APP_COLLECTION = APP_COLLECTION;
+
+  /**
+   * The connection string used or null if a Db object was used for the connection or the
+   * connection has not been established yet.
+   */
+  connectionString = null;
+
   constructor() {
     this.db = null;
   }
 
-  init() {
-    return new Promise((resolve, reject) => {
-      MongoClient.connect(mongoURL, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
-        if (err) {
-          reject(err);
-        } else {
-          let db = client.db('opendatacam');
-          this.db = db;
+  /**
+   * Connect to the opendatacam database the MongoDB Server
+   *
+   * If connectionStringOrDbObject is a
+   *
+   * - Db object: the object pointing to a database will be used and no new connection will be
+   *   created
+   * - String: The string will be used to create a new connection to the database and then the
+   *   "opendatacam" database will be used
+   *
+   * @param {*} connectionStringOrDbObject The connection to use or credentials to create one
+   *
+   * @returns A promise that if resolved returns the opendatacam database object
+   *
+   * @throws Error if something else then a String or Db is passed
+   */
+  async connect(connectionStringOrDbObject) {
+    const createCollectionsAndIndex = function(db) {
+      const recordingCollection = db.collection(RECORDING_COLLECTION);
+      recordingCollection.createIndex({ dateStart: -1 });
 
-          // Get the collection
-          const recordingCollection = db.collection(RECORDING_COLLECTION);
-          // Create the index
-          recordingCollection.createIndex({ dateStart: -1 });
+      const trackerCollection = db.collection(TRACKER_COLLECTION);
+      trackerCollection.createIndex({ recordingId: 1 });
+    }
 
-          const trackerCollection = db.collection(TRACKER_COLLECTION);
-          // Create the index
-          trackerCollection.createIndex({ recordingId: 1 });
+    const isConnectionString = typeof connectionStringOrDbObject === 'string'
+      || connectionStringOrDbObject instanceof String;
+    const isDbObject = typeof connectionStringOrDbObject === 'object';
 
-          resolve(db);
-        }
+    if (isConnectionString) {
+      return new Promise((resolve, reject) => {
+        this.connectionString = connectionStringOrDbObject;
+        MongoClient.connect(this.connectionString, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
+          if (err) {
+            reject(err);
+          } else {
+            let db = client.db('opendatacam');
+            this.db = db;
+
+            createCollectionsAndIndex(db);
+
+            resolve(db);
+          }
+        });
       });
-    });
+    } else if (isDbObject) {
+      this.db = connectionStringOrDbObject;
+      createCollectionsAndIndex(this.db);
+      return Promise.resolve(this.db);
+    } else {
+      return new Error();
+    }
+  }
+
+  /**
+   * Creates a new connection to the database with default credentials
+   *
+   * @returns A promise that if resolved returns the opendatacam database object
+   *
+   * @deprecated Use DBManager.connect instead
+   * @see DBManager.connect
+   */
+  async init() {
+    return this.connect(getMongoUrl());
   }
 
   getDB() {
@@ -103,9 +154,9 @@ class DBManager {
   }
 
   deleteRecording(recordingId) {
-    return new Promise((resolve, reject) => {
+    const deleteRecordingPromise = new Promise((resolve, reject) => {
       this.getDB().then(db => {
-        db.collection(RECORDING_COLLECTION).remove({ _id: ObjectID(recordingId) }, (err, r) => {
+        db.collection(RECORDING_COLLECTION).deleteOne({ _id: ObjectID(recordingId) }, (err, r) => {
           if (err) {
             reject(err);
           } else {
@@ -114,6 +165,20 @@ class DBManager {
         });
       });
     });
+
+    const deleteTrackerPromise = new Promise((resolve, reject) => {
+      this.getDB().then(db => {
+        db.collection(TRACKER_COLLECTION).deleteMany({ 'recordingId': ObjectID(recordingId) }, (err, r) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(r);
+          }
+        });
+      });
+    });
+
+    return Promise.all([deleteRecordingPromise, deleteTrackerPromise]);
   }
 
   // TODO For larges array like the one we are using, we can't do that, perfs are terrible
@@ -167,7 +232,9 @@ class DBManager {
           }
         );
 
-        db.collection(TRACKER_COLLECTION).insertOne(trackerEntry);
+        if(trackerEntry.objects != null && trackerEntry.objects.length > 0) {
+          db.collection(TRACKER_COLLECTION).insertOne(trackerEntry);
+        }
       });
     });
   }
