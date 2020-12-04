@@ -440,7 +440,13 @@ volumes:
 "NEURAL_NETWORK": "yolov3-tiny-prn"
 ```
 
-- restart the container
+- If you've added new volumes to your `docker-compose.yml`, you need to update the container using : 
+
+```
+sudo docker-compose up -d
+```
+
+- Otherwise, if you just updated files from existing volumes, you need to restart the container using  : 
 
 ```
 sudo docker-compose restart
