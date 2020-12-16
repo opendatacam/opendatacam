@@ -18,7 +18,7 @@
     "plugins": [
         "react"
     ],
-    "ignorePatterns": ["node_modules"],
+    "ignorePatterns": ["node_modules", ".next", "apidoc"],
     "rules": {
     }
 }
