@@ -19,7 +19,7 @@
     "plugins": [
         "react"
     ],
-    "ignorePatterns": ["node_modules", ".next", "apidoc", "public/static/js"],
+    "ignorePatterns": ["node_modules", ".next", "apidoc", "public/static/js", "server/tracker/GpsTracker.js"],
     "rules": {
       "array-callback-return": "warn",
       "arrow-body-style": "warn",
