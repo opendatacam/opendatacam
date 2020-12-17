@@ -122,7 +122,6 @@ class GpsTracker {
     }
   }
 
-
   getJSONOfTrackedItems = function(roundInt = true) {
     var ret = this.__proto__.getJSONOfTrackedItems(roundInt);
 
