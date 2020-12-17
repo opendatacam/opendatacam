@@ -34,7 +34,7 @@ const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not runni
 
 const port = parseInt(process.env.PORT, 10) || configHelper.getAppPort()
 const dev = process.env.NODE_ENV !== 'production'
-const app = next({ dev })
+const app = next({ dir: "/data/data/com.opendatacam/files/nodejs-project" })
 const handle = app.getRequestHandler()
 
 // Log config loaded
@@ -65,7 +65,7 @@ if(config.VIDEO_INPUT == 'simulation') {
     };
   }
 }
-const YOLO = new YoloDarknet(yoloConfig);
+// const YOLO = new YoloDarknet(yoloConfig);
 
 // Select tracker, based on GPS settings in config
 var tracker = Tracker;
@@ -112,6 +112,9 @@ var unhook_intercept = intercept(function(text) {
   }
 });
 
+// for update with new frame "new" endpoint (TO refactor obviously)
+var frameId = 0;
+
 app.prepare()
 .then(() => {
   // Start HTTP server
@@ -123,13 +126,72 @@ app.prepare()
   // This render pages/index.js for a request to /
   express.get('/', (req, res) => {
 
-    YOLO.start(); // Inside yolo process will check is started
+    //YOLO.start(); // Inside yolo process will check is started
 
     const urlData = getURLData(req);
-    Opendatacam.listenToYOLO(YOLO, urlData);
+    //Opendatacam.listenToYOLO(YOLO, urlData);
+    Opendatacam.setVideoResolution({w: 480, h: 640});
 
     return app.render(req, res, '/')
   })
+
+
+  express.post('/updatewithnewframe', (req, res) => {
+    console.log("================== UPDATE WITH NEW FRAME ON NODE.JS side ==================")
+    var data = req.body;
+
+    /* INPUT IS:
+      [
+        {
+          height: 0.370419,
+          label: 26,
+          score: 0.30323648,
+          width: 0.45102352,
+          x: 0.022930816,
+          y: 0.46413746
+        },
+        {
+          height: 0.20264387,
+          label: 63,
+          score: 0.30077356,
+          width: 0.24395037,
+          x: 0.7267128,
+          y: 0.7456955
+        }
+    ]  
+    */
+
+
+    // Format data like this
+    /*
+    
+      [ 
+      {"name":"car", "relative_coordinates":{"center_x":0.485693, "center_y":0.570632, "width":0.091478, "height":0.156059}, "confidence":0.892377}
+      ] 
+     */
+
+    var frameUpdate = data.map((object) => {
+      return {
+        name: "car",
+        relative_coordinates: {
+          center_x: object.x + object.width / 2,
+          center_y: object.y + object.height / 2,
+          width: object.width,
+          height: object.height
+        },
+        confidence: 0.8
+      }
+    })
+
+
+    console.log(frameUpdate)
+
+    frameId++
+
+    Opendatacam.updateWithNewFrame(frameUpdate, frameId)
+
+    res.sendStatus(200)
+  });
 
   /**
    * @api {get} /start Start Opendatacam
@@ -515,11 +577,11 @@ app.prepare()
    *   HTTP/1.1 200 OK
   */
   express.get('/recording/start', (req, res) => {
-    if(YOLO.isLive()) {
-      Opendatacam.startRecording();
-    } else {
-      Opendatacam.requestFileRecording(YOLO);
-    }
+    //if(YOLO.isLive()) {
+    Opendatacam.startRecording();
+    //} else {
+    //  Opendatacam.requestFileRecording(YOLO);
+    //}
     res.sendStatus(200)
   });
 

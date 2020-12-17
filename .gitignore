@@ -16,3 +16,4 @@ public/static/trackerHistoryExport.json
 opendatacam_app.db
 opendatacam_recording.db
 opendatacam_tracker.db
+build/

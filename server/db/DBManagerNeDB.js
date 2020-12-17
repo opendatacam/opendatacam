@@ -37,9 +37,9 @@ class DBManagerNeDB {
       });
     });
 
-    this.db[RECORDING_COLLECTION] = new Datastore({ filename: 'opendatacam_recording.db' });
-    this.db[TRACKER_COLLECTION] = new Datastore({ filename: 'opendatacam_tracker.db' });
-    this.db[APP_COLLECTION] = new Datastore({ filename: 'opendatacam_app.db' });
+    this.db[RECORDING_COLLECTION] = new Datastore({ filename: '/data/data/com.opendatacam/files/opendatacam_recording.db' });
+    this.db[TRACKER_COLLECTION] = new Datastore({ filename: '/data/data/com.opendatacam/files/opendatacam_tracker.db' });
+    this.db[APP_COLLECTION] = new Datastore({ filename: '/data/data/com.opendatacam/files/opendatacam_app.db' });
 
     
     await Promise.all([
