@@ -13,3 +13,6 @@ public/static/trackerHistoryExport.json
 # static/placeholder/frames/
 *.weights
 .env
+opendatacam_app.db
+opendatacam_recording.db
+opendatacam_tracker.db
