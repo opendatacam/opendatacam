@@ -11,36 +11,36 @@ const splitargs = require('splitargs');
 const os = require("os");
 
 class YoloSimulation extends YoloDarknet {
-  config = {
-    videoParams: {
-      yolo_json: null,
-      video_file_or_folder: null,
-      // If true, simulation will behave like a webcam and silently restart at
-      // the end. If false, it behaves like a file and will cause the streams
-      // to close and reopen.
-      isLive: true,
-      jsonFps: 20,
-      mjpgFps: 1.0 / 5, // One image every 5 seconds
-    },
-    jsonStreamPort: 8070,
-    mjpegStreamPort: 8090,
-    simulationStartupDelayMs: 5000,
-    darknetStdout: false
-  };
-
-  // Store the path of the JSON file and the video files including some
-  // metadata on the FPS if possible
-  isVideoDirectory = null;
-  videoFileOrFolderExists = false;
-  videoFileFps = null;
-  detections = null;
-
-  // Information for the Stream
-  simulationMJPEGServe = null;
-  simulationJSONHTTPStreamServer = null;
-
   constructor(config) {
     super();
+
+    this.config = {
+      videoParams: {
+        yolo_json: null,
+        video_file_or_folder: null,
+        // If true, simulation will behave like a webcam and silently restart at
+        // the end. If false, it behaves like a file and will cause the streams
+        // to close and reopen.
+        isLive: true,
+        jsonFps: 20,
+        mjpgFps: 1.0 / 5, // One image every 5 seconds
+      },
+      jsonStreamPort: 8070,
+      mjpegStreamPort: 8090,
+      simulationStartupDelayMs: 5000,
+      darknetStdout: false
+    };
+
+    // Store the path of the JSON file and the video files including some
+    // metadata on the FPS if possible
+    this.isVideoDirectory = null;
+    this.videoFileOrFolderExists = false;
+    this.videoFileFps = null;
+    this.detections = null;
+
+    // Information for the Stream
+    this.simulationMJPEGServe = null;
+    this.simulationJSONHTTPStreamServer = null;
 
     // Take the values form the config first and then normalize what you have to.
     YoloSimulation.copyConfig(this.config, config);

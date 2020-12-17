@@ -26,7 +26,7 @@ if(package_json.version !== config.OPENDATACAM_VERSION) {
   console.log(`- ERROR Config.json version doesn't match Opendatacam package.json version -`)
   console.log(`- Use a config.json file version matching: ${process.env.npm_package_version}`)
   console.log('-----------------------------------')
-  return;
+  process.exit(1);
 }
 
 const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not running on the Jetson
