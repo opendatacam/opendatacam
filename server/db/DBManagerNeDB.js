@@ -59,6 +59,7 @@ class DBManagerNeDB {
     });
 
     // Auto compact db every 5 mins
+    // TODO add, do it only when isRecording
     this.db[RECORDING_COLLECTION].persistence.setAutocompactionInterval(1000 * 60 * 5);
     this.db[TRACKER_COLLECTION].persistence.setAutocompactionInterval(1000 * 60 * 5);
     console.log('Auto compacting NeDB files ... might cause a sligth lag')
@@ -151,6 +152,8 @@ class DBManagerNeDB {
           if (err) {
             reject(err);
           } else {
+            // compact
+            db[RECORDING_COLLECTION].persistence.compactDatafile()
             resolve(r);
           }
         });
@@ -163,6 +166,8 @@ class DBManagerNeDB {
           if (err) {
             reject(err);
           } else {
+            // compact
+            db[TRACKER_COLLECTION].persistence.compactDatafile()
             resolve(r);
           }
         });
