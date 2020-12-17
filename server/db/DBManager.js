@@ -7,19 +7,18 @@ const APP_COLLECTION = 'app';
 
 
 class DBManager {
-  // XXX: This is a hacky way to export the collections without changing the module structure to
-  // much
-  RECORDING_COLLECTION = RECORDING_COLLECTION;
-  TRACKER_COLLECTION = TRACKER_COLLECTION;
-  APP_COLLECTION = APP_COLLECTION;
-
-  /**
-   * The connection string used or null if a Db object was used for the connection or the
-   * connection has not been established yet.
-   */
-  connectionString = null;
-
   constructor() {
+    // XXX: This is a hacky way to export the collections without changing the module structure to
+    // much
+    this.RECORDING_COLLECTION = RECORDING_COLLECTION;
+    this.TRACKER_COLLECTION = TRACKER_COLLECTION;
+    this.APP_COLLECTION = APP_COLLECTION;
+
+    /**
+     * The connection string used or null if a Db object was used for the connection or the
+     * connection has not been established yet.
+     */
+    this.connectionString = null;
     this.db = null;
   }
 

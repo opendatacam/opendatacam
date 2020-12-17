@@ -3,26 +3,6 @@ const { performance } = require('perf_hooks');
 const { EventEmitter } = require('events');
 
 class YoloDarknet extends EventEmitter {
-  isStarting = false;
-  isStarted = false;
-  isInitialized = false;
-  process = null;
-  videoResolution = {
-    w: 0,
-    h: 0
-  };
-
-  /** The configuration passed to the constructor. */
-  config = {
-    yoloParams: null,
-    videoType: null,
-    videoParams: null,
-    jsonStreamPort: null,
-    mjpegStreamPort: null,
-    darknetPath: null,
-    darknetCmd: null,
-  };
-
   /**
    * Creates a YoloDarknet object
    *
@@ -33,6 +13,26 @@ class YoloDarknet extends EventEmitter {
    */
   constructor(config = null) {
     super();
+
+    this.isStarting = false;
+    this.isStarted = false;
+    this.isInitialized = false;
+    this.process = null;
+    this.videoResolution = {
+      w: 0,
+      h: 0
+    };
+
+    /** The configuration passed to the constructor. */
+    this.config = {
+      yoloParams: null,
+      videoType: null,
+      videoParams: null,
+      jsonStreamPort: null,
+      mjpegStreamPort: null,
+      darknetPath: null,
+      darknetCmd: null,
+    };
 
     if(config == null) {
       console.warn('YoloDarknet: Empty configuration passed, most likely because you are in Simulation mode.');

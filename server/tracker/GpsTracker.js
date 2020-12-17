@@ -4,23 +4,6 @@ const gpsd = require('node-gpsd');
  * Augments a tracker with GPS coordinates if they are available.
  */
 class GpsTracker {
-  DEFAULT_GPSD_RECONNECT_BACKUP_MILLIS = 1000;
-  DEFAULT_GPSD_RECONNECT_MAX_MILLIS = 60 * this.DEFAULT_GPSD_RECONNECT_BACKUP_MILLIS;
-
-  lat = null;
-  lon = null;
-  /** The time obtained from GPS signals as JavaScript Date object */
-  gpsTimestamp = null;
-  /** The system timestamp of the last GPS position fix as JavaScript Date object */
-  positionUpdateTime = null;
-  /** The system timestamp of the last GPS timestamp fix as JavaScript Date object */
-  timeUpdateTime = null;
-  signalLossTimeoutSeconds = null;
-  gpsdListener = null;
-  gpsdReconnectBackoffMillis = this.DEFAULT_GPSD_RECONNECT_BACKUP_MILLIS;
-  gpsdReconnectTimer = null;
-  logger = console;
-
   /**
    * Creates a new GPS Tracker to augment the given tracker.
    *
@@ -30,6 +13,23 @@ class GpsTracker {
    *    creating a new one
    */
   constructor(baseTracker, config, gpsdListener=null) {
+    this.DEFAULT_GPSD_RECONNECT_BACKUP_MILLIS = 1000;
+    this.DEFAULT_GPSD_RECONNECT_MAX_MILLIS = 60 * this.DEFAULT_GPSD_RECONNECT_BACKUP_MILLIS;
+
+    this.lat = null;
+    this.lon = null;
+    /** The time obtained from GPS signals as JavaScript Date object */
+    this.gpsTimestamp = null;
+    /** The system timestamp of the last GPS position fix as JavaScript Date object */
+    this.positionUpdateTime = null;
+    /** The system timestamp of the last GPS timestamp fix as JavaScript Date object */
+    this.timeUpdateTime = null;
+    this.signalLossTimeoutSeconds = null;
+    this.gpsdListener = null;
+    this.gpsdReconnectBackoffMillis = this.DEFAULT_GPSD_RECONNECT_BACKUP_MILLIS;
+    this.gpsdReconnectTimer = null;
+    this.logger = console;
+
     this.__proto__ = baseTracker;
     this.signalLossTimeoutSeconds = config.signalLossTimeoutSeconds;
 
@@ -93,7 +93,7 @@ class GpsTracker {
     }
   }
 
-  handleGpsTpvUpdate = function (tpv) {
+  handleGpsTpvUpdate(tpv) {
     if (tpv.lat && tpv.lon) {
 
       // Log if this is the first position fix we get
@@ -122,7 +122,7 @@ class GpsTracker {
     }
   }
 
-  getJSONOfTrackedItems = function (roundInt = true) {
+  getJSONOfTrackedItems = function(roundInt = true) {
     var ret = this.__proto__.getJSONOfTrackedItems(roundInt);
 
     // Decorate with GPS data
