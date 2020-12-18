@@ -28,9 +28,6 @@ if (packageJson.version !== config.OPENDATACAM_VERSION) {
   process.exit(1);
 }
 
-const SIMULATION_MODE = process.env.NODE_ENV !== 'production'; // When not running on the Jetson
-// const SIMULATION_MODE = true;
-
 const port = parseInt(process.env.PORT, 10) || configHelper.getAppPort();
 const dev = process.env.NODE_ENV !== 'production';
 const app = next({ dev });
@@ -100,7 +97,7 @@ DBManager.init().then(
 let stdoutBuffer = '';
 let stdoutInterval = '';
 const bufferLimit = 30000;
-const unhookIntercept = intercept((text) => {
+intercept((text) => {
   const stdoutText = text.toString();
   stdoutBuffer += stdoutText;
   stdoutInterval += stdoutText;
@@ -723,7 +720,7 @@ app.prepare()
      *   HTTP/1.1 200 OK
      */
     express.delete('/recording/:id', (req, res) => {
-      DBManager.deleteRecording(req.params.id).then((success) => {
+      DBManager.deleteRecording(req.params.id).then(() => {
         res.sendStatus(200);
       });
     });
@@ -1063,7 +1060,7 @@ app.prepare()
     // API to Upload file and restart yolo on that file
     // TODO JSDOC
     // TODO Only upload file here and then add another endpoint to restart YOLO on a given file
-    express.post('/files', (req, res, next) => {
+    express.post('/files', (req, res) => {
       uploadMulter(req, res, (err) => {
         console.log('uploadMulter callback');
         if (err) {
