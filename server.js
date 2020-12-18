@@ -9,6 +9,7 @@ const ip = require('ip');
 const flatten = require('lodash.flatten');
 const intercept = require('intercept-stdout');
 const { Tracker } = require('node-moving-things-tracker');
+const cloneDeep = require('lodash.clonedeep');
 const Opendatacam = require('./server/Opendatacam');
 const { getURLData } = require('./server/utils/urlHelper');
 const DBManager = require('./server/db/DBManager');
