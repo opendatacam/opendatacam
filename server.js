@@ -146,6 +146,7 @@ app.prepare()
       res.sendStatus(200);
     });
 
+    let mjpgProxy = null;
     /**
      * @api {get} /webcam/stream Stream (MJPEG)
      * @apiName Stream
@@ -168,7 +169,6 @@ app.prepare()
       }
       return mjpgProxy.proxyRequest(req, res);
     });
-    var mjpgProxy = null;
 
     /**
      * @api {get} /webcam/resolution Resolution
