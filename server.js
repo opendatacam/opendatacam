@@ -17,10 +17,10 @@ const { MjpegProxy } = require('./server/utils/mjpegproxy');
 const config = require('./config.json');
 const configHelper = require('./server/utils/configHelper');
 const GpsTracker = require('./server/tracker/GpsTracker');
-const package_json = require('./package.json');
+const packageJson = require('./package.json');
 const { YoloDarknet } = require('./server/processes/YoloDarknet');
 
-if (package_json.version !== config.OPENDATACAM_VERSION) {
+if (packageJson.version !== config.OPENDATACAM_VERSION) {
   console.log('-----------------------------------');
   console.log('- ERROR Config.json version doesn\'t match Opendatacam package.json version -');
   console.log(`- Use a config.json file version matching: ${process.env.npm_package_version}`);
@@ -100,7 +100,7 @@ DBManager.init().then(
 let stdoutBuffer = '';
 let stdoutInterval = '';
 const bufferLimit = 30000;
-const unhook_intercept = intercept((text) => {
+const unhookIntercept = intercept((text) => {
   const stdoutText = text.toString();
   stdoutBuffer += stdoutText;
   stdoutInterval += stdoutText;
