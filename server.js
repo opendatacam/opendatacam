@@ -855,7 +855,6 @@ app.prepare()
             };
 
             // Adds GPS export fields to CSV
-            const isGpsEnabled = config.GPS && config.GPS.enabled === true;
             if (isGpsEnabled) {
             // Links
               const isExportOsmLink = config.GPS && config.GPS.csvExportOpenStreetMapsUrl === true;
