@@ -103,3 +103,8 @@ v4l2-ctl --list-devices
 
 ![Technical architecture](https://user-images.githubusercontent.com/533590/60489282-3f2d1700-9ca4-11e9-932c-19bf84e04f9a.png)
 
+### Code Style
+
+Opendatacam uses the https://github.com/airbnb/javascript style.
+You can run `npm run lint` to check the whole code base.
+Or `npx eslint yourfile.js` to check only a single file.
