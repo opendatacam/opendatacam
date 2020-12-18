@@ -50,10 +50,10 @@ const yoloConfig = {
   darknetPath: config.PATH_TO_YOLO_DARKNET,
   darknetCmd: config.CMD_TO_YOLO_DARKNET,
 };
-if (config.VIDEO_INPUT == 'simulation') {
+if (config.VIDEO_INPUT === 'simulation') {
   yoloConfig.darknetPath = '.';
   yoloConfig.darknetCmd = 'node scripts/YoloSimulation.js';
-  if (yoloConfig.yoloParams == undefined) {
+  if (yoloConfig.yoloParams === undefined) {
     yoloConfig.yoloParams = {
       data: 'data',
       cfg: 'cfg',
