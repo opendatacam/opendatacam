@@ -184,7 +184,7 @@ app.prepare()
      *     }
      */
     express.get('/webcam/resolution', (req, res) => {
-      res.json(videoResolution);
+      res.json(YOLO.videoResolution);
     });
 
     let consoleRes = null;
