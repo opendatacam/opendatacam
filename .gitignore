@@ -13,3 +13,4 @@ public/static/trackerHistoryExport.json
 # static/placeholder/frames/
 *.weights
 .env
+.build
