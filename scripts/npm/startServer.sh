@@ -11,8 +11,11 @@ fi
 echo "PORT=$PORT"
 echo "NODE_ENV=$NODE_ENV"
 
-$REPO_ROOT/scripts/generateapidoc
 if [ "$NODE_ENV" == "production" ]; then
-  $REPO_ROOT/scripts/build
+  # Build automatically generates API docs
+  $REPO_ROOT/scripts/npm/build.sh
+else
+  # Explicitly generate API docs during development
+  $REPO_ROOT/scripts/npm/generateapidoc.sh
 fi
 node $REPO_ROOT/server.js

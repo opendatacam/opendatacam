@@ -2,12 +2,12 @@
   "name": "OpenDataCam",
   "version": "3.0.1",
   "scripts": {
-    "dev": "scripts/startServer",
-    "lint": "scripts/lint",
-    "build": "scripts/build",
-    "start": "NODE_ENV=production scripts/startServer",
-    "generateapidoc": "scripts/generateapidoc",
-    "test": "scripts/test"
+    "dev": "scripts/npm/startServer.sh",
+    "lint": "scripts/npm/lint.sh",
+    "build": "scripts/npm/build.sh",
+    "start": "NODE_ENV=production scripts/npm/startServer.sh",
+    "generateapidoc": "scripts/npm/generateapidoc.sh",
+    "test": "scripts/npm/test.sh"
   },
   "dependencies": {
     "axios": "^0.19.2",
