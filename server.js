@@ -1,3 +1,6 @@
+// Ignore long apidoc comments while keeping the code to 100 chars per line.
+/* eslint max-len: ["warn", { "ignoreComments": true , "code": 100, "tabWidth": 2, "ignoreUrls": true }] */
+
 const express = require('express')();
 const multer = require('multer');
 const serveStatic = require('serve-static');
@@ -73,7 +76,11 @@ if (isGpsEnabled) {
 // Set tracker params
 if (config.TRACKER_SETTINGS) {
   const trackerParams = {};
-  const paramKeys = ['iouLimit', 'unMatchedFrameTolerance', 'fastDelete', 'distanceFunc', 'distanceLimit'];
+  const paramKeys = ['iouLimit',
+    'unMatchedFrameTolerance',
+    'fastDelete',
+    'distanceFunc',
+    'distanceLimit'];
 
   paramKeys.forEach((key) => {
     if (key in config.TRACKER_SETTINGS) {
@@ -155,12 +162,11 @@ app.prepare()
      *
      * @apiDescription Limitation: Only available after YOLO has started
      *
-     * This endpoint streams the webcam as a MJPEG stream. (streams the sequence of JPEG frames over HTTP).
-     * The TCP connection is not closed as long as the client wants to receive new frames and the server wants to provide new frames
-     * Only support one client at a time, if another one connect, the first HTTP connection is closed
+     * This endpoint streams the webcam as a MJPEG stream. (streams the sequence of JPEG frames
+     * over HTTP). The TCP connection is not closed as long as the client wants to receive new
+     * frames and the server wants to provide new frames
      *
      * More on MJPEG over HTTP: https://en.wikipedia.org/wiki/Motion_JPEG#M-JPEG_over_HTTP
-     *
      */
     express.get('/webcam/stream', (req, res) => {
     // Proxy MJPEG stream from darknet to avoid freezing issues
@@ -412,13 +418,15 @@ app.prepare()
       res.json(Opendatacam.getCountingAreas());
     });
 
-    // Maybe Remove the need for dependency with direct express implem: https://github.com/expressjs/compression#server-sent-events
+    // Maybe Remove the need for dependency with direct express implem:
+    // https://github.com/expressjs/compression#server-sent-events
     /**
      * @api {get} /tracker/sse Tracker data
      * @apiName Data
      * @apiGroup Tracker
      *
-     * @apiDescription From the browser, you can open a SSE (Server side event) connection to get data from Opendatacan on each frame.
+     * @apiDescription From the browser, you can open a SSE (Server side event) connection to get
+     * data from Opendatacan on each frame.
      *
      * **How to open an SSE connexion**
      *
@@ -430,9 +438,11 @@ app.prepare()
      *
      * Then it works like websocket but only the server can push data.
      *
-     * *Limitation: Only support one client at a time, if another one connect, the first SSE connection is closed*
+     * *Limitation: Only support one client at a time, if another one connect, the first SSE
+     * connection is closed*
      *
-     * More doc on server side event, read [What are SSE : Server Side Events](https://medium.com/axiomzenteam/websockets-http-2-and-sse-5c24ae4d9d96)
+     * More doc on server side event, read
+     * [What are Server Side Events](https://medium.com/axiomzenteam/websockets-http-2-and-sse-5c24ae4d9d96)
      *
      * @apiSuccessExample {json} Frame example (once parsed to JSON):
      *  {
@@ -619,7 +629,8 @@ app.prepare()
      * @apiName Tracker data
      * @apiGroup Recording
      *
-     * @apiDescription Get tracker data for a specific recording **(can be very large as it returns all the data for each frame)**
+     * @apiDescription Get tracker data for a specific recording **(can be very large as it returns
+     * all the data for each frame)**
      *
      * @apiParam {String} id Recording id (_id field of GET /recordings endpoint)
      *
@@ -666,7 +677,8 @@ app.prepare()
     express.get('/recording/:id/tracker', (req, res) => {
       DBManager.getTrackerHistoryOfRecording(req.params.id).then((trackerData) => {
         res.setHeader('Content-Type', 'application/json');
-        res.setHeader('Content-disposition', `attachment; filename=trackerData-${req.params.id}.json`);
+        res.setHeader('Content-disposition',
+          `attachment; filename=trackerData-${req.params.id}.json`);
         res.json(trackerData);
       });
     });
@@ -813,7 +825,9 @@ app.prepare()
     express.get('/recording/:id/counter', (req, res) => {
       DBManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
         res.setHeader('Content-Type', 'application/json');
-        res.setHeader('Content-disposition', `attachment; filename=counterData-${counterData.dateStart.toISOString().split('T')[0]}-${req.params.id}.json`);
+        const startDate = counterData.dateStart.toISOString().split('T')[0];
+        const fileName = `counterData-${startDate}-${req.params.id}.json`;
+        res.setHeader('Content-disposition', `attachment; filename=${fileName}`);
         res.json(counterData);
       });
     });
@@ -880,7 +894,9 @@ app.prepare()
           data = [];
         }
         console.log(`Exporting ${req.params.id} counter history to CSV`);
-        res.csv(data, true, { 'Content-disposition': `attachment; filename=counterData-${counterData.dateStart.toISOString().split('T')[0]}-${req.params.id}.csv` });
+        const startDate = counterData.dateStart.toISOString().split('T')[0];
+        const fileName = `counterData-${startDate}-${req.params.id}.csv`;
+        res.csv(data, true, { 'Content-disposition': `attachment; filename=${fileName}` });
       });
     });
 
@@ -1103,7 +1119,8 @@ app.prepare()
      *
      * @apiDescription Save UI settings
      *
-     * Through this api you can persist some UI settings like whether counter and pathfinder features are enabled
+     * Through this api you can persist some UI settings like whether counter and pathfinder
+     * features are enabled
      *
      *
      * @apiParam {Boolean} counterEnabled If counter feature is enabled
@@ -1129,7 +1146,8 @@ app.prepare()
      *
      * @apiDescription Get UI settings
      *
-     * Through this api you can get UI settings like whether counter and pathfinder features are enabled
+     * Through this api you can get UI settings like whether counter and pathfinder features are
+     * enabled
      *
      *
      * @apiSuccessExample {json} Success Response:
@@ -1187,5 +1205,6 @@ process.on('SIGUSR2', exitHandler.bind(null, { exit: true }));
 
 process.on('uncaughtException', (err) => {
   // This should not happen
-  console.log('Pheew ....! Something unexpected happened. This should be handled more gracefully. I am sorry. The culprit is: ', err);
+  console.log('Pheew ....! Something unexpected happened. This should be handled more '
+    + 'gracefully. I am sorry. The culprit is: ', err);
 });
