@@ -6,7 +6,7 @@
     "lint": "npx eslint .",
     "build": "next build",
     "start": "PORT=8080 NODE_ENV=production node server.js",
-    "generateapidoc": "apidoc -i . -e node_modules/ -o apidoc/",
+    "generateapidoc": "scripts/generateapidoc",
     "test": "node --unhandled-rejections=strict ./node_modules/jasmine/bin/jasmine.js"
   },
   "dependencies": {
