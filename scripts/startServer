@@ -1,0 +1,18 @@
+#! /bin/bash
+REPO_ROOT=$(git rev-parse --show-toplevel)
+
+if [ -z $PORT ]; then
+  PORT=8080
+fi
+if [ -z $NODE_ENV ]; then
+  NODE_ENV=development
+fi
+
+echo "PORT=$PORT"
+echo "NODE_ENV=$NODE_ENV"
+
+$REPO_ROOT/scripts/generateapidoc
+if [ "$NODE_ENV" == "production" ]; then
+  $REPO_ROOT/scripts/build
+fi
+node $REPO_ROOT/server.js
