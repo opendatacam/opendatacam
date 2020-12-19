@@ -1066,10 +1066,11 @@ app.prepare()
     const uploadMulter = multer({
       storage,
       fileFilter(req, file, cb) {
-        if (!file.originalname.match(/\.(mp4|avi|mov)$/)) {
-          return cb(new Error('Only video files are allowed!'));
+        if (file.originalname.match(/\.(mp4|avi|mov)$/)) {
+          cb(null, true);
+        } else {
+          cb(new Error('Only video files are allowed!'));
         }
-        cb(null, true);
       },
     }).single('video');
 
