@@ -1162,7 +1162,7 @@ app.prepare()
       res.json(uiSettings);
     });
 
-    express.use('/api/doc', serveStatic('apidoc'));
+    express.use('/api/doc', serveStatic('.build/apidoc'));
 
     // Global next.js handler
     express.get('*', (req, res) => handle(req, res));
