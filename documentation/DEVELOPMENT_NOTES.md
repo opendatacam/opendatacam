@@ -63,7 +63,7 @@ The simulation JSON and MJPG streams can also be started without Opendatacam by 
 - Make sure correct version in README "Install and start OpenDataCam" wget install script
 - Make sure correct version in JETSON_NANO.md "Install OpenDataCam" wget install script
 - Make sure correct VERSION in /docker/install-opendatacam.sh
-- Generate up to date api documentation `npm run generateapidoc`
+- Generate up to date api documentation `npm run generateapidoc` (not needed anymore since https://github.com/opendatacam/opendatacam/pull/336)
 - Push and Tag version on github
 - Compile docker image on 4 platforms ( nano, tx2, xavier, nvidia-docker ) , upload them to dockerhub and tag them properly
 - Add Release on github
