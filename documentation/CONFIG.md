@@ -402,7 +402,7 @@ For example, if you want to use `yolov3-tiny-prn` , you need to:
 
 - download `yolov3-tiny-prn.weights` the same directory as the `docker-compose.yml` file
 
-- (optional) download the `.cfg` and `.data` files if they are custom (not default darknet)
+- (optional) download the `.cfg`, `.data` and `.names` files if they are custom (not default darknet)
 
 - mount the weights file using `volumes` in the `docker-compose.yml` file
 
@@ -412,7 +412,7 @@ volumes:
   - './yolov3-tiny-prn.weights:/var/local/darknet/yolov3-tiny-prn.weights'
 ```
 
-- (optional) if you have custom `.cfg` and `.data` files you should mount them too
+- (optional) if you have custom `.cfg`,`.data` and `.names` files you should mount them too
 
 
 ```yaml
@@ -421,6 +421,7 @@ volumes:
   - './yolov3-tiny-prn.weights:/var/local/darknet/yolov3-tiny-prn.weights'
   - './coco.data:/var/local/darknet/cfg/coco.data'
   - './yolov3-tiny-prn.cfg:/var/local/darknet/cfg/yolov3-tiny-prn.cfg'
+  - './coco.names:/var/local/darknet/cfg/coco.names'
 ```
 
 - change the `config.json`
@@ -441,7 +442,13 @@ volumes:
 "NEURAL_NETWORK": "yolov3-tiny-prn"
 ```
 
-- restart the container
+- If you've added new volumes to your `docker-compose.yml`, you need to update the container using : 
+
+```
+sudo docker-compose up -d
+```
+
+- Otherwise, if you just updated files from existing volumes, you need to restart the container using  : 
 
 ```
 sudo docker-compose restart
