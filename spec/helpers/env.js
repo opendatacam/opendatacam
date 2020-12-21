@@ -3,7 +3,7 @@
  * real config values.
  */
 
- /**
+/**
   * Sets an environmet variable
   *
   * This will print a warning if the variable was overwritten.
@@ -12,7 +12,8 @@
   * @param {*} value The new value
   */
 function setEnv(name, value) {
-  if(name in process.env) {
+  if (name in process.env) {
+    // eslint-disable-next-line no-console
     console.warn(`ENV: Overriding ${name}: ${process.env[name]} => ${value}`);
   }
   process.env[name] = value;

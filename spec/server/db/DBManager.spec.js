@@ -1,13 +1,13 @@
 const { ObjectID } = require('mongodb');
+const cloneDeep = require('lodash.clonedeep');
 const DBManager = require('../../../server/db/DBManager');
 const { getMongoUrl } = require('../../../server/utils/configHelper');
-const cloneDeep = require('lodash.clonedeep');
-
 
 describe('DBManager', () => {
   const RECORDING_ID = '5faac7df863f7328a158c78e';
 
-  var dbSpy = null;
+  let dbSpy = null;
+  let collectionSpy = null;
 
   beforeEach(() => {
     collectionSpy = jasmine.createSpyObj('collection',
@@ -28,7 +28,7 @@ describe('DBManager', () => {
       // Report success
       callback(null, null);
     });
-    dbSpy = jasmine.createSpyObj('Db', { 'collection': collectionSpy });
+    dbSpy = jasmine.createSpyObj('Db', { collection: collectionSpy });
   });
 
   describe('connection', () => {
@@ -36,7 +36,7 @@ describe('DBManager', () => {
       const defaultConnectionString = getMongoUrl();
       DBManager.init().then(
         () => { fail(); },
-        () => { expect(DBManager.connectionString).toEqual(defaultConnectionString); }
+        () => { expect(DBManager.connectionString).toEqual(defaultConnectionString); },
       );
     });
 
@@ -44,12 +44,12 @@ describe('DBManager', () => {
       const connectionString = 'mongo://foo:218';
       DBManager.connect(connectionString).then(
         () => { fail(); },
-        () => { expect(DBManager.connectionString).toEqual(connectionString); }
+        () => { expect(DBManager.connectionString).toEqual(connectionString); },
       );
     });
 
     describe('object', () => {
-      var connectionPromise = null;
+      let connectionPromise = null;
       beforeEach(() => {
         connectionPromise = DBManager.connect(dbSpy);
       });
@@ -93,10 +93,10 @@ describe('DBManager', () => {
             bearing: 90,
             confidence: 50,
             name: 'car',
-            areas: []
-          }
-        ]
-      }
+            areas: [],
+          },
+        ],
+      },
     ];
 
     beforeEach(async () => {
@@ -136,7 +136,8 @@ describe('DBManager', () => {
 
     it('deletes tracker data for recording', () => {
       expect(dbSpy.collection).toHaveBeenCalledWith(DBManager.TRACKER_COLLECTION);
-      expect(collectionSpy.deleteMany.calls.mostRecent().args[0]).toEqual({ 'recordingId': ObjectID(RECORDING_ID) });
+      const expectedCall = { recordingId: ObjectID(RECORDING_ID) };
+      expect(collectionSpy.deleteMany.calls.mostRecent().args[0]).toEqual(expectedCall);
     });
 
     it('does not call obsolete methods', () => {

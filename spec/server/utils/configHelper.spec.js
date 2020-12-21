@@ -10,11 +10,11 @@ const {
 describe('configHelper', () => {
   describe('parseAndTestIsNumber', () => {
     it('should parse string to number', () => {
-      expect(parseAndTestIsNumber("123")).toBe(true);
+      expect(parseAndTestIsNumber('123')).toBe(true);
     });
 
     it('should return false on non number s string', () => {
-      expect(parseAndTestIsNumber("abc")).toBe(false);
+      expect(parseAndTestIsNumber('abc')).toBe(false);
     });
 
     it('should return true when passed a number', () => {
@@ -54,9 +54,9 @@ describe('configHelper', () => {
 
   describe('process env', () => {
     it('takes ENV values by default', () => {
-      expect(getAppPort()).toBe(parseInt(process.env.PORT_APP));
-      expect(getJsonStreamPort()).toBe(parseInt(process.env.PORT_DARKNET_JSON_STREAM));
-      expect(getMjpegStreamPort()).toBe(parseInt(process.env.PORT_DARKNET_MJPEG_STREAM));
+      expect(getAppPort()).toBe(parseInt(process.env.PORT_APP, 10));
+      expect(getJsonStreamPort()).toBe(parseInt(process.env.PORT_DARKNET_JSON_STREAM, 10));
+      expect(getMjpegStreamPort()).toBe(parseInt(process.env.PORT_DARKNET_MJPEG_STREAM, 10));
       expect(getMongoUrl()).toBe(process.env.MONGODB_URL);
     });
   });
