@@ -1,0 +1,26 @@
+name: API Documentation
+
+on:
+  push:
+    branches:
+      - master
+      - 334-apidoc-on-build
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+
+      - name: Generate API Documentation
+        run: npm run generateapidoc
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: .build/apidoc
