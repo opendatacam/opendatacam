@@ -55,6 +55,7 @@ The simulation JSON and MJPG streams can also be started without Opendatacam by 
 
 ### Release checklist
 
+- For next release only: Set $VERSION instead of master for the Kubernete install script, see: https://github.com/opendatacam/opendatacam/pull/247
 - Make sure that config.json has the TO_REPLACE_VIDEO_INPUT, TO_REPLACE_VIDEO_INPUT values that will be replaced by sed on installation
 - Search and replace OLD_VERSION with NEW_VERSION in all documentation
 - Make sure correct version in config.json > OPENDATACAM_VERSION
@@ -62,7 +63,7 @@ The simulation JSON and MJPG streams can also be started without Opendatacam by 
 - Make sure correct version in README "Install and start OpenDataCam" wget install script
 - Make sure correct version in JETSON_NANO.md "Install OpenDataCam" wget install script
 - Make sure correct VERSION in /docker/install-opendatacam.sh
-- Generate up to date api documentation `npm run generateapidoc`
+- Generate up to date api documentation `npm run generateapidoc` (not needed anymore since https://github.com/opendatacam/opendatacam/pull/336 , will need to double check the documentation and api doc are generating correctly on gh-pages for any commit on master, see also: https://github.com/opendatacam/opendatacam/issues/334 )
 - Push and Tag version on github
 - Compile docker image on 4 platforms ( nano, tx2, xavier, nvidia-docker ) , upload them to dockerhub and tag them properly
 - Add Release on github
@@ -103,3 +104,8 @@ v4l2-ctl --list-devices
 
 ![Technical architecture](https://user-images.githubusercontent.com/533590/60489282-3f2d1700-9ca4-11e9-932c-19bf84e04f9a.png)
 
+### Code Style
+
+Opendatacam uses the https://github.com/airbnb/javascript style.
+You can run `npm run lint` to check the whole code base.
+Or `npx eslint yourfile.js` to check only a single file.

@@ -1,3 +1,5 @@
+/* eslint no-console: "off" */
+
 const fs = require('fs');
 const path = require('path');
 const http = require('http');
@@ -5,10 +7,10 @@ const killable = require('killable');
 const mjpegServer = require('mjpeg-server');
 const { execFile, execFileSync } = require('child_process');
 const { performance } = require('perf_hooks');
-const { YoloDarknet } = require('../server/processes/YoloDarknet');
 const yargs = require('yargs');
 const splitargs = require('splitargs');
-const os = require("os");
+const os = require('os');
+const { YoloDarknet } = require('../server/processes/YoloDarknet');
 
 class YoloSimulation extends YoloDarknet {
   constructor(config) {
@@ -28,7 +30,7 @@ class YoloSimulation extends YoloDarknet {
       jsonStreamPort: 8070,
       mjpegStreamPort: 8090,
       simulationStartupDelayMs: 5000,
-      darknetStdout: false
+      darknetStdout: false,
     };
 
     // Store the path of the JSON file and the video files including some
@@ -45,19 +47,24 @@ class YoloSimulation extends YoloDarknet {
     // Take the values form the config first and then normalize what you have to.
     YoloSimulation.copyConfig(this.config, config);
     this.config.videoParams.yolo_json = YoloSimulation.normalizePath(config.videoParams.yolo_json);
+    // eslint-disable-next-line max-len
     this.config.videoParams.video_file_or_folder = YoloSimulation.normalizePath(config.videoParams.video_file_or_folder);
-    this.detections = require(this.config.videoParams.yolo_json);
 
+    // parse JSON string to JSON object
+    const data = fs.readFileSync(this.config.videoParams.yolo_json);
+    this.detections = JSON.parse(data);
 
     // Check if the video source is a file and determine the fps
     try {
+      // eslint-disable-next-line max-len
       this.isVideoDirectory = fs.lstatSync(this.config.videoParams.video_file_or_folder).isDirectory();
       this.videoFileOrFolderExists = true;
     } catch (err) {
-      console.warn('Could not open simulation video file or folder ' + this.config.videoParams.video_file_or_folder);
+      console.warn(`Could not open simulation video file or folder ${this.config.videoParams.video_file_or_folder}`);
       this.videoFileOrFolderExists = false;
     }
     if (this.videoFileOrFolderExists && !this.isVideoDirectory) {
+      // eslint-disable-next-line max-len
       this.videoFileFps = YoloSimulation.getFpsForFile(this.config.videoParams.video_file_or_folder);
     }
 
@@ -83,7 +90,7 @@ class YoloSimulation extends YoloDarknet {
     const fpsProcOut = execFileSync('ffprobe', args, { encoding: 'utf-8' });
     const fpsParts = fpsProcOut.split('/');
     const fps = Number(fpsParts[0]) / Number(fpsParts[1]);
-    console.debug(file + ' @ ' + fps + ' fps');
+    console.debug(`${file} @ ${fps} fps`);
     return fps;
   }
 
@@ -94,6 +101,7 @@ class YoloSimulation extends YoloDarknet {
         if (isObject) {
           YoloSimulation.copyConfig(target[key], newConfig[key]);
         } else {
+          // eslint-disable-next-line no-param-reassign
           target[key] = newConfig[key];
         }
       }
@@ -136,7 +144,7 @@ class YoloSimulation extends YoloDarknet {
   }
 
   stop() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (this.simulationMJPEGServer) {
         this.simulationMJPEGServer.kill();
       }
@@ -158,17 +166,17 @@ class YoloSimulation extends YoloDarknet {
     const simulationState = {
       JSONStreamRes: null,
       mjpegReqHandler: null,
-      timer: null
-    }
+      timer: null,
+    };
 
-    console.debug("Start HTTP JSON Stream server");
+    console.debug('Start HTTP JSON Stream server');
     this.simulationJSONHTTPStreamServer = http.createServer((req, res) => {
-      console.debug("Got request on JSON Stream server started");
+      console.debug('Got request on JSON Stream server started');
       simulationState.JSONStreamRes = res;
-      res.write("[");
+      res.write('[');
       simulationState.timer = this.startStream(simulationState);
     });
-    this.simulationJSONHTTPStreamServer.on('close', (err, socket) => {
+    this.simulationJSONHTTPStreamServer.on('close', () => {
       console.debug('closing JSON');
       simulationState.JSONStreamRes = null;
       if (simulationState.mjpegReqHandler) {
@@ -179,12 +187,12 @@ class YoloSimulation extends YoloDarknet {
     console.debug(simulationState.config);
     this.simulationJSONHTTPStreamServer.listen(this.config.jsonStreamPort);
 
-    console.debug("Start MJPEG server");
-    this.simulationMJPEGServer = http.createServer(function (req, res) {
-      console.debug("Got request on MJPEG server");
+    console.debug('Start MJPEG server');
+    this.simulationMJPEGServer = http.createServer((req, res) => {
+      console.debug('Got request on MJPEG server');
       simulationState.mjpegReqHandler = mjpegServer.createReqHandler(req, res);
     });
-    this.simulationMJPEGServer.on('close', (err, socket) => {
+    this.simulationMJPEGServer.on('close', () => {
       console.debug('closing MJGEG');
       if (simulationState.timer) {
         clearInterval(simulationState.timer);
@@ -197,12 +205,12 @@ class YoloSimulation extends YoloDarknet {
   }
 
   startStream(simulationState) {
-    var detectionsNb = 0;
-    var isSendingJpeg = false;
-    var lastJpegTimestamp = 0;
+    let detectionsNb = 0;
+    let isSendingJpeg = false;
+    let lastJpegTimestamp = 0;
     const self = this;
     const timer = setInterval(() => {
-      let sendJPGData = function (err, data) {
+      const sendJPGData = (err, data) => {
         if (!err) {
           // The JPEG stream is opened after the JSON stream, so check for it
           // to be open before sending frames
@@ -225,7 +233,7 @@ class YoloSimulation extends YoloDarknet {
             isSendingJpeg = false;
           }
         }
-      }
+      };
 
       if (isSendingJpeg) {
         return;
@@ -248,25 +256,34 @@ class YoloSimulation extends YoloDarknet {
       //
       // In this simple form we have a mutex to check if we are still
       // transmitting a frame.
+      //
+      // Additonally for File extraction we put in a 1s delay to give the CPU some rest.
+      const sleepMillis = (1000.0 / this.config.videoParams.mjpgFps);
       if (this.videoFileOrFolderExists && !isSendingJpeg) {
         if (this.isVideoDirectory) {
           isSendingJpeg = true;
-          YoloSimulation.getJpgForFrameFromFolder(this.config.videoParams.video_file_or_folder, detection.frame_id, sendJPGData);
-        } else {
-          // Additonally for File extraction we put in a 1s delay to give the CPU some rest.
-          if (performance.now() - lastJpegTimestamp > (1000.0 / this.config.videoParams.mjpgFps)) {
-            isSendingJpeg = true;
-            lastJpegTimestamp = performance.now();
+          YoloSimulation.getJpgForFrameFromFolder(
+            this.config.videoParams.video_file_or_folder,
+            detection.frame_id,
+            sendJPGData,
+          );
+        } else if (performance.now() - lastJpegTimestamp > sleepMillis) {
+          isSendingJpeg = true;
+          lastJpegTimestamp = performance.now();
 
-            // Seeking is not exact and updating the stream takes some time as
-            // well, therefore jump a few frames ahead
-            const maxFrameId = this.detections[this.detections.length - 1].frame_id;
-            var frame_id = detection.frame_id + Math.ceil(this.videoFileFps / 10);
-            if (frame_id > maxFrameId) {
-              frame_id = maxFrameId;
-            }
-            YoloSimulation.getJpgForFrameFromFile(this.config.videoParams.video_file_or_folder, this.videoFileFps, frame_id, sendJPGData);
+          // Seeking is not exact and updating the stream takes some time as
+          // well, therefore jump a few frames ahead
+          const maxFrameId = this.detections[this.detections.length - 1].frame_id;
+          let frameId = detection.frame_id + Math.ceil(this.videoFileFps / 10);
+          if (frameId > maxFrameId) {
+            frameId = maxFrameId;
           }
+          YoloSimulation.getJpgForFrameFromFile(
+            this.config.videoParams.video_file_or_folder,
+            this.videoFileFps,
+            frameId,
+            sendJPGData,
+          );
         }
       }
 
@@ -274,7 +291,7 @@ class YoloSimulation extends YoloDarknet {
       YoloSimulation.sendYoloJson(simulationState.JSONStreamRes, this.detections[detectionsNb]);
 
       // Move on to next detection
-      detectionsNb++;
+      detectionsNb += 1;
     }, 1000.0 / this.config.videoParams.jsonFps);
     return timer;
   }
@@ -287,21 +304,21 @@ class YoloSimulation extends YoloDarknet {
    */
   static sendYoloJson(stream, detections) {
     if (stream) {
-      stream.write(JSON.stringify(detections) + ",");
+      stream.write(`${JSON.stringify(detections)},`);
     } else {
       console.warn("JSONStream connection isn't opened yet");
     }
   }
 
   static getJpgForFrameFromFolder(folder, frameNb, callback) {
-    const frameFileName = String(frameNb).padStart(3, '0') + '.jpg';
+    const frameFileName = `${String(frameNb).padStart(3, '0')}.jpg`;
     const filePath = path.join(folder, frameFileName);
 
     fs.access(filePath, fs.constants.R_OK, (err) => {
       if (!err) {
         fs.readFile(filePath, callback);
       } else {
-        console.error('Could not open ' + filePath);
+        console.error(`Could not open ${filePath}`);
       }
     });
   }
@@ -310,7 +327,7 @@ class YoloSimulation extends YoloDarknet {
     const seekPos = frameNb / fps;
     const args = ['-ss', seekPos, '-i', file, '-frames', 1, '-f', 'image2pipe', '-vcodec', 'mjpeg', '-'];
 
-    execFile('ffmpeg', args, { encoding: 'binary' }, (error, stdout, stderr) => {
+    execFile('ffmpeg', args, { encoding: 'binary' }, (error, stdout) => {
       if (error) {
         throw error;
       }
@@ -331,43 +348,43 @@ class YoloSimulation extends YoloDarknet {
   static parseCmdLine(argv) {
     const simulationYargs = yargs
       .option('yolo_json', {
-        requiresArg: true
+        requiresArg: true,
       })
       .option('video_file_or_folder', {
         requiresArg: true,
-        default: ''
+        default: '',
       })
       .option('isLive', {
         type: 'boolean',
-        default: true
+        default: true,
       })
       .option('jsonFps', {
         type: 'number',
         requiresArg: true,
-        default: 20
+        default: 20,
       })
       .option('mjpgFps', {
         type: 'number',
         requiresArg: true,
-        default: 20
+        default: 20,
       })
       .option('darknetStdout', {
         type: 'boolean',
-        default: true
+        default: true,
       })
       .option('json_port', {
         type: 'number',
         requiresArg: true,
-        default: 8070
+        default: 8070,
       })
       .option('mjpeg_port', {
         type: 'number',
         requiresArg: true,
-        default: 8090
+        default: 8090,
       })
       .demandOption(['yolo_json'])
-      .fail((msg, err, yargs) => {
-        const errMsg = msg + os.EOL + os.EOL + yargs.help();
+      .fail((msg, err, yYargs) => {
+        const errMsg = msg + os.EOL + os.EOL + yYargs.help();
         throw new Error(errMsg);
       });
 
@@ -375,12 +392,12 @@ class YoloSimulation extends YoloDarknet {
     // original darknet arguments use '-', but yargs needs '--'
     const argsvSane = [];
     argv.forEach((x) => {
-      if(x == '-json_port' || x == '-mjpeg_port') {
-        argsvSane.push('-' + x);
+      if (x === '-json_port' || x === '-mjpeg_port') {
+        argsvSane.push(`-${x}`);
         return;
       }
 
-      if(typeof x == 'string' && x.startsWith('--') && x.indexOf(' ') >= 0) {
+      if (typeof x === 'string' && x.startsWith('--') && x.indexOf(' ') >= 0) {
         splitargs(x).forEach((s) => {
           argsvSane.push(s);
         });
@@ -401,22 +418,21 @@ class YoloSimulation extends YoloDarknet {
       },
       jsonStreamPort: simulationArgv.json_port,
       mjpegStreamPort: simulationArgv.mjpeg_port,
-      darknetStdout: simulationArgv.darknetStdout
+      darknetStdout: simulationArgv.darknetStdout,
     };
   }
 }
 
-const isDirectExecution = __filename == process.argv[1];
+const isDirectExecution = __filename === process.argv[1];
 if (isDirectExecution) {
-  var config = null;
+  let config = null;
   try {
     config = YoloSimulation.parseCmdLine(process.argv);
-  }
-  catch(e) {
+  } catch (e) {
     console.log(e.message);
   }
 
-  if(config != null) {
+  if (config != null) {
     console.log('YoloSimulation Start with Arguments');
     console.log(config);
     const yoloSim = new YoloSimulation(config);

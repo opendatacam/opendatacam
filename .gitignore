@@ -17,3 +17,4 @@ opendatacam_app.db
 opendatacam_recording.db
 opendatacam_tracker.db
 build/
+.build

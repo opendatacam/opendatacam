@@ -2,12 +2,12 @@
   "name": "OpenDataCam",
   "version": "3.0.1",
   "scripts": {
-    "dev": "node server.js",
-    "lint": "npx eslint .",
-    "build": "next build",
-    "start": "PORT=8080 NODE_ENV=production node server.js",
-    "generateapidoc": "apidoc -i . -e node_modules/ -o apidoc/",
-    "test": "node --unhandled-rejections=strict ./node_modules/jasmine/bin/jasmine.js"
+    "dev": "scripts/npm/startServer.sh",
+    "lint": "scripts/npm/lint.sh",
+    "build": "scripts/npm/build.sh",
+    "start": "NODE_ENV=production scripts/npm/startServer.sh",
+    "generateapidoc": "scripts/npm/generateapidoc.sh",
+    "test": "scripts/npm/test.sh"
   },
   "dependencies": {
     "axios": "^0.19.2",
