@@ -16,13 +16,23 @@ jobs:
         node-version:
           - 12.x
           - 14.x
+        architecture:
+          - x64
+          # FIXME: GitHub does not offer arm64 runners at the moment.
+          #
+          # We can enalbe arm64 builds in the future when GitHub offers arm64 runners or we decide
+          # to set up a self-hosted runner on arm64.
+          # See also https://docs.github.com/en/free-pro-team@latest/actions/reference/specifications-for-github-hosted-runners
+          # and https://docs.github.com/en/free-pro-team@latest/actions/hosting-your-own-runners
+          # - arm64 # Jetson Devices
 
     steps:
     - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
+    - name: Use Node.js ${{ matrix.node-version }} - ${{ matrix.architecture }}
       uses: actions/setup-node@v2
       with:
         node-version: ${{ matrix.node-version }}
+        architecture: ${{ matrix.architecture }}
     - run: npm ci
     - run: npm run build --if-present
     - run: npm test
