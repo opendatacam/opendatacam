@@ -1,7 +1,7 @@
 const UUID = require('uuid');
 const { Recording } = require('../../../server/model/Recording');
 
-describe('DBManager', () => {
+describe('Recording', () => {
   describe('constructor', () => {
     const startDate = new Date(2020, 12, 24, 12, 13, 14);
     const endDate = new Date(2020, 12, 24, 13, 13, 14);
