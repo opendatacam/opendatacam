@@ -93,8 +93,8 @@ if (config.TRACKER_SETTINGS) {
 Opendatacam.setTracker(tracker);
 
 // Init connection to db
-const DBManager = new MongoDbManager(configHelper.getMongoUrl());
-DBManager.connect().then(
+const dbManager = new MongoDbManager(configHelper.getMongoUrl());
+dbManager.connect().then(
   () => {
     console.log('Success init db');
   },
@@ -102,7 +102,7 @@ DBManager.connect().then(
     console.error(err);
   },
 );
-Opendatacam.setDatabase(DBManager);
+Opendatacam.setDatabase(dbManager);
 
 let stdoutBuffer = '';
 let stdoutInterval = '';
@@ -613,8 +613,8 @@ app.prepare()
       const limit = parseInt(req.query.limit, 10) || 20;
       const offset = parseInt(req.query.offset, 10) || 0;
 
-      const recordingPromise = DBManager.getRecordings(limit, offset);
-      const countPromise = DBManager.getRecordingsCount();
+      const recordingPromise = dbManager.getRecordings(limit, offset);
+      const countPromise = dbManager.getRecordingsCount();
 
       Promise.all([recordingPromise, countPromise]).then((values) => {
         res.json({
@@ -677,7 +677,7 @@ app.prepare()
           ]
      */
     express.get('/recording/:id/tracker', (req, res) => {
-      DBManager.getTrackerHistoryOfRecording(req.params.id).then((trackerData) => {
+      dbManager.getTrackerHistoryOfRecording(req.params.id).then((trackerData) => {
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Content-disposition',
           `attachment; filename=trackerData-${req.params.id}.json`);
@@ -717,7 +717,7 @@ app.prepare()
         }
      */
     express.get('/recording/:id', (req, res) => {
-      DBManager.getRecording(req.params.id).then((recordingData) => {
+      dbManager.getRecording(req.params.id).then((recordingData) => {
         res.json(recordingData);
       });
     });
@@ -735,7 +735,7 @@ app.prepare()
      *   HTTP/1.1 200 OK
      */
     express.delete('/recording/:id', (req, res) => {
-      DBManager.deleteRecording(req.params.id).then(() => {
+      dbManager.deleteRecording(req.params.id).then(() => {
         res.sendStatus(200);
       });
     });
@@ -825,7 +825,7 @@ app.prepare()
           ]
      */
     express.get('/recording/:id/counter', (req, res) => {
-      DBManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
+      dbManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
         res.setHeader('Content-Type', 'application/json');
         const startDate = counterData.dateStart.toISOString().split('T')[0];
         const fileName = `counterData-${startDate}-${req.params.id}.json`;
@@ -857,7 +857,7 @@ app.prepare()
           "2019-05-02T19:10:36.925Z","truc","car",4156,"rightleft_bottomtop"
      */
     express.get('/recording/:id/counter/csv', (req, res) => {
-      DBManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
+      dbManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
         let data = counterData.counterHistory;
         if (data) {
         // Flatten
