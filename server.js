@@ -101,6 +101,7 @@ DBManager.init().then(
     console.error(err);
   },
 );
+Opendatacam.setDatabase(DBManager);
 
 let stdoutBuffer = '';
 let stdoutInterval = '';

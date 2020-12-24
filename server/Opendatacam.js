@@ -10,7 +10,6 @@ const stream = require('stream');
 const StreamArray = require('stream-json/streamers/StreamArray');
 const config = require('../config.json');
 const Recording = require('./model/Recording');
-const DBManager = require('./db/DBManager');
 const Logger = require('./utils/Logger');
 const configHelper = require('./utils/configHelper');
 const isInsidePolygon = require('point-in-polygon')
@@ -78,7 +77,7 @@ const initialState = {
   /** The event emitter used for all events */
   eventEmitter: new EventEmitter(),
   /** A reference to the database used to persist Opendatacam's recordings and settings */
-  database: DBManager
+  database: null
 }
 
 let Opendatacam = cloneDeep(initialState);
@@ -931,6 +930,10 @@ module.exports = {
 
   setTracker(tracker) {
     Opendatacam.tracker = tracker;
+  },
+
+  setDatabase(db) {
+    Opendatacam.database = db;
   },
 
   on(event, listener) {
