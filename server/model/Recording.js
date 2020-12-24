@@ -30,7 +30,7 @@ class Recording {
     areas,
     videoResolution,
     filename,
-    id
+    id,
   ) {
     this.dateStart = dateStart;
     this.dateEnd = dateEnd;
@@ -38,9 +38,9 @@ class Recording {
     this.videoResolution = videoResolution;
     this.filename = filename;
 
-    if(id === undefined || id === null) {
+    if (id === undefined || id === null) {
       this.id = UUID.v4();
-    } else if(UUID.validate(id)) {
+    } else if (UUID.validate(id)) {
       this.id = id;
     } else {
       throw new TypeError('Invalid ID. Must be RFC4122 compliant.');

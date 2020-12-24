@@ -93,13 +93,13 @@ Opendatacam.setTracker(tracker);
 
 // Init connection to db
 let dbManager = null;
-if(config.DATABASE === "mongo") {
+if (config.DATABASE === 'mongo') {
   const { MongoDbManager } = require('./server/db/MongoDbManager');
   const mongoUrl = config.DATABASE_PARAMS.mongo.url;
   dbManager = new MongoDbManager(mongoUrl);
 }
 
-if(dbManager !== null) {
+if (dbManager !== null) {
   dbManager.connect().then(
     () => {
       console.log('Success init db');

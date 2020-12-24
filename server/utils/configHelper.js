@@ -19,17 +19,14 @@ const envDarknetJsonStreamPort = process.env.PORT_DARKNET_JSON_STREAM;
 function getPortFromConfig(config, key, defaultPort) {
   if (!config.PORTS) {
     return defaultPort;
-  } else {
-    if (!config.PORTS[key]) {
-      return defaultPort;
-    } else {
-      if (parseAndTestIsNumber(config.PORTS[key])) {
-        return parseInt(config.PORTS[key], 10);
-      } else {
-        return defaultPort;
-      }
-    }
   }
+  if (!config.PORTS[key]) {
+    return defaultPort;
+  }
+  if (parseAndTestIsNumber(config.PORTS[key])) {
+    return parseInt(config.PORTS[key], 10);
+  }
+  return defaultPort;
 }
 
 /**
@@ -39,9 +36,8 @@ function getPortFromConfig(config, key, defaultPort) {
 function getKeyFromConfig(config, key, defaultValue) {
   if (!config[key]) {
     return defaultValue;
-  } else {
-    return config[key];
   }
+  return config[key];
 }
 
 /**
@@ -59,33 +55,30 @@ module.exports = {
   getPortFromConfig,
   parseAndTestIsNumber,
   getMjpegStreamPort: () => {
-    let port = getPortFromConfig(config, 'darknet_mjpeg_stream', 8090);
+    const port = getPortFromConfig(config, 'darknet_mjpeg_stream', 8090);
     if (
-      envDarknetJsonStreamPort &&
-      parseAndTestIsNumber(envDarknetJsonStreamPort)
+      envDarknetJsonStreamPort
+      && parseAndTestIsNumber(envDarknetJsonStreamPort)
     ) {
       return parseInt(envDarknetMjpegStreamPort, 10);
-    } else {
-      return port;
     }
+    return port;
   },
   getJsonStreamPort: () => {
-    let port = getPortFromConfig(config, 'darknet_json_stream', 8070);
+    const port = getPortFromConfig(config, 'darknet_json_stream', 8070);
     if (
-      envDarknetJsonStreamPort &&
-      parseAndTestIsNumber(envDarknetJsonStreamPort)
+      envDarknetJsonStreamPort
+      && parseAndTestIsNumber(envDarknetJsonStreamPort)
     ) {
       return parseInt(envDarknetJsonStreamPort, 10);
-    } else {
-      return port;
     }
+    return port;
   },
   getAppPort: () => {
-    let port = getPortFromConfig(config, 'app', 8080);
+    const port = getPortFromConfig(config, 'app', 8080);
     if (envAppPort && parseAndTestIsNumber(envAppPort)) {
       return parseInt(envAppPort, 10);
-    } else {
-      return port;
     }
+    return port;
   },
 };
