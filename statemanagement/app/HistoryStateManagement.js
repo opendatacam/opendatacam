@@ -89,7 +89,7 @@ export default function HistoryReducer (state = initialState, action = {}) {
       return state.set('recordingsCursor', fromJS(action.payload))
     case DELETE_RECORDING:
       return state.updateIn(['recordingHistory'], recordingHistory => recordingHistory.delete(
-              recordingHistory.findIndex((value) => value.get('_id') === action.payload)
+              recordingHistory.findIndex((value) => value.get('id') === action.payload)
             ))
     default:
       return state

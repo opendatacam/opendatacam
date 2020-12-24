@@ -1,3 +1,5 @@
+const UUID = require('uuid');
+
 /**
  * A single recording
  */
@@ -18,6 +20,9 @@ class Recording {
    * @param {*} areas The recording areas used in this recording
    * @param {*} videoResolution Resolution of the file or live camera
    * @param {String} filename Name of the file, or `null` if running  from live camera
+   * @param {String} id The RFC4122 UUID to use, or `null` to generate a new one
+   *
+   * @throws {TypeError} If the UUID is not valid
    */
   constructor(
     dateStart,
@@ -25,12 +30,21 @@ class Recording {
     areas,
     videoResolution,
     filename,
+    id
   ) {
     this.dateStart = dateStart;
     this.dateEnd = dateEnd;
     this.areas = areas;
     this.videoResolution = videoResolution;
     this.filename = filename;
+
+    if(id === undefined || id === null) {
+      this.id = UUID.v4();
+    } else if(UUID.validate(id)) {
+      this.id = id;
+    } else {
+      throw new TypeError('Invalid ID. Must be RFC4122 compliant.');
+    }
   }
 }
 

@@ -554,7 +554,7 @@ app.prepare()
      * @apiDescription Get list of all recording ordered by latest date
      *
      *
-     * @apiSuccess {String} _id recordingId you will use to fetch more data on a specific recording
+     * @apiSuccess {String} id recordingId you will use to fetch more data on a specific recording
      * @apiSuccess {String} dateStart recording start date
      * @apiSuccess {String} dateEnd recording end date
      * @apiSuccess {Object} areas Areas defined in this recording (see Counter -> Get areas for documentation)
@@ -633,7 +633,7 @@ app.prepare()
      * @apiDescription Get tracker data for a specific recording **(can be very large as it returns
      * all the data for each frame)**
      *
-     * @apiParam {String} id Recording id (_id field of GET /recordings endpoint)
+     * @apiParam {String} id Recording id (id field of GET /recordings endpoint)
      *
      * @apiSuccess {String} recordingId Corresponding recordingId of this tracker recorded frame
      * @apiSuccess {String} timestamp Frame date
@@ -691,7 +691,7 @@ app.prepare()
      *
      * @apiDescription Get recording details
      *
-     * @apiParam {String} id Recording id (_id field of /recordings)
+     * @apiParam {String} id Recording id (id field of /recordings)
      *
      * @apiSuccess {videoResolution} Frame resolution
      * @apiSuccessExample {json} Success Response:
@@ -728,7 +728,7 @@ app.prepare()
      *
      * @apiDescription Delete recording
      *
-     * @apiParam {String} id Recording id (_id field of /recordings)
+     * @apiParam {String} id Recording id (id field of /recordings)
      *
      * @apiSuccessExample Success-Response:
      *   HTTP/1.1 200 OK
@@ -746,9 +746,9 @@ app.prepare()
      *
      * @apiDescription Get counter data for a specific recording
      *
-     * @apiParam {String} id Recording id (_id field of GET /recordings)
+     * @apiParam {String} id Recording id (id field of GET /recordings)
      *
-     * @apiSuccess {String} _id recordingId you will use to fetch more data on a specific recording
+     * @apiSuccess {String} id recordingId you will use to fetch more data on a specific recording
      * @apiSuccess {String} dateStart recording start date
      * @apiSuccess {String} dateEnd recording end date
      * @apiSuccess {Object} areas Areas defined in this recording (see Counter -> Get areas for documentation)
@@ -840,7 +840,7 @@ app.prepare()
      *
      * @apiDescription Get counter history data as CSV file
      *
-     * @apiParam {String} id Recording id (_id field of /recordings)
+     * @apiParam {String} id Recording id (id field of /recordings)
      *
      * @apiSuccessExample {csv} Success Response:
      *    "Timestamp","Counter area","ObjectClass","UniqueID","CountingDirection"

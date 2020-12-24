@@ -46,9 +46,9 @@ class DataView extends PureComponent {
             />
           }
           {this.props.recordingHistory.map((recording) =>
-            <Recording 
-              key={recording.get('_id')} 
-              id={recording.get('_id')} 
+            <Recording
+              key={recording.get('id')}
+              id={recording.get('id')}
               dateStart={recording.get('dateStart')}
               dateEnd={recording.get('dateEnd')}
               counterData={recording.get('counterSummary')}

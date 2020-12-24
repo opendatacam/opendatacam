@@ -9,7 +9,7 @@ const { once } = require('events');
 const stream = require('stream');
 const StreamArray = require('stream-json/streamers/StreamArray');
 const config = require('../config.json');
-const Recording = require('./model/Recording');
+const { Recording } = require('./model/Recording');
 const Logger = require('./utils/Logger');
 const configHelper = require('./utils/configHelper');
 const isInsidePolygon = require('point-in-polygon')
@@ -745,15 +745,16 @@ module.exports = {
     Opendatacam._refTrackedItemIdWhenRecordingStarted = highestTrackedItemId - currentlyTrackedItems.length;
 
     // Persist recording
+    const newRecording = new Recording(
+      Opendatacam.recordingStatus.dateStarted,
+      Opendatacam.recordingStatus.dateStarted,
+      Opendatacam.countingAreas,
+      Opendatacam.videoResolution,
+      filename
+    );
     if(Opendatacam.database !== null) {
-      Opendatacam.database.insertRecording(new Recording(
-        Opendatacam.recordingStatus.dateStarted,
-        Opendatacam.recordingStatus.dateStarted,
-        Opendatacam.countingAreas,
-        Opendatacam.videoResolution,
-        filename
-      )).then((recording) => {
-        Opendatacam.recordingStatus.recordingId = recording.insertedId;
+      Opendatacam.database.insertRecording(newRecording).then((recording) => {
+        Opendatacam.recordingStatus.recordingId = newRecording.id;
       }, (error) => {
         console.log(error);
       })

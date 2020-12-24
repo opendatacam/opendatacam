@@ -1,4 +1,3 @@
-const { ObjectID } = require('mongodb');
 const cloneDeep = require('lodash.clonedeep');
 const DBManager = require('../../../server/db/DBManager');
 const { getMongoUrl } = require('../../../server/utils/configHelper');
@@ -136,7 +135,7 @@ describe('DBManager', () => {
 
     it('deletes tracker data for recording', () => {
       expect(dbSpy.collection).toHaveBeenCalledWith(DBManager.TRACKER_COLLECTION);
-      const expectedCall = { recordingId: ObjectID(RECORDING_ID) };
+      const expectedCall = { recordingId: RECORDING_ID };
       expect(collectionSpy.deleteMany.calls.mostRecent().args[0]).toEqual(expectedCall);
     });
 

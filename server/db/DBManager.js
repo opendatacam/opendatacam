@@ -1,4 +1,4 @@
-const { MongoClient, ObjectID } = require('mongodb');
+const { MongoClient } = require('mongodb');
 const { getMongoUrl } = require('../utils/configHelper');
 
 const RECORDING_COLLECTION = 'recordings';
@@ -41,6 +41,7 @@ class DBManager {
     const createCollectionsAndIndex = (db) => {
       const recordingCollection = db.collection(RECORDING_COLLECTION);
       recordingCollection.createIndex({ dateStart: -1 });
+      recordingCollection.createIndex({ id: 1 }, { unique: true });
 
       const trackerCollection = db.collection(TRACKER_COLLECTION);
       trackerCollection.createIndex({ recordingId: 1 });
@@ -154,7 +155,7 @@ class DBManager {
   deleteRecording(recordingId) {
     const deleteRecordingPromise = new Promise((resolve, reject) => {
       this.getDB().then((db) => {
-        db.collection(RECORDING_COLLECTION).deleteOne({ _id: ObjectID(recordingId) }, (err, r) => {
+        db.collection(RECORDING_COLLECTION).deleteOne({ id: recordingId }, (err, r) => {
           if (err) {
             reject(err);
           } else {
@@ -166,7 +167,7 @@ class DBManager {
 
     const deleteTrackerPromise = new Promise((resolve, reject) => {
       this.getDB().then((db) => {
-        const filter = { recordingId: ObjectID(recordingId) };
+        const filter = { recordingId };
         db.collection(TRACKER_COLLECTION).deleteMany(filter, (err, r) => {
           if (err) {
             reject(err);
@@ -219,7 +220,7 @@ class DBManager {
 
       this.getDB().then((db) => {
         db.collection(RECORDING_COLLECTION).updateOne(
-          { _id: recordingId },
+          { id: recordingId },
           updateRequest,
           (err, r) => {
             if (err) {
@@ -264,7 +265,7 @@ class DBManager {
         db
           .collection(RECORDING_COLLECTION)
           .findOne(
-            { _id: ObjectID(recordingId) },
+            { id: recordingId },
             { projection: { counterHistory: 0, areas: 0 } },
             (err, doc) => {
               if (err) {
@@ -300,7 +301,7 @@ class DBManager {
         db
           .collection(TRACKER_COLLECTION)
           .find(
-            { recordingId: ObjectID(recordingId) },
+            { recordingId },
           )
           .toArray((err, docs) => {
             if (err) {
@@ -319,7 +320,7 @@ class DBManager {
         db
           .collection(RECORDING_COLLECTION)
           .find(
-            { _id: ObjectID(recordingId) },
+            { id: recordingId },
           )
           .toArray((err, docs) => {
             if (err) {
