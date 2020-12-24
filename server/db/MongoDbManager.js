@@ -1,10 +1,6 @@
 const { MongoClient } = require('mongodb');
 const { DbManagerBase } = require('./DbManagerBase');
 
-const RECORDING_COLLECTION = 'recordings';
-const TRACKER_COLLECTION = 'tracker';
-const APP_COLLECTION = 'app';
-
 class MongoDbManager extends DbManagerBase {
   /**
    * Creates a new MongoDbManager object
@@ -23,11 +19,30 @@ class MongoDbManager extends DbManagerBase {
   constructor(connectionStringOrDbObject) {
     super();
 
-    // XXX: This is a hacky way to export the collections without changing the module structure to
-    // much
-    this.RECORDING_COLLECTION = RECORDING_COLLECTION;
-    this.TRACKER_COLLECTION = TRACKER_COLLECTION;
-    this.APP_COLLECTION = APP_COLLECTION;
+    /**
+     * Collection used to store the recordings
+     *
+     * @private
+     */
+    this.RECORDING_COLLECTION = 'recordings';
+    /**
+     * Collection used to store the tracker data
+     *
+     * @private
+     */
+    this.TRACKER_COLLECTION = 'tracker';
+    /**
+     * Collection to store App Settings
+     *
+     * @private
+     */
+    this.APP_COLLECTION = 'app';
+    /**
+     * Name of the Database
+     *
+     * @private
+     */
+    this.DATABASE_NAME = 'opendatacam';
 
     this.connectionStringOrDbObject = connectionStringOrDbObject;
     /**
@@ -47,11 +62,11 @@ class MongoDbManager extends DbManagerBase {
    */
   async connect() {
     const createCollectionsAndIndex = (db) => {
-      const recordingCollection = db.collection(RECORDING_COLLECTION);
+      const recordingCollection = db.collection(this.RECORDING_COLLECTION);
       recordingCollection.createIndex({ dateStart: -1 });
       recordingCollection.createIndex({ id: 1 }, { unique: true });
 
-      const trackerCollection = db.collection(TRACKER_COLLECTION);
+      const trackerCollection = db.collection(this.TRACKER_COLLECTION);
       trackerCollection.createIndex({ recordingId: 1 });
     };
 
@@ -67,7 +82,7 @@ class MongoDbManager extends DbManagerBase {
           if (err) {
             reject(err);
           } else {
-            const db = client.db('opendatacam');
+            const db = client.db(this.DATABASE_NAME);
             this.db = db;
 
             createCollectionsAndIndex(db);
@@ -100,7 +115,7 @@ class MongoDbManager extends DbManagerBase {
   persistAppSettings(settings) {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
-        db.collection(APP_COLLECTION).updateOne({
+        db.collection(this.APP_COLLECTION).updateOne({
           id: 'settings',
         }, {
           $set: {
@@ -122,7 +137,7 @@ class MongoDbManager extends DbManagerBase {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db
-          .collection(APP_COLLECTION)
+          .collection(this.APP_COLLECTION)
           .findOne(
             { id: 'settings' },
             (err, doc) => {
@@ -140,7 +155,7 @@ class MongoDbManager extends DbManagerBase {
   insertRecording(recording) {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
-        db.collection(RECORDING_COLLECTION).insertOne(recording, (err, r) => {
+        db.collection(this.RECORDING_COLLECTION).insertOne(recording, (err, r) => {
           if (err) {
             reject(err);
           } else {
@@ -154,7 +169,7 @@ class MongoDbManager extends DbManagerBase {
   deleteRecording(recordingId) {
     const deleteRecordingPromise = new Promise((resolve, reject) => {
       this.getDB().then((db) => {
-        db.collection(RECORDING_COLLECTION).deleteOne({ id: recordingId }, (err, r) => {
+        db.collection(this.RECORDING_COLLECTION).deleteOne({ id: recordingId }, (err, r) => {
           if (err) {
             reject(err);
           } else {
@@ -167,7 +182,7 @@ class MongoDbManager extends DbManagerBase {
     const deleteTrackerPromise = new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         const filter = { recordingId };
-        db.collection(TRACKER_COLLECTION).deleteMany(filter, (err, r) => {
+        db.collection(this.TRACKER_COLLECTION).deleteMany(filter, (err, r) => {
           if (err) {
             reject(err);
           } else {
@@ -218,7 +233,7 @@ class MongoDbManager extends DbManagerBase {
       }
 
       this.getDB().then((db) => {
-        db.collection(RECORDING_COLLECTION).updateOne(
+        db.collection(this.RECORDING_COLLECTION).updateOne(
           { id: recordingId },
           updateRequest,
           (err, r) => {
@@ -231,7 +246,7 @@ class MongoDbManager extends DbManagerBase {
         );
 
         if (trackerEntry.objects != null && trackerEntry.objects.length > 0) {
-          db.collection(TRACKER_COLLECTION).insertOne(trackerEntry);
+          db.collection(this.TRACKER_COLLECTION).insertOne(trackerEntry);
         }
       });
     });
@@ -241,7 +256,7 @@ class MongoDbManager extends DbManagerBase {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db
-          .collection(RECORDING_COLLECTION)
+          .collection(this.RECORDING_COLLECTION)
           .find({})
           .project({ counterHistory: 0, trackerHistory: 0 })
           .sort({ dateStart: -1 })
@@ -262,7 +277,7 @@ class MongoDbManager extends DbManagerBase {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db
-          .collection(RECORDING_COLLECTION)
+          .collection(this.RECORDING_COLLECTION)
           .findOne(
             { id: recordingId },
             { projection: { counterHistory: 0, areas: 0 } },
@@ -282,7 +297,7 @@ class MongoDbManager extends DbManagerBase {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db
-          .collection(RECORDING_COLLECTION)
+          .collection(this.RECORDING_COLLECTION)
           .countDocuments({}, (err, res) => {
             if (err) {
               reject(err);
@@ -298,7 +313,7 @@ class MongoDbManager extends DbManagerBase {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db
-          .collection(TRACKER_COLLECTION)
+          .collection(this.TRACKER_COLLECTION)
           .find(
             { recordingId },
           )
@@ -317,7 +332,7 @@ class MongoDbManager extends DbManagerBase {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db
-          .collection(RECORDING_COLLECTION)
+          .collection(this.RECORDING_COLLECTION)
           .find(
             { id: recordingId },
           )
