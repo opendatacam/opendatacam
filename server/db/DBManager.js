@@ -91,6 +91,9 @@ class DBManager extends DbManagerBase {
     return this.connect(getMongoUrl());
   }
 
+  /**
+   * @private
+   */
   getDB() {
     return new Promise((resolve) => {
       if (this.db) {
