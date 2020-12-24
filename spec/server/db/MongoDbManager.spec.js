@@ -1,8 +1,8 @@
 const cloneDeep = require('lodash.clonedeep');
-const DBManager = require('../../../server/db/DBManager');
+const DBManager = require('../../../server/db/MongoDbManager');
 const { getMongoUrl } = require('../../../server/utils/configHelper');
 
-describe('DBManager', () => {
+describe('MongoDbManager', () => {
   const RECORDING_ID = '5faac7df863f7328a158c78e';
 
   let dbSpy = null;

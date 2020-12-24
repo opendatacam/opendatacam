@@ -6,7 +6,7 @@ const RECORDING_COLLECTION = 'recordings';
 const TRACKER_COLLECTION = 'tracker';
 const APP_COLLECTION = 'app';
 
-class DBManager extends DbManagerBase {
+class MongoDbManager extends DbManagerBase {
   constructor() {
     super();
 
@@ -85,7 +85,7 @@ class DBManager extends DbManagerBase {
    * @returns A promise that if resolved returns the opendatacam database object
    *
    * @deprecated Use DBManager.connect instead
-   * @see DBManager.connect
+   * @see MongoDbManager.connect
    */
   async init() {
     return this.connect(getMongoUrl());
@@ -342,6 +342,6 @@ class DBManager extends DbManagerBase {
   }
 }
 
-const DBManagerInstance = new DBManager();
+const MongoDbManagerInstance = new MongoDbManager();
 
-module.exports = DBManagerInstance;
+module.exports = MongoDbManagerInstance;
