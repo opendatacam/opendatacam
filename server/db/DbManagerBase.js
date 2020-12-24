@@ -1,5 +1,11 @@
-// Disable some eslint rules for this abstract class
-/* eslint-disable no-unused-vars, class-methods-use-this */
+/*
+ * Disable some eslint rules for this abstract class.
+ */
+
+/* eslint-disable no-unused-vars */
+/* eslint-disable class-methods-use-this */
+/* eslint-disable no-empty-function */
+/* eslint-disable no-useless-constructor */
 
 const { Recording } = require('../model/Recording');
 
