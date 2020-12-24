@@ -38,7 +38,7 @@ class DBManager {
    * @throws Error if something else then a String or Db is passed
    */
   async connect(connectionStringOrDbObject) {
-    const createCollectionsAndIndex = function (db) {
+    const createCollectionsAndIndex = (db) => {
       const recordingCollection = db.collection(RECORDING_COLLECTION);
       recordingCollection.createIndex({ dateStart: -1 });
 
