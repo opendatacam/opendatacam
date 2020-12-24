@@ -1,12 +1,12 @@
-import React from 'react'
-import { connect } from 'react-redux'; 
+import React from 'react';
+import { connect } from 'react-redux';
 import axios from 'axios';
 
 import AskLandscape from './shared/AskLandscape';
 import WebcamStream from './shared/WebcamStream';
 
-import { initViewportListeners } from '../statemanagement/app/ViewportStateManagement'
-import { startListeningToServerData } from '../statemanagement/app/AppStateManagement'
+import { initViewportListeners } from '../statemanagement/app/ViewportStateManagement';
+import { startListeningToServerData } from '../statemanagement/app/AppStateManagement';
 import LiveView from './main/LiveView';
 import CounterView from './main/CounterView';
 import PathView from './main/PathView';
@@ -21,13 +21,12 @@ import { loadUserSettings } from '../statemanagement/app/UserSettingsStateManage
 import TrackerAccuracyView from './shared/TrackerAccuracyView';
 
 class MainPage extends React.PureComponent {
-
   constructor(props) {
     super(props);
 
     this.state = {
-      droppedFile: false
-    }
+      droppedFile: false,
+    };
   }
 
   componentDidMount() {
@@ -43,82 +42,78 @@ class MainPage extends React.PureComponent {
   onDrop(event) {
     event.preventDefault();
     this.setState({
-      droppedFile: true
+      droppedFile: true,
     });
-    var formData = new FormData();
-    formData.append("video", event.dataTransfer.files[0]);
+    const formData = new FormData();
+    formData.append('video', event.dataTransfer.files[0]);
     axios.post('/files', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
     }).then(() => {
       console.log('success');
       this.setState({
-        droppedFile: false
+        droppedFile: false,
       });
       // Todo here
       // Ping API endpoint to restart YOLO on this file
-    },(error) => {
-      console.log('error')
+    }, (error) => {
+      console.log('error');
       this.setState({
-        droppedFile: false
+        droppedFile: false,
       });
-    })
+    });
   }
 
-  render () {
+  render() {
     return (
-      <div 
-        className="main-page" 
-        onDragOver={(event) => event.preventDefault()} 
-        onDragStart={(event) => event.preventDefault()} 
+      <div
+        className="main-page"
+        onDragOver={(event) => event.preventDefault()}
+        onDragStart={(event) => event.preventDefault()}
         onDrop={(event) => this.onDrop(event)}
       >
-        {this.props.deviceOrientation === 'portrait' &&
-          <AskLandscape />
-        }
-        {!this.props.isListeningToYOLO &&
+        {this.props.deviceOrientation === 'portrait'
+          && <AskLandscape />}
+        {!this.props.isListeningToYOLO
+          && (
           <InitializingView
             requestedFileRecording={this.props.requestedFileRecording}
             droppedFile={this.state.droppedFile}
           />
-        }
-        {this.props.isListeningToYOLO && this.state.droppedFile &&
+          )}
+        {this.props.isListeningToYOLO && this.state.droppedFile
+          && (
           <InitializingView
             requestedFileRecording={this.props.requestedFileRecording}
             droppedFile={this.state.droppedFile}
           />
-        }
-        {this.props.isListeningToYOLO && !this.state.droppedFile &&
+          )}
+        {this.props.isListeningToYOLO && !this.state.droppedFile
+          && (
           <>
             <UIControls />
-            {this.props.showMenu &&  
-              <Menu />
-            }
-            {this.props.mode === MODE.DATAVIEW &&
-              <DataView />
-            }
-            {this.props.mode === MODE.CONSOLEVIEW &&
-              <ConsoleView />
-            }
-            {this.props.mode === MODE.LIVEVIEW &&
-              <LiveView />
-            }
-            {this.props.uiSettings.get('counterEnabled') && this.props.mode === MODE.COUNTERVIEW &&
-              <CounterView />
-            }
+            {this.props.showMenu
+              && <Menu />}
+            {this.props.mode === MODE.DATAVIEW
+              && <DataView />}
+            {this.props.mode === MODE.CONSOLEVIEW
+              && <ConsoleView />}
+            {this.props.mode === MODE.LIVEVIEW
+              && <LiveView />}
+            {this.props.uiSettings.get('counterEnabled') && this.props.mode === MODE.COUNTERVIEW
+              && <CounterView />}
             {/* Need to keep pathview in the DOM as it continuously renders */}
-            {this.props.uiSettings.get('pathfinderEnabled') &&
-              <PathView hidden={this.props.mode !== MODE.PATHVIEW} />
-            }
+            {this.props.uiSettings.get('pathfinderEnabled')
+              && <PathView hidden={this.props.mode !== MODE.PATHVIEW} />}
             {/* Hide it on pathview mode */}
-            {this.props.uiSettings.get('heatmapEnabled') &&
-              <TrackerAccuracyView hidden={this.props.mode === MODE.PATHVIEW} />
-            }
+            {this.props.uiSettings.get('heatmapEnabled')
+              && <TrackerAccuracyView hidden={this.props.mode === MODE.PATHVIEW} />}
             <WebcamStream />
           </>
-        }
-        <style jsx>{`
+          )}
+        <style jsx>
+          {`
           .main-page {
             width: 100%;
             height: 100%;
@@ -128,21 +123,20 @@ class MainPage extends React.PureComponent {
             z-index: 1;
             overflow: hidden;
           }
-        `}</style>
+        `}
+        </style>
       </div>
-      
-    )
+
+    );
   }
 }
 
-export default connect((state) => {
-  return {
-    deviceOrientation: state.viewport.get('deviceOrientation'),
-    mode: state.app.get('mode'),
-    isListeningToYOLO: state.app.get('isListeningToYOLO'),
-    requestedFileRecording: state.app.getIn(['recordingStatus', 'requestedFileRecording']),
-    showMenu: state.app.get('showMenu'),
-    uiSettings: state.app.get('uiSettings'),
-    config: state.app.get('config')
-  }
-})(MainPage)
+export default connect((state) => ({
+  deviceOrientation: state.viewport.get('deviceOrientation'),
+  mode: state.app.get('mode'),
+  isListeningToYOLO: state.app.get('isListeningToYOLO'),
+  requestedFileRecording: state.app.getIn(['recordingStatus', 'requestedFileRecording']),
+  showMenu: state.app.get('showMenu'),
+  uiSettings: state.app.get('uiSettings'),
+  config: state.app.get('config'),
+}))(MainPage);

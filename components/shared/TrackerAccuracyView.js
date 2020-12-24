@@ -1,4 +1,4 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import CanvasEngine from '../canvas/CanvasEngine';
@@ -7,13 +7,12 @@ import { getTrackerAccuracySettings } from '../../statemanagement/app/TrackerSta
 import TrackerAccuracyModal from './TrackerAccuracyModal';
 
 class TrackerAccuracyView extends Component {
-
   constructor(props) {
     super(props);
 
     this.state = {
-      showHelp: true
-    }
+      showHelp: true,
+    };
   }
 
   componentDidMount() {
@@ -29,30 +28,29 @@ class TrackerAccuracyView extends Component {
     this.clearVisibleCanvas();
   }
 
-  render () {
+  render() {
     return (
       <>
-        {this.state.showHelp &&
+        {this.state.showHelp
+          && (
           <TrackerAccuracyModal
-            close={() => this.setState({showHelp: false})}
+            close={() => this.setState({ showHelp: false })}
           />
-        }
-        <CanvasEngine 
+          )}
+        <CanvasEngine
           mode={CANVAS_RENDERING_MODE.TRACKER_ACCURACY}
           fixedResolution={{
             w: this.props.canvasResolution.get('w') * getTrackerAccuracySettings().canvasResolutionFactor,
-            h: this.props.canvasResolution.get('h') * getTrackerAccuracySettings().canvasResolutionFactor
+            h: this.props.canvasResolution.get('h') * getTrackerAccuracySettings().canvasResolutionFactor,
           }}
-          hidden={this.props.hidden} 
+          hidden={this.props.hidden}
           registerClearCanvas={(clearCanvas) => this.clearVisibleCanvas = clearCanvas}
         />
       </>
-    )
+    );
   }
 }
 
-export default connect((state) => {
-  return {
-    canvasResolution: state.viewport.get('canvasResolution')
-  }
-})(TrackerAccuracyView)
+export default connect((state) => ({
+  canvasResolution: state.viewport.get('canvasResolution'),
+}))(TrackerAccuracyView);

@@ -1,20 +1,17 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import SVG from 'react-inlinesvg';
 
 class OpenMoji extends Component {
-
   render() {
     return (
-      <SVG 
+      <SVG
         className="svg-openmoji w-10"
-        cacheRequests={true}
+        cacheRequests
         src={`/static/icons/openmojis/${this.props.hexcode}.svg`}
         aria-label={this.props.label}
       />
-    )
+    );
   }
 }
 
-export default OpenMoji
-
-
+export default OpenMoji;

@@ -1,4 +1,4 @@
-import React, { PureComponent } from 'react'
+import React, { PureComponent } from 'react';
 import { connect } from 'react-redux';
 /*
 
@@ -11,35 +11,35 @@ import { connect } from 'react-redux';
     -> Readable stream improve perfs : ( https://github.com/aruntj/mjpeg-readable-stream but I think not that useful , browser compat
     -> draw directly on canvas instead of having a <img> tag (https://gist.github.com/codebrainz/eeeeead894e8bdff059b)
     -> Support other resolution than 16/9
-    -> Do not use the mjpeg HTTP Stream:  but launch a HLS stream with Gstreamer: https://stackoverflow.com/questions/34975851/i-want-to-perform-hls-http-live-streaming-using-gstreamer 
+    -> Do not use the mjpeg HTTP Stream:  but launch a HLS stream with Gstreamer: https://stackoverflow.com/questions/34975851/i-want-to-perform-hls-http-live-streaming-using-gstreamer
     -  this will enable to launch stream with a <video> tag
 
-*/ 
+*/
 
 class WebcamStream extends PureComponent {
-
   constructor(props) {
     super(props);
     this.state = {
-      url : "/webcam/stream"
-    }
+      url: '/webcam/stream',
+    };
   }
 
   componentDidMount() {
     this.setState({
-      url: `/webcam/stream?date=${new Date().getTime()}`
-    })
+      url: `/webcam/stream?date=${new Date().getTime()}`,
+    });
   }
 
-  render () {
+  render() {
     return (
-      <React.Fragment>
+      <>
         <img
-           width={this.props.resolution.get('w')}
-           height={this.props.resolution.get('h')}
-           src={this.state.url}
-         />
-        <style jsx>{`
+          width={this.props.resolution.get('w')}
+          height={this.props.resolution.get('h')}
+          src={this.state.url}
+        />
+        <style jsx>
+          {`
           {/* @media (min-aspect-ratio: 16/9) {
             img {
               width: 100%;
@@ -58,14 +58,13 @@ class WebcamStream extends PureComponent {
           img {
             height: inherit;
           }
-        `}</style>
-      </React.Fragment>
-    )
+        `}
+        </style>
+      </>
+    );
   }
 }
 
-export default connect((state) => {
-  return {
-    resolution: state.viewport.get('canvasResolution')
-  }
-})(WebcamStream)
+export default connect((state) => ({
+  resolution: state.viewport.get('canvasResolution'),
+}))(WebcamStream);

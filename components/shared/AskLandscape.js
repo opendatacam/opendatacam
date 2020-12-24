@@ -1,14 +1,15 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 
 class AskLandscape extends Component {
-  render () {
+  render() {
     return (
-      <div className='turnDevice'>
-        <div className='icon'>
+      <div className="turnDevice">
+        <div className="icon">
           📱
         </div>
-        <h1 className="text-white text-2xl">Please use your device in Landscape</h1>  
-        <style jsx>{`
+        <h1 className="text-white text-2xl">Please use your device in Landscape</h1>
+        <style jsx>
+          {`
           .turnDevice{
             position: fixed;
             width: 100%;
@@ -45,10 +46,11 @@ class AskLandscape extends Component {
               transform: rotate(90deg);
             }
           }
-        `}</style>
+        `}
+        </style>
       </div>
-    )
+    );
   }
 }
 
-export default AskLandscape
+export default AskLandscape;

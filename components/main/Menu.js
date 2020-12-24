@@ -1,12 +1,11 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import SVG from 'react-inlinesvg';
 import { hideMenu, setUiSetting } from '../../statemanagement/app/AppStateManagement';
 import { setUserSetting } from '../../statemanagement/app/UserSettingsStateManagement';
 import Toggle from '../shared/Toggle';
-import SVG from 'react-inlinesvg';
 
 class Menu extends Component {
-
   constructor(props) {
     super(props);
     this.escFunction = this.escFunction.bind(this);
@@ -20,13 +19,13 @@ class Menu extends Component {
   }
 
   componentDidMount() {
-    document.addEventListener("keydown", this.escFunction, false);
-    document.addEventListener("click", this.handleClick, false);
+    document.addEventListener('keydown', this.escFunction, false);
+    document.addEventListener('click', this.handleClick, false);
   }
 
   componentWillUnmount() {
-    document.removeEventListener("keydown", this.escFunction, false);
-    document.removeEventListener("click", this.handleClick, false);
+    document.removeEventListener('keydown', this.escFunction, false);
+    document.removeEventListener('click', this.handleClick, false);
   }
 
   handleClick(e) {
@@ -41,9 +40,9 @@ class Menu extends Component {
 
   render() {
     return (
-      <React.Fragment>
+      <>
         <div
-          ref={node => this.node = node}
+          ref={(node) => this.node = node}
           className="menu text-inverse bg-default shadow"
         >
           <button
@@ -52,8 +51,8 @@ class Menu extends Component {
           >
             <SVG
               className="w-12 h-12 svg-icon flex items-center"
-              cacheRequests={true}
-              src={`/static/icons/ui/close.svg`}
+              cacheRequests
+              src="/static/icons/ui/close.svg"
               aria-label="icon close"
             />
           </button>
@@ -77,13 +76,13 @@ class Menu extends Component {
               enabled={this.props.uiSettings.get('heatmapEnabled')}
               onChange={(value) => this.props.dispatch(setUiSetting('heatmapEnabled', value))}
             />
-            <div className="mt-16"></div>
+            <div className="mt-16" />
             <Toggle
               label="Dark mode"
               description="Turn dark UI elements on"
               enabled={this.props.userSettings.get('darkMode')}
               onChange={(darkMode) => {
-                this.props.dispatch(setUserSetting('darkMode', darkMode))
+                this.props.dispatch(setUserSetting('darkMode', darkMode));
               }}
             />
             <div className="mb-4 mt-4 flex items-center justify-between">
@@ -93,22 +92,16 @@ class Menu extends Component {
               </div>
               <div className="flex">
                 <button
-                  className='btn btn-light py-1 px-3 rounded-l border border-gray-100 border-solid flex items-center text-xl font-bold shadow'
-                  onClick={() =>
-                    this.props.dispatch(setUserSetting('dimmerOpacity',
-                      Math.max(this.props.userSettings.get('dimmerOpacity') - 0.1, 0)
-                    ))
-                  }
+                  className="btn btn-light py-1 px-3 rounded-l border border-gray-100 border-solid flex items-center text-xl font-bold shadow"
+                  onClick={() => this.props.dispatch(setUserSetting('dimmerOpacity',
+                    Math.max(this.props.userSettings.get('dimmerOpacity') - 0.1, 0)))}
                 >
                   -
                 </button>
                 <button
-                  className='btn btn-light py-1 px-3 rounded-r border border-gray-100 border-solid flex items-center text-xl font-bold shadow'
-                  onClick={() =>
-                    this.props.dispatch(setUserSetting('dimmerOpacity',
-                      Math.min(this.props.userSettings.get('dimmerOpacity') + 0.1, 1)
-                    ))
-                  }
+                  className="btn btn-light py-1 px-3 rounded-r border border-gray-100 border-solid flex items-center text-xl font-bold shadow"
+                  onClick={() => this.props.dispatch(setUserSetting('dimmerOpacity',
+                    Math.min(this.props.userSettings.get('dimmerOpacity') + 0.1, 1)))}
                 >
                   +
                 </button>
@@ -116,14 +109,18 @@ class Menu extends Component {
             </div>
           </div>
           <div className="menu-footer bg-black text-white p-5 w-full">
-              <div className="flex flex-col">
-                  <p>Version {this.props.version}</p>
-                  <a className="mt-2" target="_blank" href="/api/doc">API documentation</a>
-                  <a className="mt-2" href="https://github.com/opendatacam/opendatacam" target="_blank">About</a>
-              </div>
+            <div className="flex flex-col">
+              <p>
+                Version
+                {this.props.version}
+              </p>
+              <a className="mt-2" target="_blank" href="/api/doc">API documentation</a>
+              <a className="mt-2" href="https://github.com/opendatacam/opendatacam" target="_blank">About</a>
+            </div>
           </div>
         </div>
-        <style jsx>{`
+        <style jsx>
+          {`
           .menu {
             position: absolute;
             top: 0;
@@ -146,17 +143,16 @@ class Menu extends Component {
             top: 1rem;
             left: -4rem;
           }
-        `}</style>
-      </React.Fragment>
-    )
+        `}
+        </style>
+      </>
+    );
   }
 }
 
-export default connect((state) => {
-  return {
-    mode: state.app.get('mode'),
-    userSettings: state.usersettings,
-    uiSettings: state.app.get('uiSettings'),
-    version: state.app.getIn(['config','OPENDATACAM_VERSION'])
-  }
-})(Menu);
+export default connect((state) => ({
+  mode: state.app.get('mode'),
+  userSettings: state.usersettings,
+  uiSettings: state.app.get('uiSettings'),
+  version: state.app.getIn(['config', 'OPENDATACAM_VERSION']),
+}))(Menu);
