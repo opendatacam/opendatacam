@@ -53,7 +53,8 @@ class DBManager {
     if (isConnectionString) {
       return new Promise((resolve, reject) => {
         this.connectionString = connectionStringOrDbObject;
-        MongoClient.connect(this.connectionString, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
+        const mongoConnectParams = { useNewUrlParser: true, useUnifiedTopology: true };
+        MongoClient.connect(this.connectionString, mongoConnectParams, (err, client) => {
           if (err) {
             reject(err);
           } else {
@@ -165,7 +166,8 @@ class DBManager {
 
     const deleteTrackerPromise = new Promise((resolve, reject) => {
       this.getDB().then((db) => {
-        db.collection(TRACKER_COLLECTION).deleteMany({ recordingId: ObjectID(recordingId) }, (err, r) => {
+        const filter = { recordingId: ObjectID(recordingId) };
+        db.collection(TRACKER_COLLECTION).deleteMany(filter, (err, r) => {
           if (err) {
             reject(err);
           } else {
