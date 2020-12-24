@@ -5,7 +5,6 @@ const RECORDING_COLLECTION = 'recordings';
 const TRACKER_COLLECTION = 'tracker';
 const APP_COLLECTION = 'app';
 
-
 class DBManager {
   constructor() {
     // XXX: This is a hacky way to export the collections without changing the module structure to
@@ -39,13 +38,13 @@ class DBManager {
    * @throws Error if something else then a String or Db is passed
    */
   async connect(connectionStringOrDbObject) {
-    const createCollectionsAndIndex = function(db) {
+    const createCollectionsAndIndex = function (db) {
       const recordingCollection = db.collection(RECORDING_COLLECTION);
       recordingCollection.createIndex({ dateStart: -1 });
 
       const trackerCollection = db.collection(TRACKER_COLLECTION);
       trackerCollection.createIndex({ recordingId: 1 });
-    }
+    };
 
     const isConnectionString = typeof connectionStringOrDbObject === 'string'
       || connectionStringOrDbObject instanceof String;
@@ -58,7 +57,7 @@ class DBManager {
           if (err) {
             reject(err);
           } else {
-            let db = client.db('opendatacam');
+            const db = client.db('opendatacam');
             this.db = db;
 
             createCollectionsAndIndex(db);
@@ -67,13 +66,12 @@ class DBManager {
           }
         });
       });
-    } else if (isDbObject) {
+    } if (isDbObject) {
       this.db = connectionStringOrDbObject;
       createCollectionsAndIndex(this.db);
       return Promise.resolve(this.db);
-    } else {
-      return new Error();
     }
+    return new Error();
   }
 
   /**
@@ -100,14 +98,14 @@ class DBManager {
 
   persistAppSettings(settings) {
     return new Promise((resolve, reject) => {
-      this.getDB().then(db => {
+      this.getDB().then((db) => {
         db.collection(APP_COLLECTION).updateOne({
-          id: 'settings'
+          id: 'settings',
         }, {
           $set: {
             id: 'settings',
-            countingAreas: settings.countingAreas
-          }
+            countingAreas: settings.countingAreas,
+          },
         }, { upsert: true }, (err, r) => {
           if (err) {
             reject(err);
@@ -121,7 +119,7 @@ class DBManager {
 
   getAppSettings() {
     return new Promise((resolve, reject) => {
-      this.getDB().then(db => {
+      this.getDB().then((db) => {
         db
           .collection(APP_COLLECTION)
           .findOne(
@@ -132,7 +130,7 @@ class DBManager {
               } else {
                 resolve(doc);
               }
-            }
+            },
           );
       });
     });
@@ -140,7 +138,7 @@ class DBManager {
 
   insertRecording(recording) {
     return new Promise((resolve, reject) => {
-      this.getDB().then(db => {
+      this.getDB().then((db) => {
         db.collection(RECORDING_COLLECTION).insertOne(recording, (err, r) => {
           if (err) {
             reject(err);
@@ -154,7 +152,7 @@ class DBManager {
 
   deleteRecording(recordingId) {
     const deleteRecordingPromise = new Promise((resolve, reject) => {
-      this.getDB().then(db => {
+      this.getDB().then((db) => {
         db.collection(RECORDING_COLLECTION).deleteOne({ _id: ObjectID(recordingId) }, (err, r) => {
           if (err) {
             reject(err);
@@ -166,8 +164,8 @@ class DBManager {
     });
 
     const deleteTrackerPromise = new Promise((resolve, reject) => {
-      this.getDB().then(db => {
-        db.collection(TRACKER_COLLECTION).deleteMany({ 'recordingId': ObjectID(recordingId) }, (err, r) => {
+      this.getDB().then((db) => {
+        db.collection(TRACKER_COLLECTION).deleteMany({ recordingId: ObjectID(recordingId) }, (err, r) => {
           if (err) {
             reject(err);
           } else {
@@ -191,34 +189,33 @@ class DBManager {
     counterSummary,
     trackerSummary,
     counterEntry,
-    trackerEntry
+    trackerEntry,
   ) {
     return new Promise((resolve, reject) => {
-
       // let itemsToAdd = {
       //   trackerHistory: trackerEntry
       // };
 
-      let updateRequest = {
+      const updateRequest = {
         $set: {
           dateEnd: frameDate,
-          counterSummary: counterSummary,
-          trackerSummary: trackerSummary
-        }
+          counterSummary,
+          trackerSummary,
+        },
         // Only add $push if we have a counted item
       };
 
-      let itemsToAdd = {};
+      const itemsToAdd = {};
 
       // Add counterHistory when somethings counted
       if (counterEntry.length > 0) {
-        itemsToAdd['counterHistory'] = {
-          $each: counterEntry
+        itemsToAdd.counterHistory = {
+          $each: counterEntry,
         };
-        updateRequest['$push'] = itemsToAdd;
+        updateRequest.$push = itemsToAdd;
       }
 
-      this.getDB().then(db => {
+      this.getDB().then((db) => {
         db.collection(RECORDING_COLLECTION).updateOne(
           { _id: recordingId },
           updateRequest,
@@ -228,10 +225,10 @@ class DBManager {
             } else {
               resolve(r);
             }
-          }
+          },
         );
 
-        if(trackerEntry.objects != null && trackerEntry.objects.length > 0) {
+        if (trackerEntry.objects != null && trackerEntry.objects.length > 0) {
           db.collection(TRACKER_COLLECTION).insertOne(trackerEntry);
         }
       });
@@ -240,7 +237,7 @@ class DBManager {
 
   getRecordings(limit = 30, offset = 0) {
     return new Promise((resolve, reject) => {
-      this.getDB().then(db => {
+      this.getDB().then((db) => {
         db
           .collection(RECORDING_COLLECTION)
           .find({})
@@ -248,7 +245,7 @@ class DBManager {
           .sort({ dateStart: -1 })
           .limit(limit)
           .skip(offset)
-          .toArray(function (err, docs) {
+          .toArray((err, docs) => {
             if (err) {
               reject(err);
             } else {
@@ -261,7 +258,7 @@ class DBManager {
 
   getRecording(recordingId) {
     return new Promise((resolve, reject) => {
-      this.getDB().then(db => {
+      this.getDB().then((db) => {
         db
           .collection(RECORDING_COLLECTION)
           .findOne(
@@ -273,7 +270,7 @@ class DBManager {
               } else {
                 resolve(doc);
               }
-            }
+            },
           );
       });
     });
@@ -281,7 +278,7 @@ class DBManager {
 
   getRecordingsCount() {
     return new Promise((resolve, reject) => {
-      this.getDB().then(db => {
+      this.getDB().then((db) => {
         db
           .collection(RECORDING_COLLECTION)
           .countDocuments({}, (err, res) => {
@@ -297,13 +294,13 @@ class DBManager {
 
   getTrackerHistoryOfRecording(recordingId) {
     return new Promise((resolve, reject) => {
-      this.getDB().then(db => {
+      this.getDB().then((db) => {
         db
           .collection(TRACKER_COLLECTION)
           .find(
-            { recordingId: ObjectID(recordingId) }
+            { recordingId: ObjectID(recordingId) },
           )
-          .toArray(function (err, docs) {
+          .toArray((err, docs) => {
             if (err) {
               reject(err);
             } else {
@@ -316,29 +313,26 @@ class DBManager {
 
   getCounterHistoryOfRecording(recordingId) {
     return new Promise((resolve, reject) => {
-      this.getDB().then(db => {
+      this.getDB().then((db) => {
         db
           .collection(RECORDING_COLLECTION)
           .find(
-            { _id: ObjectID(recordingId) }
+            { _id: ObjectID(recordingId) },
           )
-          .toArray(function (err, docs) {
+          .toArray((err, docs) => {
             if (err) {
               reject(err);
+            } else if (docs.length === 0) {
+              resolve({});
             } else {
-              if (docs.length === 0) {
-                resolve({});
-              } else {
-                resolve(docs[0]);
-              }
+              resolve(docs[0]);
             }
           });
       });
     });
   }
-
 }
 
-var DBManagerInstance = new DBManager();
+const DBManagerInstance = new DBManager();
 
 module.exports = DBManagerInstance;
