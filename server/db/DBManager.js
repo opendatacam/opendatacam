@@ -1,12 +1,15 @@
 const { MongoClient } = require('mongodb');
 const { getMongoUrl } = require('../utils/configHelper');
+const { DbManagerBase } = require('./DbManagerBase');
 
 const RECORDING_COLLECTION = 'recordings';
 const TRACKER_COLLECTION = 'tracker';
 const APP_COLLECTION = 'app';
 
-class DBManager {
+class DBManager extends DbManagerBase {
   constructor() {
+    super();
+
     // XXX: This is a hacky way to export the collections without changing the module structure to
     // much
     this.RECORDING_COLLECTION = RECORDING_COLLECTION;
