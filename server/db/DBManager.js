@@ -1,4 +1,4 @@
-const { MongoClient, ObjectID, Db } = require('mongodb');
+const { MongoClient, ObjectID } = require('mongodb');
 const { getMongoUrl } = require('../utils/configHelper');
 
 const RECORDING_COLLECTION = 'recordings';
@@ -87,7 +87,7 @@ class DBManager {
   }
 
   getDB() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (this.db) {
         resolve(this.db);
       } else {
