@@ -1,5 +1,4 @@
 const { MongoClient } = require('mongodb');
-const { getMongoUrl } = require('../utils/configHelper');
 const { DbManagerBase } = require('./DbManagerBase');
 
 const RECORDING_COLLECTION = 'recordings';
@@ -7,7 +6,21 @@ const TRACKER_COLLECTION = 'tracker';
 const APP_COLLECTION = 'app';
 
 class MongoDbManager extends DbManagerBase {
-  constructor() {
+  /**
+   * Creates a new MongoDbManager object
+   *
+   * If connectionStringOrDbObject is a
+   *
+   * - Db object: the object pointing to a database will be used and no new connection will be
+   *   created
+   * - String: The string will be used to create a new connection to the database and then the
+   *   "opendatacam" database will be used
+   *
+   * After creation {@link MongoDbManager.connect} must be called
+   *
+   * @param {*} connectionStringOrDbObject The connection to use or credentials to create one
+   */
+  constructor(connectionStringOrDbObject) {
     super();
 
     // XXX: This is a hacky way to export the collections without changing the module structure to
@@ -16,6 +29,7 @@ class MongoDbManager extends DbManagerBase {
     this.TRACKER_COLLECTION = TRACKER_COLLECTION;
     this.APP_COLLECTION = APP_COLLECTION;
 
+    this.connectionStringOrDbObject = connectionStringOrDbObject;
     /**
      * The connection string used or null if a Db object was used for the connection or the
      * connection has not been established yet.
@@ -27,20 +41,11 @@ class MongoDbManager extends DbManagerBase {
   /**
    * Connect to the opendatacam database the MongoDB Server
    *
-   * If connectionStringOrDbObject is a
-   *
-   * - Db object: the object pointing to a database will be used and no new connection will be
-   *   created
-   * - String: The string will be used to create a new connection to the database and then the
-   *   "opendatacam" database will be used
-   *
-   * @param {*} connectionStringOrDbObject The connection to use or credentials to create one
-   *
    * @returns A promise that if resolved returns the opendatacam database object
    *
    * @throws Error if something else then a String or Db is passed
    */
-  async connect(connectionStringOrDbObject) {
+  async connect() {
     const createCollectionsAndIndex = (db) => {
       const recordingCollection = db.collection(RECORDING_COLLECTION);
       recordingCollection.createIndex({ dateStart: -1 });
@@ -50,13 +55,13 @@ class MongoDbManager extends DbManagerBase {
       trackerCollection.createIndex({ recordingId: 1 });
     };
 
-    const isConnectionString = typeof connectionStringOrDbObject === 'string'
-      || connectionStringOrDbObject instanceof String;
-    const isDbObject = typeof connectionStringOrDbObject === 'object';
+    const isConnectionString = typeof this.connectionStringOrDbObject === 'string'
+      || this.connectionStringOrDbObject instanceof String;
+    const isDbObject = typeof this.connectionStringOrDbObject === 'object';
 
     if (isConnectionString) {
       return new Promise((resolve, reject) => {
-        this.connectionString = connectionStringOrDbObject;
+        this.connectionString = this.connectionStringOrDbObject;
         const mongoConnectParams = { useNewUrlParser: true, useUnifiedTopology: true };
         MongoClient.connect(this.connectionString, mongoConnectParams, (err, client) => {
           if (err) {
@@ -72,23 +77,11 @@ class MongoDbManager extends DbManagerBase {
         });
       });
     } if (isDbObject) {
-      this.db = connectionStringOrDbObject;
+      this.db = this.connectionStringOrDbObject;
       createCollectionsAndIndex(this.db);
       return Promise.resolve(this.db);
     }
     return new Error();
-  }
-
-  /**
-   * Creates a new connection to the database with default credentials
-   *
-   * @returns A promise that if resolved returns the opendatacam database object
-   *
-   * @deprecated Use DBManager.connect instead
-   * @see MongoDbManager.connect
-   */
-  async init() {
-    return this.connect(getMongoUrl());
   }
 
   /**
@@ -342,6 +335,4 @@ class MongoDbManager extends DbManagerBase {
   }
 }
 
-const MongoDbManagerInstance = new MongoDbManager();
-
-module.exports = MongoDbManagerInstance;
+module.exports = { MongoDbManager };

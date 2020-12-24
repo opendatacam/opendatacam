@@ -15,7 +15,7 @@ const { Tracker } = require('node-moving-things-tracker');
 const cloneDeep = require('lodash.clonedeep');
 const Opendatacam = require('./server/Opendatacam');
 const { getURLData } = require('./server/utils/urlHelper');
-const DBManager = require('./server/db/MongoDbManager');
+const { MongoDbManager } = require('./server/db/MongoDbManager');
 const FileSystemManager = require('./server/fs/FileSystemManager');
 const { MjpegProxy } = require('./server/utils/mjpegproxy');
 const config = require('./config.json');
@@ -93,7 +93,8 @@ if (config.TRACKER_SETTINGS) {
 Opendatacam.setTracker(tracker);
 
 // Init connection to db
-DBManager.init().then(
+const DBManager = new MongoDbManager(configHelper.getMongoUrl());
+DBManager.connect().then(
   () => {
     console.log('Success init db');
   },
