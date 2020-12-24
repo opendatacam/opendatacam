@@ -174,14 +174,14 @@ app.prepare()
 
     var frameUpdate = data.map((object) => {
       return {
-        name: "car",
+        name: object.label,
         relative_coordinates: {
           center_x: object.x + object.width / 2,
           center_y: object.y + object.height / 2,
           width: object.width,
           height: object.height
         },
-        confidence: 0.8
+        confidence: object.score
       }
     })
 
