@@ -114,9 +114,11 @@ module.exports = {
   registerCountingAreas : function(countingAreas) {
     // Reset existing
     Opendatacam.countingAreas = {}
-    Opendatacam.database.persistAppSettings({
-      countingAreas: countingAreas
-    })
+    if(Opendatacam.database !== null) {
+      Opendatacam.database.persistAppSettings({
+        countingAreas: countingAreas
+      });
+    }
     Object.keys(countingAreas).map((countingAreaKey) => {
       if(countingAreas[countingAreaKey]) {
         this.registerSingleCountingArea(countingAreaKey, countingAreas[countingAreaKey]);
@@ -232,20 +234,21 @@ module.exports = {
         }
       })
     }
-
-    Opendatacam.database.updateRecordingWithNewframe(
-      Opendatacam.recordingStatus.recordingId,
-      frameTimestamp,
-      counterSummary,
-      trackerSummary,
-      countedItemsForThisFrame,
-      trackerEntry
-    ).then(() => {
-      // console.log('success updateRecordingWithNewframe');
-    }, (error) => {
-      console.log(error);
-      console.log('error updateRecordingWithNewframe');
-    })
+    if(Opendatacam.database !== null) {
+      Opendatacam.database.updateRecordingWithNewframe(
+        Opendatacam.recordingStatus.recordingId,
+        frameTimestamp,
+        counterSummary,
+        trackerSummary,
+        countedItemsForThisFrame,
+        trackerEntry
+      ).then(() => {
+        // console.log('success updateRecordingWithNewframe');
+      }, (error) => {
+        console.log(error);
+        console.log('error updateRecordingWithNewframe');
+      })
+    }
   },
 
   updateWithNewFrame: function(detectionsOfThisFrame, frameId) {
@@ -743,17 +746,19 @@ module.exports = {
     Opendatacam._refTrackedItemIdWhenRecordingStarted = highestTrackedItemId - currentlyTrackedItems.length;
 
     // Persist recording
-    Opendatacam.database.insertRecording(new Recording(
-      Opendatacam.recordingStatus.dateStarted,
-      Opendatacam.recordingStatus.dateStarted,
-      Opendatacam.countingAreas,
-      Opendatacam.videoResolution,
-      filename
-    )).then((recording) => {
-      Opendatacam.recordingStatus.recordingId = recording.insertedId;
-    }, (error) => {
-      console.log(error);
-    })
+    if(Opendatacam.database !== null) {
+      Opendatacam.database.insertRecording(new Recording(
+        Opendatacam.recordingStatus.dateStarted,
+        Opendatacam.recordingStatus.dateStarted,
+        Opendatacam.countingAreas,
+        Opendatacam.videoResolution,
+        filename
+      )).then((recording) => {
+        Opendatacam.recordingStatus.recordingId = recording.insertedId;
+      }, (error) => {
+        console.log(error);
+      })
+    }
   },
 
   stopRecording() {
@@ -771,12 +776,14 @@ module.exports = {
     console.log('setvideoresolution')
     Opendatacam.videoResolution = videoResolution;
     // Restore counting areas if defined
-    Opendatacam.database.getAppSettings().then((appSettings) => {
-      if(appSettings && appSettings.countingAreas) {
-        console.log('Restore counting areas');
-        self.registerCountingAreas(appSettings.countingAreas)
-      }
-    });
+    if(Opendatacam.database !== null) {
+      Opendatacam.database.getAppSettings().then((appSettings) => {
+        if(appSettings && appSettings.countingAreas) {
+          console.log('Restore counting areas');
+          self.registerCountingAreas(appSettings.countingAreas)
+        }
+      });
+    }
   },
 
   // Listen to 8070 for Tracker data detections
