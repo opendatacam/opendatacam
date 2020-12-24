@@ -76,7 +76,9 @@ const initialState = {
   // A reference of the yolo object to work with
   yolo: null,
   /** The event emitter used for all events */
-  eventEmitter: new EventEmitter()
+  eventEmitter: new EventEmitter(),
+  /** A reference to the database used to persist Opendatacam's recordings and settings */
+  database: DBManager
 }
 
 let Opendatacam = cloneDeep(initialState);
@@ -112,7 +114,7 @@ module.exports = {
   registerCountingAreas : function(countingAreas) {
     // Reset existing
     Opendatacam.countingAreas = {}
-    DBManager.persistAppSettings({
+    Opendatacam.database.persistAppSettings({
       countingAreas: countingAreas
     })
     Object.keys(countingAreas).map((countingAreaKey) => {
@@ -231,7 +233,7 @@ module.exports = {
       })
     }
 
-    DBManager.updateRecordingWithNewframe(
+    Opendatacam.database.updateRecordingWithNewframe(
       Opendatacam.recordingStatus.recordingId,
       frameTimestamp,
       counterSummary,
@@ -741,7 +743,7 @@ module.exports = {
     Opendatacam._refTrackedItemIdWhenRecordingStarted = highestTrackedItemId - currentlyTrackedItems.length;
 
     // Persist recording
-    DBManager.insertRecording(new Recording(
+    Opendatacam.database.insertRecording(new Recording(
       Opendatacam.recordingStatus.dateStarted,
       Opendatacam.recordingStatus.dateStarted,
       Opendatacam.countingAreas,
@@ -769,7 +771,7 @@ module.exports = {
     console.log('setvideoresolution')
     Opendatacam.videoResolution = videoResolution;
     // Restore counting areas if defined
-    DBManager.getAppSettings().then((appSettings) => {
+    Opendatacam.database.getAppSettings().then((appSettings) => {
       if(appSettings && appSettings.countingAreas) {
         console.log('Restore counting areas');
         self.registerCountingAreas(appSettings.countingAreas)
