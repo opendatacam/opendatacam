@@ -79,7 +79,12 @@
       "canvasResolutionFactor": 0.1
     }
   },
-  "MONGODB_URL": "mongodb://mongo:27017",
+  "DATABASE": "mongo",
+  "DATABASE_PARAMS": {
+    "mongo": {
+      "url": "mongodb://mongo:27017"
+    }
+  },
   "PORTS": {
     "app": 8080,
     "darknet_json_stream": 8070,

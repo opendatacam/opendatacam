@@ -8,7 +8,6 @@ const config = require('../../config.json');
 const envAppPort = process.env.PORT_APP;
 const envDarknetMjpegStreamPort = process.env.PORT_DARKNET_MJPEG_STREAM;
 const envDarknetJsonStreamPort = process.env.PORT_DARKNET_JSON_STREAM;
-const envMongodbUrl = process.env.MONGODB_URL;
 
 /**
  * Gets a value by its key from the config.PORTS and define a default. Does some sanity checks if it is really a port we could use. Doesn't check if a port is in use already
@@ -87,18 +86,6 @@ module.exports = {
       return parseInt(envAppPort, 10);
     } else {
       return port;
-    }
-  },
-  getMongoUrl: () => {
-    const url = getKeyFromConfig(
-      config,
-      'MONGODB_URL',
-      'mongodb://mongo:27017'
-    );
-    if (envMongodbUrl) {
-      return envMongodbUrl;
-    } else {
-      return url;
     }
   },
 };

@@ -15,7 +15,6 @@ const { Tracker } = require('node-moving-things-tracker');
 const cloneDeep = require('lodash.clonedeep');
 const Opendatacam = require('./server/Opendatacam');
 const { getURLData } = require('./server/utils/urlHelper');
-const { MongoDbManager } = require('./server/db/MongoDbManager');
 const FileSystemManager = require('./server/fs/FileSystemManager');
 const { MjpegProxy } = require('./server/utils/mjpegproxy');
 const config = require('./config.json');
@@ -93,16 +92,26 @@ if (config.TRACKER_SETTINGS) {
 Opendatacam.setTracker(tracker);
 
 // Init connection to db
-const dbManager = new MongoDbManager(configHelper.getMongoUrl());
-dbManager.connect().then(
-  () => {
-    console.log('Success init db');
-  },
-  (err) => {
-    console.error(err);
-  },
-);
-Opendatacam.setDatabase(dbManager);
+let dbManager = null;
+if(config.DATABASE === "mongo") {
+  const { MongoDbManager } = require('./server/db/MongoDbManager');
+  const mongoUrl = config.DATABASE_PARAMS.mongo.url;
+  dbManager = new MongoDbManager(mongoUrl);
+}
+
+if(dbManager !== null) {
+  dbManager.connect().then(
+    () => {
+      console.log('Success init db');
+    },
+    (err) => {
+      console.error(err);
+    },
+  );
+  Opendatacam.setDatabase(dbManager);
+} else {
+  console.warn('No or unknown database configured.');
+}
 
 let stdoutBuffer = '';
 let stdoutInterval = '';
