@@ -1,0 +1,48 @@
+# For now only building, no publishing
+name: Build Docker Images
+
+# Trigger the workflow on push or pull request but only for the development branch so far branch
+# We can enable the main branch at a later point to fully automate the docker publish process as
+# well
+on:
+  push:
+    branches:
+      - development
+      - 211-build-docker-github-actin
+  pull_request:
+    branches:
+      - development
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        include:
+        - platform: desktop
+          architecture: linux/x64
+          weights: https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights
+        - platform: xavier
+          architecture: linux/arm64
+          weights: https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights
+        - platform: nano
+          architecture: linux/arm64
+          weights: https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.weights
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download weights
+        run: wget ${{ matrix.weights }}
+        working-directory: docker/build/${{ matrix.platform }}
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      - name: Build and push
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: docker/build/${{ matrix.platform }}
+          file: docker/build/${{ matrix.platform }}/Dockerfile
+          push: false
+          tags: vsaw/opendatacam:development-${{ matrix.platform }}
