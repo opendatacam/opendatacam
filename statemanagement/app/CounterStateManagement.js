@@ -90,6 +90,20 @@ export function selectCountingArea(id) {
   };
 }
 
+// TODO LATER , introduce Redux saga here to make it more explicit that this is triggered by
+// => SAVE_COUNTING_AREA_LOCATION
+// => SAVE_COUNTING_AREA_NAME
+// => DELETE_COUNTING_AREA
+// => SAVE_COUNTING_AREA_TYPE
+export function registerCountingAreasOnServer() {
+  return (dispatch, getState) => {
+    // Ping webservice to start storing data on server
+    axios.post('/counter/areas', {
+      countingAreas: getState().counter.get('countingAreas').toJS(),
+    });
+  };
+}
+
 export function resetCountingAreas() {
   return (dispatch) => {
     dispatch({
@@ -284,20 +298,6 @@ export function restoreCountingAreas(req) {
       });
     }
   });
-}
-
-// TODO LATER , introduce Redux saga here to make it more explicit that this is triggered by
-// => SAVE_COUNTING_AREA_LOCATION
-// => SAVE_COUNTING_AREA_NAME
-// => DELETE_COUNTING_AREA
-// => SAVE_COUNTING_AREA_TYPE
-export function registerCountingAreasOnServer() {
-  return (dispatch, getState) => {
-    // Ping webservice to start storing data on server
-    axios.post('/counter/areas', {
-      countingAreas: getState().counter.get('countingAreas').toJS(),
-    });
-  };
 }
 
 export function computeCountingAreasCenters(countingAreas, canvasResolution) {
