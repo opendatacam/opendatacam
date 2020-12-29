@@ -49,6 +49,13 @@ const START_LISTENING_SERVERDATA = 'App/START_LISTENING_SERVERDATA';
 // TODO LATER HANDLE STOP LISTENING ...
 const LOAD_CONFIG = 'App/LOAD_CONFIG';
 
+export function setMode(mode) {
+  return {
+    type: SET_MODE,
+    payload: mode,
+  };
+}
+
 export function startRecording() {
   return (dispatch, getState) => {
     // Ping webservice to start storing data on server
@@ -131,13 +138,6 @@ export function updateAppState(data) {
   return {
     type: UPDATE_APPSTATE,
     payload: data,
-  };
-}
-
-export function setMode(mode) {
-  return {
-    type: SET_MODE,
-    payload: mode,
   };
 }
 
