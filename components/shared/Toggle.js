@@ -1,14 +1,13 @@
-import React, { Component } from 'react'
-import uuidv4 from 'uuid/v4'
+import React, { Component } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 
 class Toggle extends Component {
-
   constructor(props) {
     super(props);
 
     this.state = {
-      id: uuidv4()
-    }
+      id: uuidv4(),
+    };
   }
 
   render() {
@@ -19,19 +18,19 @@ class Toggle extends Component {
           <p className="text-xs">{this.props.description}</p>
         </label>
         <div className="form-switch inline-block align-middle shadow">
-          <input 
+          <input
             type="checkbox"
             name={this.state.id}
             id={this.state.id}
-            checked={this.props.enabled} 
+            checked={this.props.enabled}
             className="form-switch-checkbox"
             onChange={(e) => this.props.onChange(e.target.checked)}
-           />
-          <label className="form-switch-label" htmlFor={this.state.id}></label>
+          />
+          <label className="form-switch-label" htmlFor={this.state.id} />
         </div>
       </div>
-    )
+    );
   }
 }
 
-export default Toggle
+export default Toggle;

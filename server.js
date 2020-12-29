@@ -15,7 +15,6 @@ const { Tracker } = require('node-moving-things-tracker');
 const cloneDeep = require('lodash.clonedeep');
 const Opendatacam = require('./server/Opendatacam');
 const { getURLData } = require('./server/utils/urlHelper');
-const DBManager = require('./server/db/DBManager');
 const FileSystemManager = require('./server/fs/FileSystemManager');
 const { MjpegProxy } = require('./server/utils/mjpegproxy');
 const config = require('./config.json');
@@ -93,14 +92,26 @@ if (config.TRACKER_SETTINGS) {
 Opendatacam.setTracker(tracker);
 
 // Init connection to db
-DBManager.init().then(
-  () => {
-    console.log('Success init db');
-  },
-  (err) => {
-    console.error(err);
-  },
-);
+let dbManager = null;
+if (config.DATABASE === 'mongo') {
+  const { MongoDbManager } = require('./server/db/MongoDbManager');
+  const mongoUrl = config.DATABASE_PARAMS.mongo.url;
+  dbManager = new MongoDbManager(mongoUrl);
+}
+
+if (dbManager !== null) {
+  dbManager.connect().then(
+    () => {
+      console.log('Success init db');
+    },
+    (err) => {
+      console.error(err);
+    },
+  );
+  Opendatacam.setDatabase(dbManager);
+} else {
+  console.warn('No or unknown database configured.');
+}
 
 let stdoutBuffer = '';
 let stdoutInterval = '';
@@ -553,7 +564,7 @@ app.prepare()
      * @apiDescription Get list of all recording ordered by latest date
      *
      *
-     * @apiSuccess {String} _id recordingId you will use to fetch more data on a specific recording
+     * @apiSuccess {String} id recordingId you will use to fetch more data on a specific recording
      * @apiSuccess {String} dateStart recording start date
      * @apiSuccess {String} dateEnd recording end date
      * @apiSuccess {Object} areas Areas defined in this recording (see Counter -> Get areas for documentation)
@@ -611,8 +622,8 @@ app.prepare()
       const limit = parseInt(req.query.limit, 10) || 20;
       const offset = parseInt(req.query.offset, 10) || 0;
 
-      const recordingPromise = DBManager.getRecordings(limit, offset);
-      const countPromise = DBManager.getRecordingsCount();
+      const recordingPromise = dbManager.getRecordings(limit, offset);
+      const countPromise = dbManager.getRecordingsCount();
 
       Promise.all([recordingPromise, countPromise]).then((values) => {
         res.json({
@@ -632,7 +643,7 @@ app.prepare()
      * @apiDescription Get tracker data for a specific recording **(can be very large as it returns
      * all the data for each frame)**
      *
-     * @apiParam {String} id Recording id (_id field of GET /recordings endpoint)
+     * @apiParam {String} id Recording id (id field of GET /recordings endpoint)
      *
      * @apiSuccess {String} recordingId Corresponding recordingId of this tracker recorded frame
      * @apiSuccess {String} timestamp Frame date
@@ -675,7 +686,7 @@ app.prepare()
           ]
      */
     express.get('/recording/:id/tracker', (req, res) => {
-      DBManager.getTrackerHistoryOfRecording(req.params.id).then((trackerData) => {
+      dbManager.getTrackerHistoryOfRecording(req.params.id).then((trackerData) => {
         res.setHeader('Content-Type', 'application/json');
         res.setHeader('Content-disposition',
           `attachment; filename=trackerData-${req.params.id}.json`);
@@ -690,7 +701,7 @@ app.prepare()
      *
      * @apiDescription Get recording details
      *
-     * @apiParam {String} id Recording id (_id field of /recordings)
+     * @apiParam {String} id Recording id (id field of /recordings)
      *
      * @apiSuccess {videoResolution} Frame resolution
      * @apiSuccessExample {json} Success Response:
@@ -715,7 +726,7 @@ app.prepare()
         }
      */
     express.get('/recording/:id', (req, res) => {
-      DBManager.getRecording(req.params.id).then((recordingData) => {
+      dbManager.getRecording(req.params.id).then((recordingData) => {
         res.json(recordingData);
       });
     });
@@ -727,13 +738,13 @@ app.prepare()
      *
      * @apiDescription Delete recording
      *
-     * @apiParam {String} id Recording id (_id field of /recordings)
+     * @apiParam {String} id Recording id (id field of /recordings)
      *
      * @apiSuccessExample Success-Response:
      *   HTTP/1.1 200 OK
      */
     express.delete('/recording/:id', (req, res) => {
-      DBManager.deleteRecording(req.params.id).then(() => {
+      dbManager.deleteRecording(req.params.id).then(() => {
         res.sendStatus(200);
       });
     });
@@ -745,9 +756,9 @@ app.prepare()
      *
      * @apiDescription Get counter data for a specific recording
      *
-     * @apiParam {String} id Recording id (_id field of GET /recordings)
+     * @apiParam {String} id Recording id (id field of GET /recordings)
      *
-     * @apiSuccess {String} _id recordingId you will use to fetch more data on a specific recording
+     * @apiSuccess {String} id recordingId you will use to fetch more data on a specific recording
      * @apiSuccess {String} dateStart recording start date
      * @apiSuccess {String} dateEnd recording end date
      * @apiSuccess {Object} areas Areas defined in this recording (see Counter -> Get areas for documentation)
@@ -823,7 +834,7 @@ app.prepare()
           ]
      */
     express.get('/recording/:id/counter', (req, res) => {
-      DBManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
+      dbManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
         res.setHeader('Content-Type', 'application/json');
         const startDate = counterData.dateStart.toISOString().split('T')[0];
         const fileName = `counterData-${startDate}-${req.params.id}.json`;
@@ -839,7 +850,7 @@ app.prepare()
      *
      * @apiDescription Get counter history data as CSV file
      *
-     * @apiParam {String} id Recording id (_id field of /recordings)
+     * @apiParam {String} id Recording id (id field of /recordings)
      *
      * @apiSuccessExample {csv} Success Response:
      *    "Timestamp","Counter area","ObjectClass","UniqueID","CountingDirection"
@@ -855,7 +866,7 @@ app.prepare()
           "2019-05-02T19:10:36.925Z","truc","car",4156,"rightleft_bottomtop"
      */
     express.get('/recording/:id/counter/csv', (req, res) => {
-      DBManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
+      dbManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
         let data = counterData.counterHistory;
         if (data) {
         // Flatten

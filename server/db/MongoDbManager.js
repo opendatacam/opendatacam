@@ -1,19 +1,50 @@
-const { MongoClient, ObjectID, Db } = require('mongodb');
-const { getMongoUrl } = require('../utils/configHelper');
+const { MongoClient } = require('mongodb');
+const { DbManagerBase } = require('./DbManagerBase');
 
-const RECORDING_COLLECTION = 'recordings';
-const TRACKER_COLLECTION = 'tracker';
-const APP_COLLECTION = 'app';
+class MongoDbManager extends DbManagerBase {
+  /**
+   * Creates a new MongoDbManager object
+   *
+   * If connectionStringOrDbObject is a
+   *
+   * - Db object: the object pointing to a database will be used and no new connection will be
+   *   created
+   * - String: The string will be used to create a new connection to the database and then the
+   *   "opendatacam" database will be used
+   *
+   * After creation {@link MongoDbManager.connect} must be called
+   *
+   * @param {*} connectionStringOrDbObject The connection to use or credentials to create one
+   */
+  constructor(connectionStringOrDbObject) {
+    super();
 
+    /**
+     * Collection used to store the recordings
+     *
+     * @private
+     */
+    this.RECORDING_COLLECTION = 'recordings';
+    /**
+     * Collection used to store the tracker data
+     *
+     * @private
+     */
+    this.TRACKER_COLLECTION = 'tracker';
+    /**
+     * Collection to store App Settings
+     *
+     * @private
+     */
+    this.APP_COLLECTION = 'app';
+    /**
+     * Name of the Database
+     *
+     * @private
+     */
+    this.DATABASE_NAME = 'opendatacam';
 
-class DBManager {
-  constructor() {
-    // XXX: This is a hacky way to export the collections without changing the module structure to
-    // much
-    this.RECORDING_COLLECTION = RECORDING_COLLECTION;
-    this.TRACKER_COLLECTION = TRACKER_COLLECTION;
-    this.APP_COLLECTION = APP_COLLECTION;
-
+    this.connectionStringOrDbObject = connectionStringOrDbObject;
     /**
      * The connection string used or null if a Db object was used for the connection or the
      * connection has not been established yet.
@@ -25,40 +56,33 @@ class DBManager {
   /**
    * Connect to the opendatacam database the MongoDB Server
    *
-   * If connectionStringOrDbObject is a
-   *
-   * - Db object: the object pointing to a database will be used and no new connection will be
-   *   created
-   * - String: The string will be used to create a new connection to the database and then the
-   *   "opendatacam" database will be used
-   *
-   * @param {*} connectionStringOrDbObject The connection to use or credentials to create one
-   *
    * @returns A promise that if resolved returns the opendatacam database object
    *
    * @throws Error if something else then a String or Db is passed
    */
-  async connect(connectionStringOrDbObject) {
-    const createCollectionsAndIndex = function(db) {
-      const recordingCollection = db.collection(RECORDING_COLLECTION);
+  async connect() {
+    const createCollectionsAndIndex = (db) => {
+      const recordingCollection = db.collection(this.RECORDING_COLLECTION);
       recordingCollection.createIndex({ dateStart: -1 });
+      recordingCollection.createIndex({ id: 1 }, { unique: true });
 
-      const trackerCollection = db.collection(TRACKER_COLLECTION);
+      const trackerCollection = db.collection(this.TRACKER_COLLECTION);
       trackerCollection.createIndex({ recordingId: 1 });
-    }
+    };
 
-    const isConnectionString = typeof connectionStringOrDbObject === 'string'
-      || connectionStringOrDbObject instanceof String;
-    const isDbObject = typeof connectionStringOrDbObject === 'object';
+    const isConnectionString = typeof this.connectionStringOrDbObject === 'string'
+      || this.connectionStringOrDbObject instanceof String;
+    const isDbObject = typeof this.connectionStringOrDbObject === 'object';
 
     if (isConnectionString) {
       return new Promise((resolve, reject) => {
-        this.connectionString = connectionStringOrDbObject;
-        MongoClient.connect(this.connectionString, { useNewUrlParser: true, useUnifiedTopology: true }, (err, client) => {
+        this.connectionString = this.connectionStringOrDbObject;
+        const mongoConnectParams = { useNewUrlParser: true, useUnifiedTopology: true };
+        MongoClient.connect(this.connectionString, mongoConnectParams, (err, client) => {
           if (err) {
             reject(err);
           } else {
-            let db = client.db('opendatacam');
+            const db = client.db(this.DATABASE_NAME);
             this.db = db;
 
             createCollectionsAndIndex(db);
@@ -67,29 +91,19 @@ class DBManager {
           }
         });
       });
-    } else if (isDbObject) {
-      this.db = connectionStringOrDbObject;
+    } if (isDbObject) {
+      this.db = this.connectionStringOrDbObject;
       createCollectionsAndIndex(this.db);
       return Promise.resolve(this.db);
-    } else {
-      return new Error();
     }
+    return new Error();
   }
 
   /**
-   * Creates a new connection to the database with default credentials
-   *
-   * @returns A promise that if resolved returns the opendatacam database object
-   *
-   * @deprecated Use DBManager.connect instead
-   * @see DBManager.connect
+   * @private
    */
-  async init() {
-    return this.connect(getMongoUrl());
-  }
-
   getDB() {
-    return new Promise((resolve, reject) => {
+    return new Promise((resolve) => {
       if (this.db) {
         resolve(this.db);
       } else {
@@ -100,14 +114,14 @@ class DBManager {
 
   persistAppSettings(settings) {
     return new Promise((resolve, reject) => {
-      this.getDB().then(db => {
-        db.collection(APP_COLLECTION).updateOne({
-          id: 'settings'
+      this.getDB().then((db) => {
+        db.collection(this.APP_COLLECTION).updateOne({
+          id: 'settings',
         }, {
           $set: {
             id: 'settings',
-            countingAreas: settings.countingAreas
-          }
+            countingAreas: settings.countingAreas,
+          },
         }, { upsert: true }, (err, r) => {
           if (err) {
             reject(err);
@@ -121,9 +135,9 @@ class DBManager {
 
   getAppSettings() {
     return new Promise((resolve, reject) => {
-      this.getDB().then(db => {
+      this.getDB().then((db) => {
         db
-          .collection(APP_COLLECTION)
+          .collection(this.APP_COLLECTION)
           .findOne(
             { id: 'settings' },
             (err, doc) => {
@@ -132,7 +146,7 @@ class DBManager {
               } else {
                 resolve(doc);
               }
-            }
+            },
           );
       });
     });
@@ -140,8 +154,8 @@ class DBManager {
 
   insertRecording(recording) {
     return new Promise((resolve, reject) => {
-      this.getDB().then(db => {
-        db.collection(RECORDING_COLLECTION).insertOne(recording, (err, r) => {
+      this.getDB().then((db) => {
+        db.collection(this.RECORDING_COLLECTION).insertOne(recording, (err, r) => {
           if (err) {
             reject(err);
           } else {
@@ -154,8 +168,8 @@ class DBManager {
 
   deleteRecording(recordingId) {
     const deleteRecordingPromise = new Promise((resolve, reject) => {
-      this.getDB().then(db => {
-        db.collection(RECORDING_COLLECTION).deleteOne({ _id: ObjectID(recordingId) }, (err, r) => {
+      this.getDB().then((db) => {
+        db.collection(this.RECORDING_COLLECTION).deleteOne({ id: recordingId }, (err, r) => {
           if (err) {
             reject(err);
           } else {
@@ -166,8 +180,9 @@ class DBManager {
     });
 
     const deleteTrackerPromise = new Promise((resolve, reject) => {
-      this.getDB().then(db => {
-        db.collection(TRACKER_COLLECTION).deleteMany({ 'recordingId': ObjectID(recordingId) }, (err, r) => {
+      this.getDB().then((db) => {
+        const filter = { recordingId };
+        db.collection(this.TRACKER_COLLECTION).deleteMany(filter, (err, r) => {
           if (err) {
             reject(err);
           } else {
@@ -191,36 +206,35 @@ class DBManager {
     counterSummary,
     trackerSummary,
     counterEntry,
-    trackerEntry
+    trackerEntry,
   ) {
     return new Promise((resolve, reject) => {
-
       // let itemsToAdd = {
       //   trackerHistory: trackerEntry
       // };
 
-      let updateRequest = {
+      const updateRequest = {
         $set: {
           dateEnd: frameDate,
-          counterSummary: counterSummary,
-          trackerSummary: trackerSummary
-        }
+          counterSummary,
+          trackerSummary,
+        },
         // Only add $push if we have a counted item
       };
 
-      let itemsToAdd = {};
+      const itemsToAdd = {};
 
       // Add counterHistory when somethings counted
       if (counterEntry.length > 0) {
-        itemsToAdd['counterHistory'] = {
-          $each: counterEntry
+        itemsToAdd.counterHistory = {
+          $each: counterEntry,
         };
-        updateRequest['$push'] = itemsToAdd;
+        updateRequest.$push = itemsToAdd;
       }
 
-      this.getDB().then(db => {
-        db.collection(RECORDING_COLLECTION).updateOne(
-          { _id: recordingId },
+      this.getDB().then((db) => {
+        db.collection(this.RECORDING_COLLECTION).updateOne(
+          { id: recordingId },
           updateRequest,
           (err, r) => {
             if (err) {
@@ -228,11 +242,11 @@ class DBManager {
             } else {
               resolve(r);
             }
-          }
+          },
         );
 
-        if(trackerEntry.objects != null && trackerEntry.objects.length > 0) {
-          db.collection(TRACKER_COLLECTION).insertOne(trackerEntry);
+        if (trackerEntry.objects != null && trackerEntry.objects.length > 0) {
+          db.collection(this.TRACKER_COLLECTION).insertOne(trackerEntry);
         }
       });
     });
@@ -240,15 +254,15 @@ class DBManager {
 
   getRecordings(limit = 30, offset = 0) {
     return new Promise((resolve, reject) => {
-      this.getDB().then(db => {
+      this.getDB().then((db) => {
         db
-          .collection(RECORDING_COLLECTION)
+          .collection(this.RECORDING_COLLECTION)
           .find({})
           .project({ counterHistory: 0, trackerHistory: 0 })
           .sort({ dateStart: -1 })
           .limit(limit)
           .skip(offset)
-          .toArray(function (err, docs) {
+          .toArray((err, docs) => {
             if (err) {
               reject(err);
             } else {
@@ -261,11 +275,11 @@ class DBManager {
 
   getRecording(recordingId) {
     return new Promise((resolve, reject) => {
-      this.getDB().then(db => {
+      this.getDB().then((db) => {
         db
-          .collection(RECORDING_COLLECTION)
+          .collection(this.RECORDING_COLLECTION)
           .findOne(
-            { _id: ObjectID(recordingId) },
+            { id: recordingId },
             { projection: { counterHistory: 0, areas: 0 } },
             (err, doc) => {
               if (err) {
@@ -273,7 +287,7 @@ class DBManager {
               } else {
                 resolve(doc);
               }
-            }
+            },
           );
       });
     });
@@ -281,9 +295,9 @@ class DBManager {
 
   getRecordingsCount() {
     return new Promise((resolve, reject) => {
-      this.getDB().then(db => {
+      this.getDB().then((db) => {
         db
-          .collection(RECORDING_COLLECTION)
+          .collection(this.RECORDING_COLLECTION)
           .countDocuments({}, (err, res) => {
             if (err) {
               reject(err);
@@ -297,13 +311,13 @@ class DBManager {
 
   getTrackerHistoryOfRecording(recordingId) {
     return new Promise((resolve, reject) => {
-      this.getDB().then(db => {
+      this.getDB().then((db) => {
         db
-          .collection(TRACKER_COLLECTION)
+          .collection(this.TRACKER_COLLECTION)
           .find(
-            { recordingId: ObjectID(recordingId) }
+            { recordingId },
           )
-          .toArray(function (err, docs) {
+          .toArray((err, docs) => {
             if (err) {
               reject(err);
             } else {
@@ -316,29 +330,24 @@ class DBManager {
 
   getCounterHistoryOfRecording(recordingId) {
     return new Promise((resolve, reject) => {
-      this.getDB().then(db => {
+      this.getDB().then((db) => {
         db
-          .collection(RECORDING_COLLECTION)
+          .collection(this.RECORDING_COLLECTION)
           .find(
-            { _id: ObjectID(recordingId) }
+            { id: recordingId },
           )
-          .toArray(function (err, docs) {
+          .toArray((err, docs) => {
             if (err) {
               reject(err);
+            } else if (docs.length === 0) {
+              resolve({});
             } else {
-              if (docs.length === 0) {
-                resolve({});
-              } else {
-                resolve(docs[0]);
-              }
+              resolve(docs[0]);
             }
           });
       });
     });
   }
-
 }
 
-var DBManagerInstance = new DBManager();
-
-module.exports = DBManagerInstance;
+module.exports = { MongoDbManager };

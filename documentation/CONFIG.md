@@ -32,7 +32,8 @@ We offer several customization options:
     - [Use Custom Neural Network weights](#use-custom-neural-network-weights)
     - [Tracker settings](#tracker-settings)
     - [Counter settings](#counter-settings)
-    - [MongoDB URL](#mongodb-url)
+    - [Database](#database)
+      - [MongoDB](#mongodb)
     - [Ports](#ports)
     - [Tracker accuracy display](#tracker-accuracy-display)
     - [Use Environment Variables](#use-environment-variables)
@@ -517,9 +518,25 @@ You can tweak some settings of the tracker to optimize OpenDataCam better for yo
 
 NB: if the object has changed ID in the past frames, it will take the last past frame known with the same ID.
 
-#### MongoDB URL
+#### Database
 
-If you want to persist the data on a remote mongodb instance, you can change the setting `MONGODB_URL` .
+Database backend can be selected by setting the `DATABASE` key.
+See below for a list of supported database backends.
+
+##### MongoDB
+
+By default Opendatacam will use the MongoDB instance running locally under the same docker compose
+file.
+If you want to persist the data on a remote mongodb instance, you can change the setting `url`.
+See the example below:
+
+```
+"DATABASE_PARAMS": {
+  "mongo": {
+    "url": "mongodb://my-mongo-server.domain.tld:27017"
+  }
+}
+```
 
 By default the Mongodb will be persisted in the `/data/db` directory of your host machine
 

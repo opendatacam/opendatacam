@@ -1,6 +1,6 @@
 import { fromJS } from 'immutable'
 import axios from 'axios';
-import uuidv4 from 'uuid/v4'
+import { v4 as uuidv4 } from 'uuid';
 import { scalePoint } from '../../utils/resolution';
 import { getURLData } from '../../server/utils/urlHelper';
 import { getAvailableCounterColors, getDefaultCounterColor } from '../../utils/colors.js';

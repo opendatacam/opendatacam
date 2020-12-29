@@ -9,8 +9,7 @@ const { once } = require('events');
 const stream = require('stream');
 const StreamArray = require('stream-json/streamers/StreamArray');
 const config = require('../config.json');
-const Recording = require('./model/Recording');
-const DBManager = require('./db/DBManager');
+const { Recording } = require('./model/Recording');
 const Logger = require('./utils/Logger');
 const configHelper = require('./utils/configHelper');
 const isInsidePolygon = require('point-in-polygon')
@@ -76,7 +75,9 @@ const initialState = {
   // A reference of the yolo object to work with
   yolo: null,
   /** The event emitter used for all events */
-  eventEmitter: new EventEmitter()
+  eventEmitter: new EventEmitter(),
+  /** A reference to the database used to persist Opendatacam's recordings and settings */
+  database: null
 }
 
 let Opendatacam = cloneDeep(initialState);
@@ -112,9 +113,11 @@ module.exports = {
   registerCountingAreas : function(countingAreas) {
     // Reset existing
     Opendatacam.countingAreas = {}
-    DBManager.persistAppSettings({
-      countingAreas: countingAreas
-    })
+    if(Opendatacam.database !== null) {
+      Opendatacam.database.persistAppSettings({
+        countingAreas: countingAreas
+      });
+    }
     Object.keys(countingAreas).map((countingAreaKey) => {
       if(countingAreas[countingAreaKey]) {
         this.registerSingleCountingArea(countingAreaKey, countingAreas[countingAreaKey]);
@@ -230,20 +233,21 @@ module.exports = {
         }
       })
     }
-
-    DBManager.updateRecordingWithNewframe(
-      Opendatacam.recordingStatus.recordingId,
-      frameTimestamp,
-      counterSummary,
-      trackerSummary,
-      countedItemsForThisFrame,
-      trackerEntry
-    ).then(() => {
-      // console.log('success updateRecordingWithNewframe');
-    }, (error) => {
-      console.log(error);
-      console.log('error updateRecordingWithNewframe');
-    })
+    if(Opendatacam.database !== null) {
+      Opendatacam.database.updateRecordingWithNewframe(
+        Opendatacam.recordingStatus.recordingId,
+        frameTimestamp,
+        counterSummary,
+        trackerSummary,
+        countedItemsForThisFrame,
+        trackerEntry
+      ).then(() => {
+        // console.log('success updateRecordingWithNewframe');
+      }, (error) => {
+        console.log(error);
+        console.log('error updateRecordingWithNewframe');
+      })
+    }
   },
 
   updateWithNewFrame: function(detectionsOfThisFrame, frameId) {
@@ -741,17 +745,20 @@ module.exports = {
     Opendatacam._refTrackedItemIdWhenRecordingStarted = highestTrackedItemId - currentlyTrackedItems.length;
 
     // Persist recording
-    DBManager.insertRecording(new Recording(
+    const newRecording = new Recording(
       Opendatacam.recordingStatus.dateStarted,
       Opendatacam.recordingStatus.dateStarted,
       Opendatacam.countingAreas,
       Opendatacam.videoResolution,
       filename
-    )).then((recording) => {
-      Opendatacam.recordingStatus.recordingId = recording.insertedId;
-    }, (error) => {
-      console.log(error);
-    })
+    );
+    if(Opendatacam.database !== null) {
+      Opendatacam.database.insertRecording(newRecording).then((recording) => {
+        Opendatacam.recordingStatus.recordingId = newRecording.id;
+      }, (error) => {
+        console.log(error);
+      })
+    }
   },
 
   stopRecording() {
@@ -769,12 +776,14 @@ module.exports = {
     console.log('setvideoresolution')
     Opendatacam.videoResolution = videoResolution;
     // Restore counting areas if defined
-    DBManager.getAppSettings().then((appSettings) => {
-      if(appSettings && appSettings.countingAreas) {
-        console.log('Restore counting areas');
-        self.registerCountingAreas(appSettings.countingAreas)
-      }
-    });
+    if(Opendatacam.database !== null) {
+      Opendatacam.database.getAppSettings().then((appSettings) => {
+        if(appSettings && appSettings.countingAreas) {
+          console.log('Restore counting areas');
+          self.registerCountingAreas(appSettings.countingAreas)
+        }
+      });
+    }
   },
 
   // Listen to 8070 for Tracker data detections
@@ -922,6 +931,10 @@ module.exports = {
 
   setTracker(tracker) {
     Opendatacam.tracker = tracker;
+  },
+
+  setDatabase(db) {
+    Opendatacam.database = db;
   },
 
   on(event, listener) {

@@ -45,6 +45,7 @@
     "server-sent-events": "^1.0.1",
     "splitargs": "0.0.7",
     "stream-json": "^1.7.1",
+    "uuid": "^8.3.2",
     "yargs": "^16.1.0"
   },
   "devDependencies": {

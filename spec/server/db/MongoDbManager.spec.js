@@ -1,9 +1,8 @@
-const { ObjectID } = require('mongodb');
 const cloneDeep = require('lodash.clonedeep');
-const DBManager = require('../../../server/db/DBManager');
+const { MongoDbManager } = require('../../../server/db/MongoDbManager');
 const { getMongoUrl } = require('../../../server/utils/configHelper');
 
-describe('DBManager', () => {
+describe('MongoDbManager', () => {
   const RECORDING_ID = '5faac7df863f7328a158c78e';
 
   let dbSpy = null;
@@ -32,26 +31,22 @@ describe('DBManager', () => {
   });
 
   describe('connection', () => {
-    it('uses default connection string', async () => {
-      const defaultConnectionString = getMongoUrl();
-      DBManager.init().then(
-        () => { fail(); },
-        () => { expect(DBManager.connectionString).toEqual(defaultConnectionString); },
-      );
-    });
-
     it('uses connection string', async () => {
       const connectionString = 'mongo://foo:218';
-      DBManager.connect(connectionString).then(
+      const db = new MongoDbManager(connectionString);
+      db.connect(connectionString).then(
         () => { fail(); },
-        () => { expect(DBManager.connectionString).toEqual(connectionString); },
+        () => { expect(db.connectionString).toEqual(connectionString); },
       );
     });
 
     describe('object', () => {
       let connectionPromise = null;
+      /** MongoDatabaseManager */
+      let mdbm = null;
       beforeEach(() => {
-        connectionPromise = DBManager.connect(dbSpy);
+        mdbm = new MongoDbManager(dbSpy);
+        connectionPromise = mdbm.connect();
       });
 
       it('resolves', async () => {
@@ -60,8 +55,8 @@ describe('DBManager', () => {
 
       it('uses my connection', async () => {
         await expectAsync(connectionPromise).toBeResolvedTo(dbSpy);
-        await expectAsync(DBManager.getDB()).toBeResolvedTo(dbSpy);
-        expect(DBManager.db).toBe(dbSpy);
+        await expectAsync(mdbm.getDB()).toBeResolvedTo(dbSpy);
+        expect(mdbm.db).toBe(dbSpy);
       });
 
       it('access the collections', async () => {
@@ -100,11 +95,12 @@ describe('DBManager', () => {
     ];
 
     beforeEach(async () => {
-      await DBManager.connect(dbSpy);
+      mdbm = new MongoDbManager(dbSpy);
+      await mdbm.connect();
     });
 
     it('inserts tracker data with detections', async () => {
-      await DBManager.updateRecordingWithNewframe(...argsWithDetection);
+      await mdbm.updateRecordingWithNewframe(...argsWithDetection);
 
       expect(collectionSpy.insertOne).toHaveBeenCalled();
     });
@@ -113,7 +109,7 @@ describe('DBManager', () => {
       const argsWithoutDetection = cloneDeep(argsWithDetection);
       argsWithoutDetection[5].objects = [];
 
-      await DBManager.updateRecordingWithNewframe(...argsWithoutDetection);
+      await mdbm.updateRecordingWithNewframe(...argsWithoutDetection);
 
       expect(collectionSpy.insertOne).not.toHaveBeenCalled();
     });
@@ -121,22 +117,23 @@ describe('DBManager', () => {
 
   describe('deleteRecording', () => {
     beforeEach(async () => {
-      await DBManager.connect(dbSpy);
+      mdbm = new MongoDbManager(dbSpy);
+      await mdbm.connect();
 
       dbSpy.collection.calls.reset();
       collectionSpy.remove.calls.reset();
 
-      await DBManager.deleteRecording(RECORDING_ID);
+      await mdbm.deleteRecording(RECORDING_ID);
     });
 
     it('resolves', async () => {
-      const deleteRecordingPromise = DBManager.deleteRecording(RECORDING_ID);
+      const deleteRecordingPromise = mdbm.deleteRecording(RECORDING_ID);
       await expectAsync(deleteRecordingPromise).toBeResolved();
     });
 
     it('deletes tracker data for recording', () => {
-      expect(dbSpy.collection).toHaveBeenCalledWith(DBManager.TRACKER_COLLECTION);
-      const expectedCall = { recordingId: ObjectID(RECORDING_ID) };
+      expect(dbSpy.collection).toHaveBeenCalledWith(mdbm.TRACKER_COLLECTION);
+      const expectedCall = { recordingId: RECORDING_ID };
       expect(collectionSpy.deleteMany.calls.mostRecent().args[0]).toEqual(expectedCall);
     });
 

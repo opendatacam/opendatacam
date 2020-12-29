@@ -8,7 +8,6 @@ const config = require('../../config.json');
 const envAppPort = process.env.PORT_APP;
 const envDarknetMjpegStreamPort = process.env.PORT_DARKNET_MJPEG_STREAM;
 const envDarknetJsonStreamPort = process.env.PORT_DARKNET_JSON_STREAM;
-const envMongodbUrl = process.env.MONGODB_URL;
 
 /**
  * Gets a value by its key from the config.PORTS and define a default. Does some sanity checks if it is really a port we could use. Doesn't check if a port is in use already
@@ -20,17 +19,14 @@ const envMongodbUrl = process.env.MONGODB_URL;
 function getPortFromConfig(config, key, defaultPort) {
   if (!config.PORTS) {
     return defaultPort;
-  } else {
-    if (!config.PORTS[key]) {
-      return defaultPort;
-    } else {
-      if (parseAndTestIsNumber(config.PORTS[key])) {
-        return parseInt(config.PORTS[key], 10);
-      } else {
-        return defaultPort;
-      }
-    }
   }
+  if (!config.PORTS[key]) {
+    return defaultPort;
+  }
+  if (parseAndTestIsNumber(config.PORTS[key])) {
+    return parseInt(config.PORTS[key], 10);
+  }
+  return defaultPort;
 }
 
 /**
@@ -40,9 +36,8 @@ function getPortFromConfig(config, key, defaultPort) {
 function getKeyFromConfig(config, key, defaultValue) {
   if (!config[key]) {
     return defaultValue;
-  } else {
-    return config[key];
   }
+  return config[key];
 }
 
 /**
@@ -60,45 +55,30 @@ module.exports = {
   getPortFromConfig,
   parseAndTestIsNumber,
   getMjpegStreamPort: () => {
-    let port = getPortFromConfig(config, 'darknet_mjpeg_stream', 8090);
+    const port = getPortFromConfig(config, 'darknet_mjpeg_stream', 8090);
     if (
-      envDarknetJsonStreamPort &&
-      parseAndTestIsNumber(envDarknetJsonStreamPort)
+      envDarknetJsonStreamPort
+      && parseAndTestIsNumber(envDarknetJsonStreamPort)
     ) {
       return parseInt(envDarknetMjpegStreamPort, 10);
-    } else {
-      return port;
     }
+    return port;
   },
   getJsonStreamPort: () => {
-    let port = getPortFromConfig(config, 'darknet_json_stream', 8070);
+    const port = getPortFromConfig(config, 'darknet_json_stream', 8070);
     if (
-      envDarknetJsonStreamPort &&
-      parseAndTestIsNumber(envDarknetJsonStreamPort)
+      envDarknetJsonStreamPort
+      && parseAndTestIsNumber(envDarknetJsonStreamPort)
     ) {
       return parseInt(envDarknetJsonStreamPort, 10);
-    } else {
-      return port;
     }
+    return port;
   },
   getAppPort: () => {
-    let port = getPortFromConfig(config, 'app', 8080);
+    const port = getPortFromConfig(config, 'app', 8080);
     if (envAppPort && parseAndTestIsNumber(envAppPort)) {
       return parseInt(envAppPort, 10);
-    } else {
-      return port;
     }
-  },
-  getMongoUrl: () => {
-    const url = getKeyFromConfig(
-      config,
-      'MONGODB_URL',
-      'mongodb://mongo:27017'
-    );
-    if (envMongodbUrl) {
-      return envMongodbUrl;
-    } else {
-      return url;
-    }
+    return port;
   },
 };

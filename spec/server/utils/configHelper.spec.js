@@ -57,7 +57,6 @@ describe('configHelper', () => {
       expect(getAppPort()).toBe(parseInt(process.env.PORT_APP, 10));
       expect(getJsonStreamPort()).toBe(parseInt(process.env.PORT_DARKNET_JSON_STREAM, 10));
       expect(getMjpegStreamPort()).toBe(parseInt(process.env.PORT_DARKNET_MJPEG_STREAM, 10));
-      expect(getMongoUrl()).toBe(process.env.MONGODB_URL);
     });
   });
 });
