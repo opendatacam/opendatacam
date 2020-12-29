@@ -1,3 +1,5 @@
+/* eslint-disable no-console */
+
 class Logger {
   constructor() {
     this.debug = false;
