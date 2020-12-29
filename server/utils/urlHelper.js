@@ -1,4 +1,4 @@
-const self = module.exports = {
+module.exports = {
   getURLData(req) {
     let protocol = 'http';
     if (req.headers['x-forwarded-proto'] === 'https') {
