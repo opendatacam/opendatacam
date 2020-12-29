@@ -45,7 +45,9 @@ const UPDATE_TRACKERSUMMARY = 'Counter/UPDATE_TRACKERSUMMARY';
 export function setMode(mode) {
   return (dispatch, getState) => {
     // If leaving editing mode, store last editing mode for when we go back
-    if (getState().counter.get('mode') === EDITOR_MODE.EDIT_LINE || getState().counter.get('mode') === EDITOR_MODE.EDIT_POLYGON) {
+    const isEditLine = getState().counter.get('mode') === EDITOR_MODE.EDIT_LINE;
+    const isEditPolygon = getState().counter.get('mode') === EDITOR_MODE.EDIT_POLYGON;
+    if (isEditLine || isEditPolygon) {
       // If new mode is also editing, store new mode
       if (mode === EDITOR_MODE.EDIT_LINE || mode === EDITOR_MODE.EDIT_POLYGON) {
         dispatch({
@@ -114,15 +116,24 @@ export function deleteCountingArea(id) {
 
 export function addCountingArea(type = 'bidirectional') {
   return (dispatch, getState) => {
-    // TODO Before adding a counting area, verify if selectedCountingArea is complete, otherwise delete it
+    // TODO Before adding a counting area, verify if selectedCountingArea is complete, otherwise
+    // delete it
 
     const newCountingAreaId = uuidv4();
 
     const AVAILABLE_COLORS = getAvailableCounterColors();
     const DEFAULT_COLOR = getDefaultCounterColor();
 
+    /* eslint-disable */
+    // We disable eslint because it will inline the filters and make the code harder to read
+
     // Get a color unused
-    let color = AVAILABLE_COLORS.find((potentialColor) => getState().counter.get('countingAreas').findEntry((value) => value.get('color') === potentialColor) === undefined);
+    let color = AVAILABLE_COLORS.find((potentialColor) => {
+      return getState().counter.get('countingAreas').findEntry((value) => {
+        return value.get('color') === potentialColor;
+      }) === undefined;
+    });
+    /* eslint-enable */
 
     if (!color) {
       color = DEFAULT_COLOR;
@@ -144,7 +155,10 @@ export function addCountingArea(type = 'bidirectional') {
 export function saveCountingAreaLocation(id, location) {
   return (dispatch, getState) => {
     // Compute bearing of the line (if polygon of the first line)
-    const lineBearing = computeLineBearing(location.points[0].x, -location.points[0].y, location.points[1].x, -location.points[1].y);
+    const lineBearing = computeLineBearing(location.points[0].x,
+      -location.points[0].y,
+      location.points[1].x,
+      -location.points[1].y);
     // in both directions
     const lineBearings = [0, 0];
     if (lineBearing >= 180) {
