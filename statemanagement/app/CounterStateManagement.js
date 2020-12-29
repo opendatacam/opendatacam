@@ -3,7 +3,7 @@ import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { scalePoint } from '../../utils/resolution';
 import { getURLData } from '../../server/utils/urlHelper';
-import { getAvailableCounterColors, getDefaultCounterColor } from '../../utils/colors.js';
+import { getAvailableCounterColors, getDefaultCounterColor } from '../../utils/colors';
 import { computeLineBearing } from '../../server/tracker/utils';
 import { COUNTING_AREA_TYPE } from '../../utils/constants';
 
