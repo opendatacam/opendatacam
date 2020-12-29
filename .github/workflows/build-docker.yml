@@ -33,7 +33,7 @@ jobs:
         uses: actions/checkout@v2
       - name: Download weights
         run: wget ${{ matrix.weights }}
-        working-directory: docker/build/${{ matrix.platform }}
+        working-directory: ./
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v1
       - name: Set up Docker Buildx
@@ -42,7 +42,7 @@ jobs:
         id: docker_build
         uses: docker/build-push-action@v2
         with:
-          context: docker/build/${{ matrix.platform }}
+          context: ./
           file: docker/build/${{ matrix.platform }}/Dockerfile
           push: false
           tags: vsaw/opendatacam:development-${{ matrix.platform }}

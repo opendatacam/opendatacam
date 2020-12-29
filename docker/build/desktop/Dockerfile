@@ -26,7 +26,8 @@ RUN mkdir opendatacam_videos && cd opendatacam_videos && wget https://github.com
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
     apt-get install -y nodejs
 
-RUN git clone --depth 1 -b v3.0.1 https://github.com/opendatacam/opendatacam /var/local/opendatacam
+# Copy source into Docker image
+COPY ./ /var/local/opendatacam
 
 WORKDIR /var/local/opendatacam
 
@@ -40,6 +41,6 @@ RUN sed -i -e 's+TO_REPLACE_NEURAL_NETWORK+yolov4+g' config.json;
 
 EXPOSE 8080 8070 8090
 
-COPY launch.sh launch.sh
+COPY docker/build/desktop/launch.sh launch.sh
 RUN chmod 777 launch.sh
 CMD ["./launch.sh"]
