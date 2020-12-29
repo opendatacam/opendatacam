@@ -11,24 +11,6 @@ const LOCALSTORAGE_KEY = 'opendatacam';
 // Actions
 const SET_USERSETTING = 'UserSettings/SET_USERSETTING';
 
-export function loadUserSettings() {
-  return (dispatch) => {
-    // Load localstorage content into reducer
-    const persistedData = window.localStorage.getItem('opendatacam');
-    if (persistedData) {
-      const parsedData = JSON.parse(persistedData);
-      Object.keys(parsedData).map((key) => {
-        dispatch(setUserSetting(key, parsedData[key]));
-      });
-
-      // TODO for each key setUserSetting
-    } else {
-      // Nothing persisted yet, persist default
-      persistUserSettings(initialState.toJS());
-    }
-  };
-}
-
 function persistUserSettings(userSettings) {
   // Persist
   localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(userSettings));
@@ -53,6 +35,24 @@ export function setUserSetting(userSetting, value) {
 
     // Persist
     persistUserSettings(getState().usersettings.toJS());
+  };
+}
+
+export function loadUserSettings() {
+  return (dispatch) => {
+    // Load localstorage content into reducer
+    const persistedData = window.localStorage.getItem('opendatacam');
+    if (persistedData) {
+      const parsedData = JSON.parse(persistedData);
+      Object.keys(parsedData).map((key) => {
+        dispatch(setUserSetting(key, parsedData[key]));
+      });
+
+      // TODO for each key setUserSetting
+    } else {
+      // Nothing persisted yet, persist default
+      persistUserSettings(initialState.toJS());
+    }
   };
 }
 
