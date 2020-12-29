@@ -1,9 +1,9 @@
-import { fromJS } from 'immutable'
+import { fromJS } from 'immutable';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import { scalePoint } from '../../utils/resolution';
 import { getURLData } from '../../server/utils/urlHelper';
-import { getAvailableCounterColors, getDefaultCounterColor } from '../../utils/colors.js';
+import { getAvailableCounterColors, getDefaultCounterColor } from '../../utils/colors';
 import { computeLineBearing } from '../../server/tracker/utils';
 import { COUNTING_AREA_TYPE } from '../../utils/constants';
 
@@ -14,8 +14,8 @@ export const EDITOR_MODE = {
   EDIT_POLYGON: 'edit_polygon',
   ASKNAME: 'askname',
   DELETE: 'delete',
-  SHOW_INSTRUCTION: 'showinstruction'
-}
+  SHOW_INSTRUCTION: 'showinstruction',
+};
 
 // Initial state
 const initialState = fromJS({
@@ -24,113 +24,132 @@ const initialState = fromJS({
   mode: EDITOR_MODE.EDIT_LINE, // oneOf EDITOR_MODE
   lastEditingMode: EDITOR_MODE.EDIT_LINE,
   counterSummary: {},
-  trackerSummary: {} 
-})
+  trackerSummary: {},
+});
 
 // Actions
-const SELECT_COUNTING_AREA = 'Counter/SELECT_COUNTING_AREA'
-const DELETE_COUNTING_AREA = 'Counter/DELETE_COUNTING_AREA'
-const SAVE_COUNTING_AREA_LOCATION = 'Counter/SAVE_COUNTING_AREA_LOCATION'
-const SAVE_COUNTING_AREA_BEARING = 'Counter/SAVE_COUNTING_AREA_BEARING'
-const SAVE_COUNTING_AREA_TYPE = 'Counter/SAVE_COUNTING_AREA_TYPE'
-const SET_MODE = 'Counter/SET_MODE'
-const SET_LAST_EDITING_MODE = 'Counter/SET_LAST_EDITING_MODE'
-const SAVE_COUNTING_AREA_NAME = 'Counter/SAVE_COUNTING_AREA_NAME'
-const ADD_COUNTING_AREA = 'Counter/ADD_COUNTING_AREA'
-const RESTORE_COUNTING_AREAS = 'Counter/RESTORE_COUNTING_AREAS'
-const RESET_COUNTING_AREAS = 'Counter/RESET_COUNTING_AREAS'
-const UPDATE_COUNTERSUMMARY = 'Counter/UPDATE_COUNTERSUMMARY'
-const UPDATE_TRACKERSUMMARY = 'Counter/UPDATE_TRACKERSUMMARY'
-
+const SELECT_COUNTING_AREA = 'Counter/SELECT_COUNTING_AREA';
+const DELETE_COUNTING_AREA = 'Counter/DELETE_COUNTING_AREA';
+const SAVE_COUNTING_AREA_LOCATION = 'Counter/SAVE_COUNTING_AREA_LOCATION';
+const SAVE_COUNTING_AREA_BEARING = 'Counter/SAVE_COUNTING_AREA_BEARING';
+const SAVE_COUNTING_AREA_TYPE = 'Counter/SAVE_COUNTING_AREA_TYPE';
+const SET_MODE = 'Counter/SET_MODE';
+const SET_LAST_EDITING_MODE = 'Counter/SET_LAST_EDITING_MODE';
+const SAVE_COUNTING_AREA_NAME = 'Counter/SAVE_COUNTING_AREA_NAME';
+const ADD_COUNTING_AREA = 'Counter/ADD_COUNTING_AREA';
+const RESTORE_COUNTING_AREAS = 'Counter/RESTORE_COUNTING_AREAS';
+const RESET_COUNTING_AREAS = 'Counter/RESET_COUNTING_AREAS';
+const UPDATE_COUNTERSUMMARY = 'Counter/UPDATE_COUNTERSUMMARY';
+const UPDATE_TRACKERSUMMARY = 'Counter/UPDATE_TRACKERSUMMARY';
 
 export function setMode(mode) {
   return (dispatch, getState) => {
     // If leaving editing mode, store last editing mode for when we go back
-    if(getState().counter.get('mode') === EDITOR_MODE.EDIT_LINE || getState().counter.get('mode') === EDITOR_MODE.EDIT_POLYGON) {
-
+    const isEditLine = getState().counter.get('mode') === EDITOR_MODE.EDIT_LINE;
+    const isEditPolygon = getState().counter.get('mode') === EDITOR_MODE.EDIT_POLYGON;
+    if (isEditLine || isEditPolygon) {
       // If new mode is also editing, store new mode
-      if(mode === EDITOR_MODE.EDIT_LINE || mode === EDITOR_MODE.EDIT_POLYGON) {
+      if (mode === EDITOR_MODE.EDIT_LINE || mode === EDITOR_MODE.EDIT_POLYGON) {
         dispatch({
           type: SET_LAST_EDITING_MODE,
-          payload: mode
+          payload: mode,
         });
       } else {
         dispatch({
           type: SET_LAST_EDITING_MODE,
-          payload: getState().counter.get('mode')
+          payload: getState().counter.get('mode'),
         });
       }
     }
 
     dispatch({
       type: SET_MODE,
-      payload: mode
+      payload: mode,
     });
-  }
+  };
 }
 
 export function updateCounterSummary(data) {
   return {
     type: UPDATE_COUNTERSUMMARY,
-    payload: data
-  }
+    payload: data,
+  };
 }
 
 export function updateTrackerSummary(data) {
   return {
     type: UPDATE_TRACKERSUMMARY,
-    payload: data
-  }
+    payload: data,
+  };
 }
 
 export function selectCountingArea(id) {
   return {
     type: SELECT_COUNTING_AREA,
-    payload: id
-  }
+    payload: id,
+  };
+}
+
+// TODO LATER , introduce Redux saga here to make it more explicit that this is triggered by
+// => SAVE_COUNTING_AREA_LOCATION
+// => SAVE_COUNTING_AREA_NAME
+// => DELETE_COUNTING_AREA
+// => SAVE_COUNTING_AREA_TYPE
+export function registerCountingAreasOnServer() {
+  return (dispatch, getState) => {
+    // Ping webservice to start storing data on server
+    axios.post('/counter/areas', {
+      countingAreas: getState().counter.get('countingAreas').toJS(),
+    });
+  };
 }
 
 export function resetCountingAreas() {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     dispatch({
-      type: RESET_COUNTING_AREAS
+      type: RESET_COUNTING_AREAS,
     });
 
     dispatch(registerCountingAreasOnServer());
-  }
+  };
 }
 
 export function deleteCountingArea(id) {
   return (dispatch, getState) => {
-
     dispatch({
       type: DELETE_COUNTING_AREA,
-      payload: id
+      payload: id,
     });
 
-    if(getState().counter.get('countingAreas').size === 0) {
+    if (getState().counter.get('countingAreas').size === 0) {
       dispatch(setMode(getState().counter.get('lastEditingMode')));
     }
     dispatch(registerCountingAreasOnServer());
-  }
+  };
 }
 
-export function addCountingArea(type = "bidirectional") {
+export function addCountingArea(type = 'bidirectional') {
   return (dispatch, getState) => {
+    // TODO Before adding a counting area, verify if selectedCountingArea is complete, otherwise
+    // delete it
 
-    // TODO Before adding a counting area, verify if selectedCountingArea is complete, otherwise delete it
-
-    let newCountingAreaId = uuidv4();
+    const newCountingAreaId = uuidv4();
 
     const AVAILABLE_COLORS = getAvailableCounterColors();
     const DEFAULT_COLOR = getDefaultCounterColor();
 
+    /* eslint-disable */
+    // We disable eslint because it will inline the filters and make the code harder to read
+
     // Get a color unused
     let color = AVAILABLE_COLORS.find((potentialColor) => {
-      return getState().counter.get('countingAreas').findEntry((value) => value.get('color') === potentialColor) === undefined
-    })
+      return getState().counter.get('countingAreas').findEntry((value) => {
+        return value.get('color') === potentialColor;
+      }) === undefined;
+    });
+    /* eslint-enable */
 
-    if(!color) {
+    if (!color) {
       color = DEFAULT_COLOR;
     }
 
@@ -138,23 +157,25 @@ export function addCountingArea(type = "bidirectional") {
       type: ADD_COUNTING_AREA,
       payload: {
         id: newCountingAreaId,
-        color: color,
-        type: type
-      }
-    })
+        color,
+        type,
+      },
+    });
 
     dispatch(selectCountingArea(newCountingAreaId));
-  }
+  };
 }
 
 export function saveCountingAreaLocation(id, location) {
   return (dispatch, getState) => {
-
-    //Compute bearing of the line (if polygon of the first line)
-    let lineBearing = computeLineBearing(location.points[0].x, -location.points[0].y, location.points[1].x, -location.points[1].y);
+    // Compute bearing of the line (if polygon of the first line)
+    const lineBearing = computeLineBearing(location.points[0].x,
+      -location.points[0].y,
+      location.points[1].x,
+      -location.points[1].y);
     // in both directions
-    let lineBearings = [0,0];
-    if(lineBearing >= 180) {
+    const lineBearings = [0, 0];
+    if (lineBearing >= 180) {
       lineBearings[0] = lineBearing - 180;
       lineBearings[1] = lineBearing;
     } else {
@@ -166,34 +187,33 @@ export function saveCountingAreaLocation(id, location) {
       type: SAVE_COUNTING_AREA_BEARING,
       payload: {
         lineBearings,
-        id
-      }
-    })
+        id,
+      },
+    });
 
     dispatch({
       type: SAVE_COUNTING_AREA_LOCATION,
       payload: {
         location,
-        id
-      }
+        id,
+      },
     });
 
-    if(!getState().counter.getIn(['countingAreas', id, 'name'])) {
+    if (!getState().counter.getIn(['countingAreas', id, 'name'])) {
       dispatch(setMode(EDITOR_MODE.ASKNAME));
     }
     // TODO UPDATE server side part to handle array of points instead of just point1, point2
     dispatch(registerCountingAreasOnServer());
-  }
+  };
 }
 
 export function toggleCountingAreaType(id, currentDirection) {
-  return (dispatch, getState) => {
-
+  return (dispatch) => {
     let newDirection = COUNTING_AREA_TYPE.BIDIRECTIONAL;
 
-    if(currentDirection === COUNTING_AREA_TYPE.BIDIRECTIONAL) {
+    if (currentDirection === COUNTING_AREA_TYPE.BIDIRECTIONAL) {
       newDirection = COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM;
-    } else if(currentDirection === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM) {
+    } else if (currentDirection === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM) {
       newDirection = COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP;
     }
 
@@ -201,162 +221,147 @@ export function toggleCountingAreaType(id, currentDirection) {
       type: SAVE_COUNTING_AREA_TYPE,
       payload: {
         type: newDirection,
-        id
-      }
+        id,
+      },
     });
 
     dispatch(registerCountingAreasOnServer());
-  }
+  };
 }
 
 export function saveCountingAreaName(id, name) {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     // console.log('saveName')
     dispatch({
       type: SAVE_COUNTING_AREA_NAME,
       payload: {
         id,
-        name
-      }
-    })
+        name,
+      },
+    });
 
-     dispatch(registerCountingAreasOnServer());
-  }
+    dispatch(registerCountingAreasOnServer());
+  };
 }
 
 export function restoreCountingAreasFromJSON(data) {
   return (dispatch) => {
     dispatch({
       type: RESTORE_COUNTING_AREAS,
-      payload: data
-    })
+      payload: data,
+    });
     dispatch(registerCountingAreasOnServer());
-  }
+  };
 }
 
 export function restoreCountingAreas(req) {
-  return (dispatch) => {
-    return new Promise((resolve, reject) => {
-      if(req) {
-        let urlData = getURLData(req);
-        let session = req && req.session ? req.session : null
-        let url = `${urlData.protocol}://${urlData.address}:${urlData.port}/counter/areas`;
+  return (dispatch) => new Promise((resolve, reject) => {
+    if (req) {
+      const urlData = getURLData(req);
+      const session = req && req.session ? req.session : null;
+      const url = `${urlData.protocol}://${urlData.address}:${urlData.port}/counter/areas`;
 
-        axios({
-          method: 'get',
-          url: url,
-          credentials: 'same-origin',
-          data: {'session': session}
-        }).then((response) => {
-          dispatch({
-            type: RESTORE_COUNTING_AREAS,
-            payload: response.data
-          })
-          resolve();
-        }, (error) => {
-          console.log(error);
-          reject();
-        }).catch((error) => {
-          console.log(error)
-          reject();
+      axios({
+        method: 'get',
+        url,
+        credentials: 'same-origin',
+        data: { session },
+      }).then((response) => {
+        dispatch({
+          type: RESTORE_COUNTING_AREAS,
+          payload: response.data,
         });
-      } else {
-        axios({
-          method: 'get',
-          url: '/counter/areas',
-        }).then((response) => {
-          dispatch({
-            type: RESTORE_COUNTING_AREAS,
-            payload: response.data
-          })
-          resolve();
-        }, (error) => {
-          console.log(error);
-          reject();
-        }).catch((error) => {
-          console.log(error)
-          reject();
+        resolve();
+      }, (error) => {
+        console.log(error);
+        reject();
+      }).catch((error) => {
+        console.log(error);
+        reject();
+      });
+    } else {
+      axios({
+        method: 'get',
+        url: '/counter/areas',
+      }).then((response) => {
+        dispatch({
+          type: RESTORE_COUNTING_AREAS,
+          payload: response.data,
         });
-      }
-    });
-  }
-}
-
-// TODO LATER , introduce Redux saga here to make it more explicit that this is triggered by
-// => SAVE_COUNTING_AREA_LOCATION
-// => SAVE_COUNTING_AREA_NAME
-// => DELETE_COUNTING_AREA
-// => SAVE_COUNTING_AREA_TYPE
-export function registerCountingAreasOnServer() {
-  return (dispatch, getState) => {
-    // Ping webservice to start storing data on server
-    axios.post('/counter/areas',{
-      countingAreas: getState().counter.get('countingAreas').toJS()
-    });
-  }
+        resolve();
+      }, (error) => {
+        console.log(error);
+        reject();
+      }).catch((error) => {
+        console.log(error);
+        reject();
+      });
+    }
+  });
 }
 
 export function computeCountingAreasCenters(countingAreas, canvasResolution) {
-  return countingAreas.map((data, id) => {
-    let location = data.get('location');
-    if(location) {
-      let points = location.get('points').toJS();
-      let x1 = points[0].x
-      let y1 = points[0].y
-      let x2 = points[1].x
-      let y2 = points[1].y
+  return countingAreas.map((data) => {
+    const location = data.get('location');
+    if (location) {
+      const points = location.get('points').toJS();
+      const x1 = points[0].x;
+      const y1 = points[0].y;
+      const x2 = points[1].x;
+      const y2 = points[1].y;
 
-      return data.setIn(['location','center'], scalePoint(
+      return data.setIn(['location', 'center'], scalePoint(
         {
           x: Math.abs(x2 - x1) / 2 + Math.min(x1, x2),
-          y: Math.abs(y2 - y1) / 2 + Math.min(y1, y2)
+          y: Math.abs(y2 - y1) / 2 + Math.min(y1, y2),
         },
         canvasResolution.toJS(),
-        location.get('refResolution').toJS()
-      ))
-    } else {
-      return data;
+        location.get('refResolution').toJS(),
+      ));
     }
-  })
+    return data;
+  });
 }
 
 export function computeDistance(point1, point2) {
-  return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2))
+  const xDist = (point2.x - point1.x) ** 2;
+  const yDist = (point2.y - point1.y) ** 2;
+  return Math.sqrt(xDist + yDist);
 }
 
 // Reducer
-export default function CounterReducer (state = initialState, action = {}) {
+export default function CounterReducer(state = initialState, action = {}) {
   switch (action.type) {
     case SELECT_COUNTING_AREA:
-      return state.set('selectedCountingArea', action.payload)
+      return state.set('selectedCountingArea', action.payload);
     case DELETE_COUNTING_AREA:
-      return state.deleteIn(['countingAreas', action.payload])
+      return state.deleteIn(['countingAreas', action.payload]);
     case SAVE_COUNTING_AREA_LOCATION:
-      return state.setIn(['countingAreas', action.payload.id, 'location'], fromJS(action.payload.location))
+      return state.setIn(['countingAreas', action.payload.id, 'location'], fromJS(action.payload.location));
     case SAVE_COUNTING_AREA_BEARING:
-      return state.setIn(['countingAreas', action.payload.id, 'computed', 'lineBearings'], fromJS(action.payload.lineBearings))
+      return state.setIn(['countingAreas', action.payload.id, 'computed', 'lineBearings'], fromJS(action.payload.lineBearings));
     case SAVE_COUNTING_AREA_NAME:
-      return state.setIn(['countingAreas', action.payload.id, 'name'], action.payload.name)
+      return state.setIn(['countingAreas', action.payload.id, 'name'], action.payload.name);
     case SAVE_COUNTING_AREA_TYPE:
-      return state.setIn(['countingAreas', action.payload.id, 'type'], action.payload.type)
+      return state.setIn(['countingAreas', action.payload.id, 'type'], action.payload.type);
     case ADD_COUNTING_AREA:
       return state.setIn(['countingAreas', action.payload.id], fromJS({
         color: action.payload.color,
-        type: action.payload.type
-      }))
+        type: action.payload.type,
+      }));
     case RESET_COUNTING_AREAS:
-      return state.set('countingAreas', fromJS({}))
+      return state.set('countingAreas', fromJS({}));
     case SET_MODE:
-      return state.set('mode', action.payload)
+      return state.set('mode', action.payload);
     case SET_LAST_EDITING_MODE:
-      return state.set('lastEditingMode', action.payload)
+      return state.set('lastEditingMode', action.payload);
     case RESTORE_COUNTING_AREAS:
-      return state.set('countingAreas', fromJS(action.payload))
+      return state.set('countingAreas', fromJS(action.payload));
     case UPDATE_COUNTERSUMMARY:
       return state.setIn(['counterSummary'], fromJS(action.payload));
     case UPDATE_TRACKERSUMMARY:
       return state.setIn(['trackerSummary'], fromJS(action.payload));
     default:
-      return state
+      return state;
   }
 }
