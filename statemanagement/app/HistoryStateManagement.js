@@ -23,25 +23,6 @@ const FETCH_HISTORY_ERROR = 'History/FETCH_HISTORY_ERROR';
 const UPDATE_RECORDINGS_CURSOR = 'History/UPDATE_RECORDINGS_CURSOR';
 const DELETE_RECORDING = 'History/DELETE_RECORDING';
 
-export function fetchHistory(offset = DEFAULT_OFFSET, limit = DEFAULT_LIMIT) {
-  return (dispatch) => {
-    dispatch({
-      type: FETCH_HISTORY_START,
-    });
-
-    axios.get(`/recordings?offset=${offset}&limit=${limit}`).then((response) => {
-      dispatch(fetchHistorySuccess(response.data.recordings));
-      dispatch(updateRecordingsCursor({
-        total: response.data.total,
-        offset: response.data.offset,
-        limit: response.data.limit,
-      }));
-    }, () => {
-      dispatch(fetchHistoryError());
-    });
-  };
-}
-
 export function fetchHistorySuccess(data) {
   return {
     type: FETCH_HISTORY_SUCCESS,
@@ -59,6 +40,25 @@ export function updateRecordingsCursor(data) {
   return {
     type: UPDATE_RECORDINGS_CURSOR,
     payload: data,
+  };
+}
+
+export function fetchHistory(offset = DEFAULT_OFFSET, limit = DEFAULT_LIMIT) {
+  return (dispatch) => {
+    dispatch({
+      type: FETCH_HISTORY_START,
+    });
+
+    axios.get(`/recordings?offset=${offset}&limit=${limit}`).then((response) => {
+      dispatch(fetchHistorySuccess(response.data.recordings));
+      dispatch(updateRecordingsCursor({
+        total: response.data.total,
+        offset: response.data.offset,
+        limit: response.data.limit,
+      }));
+    }, () => {
+      dispatch(fetchHistoryError());
+    });
   };
 }
 
