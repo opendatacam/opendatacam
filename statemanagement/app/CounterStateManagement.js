@@ -324,7 +324,9 @@ export function computeCountingAreasCenters(countingAreas, canvasResolution) {
 }
 
 export function computeDistance(point1, point2) {
-  return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
+  const xDist = (point2.x - point1.x) ** 2;
+  const yDist = (point2.y - point1.y) ** 2;
+  return Math.sqrt(xDist + yDist);
 }
 
 // Reducer
