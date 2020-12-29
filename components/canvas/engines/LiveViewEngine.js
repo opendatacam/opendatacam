@@ -1,27 +1,27 @@
 import { scaleDetection, scalePoint } from '../../../utils/resolution';
 import { evaluateCSSVariable, getCounterColor } from '../../../utils/colors';
-import  tailwindConfig from '../../../tailwind.config';
+import tailwindConfig from '../../../tailwind.config';
 
-const colors = tailwindConfig.theme.extend.colors;
+const { colors } = tailwindConfig.theme.extend;
 
 class LiveViewEngine {
-  drawTrackerData (
+  drawTrackerData(
     context,
     objectTrackerData,
     canvasResolution,
-    originalResolution
+    originalResolution,
   ) {
     context.globalAlpha = 1;
-    context.lineWidth = 2
-    objectTrackerData.map(objectTracked => {
+    context.lineWidth = 2;
+    objectTrackerData.map((objectTracked) => {
       context.globalAlpha = Math.max(Math.min(objectTracked.opacity, 1), 0);
-      let objectTrackedScaled = scaleDetection(
+      const objectTrackedScaled = scaleDetection(
         objectTracked,
         canvasResolution,
-        originalResolution
-      )
-      let x = objectTrackedScaled.x - objectTrackedScaled.w / 2
-      let y = objectTrackedScaled.y - objectTrackedScaled.h / 2
+        originalResolution,
+      );
+      const x = objectTrackedScaled.x - objectTrackedScaled.w / 2;
+      const y = objectTrackedScaled.y - objectTrackedScaled.h / 2;
       // context.strokeStyle = 'black'
       // context.strokeRect(
       //   x + 5,
@@ -35,83 +35,83 @@ class LiveViewEngine {
         x + 5,
         y + 5,
         objectTrackedScaled.w - 10,
-        objectTrackedScaled.h - 10
-      )
+        objectTrackedScaled.h - 10,
+      );
       context.setLineDash([]);
       context.fillStyle = evaluateCSSVariable(colors.default);
       context.fillRect(
         x + 4,
         y - 10,
         objectTrackedScaled.w - 8,
-        17
-      )
+        17,
+      );
 
       // confidence -- text
-      context.font = '10px'
+      context.font = '10px';
       context.fillStyle = evaluateCSSVariable(colors.inverse);
-      const rightName = x + 10 + context.measureText(`${objectTrackedScaled.name}`).width
-      const xConfidence = x + objectTrackedScaled.w - 30
+      const rightName = x + 10 + context.measureText(`${objectTrackedScaled.name}`).width;
+      const xConfidence = x + objectTrackedScaled.w - 30;
       if (rightName < xConfidence) {
         context.fillText(
           `${Math.round(objectTrackedScaled.confidence * 100)}%`,
           xConfidence,
-          y
-        )
+          y,
+        );
       }
 
       // name -- background
-      context.fillStyle = evaluateCSSVariable(colors.default)
+      context.fillStyle = evaluateCSSVariable(colors.default);
       context.fillRect(
         x + 10,
         y - 10,
         context.measureText(`${objectTrackedScaled.name}`).width,
-        17
-      )
+        17,
+      );
       // name -- text
       context.fillStyle = evaluateCSSVariable(colors.inverse);
       context.fillText(
         `${objectTrackedScaled.name}`,
         x + 10,
-        y
-      )
-    })
+        y,
+      );
+    });
   }
 
-  drawTrackerDataCounterEditor (
+  drawTrackerDataCounterEditor(
     context,
     objectTrackerData,
     countingAreas,
     canvasResolution,
     originalResolution,
-    timeNow = new Date().getTime()
+    timeNow = new Date().getTime(),
   ) {
-    context.globalAlpha = 1
-    context.lineWidth = 2
-    objectTrackerData.map(objectTracked => {
-      let objectTrackedScaled = scaleDetection(
+    context.globalAlpha = 1;
+    context.lineWidth = 2;
+    objectTrackerData.map((objectTracked) => {
+      const objectTrackedScaled = scaleDetection(
         objectTracked,
         canvasResolution,
-        originalResolution
-      )
+        originalResolution,
+      );
 
-      let x = objectTrackedScaled.x - objectTrackedScaled.w / 2
-      let y = objectTrackedScaled.y - objectTrackedScaled.h / 2
+      const x = objectTrackedScaled.x - objectTrackedScaled.w / 2;
+      const y = objectTrackedScaled.y - objectTrackedScaled.h / 2;
 
       // Counted status
-      let displayCountedArea = null
+      let displayCountedArea = null;
       // get last counted event
-      let countedEvent = objectTracked.counted && objectTracked.counted[objectTracked.counted.length - 1];
+      const countedEvent = objectTracked.counted && objectTracked.counted[objectTracked.counted.length - 1];
 
       // For lines, display only during 1s after beeing counted
-      if(countedEvent && countingAreas.getIn([countedEvent.areaKey, "type"]) !== "polygon") {
-        if(timeNow - countedEvent.timeMs < 1000) {
+      if (countedEvent && countingAreas.getIn([countedEvent.areaKey, 'type']) !== 'polygon') {
+        if (timeNow - countedEvent.timeMs < 1000) {
           displayCountedArea = true;
         }
       }
 
       // For polygon, as long as it is still inside the area
-      if(countedEvent && countingAreas.getIn([countedEvent.areaKey, "type"]) === "polygon") {
-        if(objectTracked.areas.indexOf(countedEvent.areaKey) > -1) {
+      if (countedEvent && countingAreas.getIn([countedEvent.areaKey, 'type']) === 'polygon') {
+        if (objectTracked.areas.indexOf(countedEvent.areaKey) > -1) {
           displayCountedArea = true;
         }
       }
@@ -119,7 +119,7 @@ class LiveViewEngine {
       // Display counted status for lines & polygon
       // => for lines : during 1s after beeing counted
       // => for polygons: as long as it remains inside the area
-      if(displayCountedArea) {
+      if (displayCountedArea) {
         // displayCountedArea contain countingareakey : see Opendatacam.js on server side
         context.strokeStyle = getCounterColor(countingAreas.getIn([countedEvent.areaKey, 'color']));
         context.fillStyle = getCounterColor(countingAreas.getIn([countedEvent.areaKey, 'color']));
@@ -127,15 +127,15 @@ class LiveViewEngine {
           x + 5,
           y + 5,
           objectTrackedScaled.w - 10,
-          objectTrackedScaled.h - 10
-        )
+          objectTrackedScaled.h - 10,
+        );
         context.globalAlpha = 0.1;
         context.fillRect(
           x + 5,
           y + 5,
           objectTrackedScaled.w - 10,
-          objectTrackedScaled.h - 10
-        )
+          objectTrackedScaled.h - 10,
+        );
         context.globalAlpha = 1;
       } else {
         context.setLineDash([10, 10]);
@@ -144,32 +144,32 @@ class LiveViewEngine {
           x + 5,
           y + 5,
           objectTrackedScaled.w - 10,
-          objectTrackedScaled.h - 10
-        )
+          objectTrackedScaled.h - 10,
+        );
         context.setLineDash([]);
       }
-    })
+    });
   }
 
-  drawCountingAreas (
+  drawCountingAreas(
     context,
     countingAreas,
-    canvasResolution
+    canvasResolution,
   ) {
     countingAreas.map((area, id) => {
-      if(area.get('location') !== null) {
-        let data = area.get('location').toJS();
-        let color = area.get('color');
+      if (area.get('location') !== null) {
+        const data = area.get('location').toJS();
+        const color = area.get('color');
         context.strokeStyle = getCounterColor(color);
         context.fillStyle = getCounterColor(color);
         context.lineWidth = 5; // TODO Have those dynamic depending on canvas resolution
-        let edgeCircleRadius = 5;
+        const edgeCircleRadius = 5;
 
         // Rescale points
-        let points = data.points.map((point) => scalePoint(point, canvasResolution, data.refResolution));
+        const points = data.points.map((point) => scalePoint(point, canvasResolution, data.refResolution));
 
         for (let index = 0; index < points.length; index++) {
-          let point = points[index];
+          const point = points[index];
           // Draw circle
           context.beginPath();
           context.arc(point.x, point.y, edgeCircleRadius, 0, 2 * Math.PI, false);
@@ -177,7 +177,7 @@ class LiveViewEngine {
 
           // Draw line
           // Draw line connecting to previous point
-          if(index > 0) {
+          if (index > 0) {
             context.beginPath();
             context.moveTo(points[index - 1].x, points[index - 1].y);
             context.lineTo(points[index].x, points[index].y);
@@ -186,19 +186,18 @@ class LiveViewEngine {
         }
 
         // Draw polygon if length > 2
-        if(points.length > 2) {
+        if (points.length > 2) {
           context.globalAlpha = 0.3;
           context.beginPath();
           context.moveTo(points[0].x, points[0].y);
           points.map((point) => {
             context.lineTo(point.x, point.y);
             context.lineTo(point.x, point.y);
-          })
+          });
           context.fill();
           context.globalAlpha = 1;
         }
       }
-
     });
   }
 
@@ -221,6 +220,6 @@ class LiveViewEngine {
   // }
 }
 
-const LiveViewEngineInstance = new LiveViewEngine()
+const LiveViewEngineInstance = new LiveViewEngine();
 
-export default LiveViewEngineInstance
+export default LiveViewEngineInstance;

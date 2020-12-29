@@ -1,14 +1,13 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { stopRecording, startRecording } from '../../statemanagement/app/AppStateManagement';
 
 class BtnRecording extends Component {
-
   handleClick() {
-    if(this.props.recordingStatus.isRecording) {
-      this.props.dispatch(stopRecording())
+    if (this.props.recordingStatus.isRecording) {
+      this.props.dispatch(stopRecording());
     } else {
-      this.props.dispatch(startRecording())
+      this.props.dispatch(startRecording());
     }
   }
 
@@ -19,20 +18,23 @@ class BtnRecording extends Component {
           className="btn-record"
           onClick={() => this.handleClick()}
         >
-          {this.props.recordingStatus.isRecording &&
+          {this.props.recordingStatus.isRecording
+            && (
             <>
               <img className="inline" src="/static/icons/ui/stop-recording.svg" />
               <h3 className="btn-record-label text-default text-xl font-bold">Stop recording</h3>
             </>
-          }
-          {!this.props.recordingStatus.isRecording &&
+            )}
+          {!this.props.recordingStatus.isRecording
+            && (
             <>
               <img className="inline" src="/static/icons/ui/start-recording.svg" />
               <h3 className="btn-record-label text-default text-xl font-bold">Start recording</h3>
             </>
-          }
+            )}
         </div>
-        <style jsx>{`
+        <style jsx>
+          {`
 
           .btn-record-container {
             position: fixed;
@@ -57,15 +59,14 @@ class BtnRecording extends Component {
             margin-top: 0.5rem;
             text-shadow: 0px 2px 4px rgba(73, 73, 73, 0.5);
           }
-        `}</style>
+        `}
+        </style>
       </div>
-    )
+    );
   }
 }
 
-export default connect((state) => {
-  return {
-    recordingStatus: state.app.get('recordingStatus').toJS(),
-    mode: state.app.get('mode')
-  }
-})(BtnRecording)
+export default connect((state) => ({
+  recordingStatus: state.app.get('recordingStatus').toJS(),
+  mode: state.app.get('mode'),
+}))(BtnRecording);
