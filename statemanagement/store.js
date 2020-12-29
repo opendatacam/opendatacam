@@ -17,7 +17,7 @@ export const makeStore = (initialState, { isServer }) => {
   if (!window.store) {
     // For each key of initialState, convert to Immutable object
     // Because SSR passed it as plain object
-    Object.keys(initialState).map((key, index) => {
+    Object.keys(initialState).map((key) => {
       initialState[key] = fromJS(initialState[key]);
     });
     window.store = createStore(reducers, initialState, composedEnhancers);

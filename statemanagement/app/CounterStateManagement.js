@@ -89,7 +89,7 @@ export function selectCountingArea(id) {
 }
 
 export function resetCountingAreas() {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     dispatch({
       type: RESET_COUNTING_AREAS,
     });
@@ -180,7 +180,7 @@ export function saveCountingAreaLocation(id, location) {
 }
 
 export function toggleCountingAreaType(id, currentDirection) {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     let newDirection = COUNTING_AREA_TYPE.BIDIRECTIONAL;
 
     if (currentDirection === COUNTING_AREA_TYPE.BIDIRECTIONAL) {
@@ -202,7 +202,7 @@ export function toggleCountingAreaType(id, currentDirection) {
 }
 
 export function saveCountingAreaName(id, name) {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     // console.log('saveName')
     dispatch({
       type: SAVE_COUNTING_AREA_NAME,
@@ -287,7 +287,7 @@ export function registerCountingAreasOnServer() {
 }
 
 export function computeCountingAreasCenters(countingAreas, canvasResolution) {
-  return countingAreas.map((data, id) => {
+  return countingAreas.map((data) => {
     const location = data.get('location');
     if (location) {
       const points = location.get('points').toJS();

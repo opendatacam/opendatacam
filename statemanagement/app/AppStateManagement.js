@@ -4,7 +4,7 @@ import { MODE } from '../../utils/constants';
 import { getURLData } from '../../server/utils/urlHelper';
 import { updateTrackerData } from './TrackerStateManagement';
 import {
-  updateCounterSummary, updateTrackerSummary, resetCountingAreas, restoreCountingAreas,
+  updateCounterSummary, updateTrackerSummary, resetCountingAreas,
 } from './CounterStateManagement';
 import { fetchHistory } from './HistoryStateManagement';
 import { setOriginalResolution } from './ViewportStateManagement';
@@ -47,7 +47,6 @@ const SET_UI_SETTING = 'App/SET_UI_SETTING';
 const RESTORE_UI_SETTINGS = 'App/RESTORE_UI_SETTINGS';
 const START_LISTENING_SERVERDATA = 'App/START_LISTENING_SERVERDATA';
 // TODO LATER HANDLE STOP LISTENING ...
-const STOP_LISTENING_SERVERDATA = 'App/STOP_LISTENING_SERVERDATA';
 const LOAD_CONFIG = 'App/LOAD_CONFIG';
 
 export function startRecording() {
@@ -203,7 +202,7 @@ export function setURLData(req) {
 }
 
 export function startListeningToServerData() {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     const eventSource = new EventSource('/tracker/sse');
     dispatch({
       type: START_LISTENING_SERVERDATA,

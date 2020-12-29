@@ -20,7 +20,7 @@ export function getTrackerAccuracySettings() {
 }
 
 export function updateTrackerData(trackerDataLastFrame) {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     // Update tracker raw data
     dispatch({
       type: UPDATE_DATA,

@@ -24,7 +24,7 @@ const UPDATE_RECORDINGS_CURSOR = 'History/UPDATE_RECORDINGS_CURSOR';
 const DELETE_RECORDING = 'History/DELETE_RECORDING';
 
 export function fetchHistory(offset = DEFAULT_OFFSET, limit = DEFAULT_LIMIT) {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     dispatch({
       type: FETCH_HISTORY_START,
     });
@@ -63,7 +63,7 @@ export function updateRecordingsCursor(data) {
 }
 
 export function deleteRecording(recordingId) {
-  return (dispatch, getState) => {
+  return (dispatch) => {
     dispatch({
       type: DELETE_RECORDING,
       payload: recordingId,
