@@ -20,7 +20,7 @@ class YoloDarknet extends EventEmitter {
     this.process = null;
     this.videoResolution = {
       w: 0,
-      h: 0
+      h: 0,
     };
 
     /** The configuration passed to the constructor. */
@@ -34,7 +34,7 @@ class YoloDarknet extends EventEmitter {
       darknetCmd: null,
     };
 
-    if(config == null) {
+    if (config == null) {
       console.warn('YoloDarknet: Empty configuration passed, most likely because you are in Simulation mode.');
       return;
     }
@@ -44,15 +44,15 @@ class YoloDarknet extends EventEmitter {
       if (key in config) {
         this.config[key] = config[key];
       }
-    })
+    });
 
-    var darknetCommand = [];
-    var initialCommand = [this.config.darknetCmd, 'detector', 'demo', this.config.yoloParams.data, this.config.yoloParams.cfg, this.config.yoloParams.weights];
-    var endCommand = ['-ext_output', '-dont_show', '-dontdraw_bbox', '-json_port', this.config.jsonStreamPort, '-mjpeg_port', this.config.mjpegStreamPort];
+    let darknetCommand = [];
+    const initialCommand = [this.config.darknetCmd, 'detector', 'demo', this.config.yoloParams.data, this.config.yoloParams.cfg, this.config.yoloParams.weights];
+    const endCommand = ['-ext_output', '-dont_show', '-dontdraw_bbox', '-json_port', this.config.jsonStreamPort, '-mjpeg_port', this.config.mjpegStreamPort];
 
     // Special case if input camera is specified as a -c flag as we need to add one arg
     if (this.config.videoParams.indexOf('-c') === 0) {
-      darknetCommand = initialCommand.concat(this.config.videoParams.split(" ")).concat(endCommand);
+      darknetCommand = initialCommand.concat(this.config.videoParams.split(' ')).concat(endCommand);
     } else {
       darknetCommand = initialCommand.concat(this.config.videoParams).concat(endCommand);
     }
@@ -60,43 +60,43 @@ class YoloDarknet extends EventEmitter {
     this.process = new (forever.Monitor)(darknetCommand, {
       max: Number.POSITIVE_INFINITY,
       cwd: this.config.darknetPath,
-      env: { 'LD_LIBRARY_PATH': './' },
-      killTree: true
+      env: { LD_LIBRARY_PATH: './' },
+      killTree: true,
     });
 
-    this.process.on("start", () => {
+    this.process.on('start', () => {
       console.log('Process YOLO started');
       this.isStarted = true;
       this.isStarting = false;
     });
 
-    this.process.on("restart", () => {
+    this.process.on('restart', () => {
       // Forever
-      console.log("Restart YOLO");
-    })
+      console.log('Restart YOLO');
+    });
 
-    this.process.on("error", (err) => {
+    this.process.on('error', (err) => {
       console.log('Process YOLO error');
       console.log(err);
     });
 
-    this.process.on("exit", (err) => {
+    this.process.on('exit', (err) => {
       console.log('Process YOLO exit');
-      //console.log(err);
+      // console.log(err);
     });
 
     this.process.on('stdout', (data) => {
-      var stdoutText = data.toString();
+      const stdoutText = data.toString();
       // Hacky way to get the video resolution from YOLO
       // We parse the stdout looking for "Video stream: 640 x 480"
       // alternative would be to add this info to the JSON stream sent by YOLO, would need to send a PR to https://github.com/alexeyab/darknet
-      if(stdoutText.indexOf('Video stream:') > -1) {
-        var splitOnStream = stdoutText.toString().split("stream:")
-        var ratio = splitOnStream[1].split("\n")[0];
+      if (stdoutText.indexOf('Video stream:') > -1) {
+        const splitOnStream = stdoutText.toString().split('stream:');
+        const ratio = splitOnStream[1].split('\n')[0];
         this.videoResolution = {
-          w : parseInt(ratio.split("x")[0].trim()),
-          h : parseInt(ratio.split("x")[1].trim())
-        }
+          w: parseInt(ratio.split('x')[0].trim()),
+          h: parseInt(ratio.split('x')[1].trim()),
+        };
 
         this.emit('videoresolution', this.videoResolution);
       }
@@ -112,8 +112,8 @@ class YoloDarknet extends EventEmitter {
   getStatus() {
     return {
       isStarting: this.isStarting,
-      isStarted: this.isStarted
-    }
+      isStarted: this.isStarted,
+    };
   }
 
   getVideoResolution() {
@@ -141,7 +141,7 @@ class YoloDarknet extends EventEmitter {
   stop() {
     return new Promise((resolve, reject) => {
       if (this.isStarted) {
-        this.process.once("stop", () => {
+        this.process.once('stop', () => {
           console.log('Process YOLO stopped');
           this.isStarted = false;
           resolve();
@@ -165,7 +165,7 @@ class YoloDarknet extends EventEmitter {
    */
   isLive() {
     // Files are recorded, everything else is live
-    return this.config.videoType !== "file";
+    return this.config.videoType !== 'file';
   }
 }
 

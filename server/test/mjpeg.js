@@ -1,33 +1,31 @@
 const http = require('http');
-   
 
-var request_options = {
-    hostname: '192.168.2.161',
-    port: 8090
+const request_options = {
+  hostname: '192.168.2.161',
+  port: 8090,
 };
 
-var req_pipe = http.request(request_options, (res) => {
-    console.log(`statusCode: ${res.statusCode}`)
-    res.on('data', () => {
-        console.log('received data');
-    })
-    res.on('close', () => {
-        console.log('close')
-    })
-    res.on('readable', () => {
-        console.log('readble')
-    })
-    res.on('error', () => {
-        console.log('error')
-    })
+const req_pipe = http.request(request_options, (res) => {
+  console.log(`statusCode: ${res.statusCode}`);
+  res.on('data', () => {
+    console.log('received data');
+  });
+  res.on('close', () => {
+    console.log('close');
+  });
+  res.on('readable', () => {
+    console.log('readble');
+  });
+  res.on('error', () => {
+    console.log('error');
+  });
 });
 // req_pipe.pipe();
 
-
-req_pipe.on('error', function(e){
-    console.log(e)
+req_pipe.on('error', (e) => {
+  console.log(e);
 });
-//client quit normally
+// client quit normally
 // req.on('end', function(){
 //     console.log('end');
 //     req_pipe.abort();
@@ -39,8 +37,6 @@ req_pipe.on('error', function(e){
 //     req_pipe.abort()
 
 // })
-
-
 
 // app.get('/cam/frontdoor',function(req,res){
 
@@ -69,6 +65,5 @@ req_pipe.on('error', function(e){
 //         req_pipe.abort()
 
 //     })
-
 
 // })

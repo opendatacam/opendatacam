@@ -1,5 +1,3 @@
-const computeLineBearing = require('./tracker/utils').computeLineBearing;
-const checkLineIntersection = require('./tracker/utils').checkLineIntersection;
 const cloneDeep = require('lodash.clonedeep');
 const fs = require('fs');
 const path = require('path');
@@ -8,12 +6,15 @@ const { promisify } = require('util');
 const { once } = require('events');
 const stream = require('stream');
 const StreamArray = require('stream-json/streamers/StreamArray');
-const config = require('../config.json');
+const isInsidePolygon = require('point-in-polygon');
+const { EventEmitter } = require('events');
 const { Recording } = require('./model/Recording');
 const Logger = require('./utils/Logger');
 const configHelper = require('./utils/configHelper');
-const isInsidePolygon = require('point-in-polygon')
-const { EventEmitter } = require('events');
+const { checkLineIntersection } = require('./tracker/utils');
+const { computeLineBearing } = require('./tracker/utils');
+const config = require('../config.json');
+
 const pipeline = promisify(stream.pipeline);
 
 // YOLO process max retries
@@ -26,18 +27,18 @@ const HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES = 180 * (1000 / HTTP_REQUEST_LISTE
 const COUNTING_BUFFER_MAX_FRAMES_MEMORY = 10000;
 
 const COUNTING_AREA_TYPE = {
-  BIDIRECTIONAL: "bidirectional",
-  LEFTRIGHT_TOPBOTTOM: "leftright_topbottom",
-  RIGHTLEFT_BOTTOMTOP: "rightleft_bottomtop",
-  ZONE: "polygon"
-}
+  BIDIRECTIONAL: 'bidirectional',
+  LEFTRIGHT_TOPBOTTOM: 'leftright_topbottom',
+  RIGHTLEFT_BOTTOMTOP: 'rightleft_bottomtop',
+  ZONE: 'polygon',
+};
 
 const COUNTING_DIRECTION = {
-  LEFTRIGHT_TOPBOTTOM: "leftright_topbottom",
-  RIGHTLEFT_BOTTOMTOP: "rightleft_bottomtop",
-  ENTERING_ZONE: "entering_zone",
-  LEAVING_ZONE: "leaving_zone",
-}
+  LEFTRIGHT_TOPBOTTOM: 'leftright_topbottom',
+  RIGHTLEFT_BOTTOMTOP: 'rightleft_bottomtop',
+  ENTERING_ZONE: 'entering_zone',
+  LEAVING_ZONE: 'leaving_zone',
+};
 
 const initialState = {
   timeLastFrameFPSComputed: new Date(),
@@ -61,12 +62,12 @@ const initialState = {
     currentFPS: 0,
     recordingId: null,
     dateStarted: null,
-    filename: ''
+    filename: '',
   },
   uiSettings: {
     counterEnabled: true,
     pathfinderEnabled: true,
-    heatmapEnabled: false
+    heatmapEnabled: false,
   },
   isListeningToYOLO: false,
   HTTPRequestListeningToYOLO: null,
@@ -77,14 +78,14 @@ const initialState = {
   /** The event emitter used for all events */
   eventEmitter: new EventEmitter(),
   /** A reference to the database used to persist Opendatacam's recordings and settings */
-  database: null
-}
+  database: null,
+};
 
 let Opendatacam = cloneDeep(initialState);
 
 module.exports = {
 
-  reset: function() {
+  reset() {
     return new Promise((resolve, reject) => {
       // We only want to reset the tracker, not delete it entirely so keep a
       // reference that we can restore.
@@ -99,7 +100,7 @@ module.exports = {
       // Restore reference to the reseted tracker and event emitter
       Opendatacam.tracker = trackerBackup;
       Opendatacam.eventEmitter = emitterBackup;
-    })
+    });
   },
 
   /*
@@ -110,40 +111,37 @@ module.exports = {
       turquoise: null
     }
   */
-  registerCountingAreas : function(countingAreas) {
+  registerCountingAreas(countingAreas) {
     // Reset existing
-    Opendatacam.countingAreas = {}
-    if(Opendatacam.database !== null) {
+    Opendatacam.countingAreas = {};
+    if (Opendatacam.database !== null) {
       Opendatacam.database.persistAppSettings({
-        countingAreas: countingAreas
+        countingAreas,
       });
     }
     Object.keys(countingAreas).map((countingAreaKey) => {
-      if(countingAreas[countingAreaKey]) {
+      if (countingAreas[countingAreaKey]) {
         this.registerSingleCountingArea(countingAreaKey, countingAreas[countingAreaKey]);
       }
-    })
+    });
   },
 
   registerSingleCountingArea(key, data) {
-
     // Remap coordinates to image reference size
     // The editor canvas can be smaller / bigger
 
     // NOTE: We need to invert the Y coordinates to be in a classic Cartesian coordinate system
     // The coordinates in inputs are from the canvas coordinates system
-    let points = data.location.points.map((point) => {
-      return {
-        x: point.x * Opendatacam.videoResolution.w / data.location.refResolution.w,
-        y: -(point.y * Opendatacam.videoResolution.h / data.location.refResolution.h),
-      }
-    });
+    const points = data.location.points.map((point) => ({
+      x: point.x * Opendatacam.videoResolution.w / data.location.refResolution.w,
+      y: -(point.y * Opendatacam.videoResolution.h / data.location.refResolution.h),
+    }));
 
     // Compute bearing
-    let lineBearing = computeLineBearing(points[0].x, points[0].y, points[1].x, points[1].y);
+    const lineBearing = computeLineBearing(points[0].x, points[0].y, points[1].x, points[1].y);
     // in both directions
-    let lineBearings = [0,0];
-    if(lineBearing >= 180) {
+    const lineBearings = [0, 0];
+    if (lineBearing >= 180) {
       lineBearings[0] = lineBearing - 180;
       lineBearings[1] = lineBearing;
     } else {
@@ -153,52 +151,52 @@ module.exports = {
 
     Opendatacam.countingAreas[key] = data;
 
-    Opendatacam.countingAreas[key]['computed'] = {
-      lineBearings: lineBearings,
+    Opendatacam.countingAreas[key].computed = {
+      lineBearings,
       point1: {
         x: points[0].x,
-        y: points[0].y
+        y: points[0].y,
       },
       point2: {
         x: points[1].x,
-        y: points[1].y
+        y: points[1].y,
       },
-      points: points
-    }
+      points,
+    };
   },
 
-  countItem: function(trackedItem, countingAreaKey, frameId, countingDirection, angleWithCountingLine) {
-    if(Opendatacam.recordingStatus.isRecording) {
+  countItem(trackedItem, countingAreaKey, frameId, countingDirection, angleWithCountingLine) {
+    if (Opendatacam.recordingStatus.isRecording) {
       var countedItem = {
-        frameId: frameId,
+        frameId,
         timestamp: new Date(),
         area: countingAreaKey,
         name: trackedItem.name,
         id: trackedItem.id,
         bearing: trackedItem.bearing,
-        countingDirection: countingDirection,
-        angleWithCountingLine: angleWithCountingLine
-      }
+        countingDirection,
+        angleWithCountingLine,
+      };
 
       // Persist GPS Position and timestamp if available
       const hasLat = 'lat' in trackedItem;
       const hasLon = 'lon' in trackedItem;
-      if(hasLat && hasLon) {
+      if (hasLat && hasLon) {
         countedItem.lat = trackedItem.lat;
         countedItem.lon = trackedItem.lon;
       }
-      if('gpsTimestamp' in trackedItem) {
+      if ('gpsTimestamp' in trackedItem) {
         countedItem.gpsTimestamp = trackedItem.gpsTimestamp;
       }
 
       // Add it to the history
-      Opendatacam.countedItemsHistory.push(countedItem)
+      Opendatacam.countedItemsHistory.push(countedItem);
     }
-    if(countingDirection !== COUNTING_DIRECTION.LEAVING_ZONE) {
+    if (countingDirection !== COUNTING_DIRECTION.LEAVING_ZONE) {
       // Mark tracked item as counted this frame for display
       trackedItem.counted.push({
         areaKey: countingAreaKey,
-        timeMs: new Date().getTime()
+        timeMs: new Date().getTime(),
       });
     }
 
@@ -206,110 +204,102 @@ module.exports = {
   },
 
   /* Persist in DB */
-  persistNewRecordingFrame: function(
+  persistNewRecordingFrame(
     frameId,
     frameTimestamp,
     counterSummary,
     trackerSummary,
     countedItemsForThisFrame,
-    trackerDataForThisFrame
+    trackerDataForThisFrame,
   ) {
-
     const trackerEntry = {
       recordingId: Opendatacam.recordingStatus.recordingId,
-      frameId: frameId,
+      frameId,
       timestamp: frameTimestamp,
-      objects: trackerDataForThisFrame.map((trackerData) => {
-        return {
-          id: trackerData.id,
-          x: Math.round(trackerData.x),
-          y: Math.round(trackerData.y),
-          w: Math.round(trackerData.w),
-          h: Math.round(trackerData.h),
-          bearing: Math.round(trackerData.bearing),
-          confidence: Math.round(trackerData.confidence * 100),
-          name: trackerData.name,
-          areas: trackerData.areas
-        }
-      })
-    }
-    if(Opendatacam.database !== null) {
+      objects: trackerDataForThisFrame.map((trackerData) => ({
+        id: trackerData.id,
+        x: Math.round(trackerData.x),
+        y: Math.round(trackerData.y),
+        w: Math.round(trackerData.w),
+        h: Math.round(trackerData.h),
+        bearing: Math.round(trackerData.bearing),
+        confidence: Math.round(trackerData.confidence * 100),
+        name: trackerData.name,
+        areas: trackerData.areas,
+      })),
+    };
+    if (Opendatacam.database !== null) {
       Opendatacam.database.updateRecordingWithNewframe(
         Opendatacam.recordingStatus.recordingId,
         frameTimestamp,
         counterSummary,
         trackerSummary,
         countedItemsForThisFrame,
-        trackerEntry
+        trackerEntry,
       ).then(() => {
         // console.log('success updateRecordingWithNewframe');
       }, (error) => {
         console.log(error);
         console.log('error updateRecordingWithNewframe');
-      })
+      });
     }
   },
 
-  updateWithNewFrame: function(detectionsOfThisFrame, frameId) {
+  updateWithNewFrame(detectionsOfThisFrame, frameId) {
     // Set yolo status to started if it's not the case
-    if(!Opendatacam.isListeningToYOLO) {
+    if (!Opendatacam.isListeningToYOLO) {
       Opendatacam.isListeningToYOLO = true;
       Opendatacam.HTTPRequestListeningToYOLOMaxRetries = initialState.HTTPRequestListeningToYOLOMaxRetries;
       // Start recording depending on the previous flag
-      if(this.isFileRecordingRequested()) {
+      if (this.isFileRecordingRequested()) {
         this.startRecording(true);
         Opendatacam.recordingStatus.requestedFileRecording = false;
       }
     }
 
     // If we didn't get the videoResolution yet
-    if(!Opendatacam.videoResolution) {
+    if (!Opendatacam.videoResolution) {
       console.log('Didn\'t get video resolution yet, not sending tracker info');
       return;
     }
 
     // Compute FPS
     const frameTimestamp = new Date();
-    if(Opendatacam.indexLastFrameFPSComputed + 3 <= frameId) {
+    if (Opendatacam.indexLastFrameFPSComputed + 3 <= frameId) {
       const timeDiff = Math.abs(frameTimestamp.getTime() - Opendatacam.timeLastFrameFPSComputed.getTime());
       const frameDiff = frameId - Opendatacam.indexLastFrameFPSComputed;
       // console.log(`YOLO detections FPS: ${1000 / timeDiff}`);
-      Opendatacam.recordingStatus.currentFPS = Math.round(1000 / timeDiff * frameDiff)
+      Opendatacam.recordingStatus.currentFPS = Math.round(1000 / timeDiff * frameDiff);
       Opendatacam.timeLastFrameFPSComputed = frameTimestamp;
       Opendatacam.indexLastFrameFPSComputed = frameId;
     }
 
-
     // Scale detection
-    let detectionScaledOfThisFrame = detectionsOfThisFrame.map((detection) => {
-      return {
-        name: detection.name,
-        x: detection.relative_coordinates.center_x * Opendatacam.videoResolution.w,
-        y: detection.relative_coordinates.center_y * Opendatacam.videoResolution.h,
-        w: detection.relative_coordinates.width * Opendatacam.videoResolution.w,
-        h: detection.relative_coordinates.height * Opendatacam.videoResolution.h,
-        counted: false,
-        confidence: detection.confidence
-      };
-    });
+    let detectionScaledOfThisFrame = detectionsOfThisFrame.map((detection) => ({
+      name: detection.name,
+      x: detection.relative_coordinates.center_x * Opendatacam.videoResolution.w,
+      y: detection.relative_coordinates.center_y * Opendatacam.videoResolution.h,
+      w: detection.relative_coordinates.width * Opendatacam.videoResolution.w,
+      h: detection.relative_coordinates.height * Opendatacam.videoResolution.h,
+      counted: false,
+      confidence: detection.confidence,
+    }));
 
     // If VALID_CLASSES if set, we should keep only those and filter out the rest
-    if(config.VALID_CLASSES && config.VALID_CLASSES.indexOf("*") === -1) {
-      detectionScaledOfThisFrame = detectionScaledOfThisFrame.filter((detection) => config.VALID_CLASSES.indexOf(detection.name) > -1)
-      //console.log(`Filtered out ${detectionsOfThisFrame.length - detectionScaledOfThisFrame.length} detections that weren't valid classes`)
+    if (config.VALID_CLASSES && config.VALID_CLASSES.indexOf('*') === -1) {
+      detectionScaledOfThisFrame = detectionScaledOfThisFrame.filter((detection) => config.VALID_CLASSES.indexOf(detection.name) > -1);
+      // console.log(`Filtered out ${detectionsOfThisFrame.length - detectionScaledOfThisFrame.length} detections that weren't valid classes`)
     }
 
     // If confidence_threshold is set, we should keep only those and filter out the rest
-    if(config.TRACKER_SETTINGS && config.TRACKER_SETTINGS.confidence_threshold) {
-      detectionScaledOfThisFrame = detectionScaledOfThisFrame.filter((detection) => detection.confidence >= config.TRACKER_SETTINGS.confidence_threshold)
-      //console.log(`Filtered out ${detectionsOfThisFrame.length - detectionScaledOfThisFrame.length} detections that didn't meet the confidence threshold`)
+    if (config.TRACKER_SETTINGS && config.TRACKER_SETTINGS.confidence_threshold) {
+      detectionScaledOfThisFrame = detectionScaledOfThisFrame.filter((detection) => detection.confidence >= config.TRACKER_SETTINGS.confidence_threshold);
+      // console.log(`Filtered out ${detectionsOfThisFrame.length - detectionScaledOfThisFrame.length} detections that didn't meet the confidence threshold`)
     }
 
     // If objectMaxAreaInPercentageOfFrame is set, we should filter out detection that are too large
-    if(config.TRACKER_SETTINGS && config.TRACKER_SETTINGS.objectMaxAreaInPercentageOfFrame) {
-      detectionScaledOfThisFrame = detectionScaledOfThisFrame.filter((detection) => {
-        return (detection.w * detection.h) <= (Opendatacam.videoResolution.w * Opendatacam.videoResolution.h) * (config.TRACKER_SETTINGS.objectMaxAreaInPercentageOfFrame / 100)
-      })
+    if (config.TRACKER_SETTINGS && config.TRACKER_SETTINGS.objectMaxAreaInPercentageOfFrame) {
+      detectionScaledOfThisFrame = detectionScaledOfThisFrame.filter((detection) => (detection.w * detection.h) <= (Opendatacam.videoResolution.w * Opendatacam.videoResolution.h) * (config.TRACKER_SETTINGS.objectMaxAreaInPercentageOfFrame / 100));
     }
 
     // console.log(`Received Detection:`);
@@ -334,7 +324,7 @@ module.exports = {
       Opendatacam.totalItemsTracked = nbItemsTrackedSinceRecordingStarted;
     }
 
-    let countingData = this.runCountingLogic(trackerDataForThisFrame, frameId);
+    const countingData = this.runCountingLogic(trackerDataForThisFrame, frameId);
     trackerDataForThisFrame = countingData.trackerDataForThisFrame;
     countedItemsForThisFrame = countingData.countedItemsForThisFrame;
     // console.log('Tracker data');
@@ -348,18 +338,18 @@ module.exports = {
     // Remember trackerData for last frame
     Opendatacam.trackerDataForLastFrame = {
       frameIndex: Opendatacam.currentFrame - 1,
-      data: trackerDataForThisFrame
-    }
+      data: trackerDataForThisFrame,
+    };
 
-    let counterSummary = this.getCounterSummary();
-    let trackerSummary = this.getTrackerSummary();
+    const counterSummary = this.getCounterSummary();
+    const trackerSummary = this.getTrackerSummary();
 
     // console.log(Opendatacam.zombiesAreas);
 
     // Persist to db
-    if(Opendatacam.recordingStatus.isRecording) {
+    if (Opendatacam.recordingStatus.isRecording) {
       // Only record from frame 25 for files, we can't be sure darknet has hooked to opendatacam before
-      if(Opendatacam.recordingStatus.filename.length > 0 && frameId < 25) {
+      if (Opendatacam.recordingStatus.filename.length > 0 && frameId < 25) {
         // console.log('do not persist yet for file, wait for frameId 25')
         // console.log(frameId);
       } else {
@@ -370,73 +360,67 @@ module.exports = {
           counterSummary,
           trackerSummary,
           countedItemsForThisFrame,
-          trackerDataForThisFrame
+          trackerDataForThisFrame,
         );
       }
-
     }
 
     this.sendUpdateToClients();
 
-    if(countedItemsForThisFrame.length > 0 && countedItemsForThisFrame[0] != undefined) {
+    if (countedItemsForThisFrame.length > 0 && countedItemsForThisFrame[0] != undefined) {
       Opendatacam.eventEmitter.emit('count', countedItemsForThisFrame, frameId);
     }
-    if(trackerDataForThisFrame.length > 0) {
+    if (trackerDataForThisFrame.length > 0) {
       Opendatacam.eventEmitter.emit('track', trackerDataForThisFrame, frameId);
     }
   },
 
+  runCountingLogic(trackerDataForThisFrame, frameId) {
+    const countedItemsForThisFrame = [];
 
-  runCountingLogic: function(trackerDataForThisFrame, frameId) {
-
-    var countedItemsForThisFrame = [];
-
-    var NBFRAME_TO_BUFFER_FOR_COUNTER = 2;
-    if(config.COUNTER_SETTINGS && config.COUNTER_SETTINGS.computeTrajectoryBasedOnNbOfPastFrame) {
-      NBFRAME_TO_BUFFER_FOR_COUNTER = config.COUNTER_SETTINGS.computeTrajectoryBasedOnNbOfPastFrame
+    let NBFRAME_TO_BUFFER_FOR_COUNTER = 2;
+    if (config.COUNTER_SETTINGS && config.COUNTER_SETTINGS.computeTrajectoryBasedOnNbOfPastFrame) {
+      NBFRAME_TO_BUFFER_FOR_COUNTER = config.COUNTER_SETTINGS.computeTrajectoryBasedOnNbOfPastFrame;
     }
 
-    var MIN_ANGLE_THRESHOLD = 0;
-    if(config.COUNTER_SETTINGS && config.COUNTER_SETTINGS.minAngleWithCountingLineThreshold) {
-      MIN_ANGLE_THRESHOLD = config.COUNTER_SETTINGS.minAngleWithCountingLineThreshold
+    let MIN_ANGLE_THRESHOLD = 0;
+    if (config.COUNTER_SETTINGS && config.COUNTER_SETTINGS.minAngleWithCountingLineThreshold) {
+      MIN_ANGLE_THRESHOLD = config.COUNTER_SETTINGS.minAngleWithCountingLineThreshold;
     }
 
-    var COUNTING_AREA_MIN_FRAMES_INSIDE = 1;
-    if(config.COUNTER_SETTINGS && config.COUNTER_SETTINGS.countingAreaMinFramesInsideToBeCounted) {
-      COUNTING_AREA_MIN_FRAMES_INSIDE = config.COUNTER_SETTINGS.countingAreaMinFramesInsideToBeCounted
+    let COUNTING_AREA_MIN_FRAMES_INSIDE = 1;
+    if (config.COUNTER_SETTINGS && config.COUNTER_SETTINGS.countingAreaMinFramesInsideToBeCounted) {
+      COUNTING_AREA_MIN_FRAMES_INSIDE = config.COUNTER_SETTINGS.countingAreaMinFramesInsideToBeCounted;
     }
 
-    var COUNTING_AREA_VERIFY_IF_OBJECT_ENTERS_CROSSING_ONE_EDGE = true;
-    if(config.COUNTER_SETTINGS && config.COUNTER_SETTINGS.countingAreaVerifyIfObjectEntersCrossingOneEdge !== undefined) {
+    let COUNTING_AREA_VERIFY_IF_OBJECT_ENTERS_CROSSING_ONE_EDGE = true;
+    if (config.COUNTER_SETTINGS && config.COUNTER_SETTINGS.countingAreaVerifyIfObjectEntersCrossingOneEdge !== undefined) {
       COUNTING_AREA_VERIFY_IF_OBJECT_ENTERS_CROSSING_ONE_EDGE = config.COUNTER_SETTINGS.countingAreaVerifyIfObjectEntersCrossingOneEdge;
     }
 
     // Populate trackerDataBuffer
-    if(Opendatacam.trackerDataBuffer.length > NBFRAME_TO_BUFFER_FOR_COUNTER) {
+    if (Opendatacam.trackerDataBuffer.length > NBFRAME_TO_BUFFER_FOR_COUNTER) {
       // Remove first element (oldest) to keep buffer at max size
       Opendatacam.trackerDataBuffer.shift();
     }
     Opendatacam.trackerDataBuffer.push(trackerDataForThisFrame);
     // console.log(`Trackerdata buffer length:  ${Opendatacam.trackerDataBuffer.length}`)
 
-
     // Keep counterBuffer under COUNTING_BUFFER_MAX_FRAMES_MEMORY
-    if(Object.keys(Opendatacam.counterBuffer).length > COUNTING_BUFFER_MAX_FRAMES_MEMORY) {
+    if (Object.keys(Opendatacam.counterBuffer).length > COUNTING_BUFFER_MAX_FRAMES_MEMORY) {
       delete Opendatacam.counterBuffer[Object.keys(Opendatacam.counterBuffer)[0]];
     }
 
     // Check if trackedItems are matching with some counting areas
     trackerDataForThisFrame = trackerDataForThisFrame.map((trackedItem) => {
-
       // If trackerDataForLastFrame exists
-      if(Opendatacam.trackerDataForLastFrame) {
-
+      if (Opendatacam.trackerDataForLastFrame) {
         // Build history of the past buffered frame for this object
         // Counting algo reasons based on the same item one or a few frame ago if exist to avoid jump in trajectories
         // it is the same item id in the interval max["1" - "computeTrajectoryBasedOnNbOfPastFrame"] frame ago
-        let trackedItemHistoryForPastBufferedFrame = [];
-        for (var i = Opendatacam.trackerDataBuffer.length - 1; i >= 0; i--) {
-          let trackedItemDataForThisBufferedFrame = Opendatacam.trackerDataBuffer[i].find((itemLastFrame) => itemLastFrame.id === trackedItem.id)
+        const trackedItemHistoryForPastBufferedFrame = [];
+        for (let i = Opendatacam.trackerDataBuffer.length - 1; i >= 0; i--) {
+          const trackedItemDataForThisBufferedFrame = Opendatacam.trackerDataBuffer[i].find((itemLastFrame) => itemLastFrame.id === trackedItem.id);
           if (!trackedItemDataForThisBufferedFrame) {
             // console.log(`this tracked item id ${trackedItem.id} didnt exist in frame -${i} from this frame`)
             break;
@@ -447,12 +431,12 @@ module.exports = {
         }
 
         // Take Oldest item (max("1";"computeTrajectoryBasedOnNbOfPastFrame") buffered frame ago)
-        let sameTrackedItemInPastFrame = trackedItemHistoryForPastBufferedFrame[trackedItemHistoryForPastBufferedFrame.length - 1];
+        const sameTrackedItemInPastFrame = trackedItemHistoryForPastBufferedFrame[trackedItemHistoryForPastBufferedFrame.length - 1];
         // Item in last frame
-        let sameTrackedItemInLastFrame = Opendatacam.trackerDataForLastFrame.data.find((itemLastFrame) => itemLastFrame.id === trackedItem.id);
+        const sameTrackedItemInLastFrame = Opendatacam.trackerDataForLastFrame.data.find((itemLastFrame) => itemLastFrame.id === trackedItem.id);
 
         // Remind counted status (could be already counted for another area but not this one)
-        if(sameTrackedItemInLastFrame && sameTrackedItemInLastFrame.counted) {
+        if (sameTrackedItemInLastFrame && sameTrackedItemInLastFrame.counted) {
           trackedItem.counted = sameTrackedItemInLastFrame.counted;
         } else {
           // init setup an empty counting history
@@ -460,42 +444,42 @@ module.exports = {
         }
 
         // Init empty area for this frame
-        trackedItem.areas = []
+        trackedItem.areas = [];
 
         // For each counting areas
         Object.keys(Opendatacam.countingAreas).map((countingAreaKey) => {
-          let countingAreaProps = Opendatacam.countingAreas[countingAreaKey].computed;
-          let countingAreaType = Opendatacam.countingAreas[countingAreaKey].type;
+          const countingAreaProps = Opendatacam.countingAreas[countingAreaKey].computed;
+          const countingAreaType = Opendatacam.countingAreas[countingAreaKey].type;
 
           // Check if it has been already counted
           let alreadyCountedForThisArea = false;
-          if(trackedItem.counted.find((countedEvent) => countedEvent.areaKey === countingAreaKey)) {
+          if (trackedItem.counted.find((countedEvent) => countedEvent.areaKey === countingAreaKey)) {
             alreadyCountedForThisArea = true;
           }
 
           // For Polygon
           let isInsideZone = false;
-          if(countingAreaType === COUNTING_AREA_TYPE.ZONE) {
+          if (countingAreaType === COUNTING_AREA_TYPE.ZONE) {
             // Check if object is inside the zone
-            isInsideZone = isInsidePolygon([trackedItem.x, -trackedItem.y], countingAreaProps.points.map((point) => [point.x, point.y]))
+            isInsideZone = isInsidePolygon([trackedItem.x, -trackedItem.y], countingAreaProps.points.map((point) => [point.x, point.y]));
 
-            if(isInsideZone) {
+            if (isInsideZone) {
               // Mark object as inside this area for this frame
               // could be inside several zone at the same time
               trackedItem.areas.push(countingAreaKey);
             } else {
               // Look in the buffer if it was marked inside this zone previously
-              if(Opendatacam.counterBuffer[trackedItem.id] && Opendatacam.counterBuffer[trackedItem.id][countingAreaKey]) {
+              if (Opendatacam.counterBuffer[trackedItem.id] && Opendatacam.counterBuffer[trackedItem.id][countingAreaKey]) {
                 // if it was counted entering the zone, count it as leaving the zone
                 // check this to avoid counting leaving events if the item was inside the zone without having beeing counted
-                if(alreadyCountedForThisArea) {
+                if (alreadyCountedForThisArea) {
                   // Count it (mark it as leaving_zone)
-                  let countedItem = this.countItem(
+                  const countedItem = this.countItem(
                     trackedItem,
                     countingAreaKey,
                     frameId,
                     COUNTING_DIRECTION.LEAVING_ZONE,
-                    null
+                    null,
                   );
                   countedItemsForThisFrame.push(countedItem);
                 }
@@ -506,47 +490,46 @@ module.exports = {
           }
 
           // Continue if object has not been counted for this area yet
-          if(!alreadyCountedForThisArea) {
-
-            if(sameTrackedItemInPastFrame) {
-
+          if (!alreadyCountedForThisArea) {
+            if (sameTrackedItemInPastFrame) {
               // IF POLYGON and the object is inside the zone
-              if(countingAreaType === COUNTING_AREA_TYPE.ZONE && isInsideZone) {
+              if (countingAreaType === COUNTING_AREA_TYPE.ZONE && isInsideZone) {
                 // Add object to the buffer to make it countable if countingAreaMinFramesInsideToBeCounted is defined
-                if(Opendatacam.counterBuffer[trackedItem.id] && Opendatacam.counterBuffer[trackedItem.id][countingAreaKey]) {
-                  Opendatacam.counterBuffer[trackedItem.id][countingAreaKey].nbFramesInsideArea++
+                if (Opendatacam.counterBuffer[trackedItem.id] && Opendatacam.counterBuffer[trackedItem.id][countingAreaKey]) {
+                  Opendatacam.counterBuffer[trackedItem.id][countingAreaKey].nbFramesInsideArea++;
                 } else {
                   // init object counter buffer
-                  if(!Opendatacam.counterBuffer[trackedItem.id]) {
-                    Opendatacam.counterBuffer[trackedItem.id] = {}
+                  if (!Opendatacam.counterBuffer[trackedItem.id]) {
+                    Opendatacam.counterBuffer[trackedItem.id] = {};
                   }
                   Opendatacam.counterBuffer[trackedItem.id][countingAreaKey] = {
                     nbFramesInsideArea: 1,
-                    trackedItemBeforeEnteringArea: sameTrackedItemInPastFrame
-                  }
+                    trackedItemBeforeEnteringArea: sameTrackedItemInPastFrame,
+                  };
                 }
 
                 // if we reached the countingAreaMinFramesInsideToBeCounted, see if we count the object
                 // otherwise, wait another frame
-                if(Opendatacam.counterBuffer[trackedItem.id][countingAreaKey].nbFramesInsideArea >= COUNTING_AREA_MIN_FRAMES_INSIDE) {
+                if (Opendatacam.counterBuffer[trackedItem.id][countingAreaKey].nbFramesInsideArea >= COUNTING_AREA_MIN_FRAMES_INSIDE) {
                   let doCountItem = false;
                   let intersectionWithPolygonEdge = null;
                   // Check if [trackedItemBeforeEnteringZone - trackedItem] crosses one of the edges of the polygon
-                  if(COUNTING_AREA_VERIFY_IF_OBJECT_ENTERS_CROSSING_ONE_EDGE) {
+                  if (COUNTING_AREA_VERIFY_IF_OBJECT_ENTERS_CROSSING_ONE_EDGE) {
                     for (let index = 0; index < countingAreaProps.points.length; index++) {
-                      if(index > 0) {
-                        let trackedItemBeforeEnteringArea = Opendatacam.counterBuffer[trackedItem.id][countingAreaKey].trackedItemBeforeEnteringArea;
+                      if (index > 0) {
+                        const { trackedItemBeforeEnteringArea } = Opendatacam.counterBuffer[trackedItem.id][countingAreaKey];
                         intersectionWithPolygonEdge = checkLineIntersection(
                           countingAreaProps.points[index - 1].x,
                           countingAreaProps.points[index - 1].y,
                           countingAreaProps.points[index].x,
                           countingAreaProps.points[index].y,
                           trackedItemBeforeEnteringArea.x,
-                          - trackedItemBeforeEnteringArea.y,
+                          -trackedItemBeforeEnteringArea.y,
                           trackedItem.x,
-                          - trackedItem.y)
+                          -trackedItem.y,
+                        );
 
-                        if(intersectionWithPolygonEdge.onLine1 && intersectionWithPolygonEdge.onLine2) {
+                        if (intersectionWithPolygonEdge.onLine1 && intersectionWithPolygonEdge.onLine2) {
                           // Flag item to be counted
                           doCountItem = true;
                           break;
@@ -558,16 +541,16 @@ module.exports = {
                     doCountItem = true;
                   }
 
-                  if(doCountItem) {
+                  if (doCountItem) {
                     // Compute bearing
-                    trackedItem.bearing = computeLineBearing(sameTrackedItemInPastFrame.x, - sameTrackedItemInPastFrame.y, trackedItem.x, - trackedItem.y)
+                    trackedItem.bearing = computeLineBearing(sameTrackedItemInPastFrame.x, -sameTrackedItemInPastFrame.y, trackedItem.x, -trackedItem.y);
                     // Count it
-                    let countedItem = this.countItem(
+                    const countedItem = this.countItem(
                       trackedItem,
                       countingAreaKey,
                       frameId,
                       COUNTING_DIRECTION.ENTERING_ZONE,
-                      null
+                      null,
                     );
                     countedItemsForThisFrame.push(countedItem);
                   }
@@ -575,27 +558,28 @@ module.exports = {
               }
 
               // IF LINE, check if it crosses the counting line
-              if(countingAreaType !== "polygon") {
-                let intersection = checkLineIntersection(
+              if (countingAreaType !== 'polygon') {
+                const intersection = checkLineIntersection(
                   countingAreaProps.point1.x,
                   countingAreaProps.point1.y,
                   countingAreaProps.point2.x,
                   countingAreaProps.point2.y,
                   sameTrackedItemInPastFrame.x,
-                  - sameTrackedItemInPastFrame.y,
+                  -sameTrackedItemInPastFrame.y,
                   trackedItem.x,
-                  - trackedItem.y)
+                  -trackedItem.y,
+                );
 
                 // To be counted, Object trajectory must intercept the counting line
                 // -> on the counting line / edge
                 // -> with an angle superior at the angle threshold (which is the smallest angle between object trajectory and counting line)
-                if(intersection.onLine1 && intersection.onLine2 && intersection.angle >= MIN_ANGLE_THRESHOLD) {
+                if (intersection.onLine1 && intersection.onLine2 && intersection.angle >= MIN_ANGLE_THRESHOLD) {
                   // Compute bearing
-                  trackedItem.bearing = computeLineBearing(sameTrackedItemInPastFrame.x, - sameTrackedItemInPastFrame.y, trackedItem.x, - trackedItem.y)
+                  trackedItem.bearing = computeLineBearing(sameTrackedItemInPastFrame.x, -sameTrackedItemInPastFrame.y, trackedItem.x, -trackedItem.y);
                   // Object comes from top to bottom or left to right of the counting line
-                  if(countingAreaProps.lineBearings[0] <= trackedItem.bearing && trackedItem.bearing <= countingAreaProps.lineBearings[1]) {
-                    if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM) {
-                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_DIRECTION.LEFTRIGHT_TOPBOTTOM, intersection.angle);
+                  if (countingAreaProps.lineBearings[0] <= trackedItem.bearing && trackedItem.bearing <= countingAreaProps.lineBearings[1]) {
+                    if (countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.LEFTRIGHT_TOPBOTTOM) {
+                      const countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_DIRECTION.LEFTRIGHT_TOPBOTTOM, intersection.angle);
                       countedItemsForThisFrame.push(countedItem);
                     } else {
                       // do not count, comes from the wrong direction
@@ -603,8 +587,8 @@ module.exports = {
                     }
                   } else {
                     // Object comes from bottom to top, or right to left of the counting lines
-                    if(countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP) {
-                      let countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_DIRECTION.RIGHTLEFT_BOTTOMTOP, intersection.angle);
+                    if (countingAreaType === COUNTING_AREA_TYPE.BIDIRECTIONAL || countingAreaType === COUNTING_AREA_TYPE.RIGHTLEFT_BOTTOMTOP) {
+                      const countedItem = this.countItem(trackedItem, countingAreaKey, frameId, COUNTING_DIRECTION.RIGHTLEFT_BOTTOMTOP, intersection.angle);
                       countedItemsForThisFrame.push(countedItem);
                     } else {
                       // do not count, comes from the wrong direction
@@ -613,38 +597,33 @@ module.exports = {
                   }
                 }
               }
-
             }
           }
-
         });
-
       }
 
       return {
-        ...trackedItem
-      }
-
-    })
+        ...trackedItem,
+      };
+    });
 
     return {
       countedItemsForThisFrame,
-      trackerDataForThisFrame
-    }
+      trackerDataForThisFrame,
+    };
   },
 
-  sendUpdateToClients: function() {
+  sendUpdateToClients() {
     const newValue = (Opendatacam.sseResponses.size > 0);
     if (Opendatacam.isSseConnectionOpen === null || Opendatacam.isSseConnectionOpen !== newValue) {
       // Log connection changes only once
-      console.info(newValue ?
-        'SSE: Sending update to clients' :
-        'SSE: All clients disconnected, cannot send update');
+      console.info(newValue
+        ? 'SSE: Sending update to clients'
+        : 'SSE: All clients disconnected, cannot send update');
     }
     Opendatacam.isSseConnectionOpen = newValue;
 
-    if (!Opendatacam.sseResponses.size)
-      return;
+    if (!Opendatacam.sseResponses.size) return;
 
     const data = `data:${JSON.stringify({
       trackerDataForLastFrame: Opendatacam.trackerDataForLastFrame,
@@ -654,14 +633,13 @@ module.exports = {
       appState: {
         yoloStatus: Opendatacam.yolo ? Opendatacam.yolo.getStatus() : null,
         isListeningToYOLO: Opendatacam.isListeningToYOLO,
-        recordingStatus: Opendatacam.recordingStatus
-      }
+        recordingStatus: Opendatacam.recordingStatus,
+      },
     })}\n\n`;
-    Opendatacam.sseResponses.forEach(res => res.sse(data));
+    Opendatacam.sseResponses.forEach((res) => res.sse(data));
   },
 
-  getCounterSummary: function() {
-
+  getCounterSummary() {
     // Generate dashboard from countingHistory
     // example
     // {
@@ -680,49 +658,48 @@ module.exports = {
     //   }
     // }
 
-    var counterSummary = {};
+    const counterSummary = {};
 
     Opendatacam.countedItemsHistory.forEach((countedItem) => {
-      if(!counterSummary[countedItem.area]) {
-        counterSummary[countedItem.area] = {}
-        counterSummary[countedItem.area]['_total'] = 0;
+      if (!counterSummary[countedItem.area]) {
+        counterSummary[countedItem.area] = {};
+        counterSummary[countedItem.area]._total = 0;
       }
 
-      if(countedItem.countingDirection !== COUNTING_DIRECTION.LEAVING_ZONE) {
-        if(!counterSummary[countedItem.area][countedItem.name]) {
+      if (countedItem.countingDirection !== COUNTING_DIRECTION.LEAVING_ZONE) {
+        if (!counterSummary[countedItem.area][countedItem.name]) {
           counterSummary[countedItem.area][countedItem.name] = 1;
         } else {
           counterSummary[countedItem.area][countedItem.name]++;
         }
-        counterSummary[countedItem.area]['_total']++;
+        counterSummary[countedItem.area]._total++;
       }
-    })
+    });
 
     return counterSummary;
   },
 
-  getTrackerSummary: function() {
+  getTrackerSummary() {
     return {
-      totalItemsTracked: Opendatacam.totalItemsTracked
-    }
+      totalItemsTracked: Opendatacam.totalItemsTracked,
+    };
   },
 
-  getCounterHistory: function() {
+  getCounterHistory() {
     return Opendatacam.countedItemsHistory;
   },
 
-  getCountingAreas: function() {
+  getCountingAreas() {
     return Opendatacam.countingAreas;
   },
 
-  getTrackedItemsThisFrame: function() {
+  getTrackedItemsThisFrame() {
     return Opendatacam.trackerDataForLastFrame;
   },
 
   addStreamClient(res) {
     Opendatacam.sseResponses.add(res);
-    res.on('close', () =>
-      Opendatacam.sseResponses.delete(res))
+    res.on('close', () => Opendatacam.sseResponses.delete(res));
   },
 
   startRecording(isFile) {
@@ -731,16 +708,16 @@ module.exports = {
     Opendatacam.recordingStatus.dateStarted = new Date();
     Opendatacam.totalItemsTracked = 0;
 
-    var filename = '';
+    let filename = '';
     const isYoloSet = Opendatacam.yolo;
-    if(isFile && isYoloSet) {
+    if (isFile && isYoloSet) {
       filename = Opendatacam.yolo.getVideoParams().split('/').pop();
     }
     Opendatacam.recordingStatus.filename = filename;
 
     // Store lowest ID of currently tracked item when start recording
     // to be able to compute nbObjectTracked
-    const currentlyTrackedItems = Opendatacam.tracker.getJSONOfTrackedItems()
+    const currentlyTrackedItems = Opendatacam.tracker.getJSONOfTrackedItems();
     const highestTrackedItemId = currentlyTrackedItems.length > 0 ? currentlyTrackedItems[currentlyTrackedItems.length - 1].id : 0;
     Opendatacam._refTrackedItemIdWhenRecordingStarted = highestTrackedItemId - currentlyTrackedItems.length;
 
@@ -750,14 +727,14 @@ module.exports = {
       Opendatacam.recordingStatus.dateStarted,
       Opendatacam.countingAreas,
       Opendatacam.videoResolution,
-      filename
+      filename,
     );
-    if(Opendatacam.database !== null) {
+    if (Opendatacam.database !== null) {
       Opendatacam.database.insertRecording(newRecording).then((recording) => {
         Opendatacam.recordingStatus.recordingId = newRecording.id;
       }, (error) => {
         console.log(error);
-      })
+      });
     }
   },
 
@@ -767,20 +744,18 @@ module.exports = {
     Opendatacam.recordingStatus.isRecording = false;
     Opendatacam.counterBuffer = {};
     Opendatacam.countedItemsHistory = [];
-
-
   },
 
   setVideoResolution(videoResolution) {
-    var self = this;
-    console.log('setvideoresolution')
+    const self = this;
+    console.log('setvideoresolution');
     Opendatacam.videoResolution = videoResolution;
     // Restore counting areas if defined
-    if(Opendatacam.database !== null) {
+    if (Opendatacam.database !== null) {
       Opendatacam.database.getAppSettings().then((appSettings) => {
-        if(appSettings && appSettings.countingAreas) {
+        if (appSettings && appSettings.countingAreas) {
           console.log('Restore counting areas');
-          self.registerCountingAreas(appSettings.countingAreas)
+          self.registerCountingAreas(appSettings.countingAreas);
         }
       });
     }
@@ -791,13 +766,13 @@ module.exports = {
     const isSameYoloIntance = Opendatacam.yolo === yolo;
     Opendatacam.yolo = yolo;
 
-    if(Opendatacam.videoResolution == null) {
+    if (Opendatacam.videoResolution == null) {
       const hasResolution = yolo.getVideoResolution().w > 0 && yolo.getVideoResolution().h > 0;
-      if(hasResolution) {
+      if (hasResolution) {
         this.setVideoResolution(yolo.getVideoResolution());
       } else {
         // Avoid re-registering to Yolo on reconnects.
-        if(!isSameYoloIntance) {
+        if (!isSameYoloIntance) {
           yolo.once('videoresolution', (resolution) => {
             this.setVideoResolution(resolution);
           });
@@ -805,52 +780,51 @@ module.exports = {
       }
     }
 
-    var self = this;
+    const self = this;
     // HTTPJSONSTREAM req
-    if(Opendatacam.isListeningToYOLO) {
+    if (Opendatacam.isListeningToYOLO) {
       // Already listening
-      console.log('Already listening')
+      console.log('Already listening');
       return;
     }
 
-    var options = {
+    const options = {
       hostname: urlData.address,
-      port:     configHelper.getJsonStreamPort(),
-      path:     '/',
-      method:   'GET'
+      port: configHelper.getJsonStreamPort(),
+      path: '/',
+      method: 'GET',
     };
 
-    Logger.log('Send request to connect to YOLO JSON Stream')
+    Logger.log('Send request to connect to YOLO JSON Stream');
     self.HTTPRequestListeningToYOLO = http.get(options);
 
     once(self.HTTPRequestListeningToYOLO, 'response').then(([res]) => {
       // re-emit request errors on response (so the pipeline fails, and we catch them)
-      self.HTTPRequestListeningToYOLO.on('error', e => res.emit('error', e));
+      self.HTTPRequestListeningToYOLO.on('error', (e) => res.emit('error', e));
 
       Logger.log(`statusCode: ${res.statusCode}`);
       res.once('data', () => console.log('Got first JSON chunk'));
 
       const parser = StreamArray.withParser();
-      parser.on('data', ({ key, value }) =>
-        self.updateWithNewFrame(value.objects, value.frame_id));
+      parser.on('data', ({ key, value }) => self.updateWithNewFrame(value.objects, value.frame_id));
       return pipeline(res, parser);
     }).then(onEnd, onError);
 
     function onEnd() {
-      if(!Opendatacam.isListeningToYOLO) {
+      if (!Opendatacam.isListeningToYOLO) {
         // Counting stopped by user, keep yolo running
         return;
       }
 
-      console.log("==== HTTP Stream closed by darknet, reset UI ====")
-      console.log("==== If you are running on a file, it is restarting  because you reached the end ====")
-      console.log("==== If you are running on a camera, it might have crashed for some reason and we are trying to restart ====")
+      console.log('==== HTTP Stream closed by darknet, reset UI ====');
+      console.log('==== If you are running on a file, it is restarting  because you reached the end ====');
+      console.log('==== If you are running on a camera, it might have crashed for some reason and we are trying to restart ====');
       // YOLO process will auto-restart, so re-listen to it
       // reset retries counter
       Opendatacam.isListeningToYOLO = false;
       Opendatacam.HTTPRequestListeningToYOLOMaxRetries = HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES;
 
-      if(!Opendatacam.yolo.isLive()) {
+      if (!Opendatacam.yolo.isLive()) {
         self.stopRecording();
       }
       self.sendUpdateToClients();
@@ -858,13 +832,12 @@ module.exports = {
     }
 
     function onError(e) {
-      if (e.code !== 'ECONNREFUSED')
-        console.debug(`YOLO stream error: ${e}`);
+      if (e.code !== 'ECONNREFUSED') console.debug(`YOLO stream error: ${e}`);
 
       // TODO Need a YOLO.isRunning()
-      if(
-        Opendatacam.isListeningToYOLO ||
-        Opendatacam.HTTPRequestListeningToYOLOMaxRetries <= 0
+      if (
+        Opendatacam.isListeningToYOLO
+        || Opendatacam.HTTPRequestListeningToYOLOMaxRetries <= 0
       ) {
         console.log('Too much retries, YOLO took more than 3 min to start, likely an error');
         return;
@@ -873,7 +846,7 @@ module.exports = {
       Logger.log(`Will retry in ${HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS} ms`);
       // Retry, YOLO might not have started server just yet
       setTimeout(() => {
-        Logger.log("Retry connect to YOLO");
+        Logger.log('Retry connect to YOLO');
         self.listenToYOLO(Opendatacam.yolo, urlData);
         Opendatacam.HTTPRequestListeningToYOLOMaxRetries--;
       }, HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS);
@@ -881,8 +854,8 @@ module.exports = {
   },
 
   setUISettings(settings) {
-    console.log('Save UI settings')
-    console.log(JSON.stringify(settings))
+    console.log('Save UI settings');
+    console.log(JSON.stringify(settings));
     Opendatacam.uiSettings = settings;
   },
 
@@ -902,7 +875,7 @@ module.exports = {
     Opendatacam.recordingStatus.requestedFileRecording = true;
     const filename = path.basename(YOLO.getVideoParams());
     Opendatacam.recordingStatus.filename = filename;
-    console.log('Ask YOLO to restart to record on a file ' + filename);
+    console.log(`Ask YOLO to restart to record on a file ${filename}`);
     YOLO.restart();
   },
 
@@ -918,13 +891,13 @@ module.exports = {
       appState: {
         yoloStatus: Opendatacam.yolo ? Opendatacam.yolo.getStatus() : undefined,
         isListeningToYOLO: Opendatacam.isListeningToYOLO,
-        recordingStatus: Opendatacam.recordingStatus
-      }
-    }
+        recordingStatus: Opendatacam.recordingStatus,
+      },
+    };
   },
 
   clean() {
-    if(this.HTTPRequestListeningToYOLO) {
+    if (this.HTTPRequestListeningToYOLO) {
       this.HTTPRequestListeningToYOLO.destroy();
     }
   },
@@ -943,5 +916,5 @@ module.exports = {
 
   once(event, listener) {
     Opendatacam.eventEmitter.once(event, listener);
-  }
-}
+  },
+};

@@ -1,19 +1,15 @@
-
-
 class Logger {
-    constructor () {
-        this.debug = false
-    }
+  constructor() {
+    this.debug = false;
+  }
 
-    log(message) {
-        if(this.debug) {
-            console.log(message);
-        }
+  log(message) {
+    if (this.debug) {
+      console.log(message);
     }
+  }
 }
 
+const LoggerInstance = new Logger();
 
-
-var LoggerInstance = new Logger()
-
-module.exports = LoggerInstance
+module.exports = LoggerInstance;
