@@ -100,8 +100,10 @@ export function initViewportListeners() {
           clearTimeout(resizeDebounceTimeout);
         }
         // start timing for event "completion"
-        resizeDebounceTimeout = setTimeout(() => dispatch(setCanvasResolution(getCanvasResolution())),
-          250);
+        resizeDebounceTimeout = setTimeout(() => {
+          dispatch(setCanvasResolution(getCanvasResolution()));
+        },
+        250);
       });
     }
   };
