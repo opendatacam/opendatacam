@@ -26,6 +26,49 @@ const INIT_LISTENERS = 'Viewport/INIT_LISTENERS';
 const SET_CANVAS_RESOLUTION = 'Viewport/SET_CANVAS_RESOLUTION';
 const SET_ORIGINAL_RESOLUTION = 'Viewport/SET_ORIGINAL_RESOLUTION';
 
+export function getCanvasResolution() {
+  const { innerWidth } = window;
+  const { innerHeight } = window;
+
+  // if (innerWidth / innerHeight < 16 / 9) {
+  //   // Height is 100% and there is a scroll on the width
+  //   return {
+  //     w: innerHeight * 16 / 9,
+  //     h: innerHeight
+  //   }
+  // } else {
+  //   // Width is 100% and there is a scroll on the height
+  //   return {
+  //     w: innerWidth,
+  //     h: innerWidth * 9 / 16
+  //   }
+  // }
+
+  return {
+    w: innerWidth,
+    h: innerHeight,
+  };
+}
+
+export function setCanvasResolution(size) {
+  return {
+    type: SET_CANVAS_RESOLUTION,
+    payload: size,
+  };
+}
+
+export function setLandscape() {
+  return {
+    type: SET_LANDSCAPE,
+  };
+}
+
+export function setPortrait() {
+  return {
+    type: SET_PORTRAIT,
+  };
+}
+
 export function handleOrientationChange(dispatch) {
   // console.log(window.orientation)
   if (window.orientation === -90 || window.orientation === 90) {
@@ -64,53 +107,10 @@ export function initViewportListeners() {
   };
 }
 
-export function setLandscape() {
-  return {
-    type: SET_LANDSCAPE,
-  };
-}
-
-export function setPortrait() {
-  return {
-    type: SET_PORTRAIT,
-  };
-}
-
-export function setCanvasResolution(size) {
-  return {
-    type: SET_CANVAS_RESOLUTION,
-    payload: size,
-  };
-}
-
 export function setOriginalResolution(resolution) {
   return {
     type: SET_ORIGINAL_RESOLUTION,
     payload: resolution,
-  };
-}
-
-export function getCanvasResolution() {
-  const { innerWidth } = window;
-  const { innerHeight } = window;
-
-  // if (innerWidth / innerHeight < 16 / 9) {
-  //   // Height is 100% and there is a scroll on the width
-  //   return {
-  //     w: innerHeight * 16 / 9,
-  //     h: innerHeight
-  //   }
-  // } else {
-  //   // Width is 100% and there is a scroll on the height
-  //   return {
-  //     w: innerWidth,
-  //     h: innerWidth * 9 / 16
-  //   }
-  // }
-
-  return {
-    w: innerWidth,
-    h: innerHeight,
   };
 }
 
