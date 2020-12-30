@@ -51,7 +51,7 @@ jobs:
       matrix:
         include:
         - platform: desktop
-          architecture: linux/x64
+          architecture: linux/amd64
           weights: https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights
         - platform: xavier
           architecture: linux/arm64
