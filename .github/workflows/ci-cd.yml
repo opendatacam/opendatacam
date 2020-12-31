@@ -57,13 +57,13 @@ jobs:
       matrix:
         include:
         - platform: desktop
-          architecture: linux/amd64
+          docker-platform: linux/amd64
           weights: https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights
         - platform: xavier
-          architecture: linux/arm64
+          docker-platform: linux/arm64
           weights: https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights
         - platform: nano
-          architecture: linux/arm64
+          docker-platform: linux/arm64
           weights: https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.weights
     steps:
       - name: Checkout
@@ -88,5 +88,6 @@ jobs:
         with:
           context: ./
           file: docker/build/${{ matrix.platform }}/Dockerfile
+          platforms: ${{ matrix.docker-platform }}
           push: ${{ env.DOCKERHUB_PUBLISH == 'true' }}
           tags: ${{ env.DOCKERHUB_USERNAME }}/opendatacam:development-${{ matrix.platform }}
