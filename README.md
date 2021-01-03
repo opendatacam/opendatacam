@@ -341,14 +341,7 @@ Read [How to use opendatacam without docker](documentation/USE_WITHOUT_DOCKER.md
 
 We host our docker images on [Dockerhub](https://cloud.docker.com/repository/docker/opendatacam/opendatacam)
 
-*For jetson devices:*
-
-See [How to create / update a docker image for a jetson device](documentation/jetson/CREATE_DOCKER_IMAGE_JETSON.md)
-
-*For nvidia-docker machine:*
-
-See [How to create / update a docker image for a nvidia-docker machine](documentation/CREATE_DOCKER_IMAGE_DESKTOP.md)
-
+To build your own images, see [How to create / update a docker image for a jetson device](documentation/CREATE_DOCKER_IMAGE.md)
 
 ## 🎯 How accurate is OpenDataCam ?
 
