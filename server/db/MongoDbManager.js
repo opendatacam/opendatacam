@@ -93,6 +93,22 @@ class MongoDbManager extends DbManagerBase {
   }
 
   /**
+   * This does not actually disconnect it just removes the reference from the MongoDB so it will no
+   * longer be in use
+   */
+  async disconnect() {
+    this.db = null;
+    return Promise.resolve();
+  }
+
+  isConnected() {
+    if (this.db) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
    * @private
    */
   getDB() {

@@ -31,6 +31,12 @@ describe('MongoDbManager', () => {
   });
 
   describe('connection', () => {
+    it('is disconnected at start', () => {
+      const connectionString = 'mongo://foo:218';
+      const db = new MongoDbManager(connectionString);
+      expect(db.isConnected()).toBeFalse();
+    });
+
     it('uses connection string', async () => {
       const connectionString = 'mongo://foo:218';
       const db = new MongoDbManager(connectionString);
@@ -53,6 +59,11 @@ describe('MongoDbManager', () => {
         await expectAsync(connectionPromise).toBeResolved();
       });
 
+      it('shows it is connected', async() => {
+        await expectAsync(connectionPromise).toBeResolved();
+        expect(mdbm.isConnected()).toBeTrue();
+      });
+
       it('uses my connection', async () => {
         await expectAsync(connectionPromise).toBeResolvedTo(dbSpy);
         await expectAsync(mdbm.getDB()).toBeResolvedTo(dbSpy);
@@ -63,6 +74,23 @@ describe('MongoDbManager', () => {
         await connectionPromise;
         expect(dbSpy.collection).toHaveBeenCalled();
         expect(collectionSpy.createIndex).toHaveBeenCalled();
+      });
+
+      describe('disconnect', () => {
+        let disconnectPromise = null;
+
+        beforeEach(()=> {
+          disconnectPromise = mdbm.disconnect();
+        });
+
+        it('resolves', async() => {
+          await expectAsync(disconnectPromise).toBeResolved();
+        });
+
+        it('sets connection status', async() => {
+          await disconnectPromise;
+          expect(mdbm.isConnected()).toBeFalse();
+        });
       });
     });
   });
