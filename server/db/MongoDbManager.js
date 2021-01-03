@@ -53,13 +53,6 @@ class MongoDbManager extends DbManagerBase {
     this.db = null;
   }
 
-  /**
-   * Connect to the opendatacam database the MongoDB Server
-   *
-   * @returns A promise that if resolved returns the opendatacam database object
-   *
-   * @throws Error if something else then a String or Db is passed
-   */
   async connect() {
     const createCollectionsAndIndex = (db) => {
       const recordingCollection = db.collection(this.RECORDING_COLLECTION);
@@ -112,7 +105,7 @@ class MongoDbManager extends DbManagerBase {
     });
   }
 
-  persistAppSettings(settings) {
+  async persistAppSettings(settings) {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db.collection(this.APP_COLLECTION).updateOne({
@@ -133,7 +126,7 @@ class MongoDbManager extends DbManagerBase {
     });
   }
 
-  getAppSettings() {
+  async getAppSettings() {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db
@@ -152,7 +145,7 @@ class MongoDbManager extends DbManagerBase {
     });
   }
 
-  insertRecording(recording) {
+  async insertRecording(recording) {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db.collection(this.RECORDING_COLLECTION).insertOne(recording, (err, r) => {
@@ -166,7 +159,7 @@ class MongoDbManager extends DbManagerBase {
     });
   }
 
-  deleteRecording(recordingId) {
+  async deleteRecording(recordingId) {
     const deleteRecordingPromise = new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db.collection(this.RECORDING_COLLECTION).deleteOne({ id: recordingId }, (err, r) => {
@@ -200,7 +193,7 @@ class MongoDbManager extends DbManagerBase {
   // Or maybe try to batch update not on every frame
   // I think a simple fix would be to store trackerData in it's own collection
   // db.collection(recordingId.toString()).insertOne(trackerEntry);
-  updateRecordingWithNewframe(
+  async updateRecordingWithNewframe(
     recordingId,
     frameDate,
     counterSummary,
@@ -252,7 +245,7 @@ class MongoDbManager extends DbManagerBase {
     });
   }
 
-  getRecordings(limit = 30, offset = 0) {
+  async getRecordings(limit = 30, offset = 0) {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db
@@ -273,7 +266,7 @@ class MongoDbManager extends DbManagerBase {
     });
   }
 
-  getRecording(recordingId) {
+  async getRecording(recordingId) {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db
@@ -293,7 +286,7 @@ class MongoDbManager extends DbManagerBase {
     });
   }
 
-  getRecordingsCount() {
+  async getRecordingsCount() {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db
@@ -309,7 +302,7 @@ class MongoDbManager extends DbManagerBase {
     });
   }
 
-  getTrackerHistoryOfRecording(recordingId) {
+  async getTrackerHistoryOfRecording(recordingId) {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db
@@ -328,7 +321,7 @@ class MongoDbManager extends DbManagerBase {
     });
   }
 
-  getCounterHistoryOfRecording(recordingId) {
+  async getCounterHistoryOfRecording(recordingId) {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db
