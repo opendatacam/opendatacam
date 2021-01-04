@@ -139,7 +139,7 @@ app.prepare()
   })
 
   express.post('/updatewithnewframe', (req, res) => {
-    console.log("================== UPDATE WITH NEW FRAME ON NODE.JS side ==================")
+    //console.log("================== UPDATE WITH NEW FRAME ON NODE.JS side ==================")
     var data = req.body;
 
     /* INPUT IS:
@@ -186,7 +186,7 @@ app.prepare()
     })
 
 
-    console.log(frameUpdate)
+    //console.log(frameUpdate)
 
     frameId++
 
