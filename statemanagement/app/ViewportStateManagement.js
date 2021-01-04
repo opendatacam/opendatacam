@@ -36,6 +36,11 @@ export function handleOrientationChange (dispatch) {
     dispatch(setPortrait())
   }
   dispatch(setCanvasResolution(getCanvasResolution()))
+  // Add a second check as sometimes the new orientation isn't picked up strait away
+  setTimeout(() => {
+    dispatch(setCanvasResolution(getCanvasResolution()))
+  }, 200);
+  
 }
 
 export function initViewportListeners () {
