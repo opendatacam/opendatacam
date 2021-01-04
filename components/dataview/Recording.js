@@ -42,8 +42,8 @@ class Recording extends PureComponent {
   render() {
 
     return (
-      <div className="flex flex-initial flex-col recording pl-2 mb-10">
-        <div className="text-inverse flex flex-initial items-center pl-6">
+      <div className="flex flex-col flex-initial pl-2 mb-10 recording">
+        <div className="flex items-center flex-initial pl-6 text-inverse">
           <div>{dayjs(this.props.dateStart).format('MMM DD, YYYY')}</div>
           <div className="ml-10">
             {dayjs(this.props.dateStart).format('hh:mm a')} - {this.renderDateEnd(this.props.dateEnd, this.props.active)}
@@ -55,11 +55,11 @@ class Recording extends PureComponent {
           }
           {!this.props.active &&
             <button
-              className="btn btn-default p-0 ml-2 shadow rounded"
+              className="p-0 ml-2 rounded shadow btn btn-default"
               onClick={() => this.setState({ showDeleteConfirmationModal: true})}
             >
               <SVG 
-                className="w-6 h-6 svg-icon flex items-center" 
+                className="flex items-center w-6 h-6 svg-icon" 
                 cacheRequests={true}
                 src={`/static/icons/ui/delete.svg`} 
                 aria-label="icon close"
@@ -73,18 +73,18 @@ class Recording extends PureComponent {
             onConfirm={() => this.props.dispatch(deleteRecording(this.props.id))} 
           />
         }
-        <div className="flex flex-initial flex-wrap pb-2 pl-1 m-2">
+        <div className="flex flex-wrap flex-initial pb-2 pl-1 m-2">
           {this.props.countingAreas.size > 0 &&
-            <div className="flex flex-initial flex-col rounded bg-white text-black shadow m-2 p-4">
+            <div className="flex flex-col flex-initial p-4 m-2 text-black bg-white rounded shadow">
               <div className="flex items-end justify-between">
                 <h3 className="mr-3 text-xl font-bold">Counter</h3>
                 <div>
-                  <div className="font-medium mr-2 inline-block">Download:</div>
-                  <a className="btn-text mr-2" href={`/recording/${this.props.id}/counter`} target="_blank" download>JSON</a>
+                  <div className="inline-block mr-2 font-medium">Download:</div>
+                  <a className="mr-2 btn-text" href={`/recording/${this.props.id}/counter`} target="_blank" download>JSON</a>
                   <a className="btn-text" href={`/recording/${this.props.id}/counter/csv`} target="_blank" download>CSV</a>
                 </div>
               </div>
-              <div className="mt-4 flex flex-wrap">
+              <div className="flex flex-wrap mt-4">
                 {this.props.countingAreas && this.props.countingAreas.entrySeq().map(([countingAreaId, countingAreaData], index) =>
                   <div 
                     key={countingAreaId} 
@@ -103,10 +103,10 @@ class Recording extends PureComponent {
                         <img className="icon-direction" style={{'transform': `rotate(${countingAreaData.getIn(['computed', 'lineBearings']).first() + 90}deg)`}} src="/static/icons/ui/arrow-down.svg" />
                       }
                     </div>
-                    <div className="flex flex-initial flex-wrap mt-5 w-64">
+                    <div className="flex flex-wrap flex-initial w-64 mt-5">
                       {this.DISPLAY_CLASSES.slice(0, Math.min(this.DISPLAY_CLASSES.length, 6)).map((counterClass) =>
                         <div 
-                          className="flex w-16 m-1 items-center justify-center" 
+                          className="flex items-center justify-center w-16 m-1" 
                           key={counterClass.class}
                         >
                           <h4 className="mr-2">{this.props.counterData && this.props.counterData.getIn([countingAreaId, counterClass.class]) || 0}</h4>
@@ -122,19 +122,19 @@ class Recording extends PureComponent {
               </div>
             </div>
           }
-          <div className="flex flex-initial flex-col rounded bg-white text-black shadow m-2 p-4">
+          <div className="flex flex-col flex-initial p-4 m-2 text-black bg-white rounded shadow">
             <div className="flex items-end justify-between">
               <h3 className="mr-3 text-xl font-bold">Tracker</h3>
               <div>
-                <div className="font-medium mr-2 inline-block">Download:</div>
-                <a className="btn-text mr-2" href={`/recording/${this.props.id}/tracker`} target="_blank" download>JSON</a>
+                <div className="inline-block mr-2 font-medium">Download:</div>
+                <a className="mr-2 btn-text" href={`/recording/${this.props.id}/tracker`} target="_blank" download>JSON</a>
               </div>
             </div>
-            <div className="mt-6 rounded relative">
-              <div className="text-white absolute" style={{ bottom: 10, left : 10}}>
+            <div className="relative mt-6 rounded">
+              <div className="absolute text-white" style={{ bottom: 10, left : 10}}>
                 <h2 className="inline text-4xl font-bold">{this.props.nbPaths}</h2> objects tracked
               </div>
-              <img src="/static/placeholder/pathview.jpg" />
+              <img src="/static/pathview.jpg" />
             </div>
           </div>
         </div>
