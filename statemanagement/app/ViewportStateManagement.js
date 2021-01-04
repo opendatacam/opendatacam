@@ -52,6 +52,9 @@ export function initViewportListeners () {
 
 
       let resizeDebounceTimeout = null;
+
+      /* DISABLE RESIZE LISTENER FOR MOBILE APP as when the keyboard is opening this messes up things
+      todo maybe disable all the time...
       window.addEventListener('resize', () => {
         if (resizeDebounceTimeout) {
           // clear the timeout
@@ -62,6 +65,7 @@ export function initViewportListeners () {
           dispatch(setCanvasResolution(getCanvasResolution())), 
         250)
       })
+      */
     }
   }
 }
