@@ -600,11 +600,7 @@ app.prepare()
      *   HTTP/1.1 200 OK
      */
     express.get('/recording/start', (req, res) => {
-      if (YOLO.isLive()) {
-        Opendatacam.startRecording();
-      } else {
-        Opendatacam.requestFileRecording(YOLO);
-      }
+      Opendatacam.startRecording();
       res.sendStatus(200);
     });
 
