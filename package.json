@@ -8,7 +8,7 @@
     "generateapidoc": "apidoc -i . -e node_modules/ -o apidoc/"
   },
   "dependencies": {
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "body-parser": "^1.19.0",
     "csv-express": "^1.2.2",
     "dayjs": "^1.8.28",
