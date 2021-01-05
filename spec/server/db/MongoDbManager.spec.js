@@ -59,7 +59,7 @@ describe('MongoDbManager', () => {
         await expectAsync(connectionPromise).toBeResolved();
       });
 
-      it('shows it is connected', async() => {
+      it('shows it is connected', async () => {
         await expectAsync(connectionPromise).toBeResolved();
         expect(mdbm.isConnected()).toBeTrue();
       });
@@ -79,15 +79,15 @@ describe('MongoDbManager', () => {
       describe('disconnect', () => {
         let disconnectPromise = null;
 
-        beforeEach(()=> {
+        beforeEach(() => {
           disconnectPromise = mdbm.disconnect();
         });
 
-        it('resolves', async() => {
+        it('resolves', async () => {
           await expectAsync(disconnectPromise).toBeResolved();
         });
 
-        it('sets connection status', async() => {
+        it('sets connection status', async () => {
           await disconnectPromise;
           expect(mdbm.isConnected()).toBeFalse();
         });
