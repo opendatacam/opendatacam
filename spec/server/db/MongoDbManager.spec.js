@@ -7,6 +7,8 @@ describe('MongoDbManager', () => {
 
   let dbSpy = null;
   let collectionSpy = null;
+  /** MongoDatabaseManager */
+  let mdbm = null;
 
   beforeEach(() => {
     collectionSpy = jasmine.createSpyObj('collection',
@@ -48,8 +50,6 @@ describe('MongoDbManager', () => {
 
     describe('object', () => {
       let connectionPromise = null;
-      /** MongoDatabaseManager */
-      let mdbm = null;
       beforeEach(() => {
         mdbm = new MongoDbManager(dbSpy);
         connectionPromise = mdbm.connect();
