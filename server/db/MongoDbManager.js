@@ -14,9 +14,9 @@ class MongoDbManager extends DbManagerBase {
    *
    * After creation {@link MongoDbManager.connect} must be called
    *
-   * @param {*} connectionStringOrDbObject The connection to use or credentials to create one
+   * @param {*} connectionStringOrMongoClient The MongoClient to use or credentials to create one
    */
-  constructor(connectionStringOrDbObject) {
+  constructor(connectionStringOrMongoClient) {
     super();
 
     /**
@@ -44,7 +44,7 @@ class MongoDbManager extends DbManagerBase {
      */
     this.DATABASE_NAME = 'opendatacam';
 
-    this.connectionStringOrDbObject = connectionStringOrDbObject;
+    this.connectionStringOrMongoClient = connectionStringOrMongoClient;
     /**
      * The connection string used or null if a Db object was used for the connection or the
      * connection has not been established yet.
@@ -63,18 +63,19 @@ class MongoDbManager extends DbManagerBase {
       trackerCollection.createIndex({ recordingId: 1 });
     };
 
-    const isConnectionString = typeof this.connectionStringOrDbObject === 'string'
-      || this.connectionStringOrDbObject instanceof String;
-    const isDbObject = typeof this.connectionStringOrDbObject === 'object';
+    const isConnectionString = typeof this.connectionStringOrMongoClient === 'string'
+      || this.connectionStringOrMongoClient instanceof String;
+    const isClientObject = typeof this.connectionStringOrMongoClient === 'object';
 
     if (isConnectionString) {
       return new Promise((resolve, reject) => {
-        this.connectionString = this.connectionStringOrDbObject;
+        this.connectionString = this.connectionStringOrMongoClient;
         const mongoConnectParams = { useNewUrlParser: true, useUnifiedTopology: true };
         MongoClient.connect(this.connectionString, mongoConnectParams, (err, client) => {
           if (err) {
             reject(err);
           } else {
+            this.client = client;
             const db = client.db(this.DATABASE_NAME);
             this.db = db;
 
@@ -84,8 +85,9 @@ class MongoDbManager extends DbManagerBase {
           }
         });
       });
-    } if (isDbObject) {
-      this.db = this.connectionStringOrDbObject;
+    } if (isClientObject) {
+      this.client = this.connectionStringOrMongoClient;
+      this.db = this.client.db(this.DATABASE_NAME);
       createCollectionsAndIndex(this.db);
       return Promise.resolve(this.db);
     }
@@ -102,8 +104,8 @@ class MongoDbManager extends DbManagerBase {
   }
 
   isConnected() {
-    if (this.db) {
-      return true;
+    if (this.client) {
+      return this.client.isConnected();
     }
     return false;
   }
@@ -112,11 +114,12 @@ class MongoDbManager extends DbManagerBase {
    * @private
    */
   getDB() {
-    return new Promise((resolve) => {
+    return new Promise((resolve, reject) => {
       if (this.db) {
         resolve(this.db);
       } else {
-        resolve(this.init());
+        this.disconnect();
+        this.connect().then(resolve, reject);
       }
     });
   }
@@ -133,6 +136,7 @@ class MongoDbManager extends DbManagerBase {
           },
         }, { upsert: true }, (err, r) => {
           if (err) {
+            this.disconnect();
             reject(err);
           } else {
             resolve(r);
@@ -151,6 +155,7 @@ class MongoDbManager extends DbManagerBase {
             { id: 'settings' },
             (err, doc) => {
               if (err) {
+                this.disconnect();
                 reject(err);
               } else {
                 resolve(doc);
@@ -166,6 +171,7 @@ class MongoDbManager extends DbManagerBase {
       this.getDB().then((db) => {
         db.collection(this.RECORDING_COLLECTION).insertOne(recording, (err, r) => {
           if (err) {
+            this.disconnect();
             reject(err);
           } else {
             resolve(r);
@@ -180,6 +186,7 @@ class MongoDbManager extends DbManagerBase {
       this.getDB().then((db) => {
         db.collection(this.RECORDING_COLLECTION).deleteOne({ id: recordingId }, (err, r) => {
           if (err) {
+            this.disconnect();
             reject(err);
           } else {
             resolve(r);
@@ -193,6 +200,7 @@ class MongoDbManager extends DbManagerBase {
         const filter = { recordingId };
         db.collection(this.TRACKER_COLLECTION).deleteMany(filter, (err, r) => {
           if (err) {
+            this.disconnect();
             reject(err);
           } else {
             resolve(r);
@@ -247,6 +255,7 @@ class MongoDbManager extends DbManagerBase {
           updateRequest,
           (err, r) => {
             if (err) {
+              this.disconnect();
               reject(err);
             } else {
               resolve(r);
@@ -273,6 +282,7 @@ class MongoDbManager extends DbManagerBase {
           .skip(offset)
           .toArray((err, docs) => {
             if (err) {
+              this.disconnect();
               reject(err);
             } else {
               resolve(docs);
@@ -292,6 +302,7 @@ class MongoDbManager extends DbManagerBase {
             { projection: { counterHistory: 0, areas: 0 } },
             (err, doc) => {
               if (err) {
+                this.disconnect();
                 reject(err);
               } else {
                 resolve(doc);
@@ -309,6 +320,7 @@ class MongoDbManager extends DbManagerBase {
           .collection(this.RECORDING_COLLECTION)
           .countDocuments({}, (err, res) => {
             if (err) {
+              this.disconnect();
               reject(err);
             } else {
               resolve(res);
@@ -328,6 +340,7 @@ class MongoDbManager extends DbManagerBase {
           )
           .toArray((err, docs) => {
             if (err) {
+              this.disconnect();
               reject(err);
             } else {
               resolve(docs);
@@ -347,6 +360,7 @@ class MongoDbManager extends DbManagerBase {
           )
           .toArray((err, docs) => {
             if (err) {
+              this.disconnect();
               reject(err);
             } else if (docs.length === 0) {
               resolve({});

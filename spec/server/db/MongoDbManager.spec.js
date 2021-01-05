@@ -8,6 +8,7 @@ describe('MongoDbManager', () => {
   let collectionSpy = null;
   /** MongoDatabaseManager */
   let mdbm = null;
+  let clientSpy = null;
 
   beforeEach(() => {
     collectionSpy = jasmine.createSpyObj('collection',
@@ -29,6 +30,7 @@ describe('MongoDbManager', () => {
       callback(null, null);
     });
     dbSpy = jasmine.createSpyObj('Db', { collection: collectionSpy });
+    clientSpy = jasmine.createSpyObj('Client', { db: dbSpy, isConnected: true });
   });
 
   describe('connection', () => {
@@ -47,10 +49,10 @@ describe('MongoDbManager', () => {
       );
     });
 
-    describe('object', () => {
+    describe('mongoclient', () => {
       let connectionPromise = null;
       beforeEach(() => {
-        mdbm = new MongoDbManager(dbSpy);
+        mdbm = new MongoDbManager(clientSpy);
         connectionPromise = mdbm.connect();
       });
 
@@ -77,9 +79,9 @@ describe('MongoDbManager', () => {
 
       describe('disconnect', () => {
         let disconnectPromise = null;
-
         beforeEach(() => {
           disconnectPromise = mdbm.disconnect();
+          clientSpy.isConnected.and.returnValue(false);
         });
 
         it('resolves', async () => {
@@ -122,7 +124,7 @@ describe('MongoDbManager', () => {
     ];
 
     beforeEach(async () => {
-      mdbm = new MongoDbManager(dbSpy);
+      mdbm = new MongoDbManager(clientSpy);
       await mdbm.connect();
     });
 
@@ -144,7 +146,7 @@ describe('MongoDbManager', () => {
 
   describe('deleteRecording', () => {
     beforeEach(async () => {
-      mdbm = new MongoDbManager(dbSpy);
+      mdbm = new MongoDbManager(clientSpy);
       await mdbm.connect();
 
       dbSpy.collection.calls.reset();
