@@ -1241,7 +1241,7 @@ var frameId = 0;
     express.use('/api/doc', serveStatic('.build/apidoc'));
 
     // Global next.js handler
-    express.get('*', (req, res) => handle(req, res));
+    //express.get('*', (req, res) => handle(req, res));
 
     server.listen(port, (err) => {
       if (err) throw err;
