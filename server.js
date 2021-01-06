@@ -21,7 +21,7 @@ const config = require('./config.json');
 const configHelper = require('./server/utils/configHelper');
 const GpsTracker = require('./server/tracker/GpsTracker');
 const packageJson = require('./package.json');
-const { YoloDarknet } = require('./server/processes/YoloDarknet');
+//const { YoloDarknet } = require('./server/processes/YoloDarknet');
 
 if (packageJson.version !== config.OPENDATACAM_VERSION) {
   console.log('-----------------------------------');
