@@ -86,6 +86,7 @@ export function loadConfig() {
         type: LOAD_CONFIG,
         payload: response.data,
       });
+      resolve(response.data);
     });
   })
 }

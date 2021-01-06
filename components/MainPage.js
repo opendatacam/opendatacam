@@ -37,12 +37,12 @@ class MainPage extends React.PureComponent {
     this.props.dispatch(loadConfig()).then(() => {
       // Make config available on window global
       window.CONFIG = this.props.config.toJS();
+      this.props.dispatch(initViewportListeners());
+      // TODO Handle specifying canvas size + resizing here, copy from beatthetraffic
+      this.props.dispatch(loadUserSettings());
+      // TODO See how we handle the YOLO on / off situation
+      this.props.dispatch(startListeningToServerData());
     });
-    this.props.dispatch(initViewportListeners());
-    // TODO Handle specifying canvas size + resizing here, copy from beatthetraffic
-    this.props.dispatch(loadUserSettings());
-    // TODO See how we handle the YOLO on / off situation
-    this.props.dispatch(startListeningToServerData());
   }
 
   onDrop(event) {
