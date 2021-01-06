@@ -6,7 +6,6 @@ const multer = require('multer');
 const serveStatic = require('serve-static');
 const bodyParser = require('body-parser');
 const http = require('http');
-const next = require('next');
 const sse = require('server-sent-events');
 const ip = require('ip');
 const flatten = require('lodash.flatten');
@@ -34,8 +33,6 @@ if (packageJson.version !== config.OPENDATACAM_VERSION) {
 
 const port = parseInt(process.env.PORT, 10) || configHelper.getAppPort();
 const dev = process.env.NODE_ENV !== 'production';
-const app = next({ dir: "/data/data/com.opendatacam/files/nodejs-project" })
-const handle = app.getRequestHandler();
 
 // Log config loaded
 console.log('-----------------------------------');
@@ -119,8 +116,6 @@ intercept((text) => {
 // for update with new frame "new" endpoint (TO refactor obviously)
 var frameId = 0;
 
-app.prepare()
-  .then(() => {
     // Start HTTP server
     const server = http.createServer(express);
     express.use(bodyParser.json());
@@ -1258,7 +1253,6 @@ app.prepare()
         console.log(`> Ready on http://${ip.address()}:${port}`);
       }
     });
-  });
 
 // Clean up node.js process if opendatacam stops or crash
 
