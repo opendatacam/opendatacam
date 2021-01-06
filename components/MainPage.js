@@ -5,8 +5,9 @@ import axios from 'axios';
 import AskLandscape from './shared/AskLandscape';
 import WebcamStream from './shared/WebcamStream';
 
-import { initViewportListeners } from '../statemanagement/app/ViewportStateManagement'
-import { startListeningToServerData } from '../statemanagement/app/AppStateManagement'
+import { initViewportListeners } from '../statemanagement/app/ViewportStateManagement';
+import { startListeningToServerData, restoreUiSettings, loadConfig } from '../statemanagement/app/AppStateManagement';
+import { restoreCountingAreas } from '../statemanagement/app/CounterStateManagement';
 import LiveView from './main/LiveView';
 import CounterView from './main/CounterView';
 import PathView from './main/PathView';
@@ -31,13 +32,17 @@ class MainPage extends React.PureComponent {
   }
 
   componentDidMount() {
+    this.props.dispatch(restoreCountingAreas());
+    this.props.dispatch(restoreUiSettings());
+    this.props.dispatch(loadConfig()).then(() => {
+      // Make config available on window global
+      window.CONFIG = this.props.config.toJS();
+    });
     this.props.dispatch(initViewportListeners());
     // TODO Handle specifying canvas size + resizing here, copy from beatthetraffic
     this.props.dispatch(loadUserSettings());
     // TODO See how we handle the YOLO on / off situation
     this.props.dispatch(startListeningToServerData());
-    // Make config available on window global
-    window.CONFIG = this.props.config.toJS();
   }
 
   onDrop(event) {

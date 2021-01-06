@@ -127,6 +127,7 @@ app.prepare()
 
   
   // This render pages/index.js for a request to /
+  /*
   express.get('/', (req, res) => {
 
     //YOLO.start(); // Inside yolo process will check is started
@@ -137,6 +138,9 @@ app.prepare()
 
     return app.render(req, res, '/')
   })
+  */
+
+  express.use('/', serveStatic('out'));
 
   express.post('/updatewithnewframe', (req, res) => {
     //console.log("================== UPDATE WITH NEW FRAME ON NODE.JS side ==================")

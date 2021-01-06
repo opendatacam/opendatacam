@@ -72,62 +72,40 @@ export function stopRecording() {
   }
 }
 
-export function loadConfig(req) {
-  return (dispatch) => {
-    return new Promise((resolve, reject) => {
-      let urlData = getURLData(req);
-      let session = req && req.session ? req.session : null
-      let url = `${urlData.protocol}://${urlData.address}:${urlData.port}/config`;
+export function loadConfig() {
+  return (dispatch) => new Promise((resolve, reject) => {
+    //const urlData = getURLData(req);
+    //const session = req && req.session ? req.session : null;
+    const url = `/config`;
 
-      axios({
-        method: 'get',
-        url: url,
-        credentials: 'same-origin',
-        data: {'session': session}
-      }).then((response) => {
-        dispatch({
-          type: LOAD_CONFIG,
-          payload: response.data
-        })
-        resolve();
-      }, (error) => {
-        console.log(error);
-        reject();
-      }).catch((error) => {
-        console.log(error)
-        reject();
+    axios({
+      method: 'get',
+      url
+    }).then((response) => {
+      dispatch({
+        type: LOAD_CONFIG,
+        payload: response.data,
       });
     });
-  }
+  })
 }
 
-export function restoreUiSettings(req) {
-  return (dispatch) => {
-    return new Promise((resolve, reject) => {
-      let urlData = getURLData(req);
-      let session = req && req.session ? req.session : null
-      let url = `${urlData.protocol}://${urlData.address}:${urlData.port}/ui`;
+export function restoreUiSettings() {
+  return (dispatch) => new Promise((resolve, reject) => {
+    //const urlData = getURLData(req);
+    //const session = req && req.session ? req.session : null;
+    const url = `/ui`;
 
-      axios({
-        method: 'get',
-        url: url,
-        credentials: 'same-origin',
-        data: {'session': session}
-      }).then((response) => {
-        dispatch({
-          type: RESTORE_UI_SETTINGS,
-          payload: response.data
-        })
-        resolve();
-      }, (error) => {
-        console.log(error);
-        reject();
-      }).catch((error) => {
-        console.log(error)
-        reject();
+    axios({
+      method: 'get',
+      url
+    }).then((response) => {
+      dispatch({
+        type: RESTORE_UI_SETTINGS,
+        payload: response.data,
       });
     });
-  }
+  })
 }
 
 export function updateAppState(data) {
@@ -200,12 +178,14 @@ export function setUiSetting(uiSetting, value) {
   }
 }
 
+/*
 export function setURLData(req) {
   return {
     type: SET_URLDATA,
     payload: getURLData(req)
   }
 }
+*/
 
 export function startListeningToServerData() {
   return (dispatch, getState) => {

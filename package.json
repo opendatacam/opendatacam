@@ -5,6 +5,7 @@
     "dev": "scripts/npm/startServer.sh",
     "lint": "scripts/npm/lint.sh",
     "build": "scripts/npm/build.sh",
+    "export": "next export",
     "start": "NODE_ENV=production scripts/npm/startServer.sh",
     "generateapidoc": "scripts/npm/generateapidoc.sh",
     "test": "scripts/npm/test.sh"
