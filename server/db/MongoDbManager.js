@@ -120,11 +120,10 @@ class MongoDbManager extends DbManagerBase {
    */
   getDB() {
     return new Promise((resolve, reject) => {
-      if (this.db) {
+      if (this.isConnected()) {
         resolve(this.db);
       } else {
-        this.disconnect();
-        this.connect().then(resolve, reject);
+        reject(new Error('Not connected'));
       }
     });
   }
@@ -147,6 +146,8 @@ class MongoDbManager extends DbManagerBase {
             resolve(r);
           }
         });
+      }, (reason) => {
+        reject(reason);
       });
     });
   }
@@ -167,6 +168,8 @@ class MongoDbManager extends DbManagerBase {
               }
             },
           );
+      }, (reason) => {
+        reject(reason);
       });
     });
   }
@@ -182,6 +185,8 @@ class MongoDbManager extends DbManagerBase {
             resolve(r);
           }
         });
+      }, (reason) => {
+        reject(reason);
       });
     });
   }
@@ -197,6 +202,8 @@ class MongoDbManager extends DbManagerBase {
             resolve(r);
           }
         });
+      }, (reason) => {
+        reject(reason);
       });
     });
 
@@ -211,6 +218,8 @@ class MongoDbManager extends DbManagerBase {
             resolve(r);
           }
         });
+      }, (reason) => {
+        reject(reason);
       });
     });
 
@@ -271,6 +280,8 @@ class MongoDbManager extends DbManagerBase {
         if (trackerEntry.objects != null && trackerEntry.objects.length > 0) {
           db.collection(this.TRACKER_COLLECTION).insertOne(trackerEntry);
         }
+      }, (reason) => {
+        reject(reason);
       });
     });
   }
@@ -293,6 +304,8 @@ class MongoDbManager extends DbManagerBase {
               resolve(docs);
             }
           });
+      }, (reason) => {
+        reject(reason);
       });
     });
   }
@@ -314,6 +327,8 @@ class MongoDbManager extends DbManagerBase {
               }
             },
           );
+      }, (reason) => {
+        reject(reason);
       });
     });
   }
@@ -331,6 +346,8 @@ class MongoDbManager extends DbManagerBase {
               resolve(res);
             }
           });
+      }, (reason) => {
+        reject(reason);
       });
     });
   }
@@ -351,6 +368,8 @@ class MongoDbManager extends DbManagerBase {
               resolve(docs);
             }
           });
+      }, (reason) => {
+        reject(reason);
       });
     });
   }
@@ -373,6 +392,8 @@ class MongoDbManager extends DbManagerBase {
               resolve(docs[0]);
             }
           });
+      }, (reason) => {
+        reject(reason);
       });
     });
   }

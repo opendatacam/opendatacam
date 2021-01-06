@@ -49,6 +49,21 @@ describe('MongoDbManager', () => {
       );
     });
 
+    it('rejets operations before connect', async () => {
+      const connectionString = 'mongo://foo:218';
+      const db = new MongoDbManager(connectionString);
+      await expectAsync(db.persistAppSettings(null)).toBeRejected();
+      await expectAsync(db.getAppSettings()).toBeRejected();
+      await expectAsync(db.insertRecording(null)).toBeRejected();
+      await expectAsync(db.deleteRecording(null)).toBeRejected();
+      await expectAsync(db.updateRecordingWithNewframe('1', null, null, null, null, null)).toBeRejected();
+      await expectAsync(db.getRecordings()).toBeRejected();
+      await expectAsync(db.getRecording('1')).toBeRejected();
+      await expectAsync(db.getRecordingsCount()).toBeRejected();
+      await expectAsync(db.getTrackerHistoryOfRecording('1')).toBeRejected();
+      await expectAsync(db.getCounterHistoryOfRecording('1')).toBeRejected();
+    });
+
     describe('mongoclient', () => {
       let connectionPromise = null;
       beforeEach(() => {
@@ -91,6 +106,20 @@ describe('MongoDbManager', () => {
         it('sets connection status', async () => {
           await disconnectPromise;
           expect(mdbm.isConnected()).toBeFalse();
+        });
+
+        it('rejects all operations', async () => {
+          await disconnectPromise;
+          await expectAsync(mdbm.persistAppSettings(null)).toBeRejected();
+          await expectAsync(mdbm.getAppSettings()).toBeRejected();
+          await expectAsync(mdbm.insertRecording(null)).toBeRejected();
+          await expectAsync(mdbm.deleteRecording(null)).toBeRejected();
+          await expectAsync(mdbm.updateRecordingWithNewframe('1', null, null, null, null, null)).toBeRejected();
+          await expectAsync(mdbm.getRecordings()).toBeRejected();
+          await expectAsync(mdbm.getRecording('1')).toBeRejected();
+          await expectAsync(mdbm.getRecordingsCount()).toBeRejected();
+          await expectAsync(mdbm.getTrackerHistoryOfRecording('1')).toBeRejected();
+          await expectAsync(mdbm.getCounterHistoryOfRecording('1')).toBeRejected();
         });
       });
     });
