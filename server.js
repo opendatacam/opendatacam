@@ -4,6 +4,7 @@
 const express = require('express')();
 const multer = require('multer');
 const serveStatic = require('serve-static');
+const path = require('path');
 const bodyParser = require('body-parser');
 const http = require('http');
 const sse = require('server-sent-events');
@@ -135,7 +136,8 @@ var frameId = 0;
   })
   */
 
-  express.use('/', serveStatic('out'));
+ Opendatacam.setVideoResolution({w: 480, h: 640});
+  express.use('/', serveStatic(path.join(__dirname, '/out')));
 
   express.post('/updatewithnewframe', (req, res) => {
     //console.log("================== UPDATE WITH NEW FRAME ON NODE.JS side ==================")

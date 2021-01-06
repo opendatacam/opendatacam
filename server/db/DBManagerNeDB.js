@@ -1,5 +1,6 @@
 
 var Datastore = require('nedb')
+const path = require('path');
 
 const RECORDING_COLLECTION = 'recordings';
 const TRACKER_COLLECTION = 'tracker';
@@ -37,9 +38,10 @@ class DBManagerNeDB {
       });
     });
 
-    this.db[RECORDING_COLLECTION] = new Datastore({ filename: '/data/data/com.opendatacam/files/opendatacam_recording.db' });
-    this.db[TRACKER_COLLECTION] = new Datastore({ filename: '/data/data/com.opendatacam/files/opendatacam_tracker.db' });
-    this.db[APP_COLLECTION] = new Datastore({ filename: '/data/data/com.opendatacam/files/opendatacam_app.db' });
+    // DB location in /files folder 
+    this.db[RECORDING_COLLECTION] = new Datastore({ filename: path.join(__dirname, '..', '..', '..', 'opendatacam_recording.db') });
+    this.db[TRACKER_COLLECTION] = new Datastore({ filename: path.join(__dirname, '..', '..', '..', 'opendatacam_tracker.db') });
+    this.db[APP_COLLECTION] = new Datastore({ filename: path.join(__dirname, '..', '..', '..', 'opendatacam_app.db') });
 
     
     await Promise.all([
