@@ -27,7 +27,7 @@ const initialState = fromJS({
     pathfinderEnabled: true,
     heatmapEnabled: false
   },
-  isListeningToYOLO: true,
+  isListeningToYOLO: false,
   mode: MODE.LIVEVIEW,
   showMenu: false,
   isListeningToServerData: false,
