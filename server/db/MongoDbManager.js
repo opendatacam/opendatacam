@@ -7,12 +7,17 @@ class MongoDbManager extends DbManagerBase {
    *
    * If connectionStringOrDbObject is a
    *
-   * - Db object: the object pointing to a database will be used and no new connection will be
-   *   created
+   * - MongoClient: the MongoClient to use
    * - String: The string will be used to create a new connection to the database and then the
    *   "opendatacam" database will be used
    *
-   * After creation {@link MongoDbManager.connect} must be called
+   * After creation {@link MongoDbManager.connect} must be called.
+   *
+   * In case of connection loss, the MongoDbManager will try to automatically reconnect. However any
+   * operations that should have been carried out while MongoDbManager was offline will be rejected.
+   * It is up to the caller to retry failed operations. In practice this meas that tracker data
+   * will be lost, while counter data should recover as Opendatacam always updates the whole counter
+   * state.
    *
    * @param {*} connectionStringOrMongoClient The MongoClient to use or credentials to create one
    */
