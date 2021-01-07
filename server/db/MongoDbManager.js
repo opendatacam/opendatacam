@@ -59,6 +59,10 @@ class MongoDbManager extends DbManagerBase {
   }
 
   async connect() {
+    if (this.isConnected()) {
+      return Promise.resolve();
+    }
+
     const createCollectionsAndIndex = (db) => {
       const recordingCollection = db.collection(this.RECORDING_COLLECTION);
       recordingCollection.createIndex({ dateStart: -1 });
@@ -92,6 +96,23 @@ class MongoDbManager extends DbManagerBase {
       });
     } if (isClientObject) {
       this.client = this.connectionStringOrMongoClient;
+      if (!this.isConnected()) {
+        return new Promise((resolve, reject) => {
+          this.client.connect((err, client) => {
+            if (err) {
+              reject(err);
+            } else {
+              this.client = client;
+              const db = client.db(this.DATABASE_NAME);
+              this.db = db;
+
+              createCollectionsAndIndex(db);
+
+              resolve(db);
+            }
+          });
+        });
+      }
       this.db = this.client.db(this.DATABASE_NAME);
       createCollectionsAndIndex(this.db);
       return Promise.resolve(this.db);
@@ -99,13 +120,9 @@ class MongoDbManager extends DbManagerBase {
     return new Error();
   }
 
-  /**
-   * This does not actually disconnect it just removes the reference from the MongoDB so it will no
-   * longer be in use
-   */
   async disconnect() {
     this.db = null;
-    return Promise.resolve();
+    return this.client.close();
   }
 
   isConnected() {
@@ -140,7 +157,9 @@ class MongoDbManager extends DbManagerBase {
           },
         }, { upsert: true }, (err, r) => {
           if (err) {
-            this.disconnect();
+            this.disconnect().then(() => {
+              this.connect();
+            });
             reject(err);
           } else {
             resolve(r);
@@ -161,7 +180,9 @@ class MongoDbManager extends DbManagerBase {
             { id: 'settings' },
             (err, doc) => {
               if (err) {
-                this.disconnect();
+                this.disconnect().then(() => {
+                  this.connect();
+                });
                 reject(err);
               } else {
                 resolve(doc);
@@ -179,7 +200,9 @@ class MongoDbManager extends DbManagerBase {
       this.getDB().then((db) => {
         db.collection(this.RECORDING_COLLECTION).insertOne(recording, (err, r) => {
           if (err) {
-            this.disconnect();
+            this.disconnect().then(() => {
+              this.connect();
+            });
             reject(err);
           } else {
             resolve(r);
@@ -196,7 +219,9 @@ class MongoDbManager extends DbManagerBase {
       this.getDB().then((db) => {
         db.collection(this.RECORDING_COLLECTION).deleteOne({ id: recordingId }, (err, r) => {
           if (err) {
-            this.disconnect();
+            this.disconnect().then(() => {
+              this.connect();
+            });
             reject(err);
           } else {
             resolve(r);
@@ -269,7 +294,9 @@ class MongoDbManager extends DbManagerBase {
           updateRequest,
           (err, r) => {
             if (err) {
-              this.disconnect();
+              this.disconnect().then(() => {
+                this.connect();
+              });
               reject(err);
             } else {
               resolve(r);
@@ -298,7 +325,9 @@ class MongoDbManager extends DbManagerBase {
           .skip(offset)
           .toArray((err, docs) => {
             if (err) {
-              this.disconnect();
+              this.disconnect().then(() => {
+                this.connect();
+              });
               reject(err);
             } else {
               resolve(docs);
@@ -320,7 +349,9 @@ class MongoDbManager extends DbManagerBase {
             { projection: { counterHistory: 0, areas: 0 } },
             (err, doc) => {
               if (err) {
-                this.disconnect();
+                this.disconnect().then(() => {
+                  this.connect();
+                });
                 reject(err);
               } else {
                 resolve(doc);
@@ -340,7 +371,9 @@ class MongoDbManager extends DbManagerBase {
           .collection(this.RECORDING_COLLECTION)
           .countDocuments({}, (err, res) => {
             if (err) {
-              this.disconnect();
+              this.disconnect().then(() => {
+                this.connect();
+              });
               reject(err);
             } else {
               resolve(res);
@@ -362,7 +395,9 @@ class MongoDbManager extends DbManagerBase {
           )
           .toArray((err, docs) => {
             if (err) {
-              this.disconnect();
+              this.disconnect().then(() => {
+                this.connect();
+              });
               reject(err);
             } else {
               resolve(docs);
@@ -384,7 +419,9 @@ class MongoDbManager extends DbManagerBase {
           )
           .toArray((err, docs) => {
             if (err) {
-              this.disconnect();
+              this.disconnect().then(() => {
+                this.connect();
+              });
               reject(err);
             } else if (docs.length === 0) {
               resolve({});

@@ -9,28 +9,46 @@ describe('MongoDbManager', () => {
   /** MongoDatabaseManager */
   let mdbm = null;
   let clientSpy = null;
+  /* Setting error to null = success */
+  let callbackError = null;
+  let callbackResult = null;
 
   beforeEach(() => {
+    callbackError = null;
+    callbackResult = null;
+
+    const collectionSpyDefaultFake = (...args) => {
+      // Last argument is the callback
+      if (args.length > 0) {
+        const callback = args[args.length - 1];
+        if (callback && typeof callback === 'function') {
+          callback(callbackError, callbackResult);
+        }
+      }
+    };
     collectionSpy = jasmine.createSpyObj('collection',
-      ['createIndex', 'deleteMany', 'deleteOne', 'updateOne', 'insertOne', 'remove']);
-    collectionSpy.updateOne.and.callFake((arg0, arg1, callback) => {
-      // Report success
-      callback(null, null);
-    });
-    collectionSpy.remove.and.callFake((args, callback) => {
-      // Report success
-      callback(null, null);
-    });
-    collectionSpy.deleteMany.and.callFake((args, callback) => {
-      // Report success
-      callback(null, null);
-    });
-    collectionSpy.deleteOne.and.callFake((args, callback) => {
-      // Report success
-      callback(null, null);
-    });
+      ['createIndex', 'deleteMany', 'deleteOne', 'updateOne', 'insertOne', 'remove', 'findOne',
+        'find', 'project', 'sort', 'limit', 'skip', 'toArray', 'countDocuments']);
+    collectionSpy.find.and.returnValue(collectionSpy);
+    collectionSpy.project.and.returnValue(collectionSpy);
+    collectionSpy.sort.and.returnValue(collectionSpy);
+    collectionSpy.limit.and.returnValue(collectionSpy);
+    collectionSpy.skip.and.returnValue(collectionSpy);
+    collectionSpy.toArray.and.callFake(collectionSpyDefaultFake);
+    collectionSpy.updateOne.and.callFake(collectionSpyDefaultFake);
+    collectionSpy.countDocuments.and.callFake(collectionSpyDefaultFake);
+    collectionSpy.remove.and.callFake(collectionSpyDefaultFake);
+    collectionSpy.deleteMany.and.callFake(collectionSpyDefaultFake);
+    collectionSpy.deleteOne.and.callFake(collectionSpyDefaultFake);
+    collectionSpy.insertOne.and.callFake(collectionSpyDefaultFake);
+    collectionSpy.findOne.and.callFake(collectionSpyDefaultFake);
+
     dbSpy = jasmine.createSpyObj('Db', { collection: collectionSpy });
-    clientSpy = jasmine.createSpyObj('Client', { db: dbSpy, isConnected: true });
+    clientSpy = jasmine.createSpyObj('Client', ['connect', 'db', 'isConnected', 'close']);
+    clientSpy.connect.and.callFake((cb) => { cb(null, clientSpy); });
+    clientSpy.db.and.returnValue(dbSpy);
+    clientSpy.isConnected.and.returnValue(true);
+    clientSpy.close.and.returnValue(Promise.resolve());
   });
 
   describe('connection', () => {
@@ -71,6 +89,18 @@ describe('MongoDbManager', () => {
         connectionPromise = mdbm.connect();
       });
 
+      it('does not connect if client is connected', async () => {
+        expect(clientSpy.connect).not.toHaveBeenCalled();
+      });
+
+      it('connects if client is not connected', async () => {
+        clientSpy.isConnected.and.returnValue(false);
+        mdbm = new MongoDbManager(clientSpy);
+        await mdbm.connect();
+
+        expect(clientSpy.connect).toHaveBeenCalled();
+      });
+
       it('resolves', async () => {
         await expectAsync(connectionPromise).toBeResolved();
       });
@@ -90,6 +120,77 @@ describe('MongoDbManager', () => {
         await connectionPromise;
         expect(dbSpy.collection).toHaveBeenCalled();
         expect(collectionSpy.createIndex).toHaveBeenCalled();
+      });
+
+      describe('connection errors', () => {
+        describe('rejects and reconnects', () => {
+          const onResolved = () => { fail(); };
+          const onRejected = (reason) => {
+            expect(clientSpy.close).toHaveBeenCalled();
+            // Mark client as disconnected after close has been called.
+            clientSpy.isConnected.and.returnValue(false);
+            expect(reason).toBe(callbackError);
+            expect(mdbm.isConnected()).toBeFalse();
+
+            expect(clientSpy.connect).toHaveBeenCalled();
+            clientSpy.connect.calls.reset();
+          };
+
+          beforeEach(async () => {
+            callbackError = new Error('Failure');
+
+            await connectionPromise;
+            clientSpy.close.and.callFake(() => {
+              clientSpy.isConnected.and.returnValue(false);
+            });
+            clientSpy.connect.calls.reset();
+          });
+
+          it('for persistAppSetting', async () => {
+            await mdbm.persistAppSettings({ countingAreas: null }).then(onResolved, onRejected);
+          });
+
+          it('for getAppSettings', async () => {
+            await mdbm.getAppSettings().then(onResolved, onRejected);
+          });
+
+          it('for insertRecording', async () => {
+            await mdbm.insertRecording(null).then(onResolved, onRejected);
+          });
+
+          it('for deleteRecording', async () => {
+            await mdbm.deleteRecording(RECORDING_ID).then(onResolved, onRejected);
+          });
+
+          it('for updateRecordingWithNewframe', async () => {
+            await mdbm.updateRecordingWithNewframe('1',
+              null,
+              null,
+              null,
+              [null],
+              { objects: null }).then(onResolved, onRejected);
+          });
+
+          it('for getRecordings', async () => {
+            await mdbm.getRecordings().then(onResolved, onRejected);
+          });
+
+          it('for getRecording', async () => {
+            await mdbm.getRecording(RECORDING_ID).then(onResolved, onRejected);
+          });
+
+          it('for getRecordingsCount', async () => {
+            await mdbm.getRecordingsCount().then(onResolved, onRejected);
+          });
+
+          it('for getTrackerHistoryOfRecording', async () => {
+            await mdbm.getTrackerHistoryOfRecording(RECORDING_ID).then(onResolved, onRejected);
+          });
+
+          it('for getCounterHistoryOfRecording', async () => {
+            await mdbm.getCounterHistoryOfRecording(RECORDING_ID).then(onResolved, onRejected);
+          });
+        });
       });
 
       describe('disconnect', () => {
