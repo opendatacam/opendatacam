@@ -1,4 +1,5 @@
 import React, { PureComponent } from 'react'
+import { Map } from 'immutable';
 import { connect } from 'react-redux';
 import dayjs from 'dayjs';
 import OpenMoji from '../shared/OpenMoji.js';
@@ -27,6 +28,29 @@ class Recording extends PureComponent {
 
   componentWillUnmount() {
 
+  }
+
+  getMostCountedClasses(counterData, counterAreaId) {
+    // Sorted by most counted first
+    let counterDataForThisArea = counterData.get(counterAreaId).remove("_total").sort((a, b) => {
+      if (a < b) { return 1; }
+      if (a > b) { return -1; }
+      if (a === b) { return 0; }
+    }).take(6);
+
+    return counterDataForThisArea.toJS();
+  }
+
+  getClassDisplayInfo(counterClass) {
+    let displayInfo = this.DISPLAY_CLASSES.find((displayClass) => displayClass.class === counterClass);
+    if(displayInfo) {
+      return displayInfo
+    } else {
+      return {
+        class: counterClass,
+        hexcode: "25A1"
+      }
+    }
   }
 
   renderDateEnd(dateEnd, active = false) {
@@ -105,15 +129,15 @@ class Recording extends PureComponent {
                       }
                     </div>
                     <div className="flex flex-wrap flex-initial w-64 mt-5">
-                      {this.DISPLAY_CLASSES.slice(0, Math.min(this.DISPLAY_CLASSES.length, 6)).map((counterClass) =>
+                      {this.props.counterData && Object.keys(this.getMostCountedClasses(this.props.counterData, countingAreaId)).map((counterClass) =>
                         <div 
                           className="flex items-center justify-center w-16 m-1" 
-                          key={counterClass.class}
+                          key={counterClass}
                         >
-                          <h4 className="mr-2">{this.props.counterData && this.props.counterData.getIn([countingAreaId, counterClass.class]) || 0}</h4>
+                          <h4 className="mr-2">{this.getMostCountedClasses(this.props.counterData, countingAreaId)[counterClass] || 0}</h4>
                           <OpenMoji
-                            hexcode={counterClass.hexcode}
-                            class={counterClass.class}
+                            hexcode={this.getClassDisplayInfo(counterClass).hexcode}
+                            class={counterClass}
                           />
                         </div>
                       )}

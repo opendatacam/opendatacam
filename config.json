@@ -28,12 +28,326 @@
   },
   "VALID_CLASSES": ["*"],
   "DISPLAY_CLASSES": [
-    { "class": "bicycle", "hexcode": "1F6B2"},
-    { "class": "person", "hexcode": "1F6B6"},
-    { "class": "truck", "hexcode": "1F69B"},
-    { "class": "motorbike", "hexcode": "1F6F5"},
-    { "class": "car", "hexcode": "1F697"},
-    { "class": "bus", "hexcode": "1F68C"}
+    {
+      "class": "person",
+      "hexcode": "1F6B6"
+    },
+    {
+      "class": "bicycle",
+      "hexcode": "1F6B2"
+    },
+    {
+      "class": "car",
+      "hexcode": "1F697"
+    },
+    {
+      "class": "motorbike",
+      "hexcode": "1F3CD"
+    },
+    {
+      "class": "airplane",
+      "hexcode": "2708"
+    },
+    {
+      "class": "bus",
+      "hexcode": "1F68C"
+    },
+    {
+      "class": "train",
+      "hexcode": "1F685"
+    },
+    {
+      "class": "truck",
+      "hexcode": "1F69B"
+    },
+    {
+      "class": "boat",
+      "hexcode": "26F5"
+    },
+    {
+      "class": "traffic light",
+      "hexcode": "1F6A6"
+    },
+    {
+      "class": "fire hydrant",
+      "hexcode": "25A1"
+    },
+    {
+      "class": "stop sign",
+      "hexcode": "1F6D1"
+    },
+    {
+      "class": "parking meter",
+      "hexcode": "25A1"
+    },
+    {
+      "class": "bench",
+      "hexcode": "25A1"
+    },
+    {
+      "class": "bird",
+      "hexcode": "1F426"
+    },
+    {
+      "class": "cat",
+      "hexcode": "1F408"
+    },
+    {
+      "class": "dog",
+      "hexcode": "1F415"
+    },
+    {
+      "class": "horse",
+      "hexcode": "1F40E"
+    },
+    {
+      "class": "sheep",
+      "hexcode": "1F411"
+    },
+    {
+      "class": "cow",
+      "hexcode": "1F404"
+    },
+    {
+      "class": "elephant",
+      "hexcode": "1F418"
+    },
+    {
+      "class": "bear",
+      "hexcode": "1F43B"
+    },
+    {
+      "class": "zebra",
+      "hexcode": "1F993"
+    },
+    {
+      "class": "giraffe",
+      "hexcode": "1F992"
+    },
+    {
+      "class": "backpack",
+      "hexcode": "1F392"
+    },
+    {
+      "class": "umbrella",
+      "hexcode": "2602"
+    },
+    {
+      "class": "handbag",
+      "hexcode": "1F45C"
+    },
+    {
+      "class": "tie",
+      "hexcode": "1F454"
+    },
+    {
+      "class": "suitcase",
+      "hexcode": "1F4BC"
+    },
+    {
+      "class": "frisbee",
+      "hexcode": "25A1"
+    },
+    {
+      "class": "skis",
+      "hexcode": "1F3BF"
+    },
+    {
+      "class": "snowboard",
+      "hexcode": "1F3C2"
+    },
+    {
+      "class": "sports ball",
+      "hexcode": "1F3C0"
+    },
+    {
+      "class": "kite",
+      "hexcode": "1FA81"
+    },
+    {
+      "class": "baseball bat",
+      "hexcode": "1F3CF"
+    },
+    {
+      "class": "baseball glove",
+      "hexcode": "25A1"
+    },
+    {
+      "class": "skateboard",
+      "hexcode": "1F6F9"
+    },
+    {
+      "class": "surfboard",
+      "hexcode": "1F3C4"
+    },
+    {
+      "class": "tennis racket",
+      "hexcode": "1F3BE"
+    },
+    {
+      "class": "bottle",
+      "hexcode": "1F37E"
+    },
+    {
+      "class": "wine glass",
+      "hexcode": "1F377"
+    },
+    {
+      "class": "cup",
+      "hexcode": "2615"
+    },
+    {
+      "class": "fork",
+      "hexcode": "25A1"
+    },
+    {
+      "class": "knife",
+      "hexcode": "1F52A"
+    },
+    {
+      "class": "spoon",
+      "hexcode": "1F944"
+    },
+    {
+      "class": "bowl",
+      "hexcode": "1F35C"
+    },
+    {
+      "class": "banana",
+      "hexcode": "1F34C"
+    },
+    {
+      "class": "apple",
+      "hexcode": "1F34E"
+    },
+    {
+      "class": "sandwich",
+      "hexcode": "1F96A"
+    },
+    {
+      "class": "orange",
+      "hexcode": "1F34A"
+    },
+    {
+      "class": "broccoli",
+      "hexcode": "1F966"
+    },
+    {
+      "class": "carrot",
+      "hexcode": "1F955"
+    },
+    {
+      "class": "hot dog",
+      "hexcode": "1F32D"
+    },
+    {
+      "class": "pizza",
+      "hexcode": "1F355"
+    },
+    {
+      "class": "donut",
+      "hexcode": "1F369"
+    },
+    {
+      "class": "cake",
+      "hexcode": "1F382"
+    },
+    {
+      "class": "chair",
+      "hexcode": "1FA91"
+    },
+    {
+      "class": "couch",
+      "hexcode": "1F6CB"
+    },
+    {
+      "class": "potted plant",
+      "hexcode": "1FAB4"
+    },
+    {
+      "class": "bed",
+      "hexcode": "1F6CF"
+    },
+    {
+      "class": "dining table",
+      "hexcode": "25A1"
+    },
+    {
+      "class": "toilet",
+      "hexcode": "1F6BD"
+    },
+    {
+      "class": "tv",
+      "hexcode": "1F4FA"
+    },
+    {
+      "class": "laptop",
+      "hexcode": "1F4BB"
+    },
+    {
+      "class": "mouse",
+      "hexcode": "1F5B1"
+    },
+    {
+      "class": "remote",
+      "hexcode": "1F3AE"
+    },
+    {
+      "class": "keyboard",
+      "hexcode": "2328"
+    },
+    {
+      "class": "cell phone",
+      "hexcode": "1F4F1"
+    },
+    {
+      "class": "microwave",
+      "hexcode": "25A1"
+    },
+    {
+      "class": "oven",
+      "hexcode": "1F373"
+    },
+    {
+      "class": "toaster",
+      "hexcode": "25A1"
+    },
+    {
+      "class": "sink",
+      "hexcode": "25A1"
+    },
+    {
+      "class": "refrigerator",
+      "hexcode": "2744"
+    },
+    {
+      "class": "book",
+      "hexcode": "1F4D4"
+    },
+    {
+      "class": "clock",
+      "hexcode": "23F0"
+    },
+    {
+      "class": "vase",
+      "hexcode": "1F3FA"
+    },
+    {
+      "class": "scissors",
+      "hexcode": "2702"
+    },
+    {
+      "class": "teddy bear",
+      "hexcode": "1F9F8"
+    },
+    {
+      "class": "hair drier",
+      "hexcode": "25A1"
+    },
+    {
+      "class": "toothbrush",
+      "hexcode": "1FAA5"
+    }
   ],
   "PATHFINDER_COLORS": [
     "#1f77b4",
