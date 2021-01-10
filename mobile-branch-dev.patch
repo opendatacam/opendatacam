@@ -1,0 +1,129 @@
+diff --git a/config.json b/config.json
+index ccb8887..612682f 100644
+--- a/config.json
++++ b/config.json
+@@ -3,7 +3,7 @@
+   "PATH_TO_YOLO_DARKNET" : "TO_REPLACE_PATH_TO_DARKNET",
+   "CMD_TO_YOLO_DARKNET" : "TO_REPLACE_PATH_TO_DARKNET/darknet",
+   "VIDEO_UPLOAD_FOLDER": "TO_REPLACE_PATH_TO_DARKNET/opendatacam_videos_uploaded",
+-  "VIDEO_INPUT": "TO_REPLACE_VIDEO_INPUT",
++  "VIDEO_INPUT": "simulation",
+   "NEURAL_NETWORK": "TO_REPLACE_NEURAL_NETWORK",
+   "VIDEO_INPUTS_PARAMS": {
+     "file": "opendatacam_videos/demo.mp4",
+diff --git a/server.js b/server.js
+index 5da9cb5..381f3e2 100644
+--- a/server.js
++++ b/server.js
+@@ -23,7 +23,8 @@ const config = require('./config.json');
+ const configHelper = require('./server/utils/configHelper');
+ const GpsTracker = require('./server/tracker/GpsTracker');
+ const packageJson = require('./package.json');
+-//const { YoloDarknet } = require('./server/processes/YoloDarknet');
++const { YoloDarknet } = require('./server/processes/YoloDarknet');
++const next = require('next');
+ 
+ if (packageJson.version !== config.OPENDATACAM_VERSION) {
+   console.log('-----------------------------------');
+@@ -36,6 +37,10 @@ if (packageJson.version !== config.OPENDATACAM_VERSION) {
+ const port = parseInt(process.env.PORT, 10) || configHelper.getAppPort();
+ const dev = process.env.NODE_ENV !== 'production';
+ 
++
++const app = next({ dev });
++const handle = app.getRequestHandler();
++
+ // Log config loaded
+ console.log('-----------------------------------');
+ console.log('-     Opendatacam initialized     -');
+@@ -64,7 +69,7 @@ if (config.VIDEO_INPUT === 'simulation') {
+     };
+   }
+ }
+-// const YOLO = new YoloDarknet(yoloConfig);
++const YOLO = new YoloDarknet(yoloConfig);
+ 
+ // Select tracker, based on GPS settings in config
+ let tracker = Tracker;
+@@ -118,13 +123,16 @@ intercept((text) => {
+ // for update with new frame "new" endpoint (TO refactor obviously)
+ var frameId = 0;
+ 
++app.prepare()
++  .then(() => {
++
+     // Start HTTP server
+     const server = http.createServer(express);
+     express.use(bodyParser.json());
+ 
+   
+   // This render pages/index.js for a request to /
+-  /*
++  
+   express.get('/', (req, res) => {
+ 
+     //YOLO.start(); // Inside yolo process will check is started
+@@ -135,10 +143,10 @@ var frameId = 0;
+ 
+     return app.render(req, res, '/')
+   })
+-  */
++  
+ 
+  Opendatacam.setVideoResolution({w: 480, h: 640});
+-  express.use('/', serveStatic(path.join(__dirname, '/out')));
++  //express.use('/', serveStatic(path.join(__dirname, '/out')));
+ 
+   express.post('/updatewithnewframe', (req, res) => {
+     //console.log("================== UPDATE WITH NEW FRAME ON NODE.JS side ==================")
+@@ -1312,7 +1320,7 @@ var frameId = 0;
+     express.use('/api/doc', serveStatic('.build/apidoc'));
+ 
+     // Global next.js handler
+-    //express.get('*', (req, res) => handle(req, res));
++    express.get('*', (req, res) => handle(req, res));
+ 
+     server.listen(port, (err) => {
+       if (err) throw err;
+@@ -1324,6 +1332,7 @@ var frameId = 0;
+         console.log(`> Ready on http://${ip.address()}:${port}`);
+       }
+     });
++  });
+ 
+ // Clean up node.js process if opendatacam stops or crash
+ 
+diff --git a/server/Opendatacam.js b/server/Opendatacam.js
+index 706897f..8d1afc0 100644
+--- a/server/Opendatacam.js
++++ b/server/Opendatacam.js
+@@ -78,7 +78,10 @@ const initialState = {
+   /** The event emitter used for all events */
+   eventEmitter: new EventEmitter(),
+   // [lat, lng]
+-  cameraLocation: null
++  cameraLocation: [
++    -34.8650165,
++    -56.1896109
++  ]
+ }
+ 
+ let Opendatacam = cloneDeep(initialState);
+diff --git a/server/db/DBManagerNeDB.js b/server/db/DBManagerNeDB.js
+index e59220d..a2baebd 100644
+--- a/server/db/DBManagerNeDB.js
++++ b/server/db/DBManagerNeDB.js
+@@ -39,9 +39,10 @@ class DBManagerNeDB {
+     });
+ 
+     // DB location in /files folder 
+-    this.db[RECORDING_COLLECTION] = new Datastore({ filename: path.join(__dirname, '..', '..', '..', 'opendatacam_recording.db') });
+-    this.db[TRACKER_COLLECTION] = new Datastore({ filename: path.join(__dirname, '..', '..', '..', 'opendatacam_tracker.db') });
+-    this.db[APP_COLLECTION] = new Datastore({ filename: path.join(__dirname, '..', '..', '..', 'opendatacam_app.db') });
++    this.db[RECORDING_COLLECTION] = new Datastore({ filename: 'opendatacam_recording.db' });
++    this.db[TRACKER_COLLECTION] = new Datastore({ filename: 'opendatacam_tracker.db' });
++    this.db[APP_COLLECTION] = new Datastore({ filename: 'opendatacam_app.db' });
++
+ 
+     
+     await Promise.all([
