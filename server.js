@@ -196,6 +196,13 @@ var frameId = 0;
     res.sendStatus(200)
   });
 
+
+  express.post('/updatecameralocation', (req, res) => {
+    var data = req.body;
+    Opendatacam.updateCameraLocation(data)
+    res.sendStatus(200)
+  });
+
   /**
    * @api {get} /start Start Opendatacam
    * @apiName Start

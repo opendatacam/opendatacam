@@ -76,12 +76,17 @@ const initialState = {
   // A reference of the yolo object to work with
   yolo: null,
   /** The event emitter used for all events */
-  eventEmitter: new EventEmitter()
+  eventEmitter: new EventEmitter(),
+  cameraLocation: null
 }
 
 let Opendatacam = cloneDeep(initialState);
 
 module.exports = {
+
+  updateCameraLocation: function(location) {
+    Opendatacam.cameraLocation = location;
+  },
 
   reset: function() {
     return new Promise((resolve, reject) => {
@@ -216,6 +221,7 @@ module.exports = {
       recordingId: Opendatacam.recordingStatus.recordingId,
       frameId: frameId,
       timestamp: frameTimestamp,
+      cameraLocation: Opendatacam.cameraLocation,
       objects: trackerDataForThisFrame.map((trackerData) => {
         return {
           id: trackerData.id,
