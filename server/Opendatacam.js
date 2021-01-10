@@ -77,6 +77,7 @@ const initialState = {
   yolo: null,
   /** The event emitter used for all events */
   eventEmitter: new EventEmitter(),
+  // [lat, lng]
   cameraLocation: null
 }
 
@@ -169,7 +170,7 @@ module.exports = {
     }
   },
 
-  countItem: function(trackedItem, countingAreaKey, frameId, countingDirection, angleWithCountingLine) {
+  countItem: function(trackedItem, countingAreaKey, frameId, countingDirection, angleWithCountingLine, cameraLocation) {
     if(Opendatacam.recordingStatus.isRecording) {
       var countedItem = {
         frameId: frameId,
@@ -179,7 +180,8 @@ module.exports = {
         id: trackedItem.id,
         bearing: trackedItem.bearing,
         countingDirection: countingDirection,
-        angleWithCountingLine: angleWithCountingLine
+        angleWithCountingLine: angleWithCountingLine,
+        cameraLocation: cameraLocation
       }
 
       // Persist GPS Position and timestamp if available
@@ -497,7 +499,8 @@ module.exports = {
                     countingAreaKey,
                     frameId,
                     COUNTING_DIRECTION.LEAVING_ZONE,
-                    null
+                    null,
+                    Opendatacam.cameraLocation
                   );
                   countedItemsForThisFrame.push(countedItem);
                 }
