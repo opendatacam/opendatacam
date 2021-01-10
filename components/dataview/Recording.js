@@ -32,13 +32,16 @@ class Recording extends PureComponent {
 
   getMostCountedClasses(counterData, counterAreaId) {
     // Sorted by most counted first
-    let counterDataForThisArea = counterData.get(counterAreaId).remove("_total").sort((a, b) => {
-      if (a < b) { return 1; }
-      if (a > b) { return -1; }
-      if (a === b) { return 0; }
-    }).take(6);
-
-    return counterDataForThisArea.toJS();
+    if(counterData.get(counterAreaId)) {
+      let counterDataForThisArea = counterData.get(counterAreaId).remove("_total").sort((a, b) => {
+        if (a < b) { return 1; }
+        if (a > b) { return -1; }
+        if (a === b) { return 0; }
+      }).take(6);
+      return counterDataForThisArea.toJS();
+    } else {
+      return [];
+    }
   }
 
   getClassDisplayInfo(counterClass) {
