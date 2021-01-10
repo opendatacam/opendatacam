@@ -81,7 +81,8 @@ class Recording extends PureComponent {
                 <div>
                   <div className="inline-block mr-2 font-medium">Download:</div>
                   <a className="mr-2 btn-text" href={`/recording/${this.props.id}/counter`} target="_blank" download>JSON</a>
-                  <a className="btn-text" href={`/recording/${this.props.id}/counter/csv`} target="_blank" download>CSV</a>
+                  <a className="mr-2 btn-text" href={`/recording/${this.props.id}/counter/csv`} target="_blank" download>CSV</a>
+                  <a className="btn-text" href={`/recording/${this.props.id}/counter/geojson`} target="_blank" download>GEOJSON</a>
                 </div>
               </div>
               <div className="flex flex-wrap mt-4">
@@ -128,6 +129,7 @@ class Recording extends PureComponent {
               <div>
                 <div className="inline-block mr-2 font-medium">Download:</div>
                 <a className="mr-2 btn-text" href={`/recording/${this.props.id}/tracker`} target="_blank" download>JSON</a>
+                <a className="btn-text" href={`/recording/${this.props.id}/tracker/geojson`} target="_blank" download>GEOJSON</a>
               </div>
             </div>
             <div className="relative mt-6 rounded">

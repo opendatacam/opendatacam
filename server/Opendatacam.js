@@ -170,7 +170,7 @@ module.exports = {
     }
   },
 
-  countItem: function(trackedItem, countingAreaKey, frameId, countingDirection, angleWithCountingLine, cameraLocation) {
+  countItem: function(trackedItem, countingAreaKey, frameId, countingDirection, angleWithCountingLine) {
     if(Opendatacam.recordingStatus.isRecording) {
       var countedItem = {
         frameId: frameId,
@@ -181,7 +181,7 @@ module.exports = {
         bearing: trackedItem.bearing,
         countingDirection: countingDirection,
         angleWithCountingLine: angleWithCountingLine,
-        cameraLocation: cameraLocation
+        cameraLocation: Opendatacam.cameraLocation
       }
 
       // Persist GPS Position and timestamp if available
@@ -499,8 +499,7 @@ module.exports = {
                     countingAreaKey,
                     frameId,
                     COUNTING_DIRECTION.LEAVING_ZONE,
-                    null,
-                    Opendatacam.cameraLocation
+                    null
                   );
                   countedItemsForThisFrame.push(countedItem);
                 }

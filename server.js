@@ -2,6 +2,7 @@
 /* eslint max-len: ["warn", { "ignoreComments": true , "code": 100, "tabWidth": 2, "ignoreUrls": true }] */
 
 const express = require('express')();
+const csv = require('csv-express');
 const multer = require('multer');
 const serveStatic = require('serve-static');
 const path = require('path');
@@ -769,6 +770,35 @@ var frameId = 0;
       });
     });
 
+    express.get('/recording/:id/tracker/geojson', (req, res) => {
+      DBManager.getTrackerHistoryOfRecording(req.params.id).then((trackerData) => {
+        res.setHeader('Content-Type', 'application/json');
+        res.setHeader('Content-disposition',
+          `attachment; filename=trackerData-${req.params.id}.geojson`);
+        var trackerDataAsGeoJson = {
+          "type": "FeatureCollection",
+          "features": trackerData.map((trackedFrame) => {
+            return {
+              "type": "Feature",
+              "properties": {
+                "recordingId": trackedFrame.recordingId,
+                "timestamp": trackedFrame.timestamp,
+                "nbItemsTracked": trackedFrame.objects.length
+              },
+              "geometry": {
+                "type": "Point",
+                "coordinates": [
+                  trackedFrame.cameraLocation[1],
+                  trackedFrame.cameraLocation[0]
+                ]
+              }
+            }
+          })
+        }
+        res.json(trackerDataAsGeoJson);
+      });
+    });
+
     /**
      * @api {get} /recording/:id Get recording
      * @apiName Get recording
@@ -917,6 +947,35 @@ var frameId = 0;
         const fileName = `counterData-${startDate}-${req.params.id}.json`;
         res.setHeader('Content-disposition', `attachment; filename=${fileName}`);
         res.json(counterData);
+      });
+    });
+
+    express.get('/recording/:id/counter/geojson', (req, res) => {
+      DBManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
+        res.setHeader('Content-Type', 'application/json');
+        const startDate = counterData.dateStart.toISOString().split('T')[0];
+        const fileName = `counterData-${startDate}-${req.params.id}.geojson`;
+        res.setHeader('Content-disposition', `attachment; filename=${fileName}`);
+        var counterDataAsGeoJson = {
+          "type": "FeatureCollection",
+          "features": counterData.counterHistory.filter((countedItem) => countedItem && countedItem.cameraLocation !== null)
+                                                .map((countedItem) => {
+            return {
+              "type": "Feature",
+              "properties": {
+                ...countedItem
+              },
+              "geometry": {
+                "type": "Point",
+                "coordinates": [
+                  countedItem.cameraLocation[1],
+                  countedItem.cameraLocation[0]
+                ]
+              }
+            }
+          })
+        }
+        res.json(counterDataAsGeoJson);
       });
     });
 
