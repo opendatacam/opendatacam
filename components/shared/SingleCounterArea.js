@@ -42,6 +42,29 @@ class SingleCounterArea extends Component {
     }
   }
 
+  getMostCountedClasses(counterData) {
+    // Sorted by most counted first
+    let counterDataForThisArea = counterData.remove("_total").sort((a, b) => {
+      if (a < b) { return 1; }
+      if (a > b) { return -1; }
+      if (a === b) { return 0; }
+    }).take(6);
+
+    return counterDataForThisArea.toJS();
+  }
+
+  getClassDisplayInfo(counterClass) {
+    let displayInfo = this.DISPLAY_CLASSES.find((displayClass) => displayClass.class === counterClass);
+    if(displayInfo) {
+      return displayInfo
+    } else {
+      return {
+        class: counterClass,
+        hexcode: "25A1"
+      }
+    }
+  }
+
   render () {
 
     // TODO POSITION BOTTOM IN CASE NO SPACE ON TOP
@@ -56,17 +79,17 @@ class SingleCounterArea extends Component {
                   left: this.props.area.location.center.x - POPOVER_WIDTH / 2
               }}
           >
-              <h4 className="area-popover-title border-b border-default-soft text-center py-2">
+              <h4 className="py-2 text-center border-b area-popover-title border-default-soft">
                 {this.props.area.name}
               </h4>
               <div className="area-popover-content">
-                {/* TODO LIMIT to 6 ?, put on it's own component to reuse in dashboard */}
-                {this.DISPLAY_CLASSES.slice(0, Math.min(this.DISPLAY_CLASSES.length, 6)).map((counterClass) =>
-                  <div className="area-popover-item mb-1" key={counterClass.class}>
-                    <div className="area-popover-count mr-2">{this.props.counterData.get(counterClass.class) || 0}</div>
+                {/* TODO put on it's own component to reuse in dashboard */}
+                {this.props.counterData && Object.keys(this.getMostCountedClasses(this.props.counterData)).map((counterClass) =>
+                  <div className="mb-1 area-popover-item" key={counterClass}>
+                    <div className="mr-2 area-popover-count">{this.getMostCountedClasses(this.props.counterData)[counterClass] || 0}</div>
                     <OpenMoji
-                      hexcode={counterClass.hexcode}
-                      class={counterClass.class}
+                      hexcode={this.getClassDisplayInfo(counterClass).hexcode}
+                      class={counterClass}
                     />
                   </div>
                 )}
