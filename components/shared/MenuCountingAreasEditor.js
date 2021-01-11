@@ -56,7 +56,7 @@ class MenuCountingAreasEditor extends Component {
 
     return (
       <div className="menu-active-areas flex fixed bottom-0 left-0 mb-2 ml-2">
-        {this.props.mode !== EDITOR_MODE.DELETE &&
+        {this.props.mode !== EDITOR_MODE.DELETE && this.props.mode !== EDITOR_MODE.ASKNAME &&
           <>
             <button
               className="btn btn-default p-0 rounded-l shadow"
