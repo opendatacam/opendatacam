@@ -505,6 +505,9 @@ var frameId = 0;
      *
      */
     express.get('/counter/areas', (req, res) => {
+      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-disposition',
+        `attachment; filename=counting-area-config.json`);
       res.json(Opendatacam.getCountingAreas());
     });
 
