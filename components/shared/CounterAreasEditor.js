@@ -358,7 +358,7 @@ class CounterAreasEditor extends Component {
 
 export default connect((state) => {
 
-  const countingAreasWithCenters = computeCountingAreasCenters(state.counter.get('countingAreas'), state.viewport.get('canvasResolution'))
+  const countingAreasWithCenters = computeCountingAreasCenters(state.counter.get('countingAreas').filter((countingArea) => countingArea.get('location') !== undefined), state.viewport.get('canvasResolution'))
 
   return {
     countingAreas: state.counter.get('countingAreas'), // Need to inject this as is it for componentDidUpdate comparison

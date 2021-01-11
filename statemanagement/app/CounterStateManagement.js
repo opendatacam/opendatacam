@@ -291,7 +291,7 @@ export function registerCountingAreasOnServer() {
   return (dispatch, getState) => {
     // Ping webservice to start storing data on server
     axios.post('/counter/areas',{
-      countingAreas: getState().counter.get('countingAreas').toJS()
+      countingAreas: getState().counter.get('countingAreas').filter((countingArea) => countingArea.get('location') !== undefined).toJS()
     });
   }
 }

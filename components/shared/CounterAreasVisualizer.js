@@ -46,7 +46,9 @@ class CounterAreasVisualizer extends Component {
 export default connect(state => {
     // Enrich countingAreas with more data
     // Maybe persist directly this data so we can reuse here and in the canvas engine
-    const countingAreasWithCenters = computeCountingAreasCenters(state.counter.get('countingAreas'), state.viewport.get('canvasResolution'))
+    const countingAreasWithCenters = computeCountingAreasCenters(state.counter.get('countingAreas').filter((countingArea) => {
+      countingArea.get('location') !== undefined
+    }), state.viewport.get('canvasResolution'))
 
     return {
       countingAreas: countingAreasWithCenters.toJS(),

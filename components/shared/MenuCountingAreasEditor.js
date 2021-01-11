@@ -7,7 +7,14 @@ import { deleteCountingArea, setMode, EDITOR_MODE, restoreCountingAreasFromJSON 
 class MenuCountingAreasEditor extends Component {
 
   handleDelete() {
-    if(this.props.countingAreas.size > 1) {
+    // Clean up "in progress"
+    this.props.countingAreas.filter((countingArea) => countingArea.get('location') === undefined).map((countingArea, countingAreaKey) => {
+      this.props.dispatch(deleteCountingArea(countingAreaKey));
+    });
+
+    if(this.props.countingAreas.filter((countingArea) => countingArea.get('location') !== undefined).size > 1) {
+      // If we have more than one counting area that isn't "in progress" (with just 1 point defined and location undefined)
+      // display the modal editor delete and remove the in progress lines
       this.props.dispatch(setMode(EDITOR_MODE.DELETE))
     } else {
       this.props.dispatch(deleteCountingArea(this.props.countingAreas.keySeq().first()))

@@ -157,7 +157,7 @@ class LiveViewEngine {
     canvasResolution
   ) {
     countingAreas.map((area, id) => {
-      if(area.get('location') !== null) {
+      if(area.get('location') !== undefined) {
         let data = area.get('location').toJS();
         let color = area.get('color');
         context.strokeStyle = getCounterColor(color);
