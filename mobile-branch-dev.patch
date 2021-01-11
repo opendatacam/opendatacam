@@ -1,5 +1,19 @@
+diff --git a/components/MainPage.js b/components/MainPage.js
+index a301ea1..cf9ff52 100644
+--- a/components/MainPage.js
++++ b/components/MainPage.js
+@@ -120,9 +120,7 @@ class MainPage extends React.PureComponent {
+             {this.props.uiSettings.get('heatmapEnabled') &&
+               <TrackerAccuracyView hidden={this.props.mode === MODE.PATHVIEW} />
+             }
+-            {/* Hide on mobile android as the camera view is provided as a layer by native code
+             <WebcamStream />
+-            */}
+           </>
+         }
+         <style jsx>{`
 diff --git a/config.json b/config.json
-index ccb8887..612682f 100644
+index 8fed764..33a8f88 100644
 --- a/config.json
 +++ b/config.json
 @@ -3,7 +3,7 @@
