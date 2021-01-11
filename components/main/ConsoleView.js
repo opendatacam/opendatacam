@@ -15,6 +15,7 @@ class ConsoleView extends Component {
             <a 
               className="btn btn-light rounded" 
               target="_blank"
+              download
               href="/console"
             >
               Download logs
