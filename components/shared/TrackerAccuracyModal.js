@@ -6,7 +6,7 @@ class TrackerAccuracyModal extends Component {
 
     return (
       <div className="overlay" onClick={() => this.props.close()}>
-        <div className="modal rounded p-10 shadow text-inverse bg-default border-inverse">
+        <div className="modal rounded p-10 shadow text-inverse bg-default border-inverse w-1/2 mr-64">
           <h3 className="text-center text-xl font-bold">
             Tracker accuracy
           </h3>

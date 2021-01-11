@@ -57,70 +57,72 @@ class Menu extends Component {
               aria-label="icon close"
             />
           </button>
-          <div className="p-5 w-full overflow-y-scroll">
-            <h3 className="mb-4 text-2xl font-bold"><a className="mt-2" href="https://github.com/opendatacam/opendatacam" target="_blank">OpenDataCam</a></h3>
-            <Toggle
-              label="Counter"
-              description="Count objects on active areas"
-              enabled={this.props.uiSettings.get('counterEnabled')}
-              onChange={(value) => this.props.dispatch(setUiSetting('counterEnabled', value))}
-            />
-            <Toggle
-              label="Pathfinder"
-              description="Display paths and positions"
-              enabled={this.props.uiSettings.get('pathfinderEnabled')}
-              onChange={(value) => this.props.dispatch(setUiSetting('pathfinderEnabled', value))}
-            />
-            <Toggle
-              label="Tracker accuracy"
-              description="Display tracker accuracy"
-              enabled={this.props.uiSettings.get('heatmapEnabled')}
-              onChange={(value) => this.props.dispatch(setUiSetting('heatmapEnabled', value))}
-            />
-            <div className="mt-16"></div>
-            <Toggle
-              label="Dark mode"
-              description="Turn dark UI elements on"
-              enabled={this.props.userSettings.get('darkMode')}
-              onChange={(darkMode) => {
-                this.props.dispatch(setUserSetting('darkMode', darkMode))
-              }}
-            />
-            <div className="mb-4 mt-4 flex items-center justify-between">
-              <div className="mr-3">
-                <h4 className="text-xl font-bold">Dimmer</h4>
-                <p className="text-xs">Opacity of camera image</p>
-              </div>
-              <div className="flex">
-                <button
-                  className='btn btn-light py-1 px-3 rounded-l border border-gray-100 border-solid flex items-center text-xl font-bold shadow'
-                  onClick={() =>
-                    this.props.dispatch(setUserSetting('dimmerOpacity',
-                      Math.max(this.props.userSettings.get('dimmerOpacity') - 0.1, 0)
-                    ))
-                  }
-                >
-                  -
+          <div className="w-full overflow-y-scroll">
+            <div className="p-5">
+              <h3 className="mb-4 text-2xl font-bold"><a className="mt-2" href="https://github.com/opendatacam/opendatacam" target="_blank">OpenDataCam</a></h3>
+              <Toggle
+                label="Counter"
+                description="Count objects on active areas"
+                enabled={this.props.uiSettings.get('counterEnabled')}
+                onChange={(value) => this.props.dispatch(setUiSetting('counterEnabled', value))}
+              />
+              <Toggle
+                label="Pathfinder"
+                description="Display paths and positions"
+                enabled={this.props.uiSettings.get('pathfinderEnabled')}
+                onChange={(value) => this.props.dispatch(setUiSetting('pathfinderEnabled', value))}
+              />
+              <Toggle
+                label="Tracker accuracy"
+                description="Display tracker accuracy"
+                enabled={this.props.uiSettings.get('heatmapEnabled')}
+                onChange={(value) => this.props.dispatch(setUiSetting('heatmapEnabled', value))}
+              />
+              <div className="mt-16"></div>
+              <Toggle
+                label="Dark mode"
+                description="Turn dark UI elements on"
+                enabled={this.props.userSettings.get('darkMode')}
+                onChange={(darkMode) => {
+                  this.props.dispatch(setUserSetting('darkMode', darkMode))
+                }}
+              />
+              <div className="mb-4 mt-4 flex items-center justify-between">
+                <div className="mr-3">
+                  <h4 className="text-xl font-bold">Dimmer</h4>
+                  <p className="text-xs">Opacity of camera image</p>
+                </div>
+                <div className="flex">
+                  <button
+                    className='btn btn-light py-1 px-3 rounded-l border border-gray-100 border-solid flex items-center text-xl font-bold shadow'
+                    onClick={() =>
+                      this.props.dispatch(setUserSetting('dimmerOpacity',
+                        Math.max(this.props.userSettings.get('dimmerOpacity') - 0.1, 0)
+                      ))
+                    }
+                  >
+                    -
                 </button>
-                <button
-                  className='btn btn-light py-1 px-3 rounded-r border border-gray-100 border-solid flex items-center text-xl font-bold shadow'
-                  onClick={() =>
-                    this.props.dispatch(setUserSetting('dimmerOpacity',
-                      Math.min(this.props.userSettings.get('dimmerOpacity') + 0.1, 1)
-                    ))
-                  }
-                >
-                  +
+                  <button
+                    className='btn btn-light py-1 px-3 rounded-r border border-gray-100 border-solid flex items-center text-xl font-bold shadow'
+                    onClick={() =>
+                      this.props.dispatch(setUserSetting('dimmerOpacity',
+                        Math.min(this.props.userSettings.get('dimmerOpacity') + 0.1, 1)
+                      ))
+                    }
+                  >
+                    +
                 </button>
+                </div>
               </div>
             </div>
-          </div>
-          <div className="menu-footer bg-black text-white p-5 w-full">
-              <div className="flex flex-col">
-                  <p>Version {this.props.version}</p>
-                  <a className="mt-2" target="_blank" href="/api/doc">API documentation</a>
-                  <a className="mt-2" href="https://github.com/opendatacam/opendatacam" target="_blank">About</a>
+            <div className="menu-footer bg-black text-white w-full">
+              <div className="flex flex-col p-5">
+                <p>Version {this.props.version}</p>
+                <a className="mt-2" target="_blank" href="/api/doc">API documentation</a>
+                <a className="mt-2" href="https://github.com/opendatacam/opendatacam" target="_blank">About</a>
               </div>
+            </div>
           </div>
         </div>
         <style jsx>{`
@@ -157,6 +159,6 @@ export default connect((state) => {
     mode: state.app.get('mode'),
     userSettings: state.usersettings,
     uiSettings: state.app.get('uiSettings'),
-    version: state.app.getIn(['config','OPENDATACAM_VERSION'])
+    version: state.app.getIn(['config', 'OPENDATACAM_ANDROID_VERSION'])
   }
 })(Menu);
