@@ -118,7 +118,6 @@ class Menu extends Component {
             </div>
             <div className="menu-footer bg-black text-white w-full">
               <div className="flex flex-col p-5">
-                <p>Version {this.props.version}</p>
                 <a className="mt-2" target="_blank" href="/api/doc">API documentation</a>
                 <a className="mt-2" href="https://github.com/opendatacam/opendatacam" target="_blank">About</a>
               </div>
@@ -159,6 +158,6 @@ export default connect((state) => {
     mode: state.app.get('mode'),
     userSettings: state.usersettings,
     uiSettings: state.app.get('uiSettings'),
-    version: state.app.getIn(['config', 'OPENDATACAM_ANDROID_VERSION'])
+    version: state.app.getIn(['config', 'OPENDATACAM_VERSION'])
   }
 })(Menu);
