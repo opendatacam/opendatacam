@@ -120,7 +120,9 @@ class MainPage extends React.PureComponent {
             {this.props.uiSettings.get('heatmapEnabled') &&
               <TrackerAccuracyView hidden={this.props.mode === MODE.PATHVIEW} />
             }
+            {/* Hide on mobile android as the camera view is provided as a layer by native code
             <WebcamStream />
+            */}
           </>
         }
         <style jsx>{`
