@@ -70,29 +70,33 @@ class Recording extends PureComponent {
 
     return (
       <div className="flex flex-col flex-initial pl-2 mb-10 recording">
-        <div className="flex items-center flex-initial pl-6 text-inverse">
-          <div>{dayjs(this.props.dateStart).format('MMM DD, YYYY')}</div>
-          <div className="ml-10">
-            {dayjs(this.props.dateStart).format('hh:mm a')} - {this.renderDateEnd(this.props.dateEnd, this.props.active)}
-          </div>
-          {this.props.filename &&
+        <div className="m-2 flex">
+          <div className="flex items-center flex-initial pl-6 text-inverse text-lg">
+            <div>{dayjs(this.props.dateStart).format('MMM DD, YYYY')}</div>
             <div className="ml-10">
-              {this.props.filename}
+              {dayjs(this.props.dateStart).format('hh:mm a')} - {this.renderDateEnd(this.props.dateEnd, this.props.active)}
             </div>
-          }
+            {this.props.filename &&
+              <div className="ml-10">
+                {this.props.filename}
+              </div>
+            }
+          </div>
+          <div>
           {!this.props.active &&
             <button
-              className="p-0 ml-2 rounded shadow btn btn-default"
+              className="p-0 ml-4 rounded shadow btn btn-default"
               onClick={() => this.setState({ showDeleteConfirmationModal: true})}
             >
               <SVG 
-                className="flex items-center w-6 h-6 svg-icon" 
+                className="flex items-center w-10 h-10 svg-icon" 
                 cacheRequests={true}
                 src={`/static/icons/ui/delete.svg`} 
                 aria-label="icon close"
               />
             </button>
           }
+          </div>
         </div>
         {this.state.showDeleteConfirmationModal &&
           <RecordingDeleteConfirmationModal 
@@ -106,13 +110,15 @@ class Recording extends PureComponent {
               <div className="flex items-end justify-between">
                 <h3 className="mr-3 text-xl font-bold">Counter</h3>
                 <div>
-                  <div className="inline-block mr-2 font-medium">Download:</div>
-                  <a className="mr-2 btn-text" href={`/recording/${this.props.id}/counter`} target="_blank" download>JSON</a>
-                  <a className="mr-2 btn-text" href={`/recording/${this.props.id}/counter/csv`} target="_blank" download>CSV</a>
-                  <a className="btn-text" href={`/recording/${this.props.id}/counter/geojson`} target="_blank" download>GEOJSON</a>
+                  <div className="inline-block font-medium">Download</div>
                 </div>
               </div>
-              <div className="flex flex-wrap mt-4">
+              <div className="flex justify-end items-end">
+                <a className="mr-2 btn-text text-lg" href={`/recording/${this.props.id}/counter`} target="_blank" download>JSON</a>
+                <a className="mr-2 btn-text text-lg" href={`/recording/${this.props.id}/counter/csv`} target="_blank" download>CSV</a>
+                <a className="btn-text text-lg" href={`/recording/${this.props.id}/counter/geojson`} target="_blank" download>GEOJSON</a>
+              </div>
+              <div className="flex flex-wrap mt-4 h-full">
                 {this.props.countingAreas && this.props.countingAreas.entrySeq().map(([countingAreaId, countingAreaData], index) =>
                   <div 
                     key={countingAreaId} 
@@ -153,11 +159,11 @@ class Recording extends PureComponent {
           <div className="flex flex-col flex-initial p-4 m-2 text-black bg-white rounded shadow">
             <div className="flex items-end justify-between">
               <h3 className="mr-3 text-xl font-bold">Tracker</h3>
-              <div>
-                <div className="inline-block mr-2 font-medium">Download:</div>
-                <a className="mr-2 btn-text" href={`/recording/${this.props.id}/tracker`} target="_blank" download>JSON</a>
-                <a className="btn-text" href={`/recording/${this.props.id}/tracker/geojson`} target="_blank" download>GEOJSON</a>
-              </div>
+              <div className="inline-block font-medium">Download</div>
+            </div>
+            <div className="flex items-end justify-end">
+                <a className="mr-2 btn-text text-lg" href={`/recording/${this.props.id}/tracker`} target="_blank" download>JSON</a>
+                <a className="btn-text text-lg" href={`/recording/${this.props.id}/tracker/geojson`} target="_blank" download>GEOJSON</a>
             </div>
             <div className="relative mt-6 rounded">
               <div className="absolute text-white" style={{ bottom: 10, left : 10}}>
