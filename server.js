@@ -944,7 +944,8 @@ var frameId = 0;
       DBManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
         res.setHeader('Content-Type', 'application/json');
         const startDate = counterData.dateStart.toISOString().split('T')[0];
-        const fileName = `counterData-${startDate}-${req.params.id}.json`;
+        const startTime = counterData.dateStart.toISOString().split('T')[1];
+        const fileName = `counterData-${startDate}-${startTime}-${req.params.id}.json`;
         res.setHeader('Content-disposition', `attachment; filename=${fileName}`);
         res.json(counterData);
       });
@@ -954,7 +955,8 @@ var frameId = 0;
       DBManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
         res.setHeader('Content-Type', 'application/json');
         const startDate = counterData.dateStart.toISOString().split('T')[0];
-        const fileName = `counterData-${startDate}-${req.params.id}.geojson`;
+        const startTime = counterData.dateStart.toISOString().split('T')[1];
+        const fileName = `counterData-${startDate}-${startTime}-${req.params.id}.geojson`;
         res.setHeader('Content-disposition', `attachment; filename=${fileName}`);
         var counterDataAsGeoJson = {
           "type": "FeatureCollection",
@@ -1046,7 +1048,8 @@ var frameId = 0;
         }
         console.log(`Exporting ${req.params.id} counter history to CSV`);
         const startDate = counterData.dateStart.toISOString().split('T')[0];
-        const fileName = `counterData-${startDate}-${req.params.id}.csv`;
+        const startTime = counterData.dateStart.toISOString().split('T')[1];
+        const fileName = `counterData-${startDate}-${startTime}-${req.params.id}.csv`;
         res.csv(data, true, { 'Content-disposition': `attachment; filename=${fileName}` });
       });
     });
