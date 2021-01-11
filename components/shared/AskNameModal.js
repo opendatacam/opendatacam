@@ -44,7 +44,7 @@ class AskNameModal extends Component {
         }}>
           <input 
             type="text"
-            className="appearance-none rounded-l py-2 px-3" 
+            className="appearance-none rounded-l py-2 px-3 text-xl" 
             value={this.state.name}
             onChange={this.handleChange} 
             placeholder='Counter name'
@@ -52,7 +52,7 @@ class AskNameModal extends Component {
           />
           <input 
             type="submit"
-            className="btn btn-default cursor-pointer"
+            className="btn btn-default cursor-pointer px-6"
             value="OK"
           />
           <button
@@ -60,7 +60,7 @@ class AskNameModal extends Component {
             onClick={() => this.props.cancel()}
           >
             <SVG 
-              className="w-10 h-10 svg-icon flex items-center" 
+              className="w-14 h-14 svg-icon flex items-center" 
               cacheRequests={true}
               src={`/static/icons/ui/close.svg`} 
               aria-label="icon close"
