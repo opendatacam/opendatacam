@@ -10,7 +10,7 @@ class InstructionsModal extends Component {
           <h3 className="text-center text-xl font-bold">
             Draw to define the counting zones
           </h3>
-          <div className="text-center mt-2">(crossing vehicles increase counter by 1)</div>
+          <div className="text-center mt-2">(crossing objects increase counter by 1)</div>
           <button 
             className="btn btn-primary btn-rounded min-w-100 mt-5 pl-10 pr-10"
             onClick={() => this.props.close()}>
