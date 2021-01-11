@@ -963,7 +963,11 @@ var frameId = 0;
             return {
               "type": "Feature",
               "properties": {
-                ...countedItem
+                "frameId": countedItem.frameId,
+                "timestamp": countedItem.timestamp,
+                "area": countedItem.area,
+                "name": countedItem.name,
+                "id": countedItem.id
               },
               "geometry": {
                 "type": "Point",
