@@ -67,7 +67,7 @@ class InitializingView extends Component {
             <a
               className="ml-2 btn btn-light rounded"
               target="_blank"
-              href="/console"
+              href="/console/logs"
             >
               Download logs
             </a>

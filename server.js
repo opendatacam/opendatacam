@@ -315,6 +315,13 @@ var frameId = 0;
       }, 2000);
     });
 
+    express.get('/console/logs', (req, res) => {
+      res.setHeader('Content-Type', 'application/txt');
+      res.setHeader('Content-disposition',
+        `attachment; filename=logs.txt`);
+      res.send(stdoutBuffer)
+    })
+
     /**
      * @api {post} /counter/areas Register areas
      * @apiName Register areas
