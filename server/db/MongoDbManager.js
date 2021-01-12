@@ -7,16 +7,21 @@ class MongoDbManager extends DbManagerBase {
    *
    * If connectionStringOrDbObject is a
    *
-   * - Db object: the object pointing to a database will be used and no new connection will be
-   *   created
+   * - MongoClient: the MongoClient to use
    * - String: The string will be used to create a new connection to the database and then the
    *   "opendatacam" database will be used
    *
-   * After creation {@link MongoDbManager.connect} must be called
+   * After creation {@link MongoDbManager.connect} must be called.
    *
-   * @param {*} connectionStringOrDbObject The connection to use or credentials to create one
+   * In case of connection loss, the MongoDbManager will try to automatically reconnect. However any
+   * operations that should have been carried out while MongoDbManager was offline will be rejected.
+   * It is up to the caller to retry failed operations. In practice this meas that tracker data
+   * will be lost, while counter data should recover as Opendatacam always updates the whole counter
+   * state.
+   *
+   * @param {*} connectionStringOrMongoClient The MongoClient to use or credentials to create one
    */
-  constructor(connectionStringOrDbObject) {
+  constructor(connectionStringOrMongoClient) {
     super();
 
     /**
@@ -44,7 +49,7 @@ class MongoDbManager extends DbManagerBase {
      */
     this.DATABASE_NAME = 'opendatacam';
 
-    this.connectionStringOrDbObject = connectionStringOrDbObject;
+    this.connectionStringOrMongoClient = connectionStringOrMongoClient;
     /**
      * The connection string used or null if a Db object was used for the connection or the
      * connection has not been established yet.
@@ -53,14 +58,11 @@ class MongoDbManager extends DbManagerBase {
     this.db = null;
   }
 
-  /**
-   * Connect to the opendatacam database the MongoDB Server
-   *
-   * @returns A promise that if resolved returns the opendatacam database object
-   *
-   * @throws Error if something else then a String or Db is passed
-   */
   async connect() {
+    if (this.isConnected()) {
+      return Promise.resolve();
+    }
+
     const createCollectionsAndIndex = (db) => {
       const recordingCollection = db.collection(this.RECORDING_COLLECTION);
       recordingCollection.createIndex({ dateStart: -1 });
@@ -70,18 +72,19 @@ class MongoDbManager extends DbManagerBase {
       trackerCollection.createIndex({ recordingId: 1 });
     };
 
-    const isConnectionString = typeof this.connectionStringOrDbObject === 'string'
-      || this.connectionStringOrDbObject instanceof String;
-    const isDbObject = typeof this.connectionStringOrDbObject === 'object';
+    const isConnectionString = typeof this.connectionStringOrMongoClient === 'string'
+      || this.connectionStringOrMongoClient instanceof String;
+    const isClientObject = typeof this.connectionStringOrMongoClient === 'object';
 
     if (isConnectionString) {
       return new Promise((resolve, reject) => {
-        this.connectionString = this.connectionStringOrDbObject;
+        this.connectionString = this.connectionStringOrMongoClient;
         const mongoConnectParams = { useNewUrlParser: true, useUnifiedTopology: true };
         MongoClient.connect(this.connectionString, mongoConnectParams, (err, client) => {
           if (err) {
             reject(err);
           } else {
+            this.client = client;
             const db = client.db(this.DATABASE_NAME);
             this.db = db;
 
@@ -91,28 +94,58 @@ class MongoDbManager extends DbManagerBase {
           }
         });
       });
-    } if (isDbObject) {
-      this.db = this.connectionStringOrDbObject;
+    } if (isClientObject) {
+      this.client = this.connectionStringOrMongoClient;
+      if (!this.isConnected()) {
+        return new Promise((resolve, reject) => {
+          this.client.connect((err, client) => {
+            if (err) {
+              reject(err);
+            } else {
+              this.client = client;
+              const db = client.db(this.DATABASE_NAME);
+              this.db = db;
+
+              createCollectionsAndIndex(db);
+
+              resolve(db);
+            }
+          });
+        });
+      }
+      this.db = this.client.db(this.DATABASE_NAME);
       createCollectionsAndIndex(this.db);
       return Promise.resolve(this.db);
     }
     return new Error();
   }
 
+  async disconnect() {
+    this.db = null;
+    return this.client.close();
+  }
+
+  isConnected() {
+    if (this.client) {
+      return this.client.isConnected();
+    }
+    return false;
+  }
+
   /**
    * @private
    */
   getDB() {
-    return new Promise((resolve) => {
-      if (this.db) {
+    return new Promise((resolve, reject) => {
+      if (this.isConnected()) {
         resolve(this.db);
       } else {
-        resolve(this.init());
+        reject(new Error('Not connected'));
       }
     });
   }
 
-  persistAppSettings(settings) {
+  async persistAppSettings(settings) {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db.collection(this.APP_COLLECTION).updateOne({
@@ -124,16 +157,21 @@ class MongoDbManager extends DbManagerBase {
           },
         }, { upsert: true }, (err, r) => {
           if (err) {
+            this.disconnect().then(() => {
+              this.connect();
+            });
             reject(err);
           } else {
             resolve(r);
           }
         });
+      }, (reason) => {
+        reject(reason);
       });
     });
   }
 
-  getAppSettings() {
+  async getAppSettings() {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db
@@ -142,40 +180,55 @@ class MongoDbManager extends DbManagerBase {
             { id: 'settings' },
             (err, doc) => {
               if (err) {
+                this.disconnect().then(() => {
+                  this.connect();
+                });
                 reject(err);
               } else {
                 resolve(doc);
               }
             },
           );
+      }, (reason) => {
+        reject(reason);
       });
     });
   }
 
-  insertRecording(recording) {
+  async insertRecording(recording) {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db.collection(this.RECORDING_COLLECTION).insertOne(recording, (err, r) => {
           if (err) {
+            this.disconnect().then(() => {
+              this.connect();
+            });
             reject(err);
           } else {
             resolve(r);
           }
         });
+      }, (reason) => {
+        reject(reason);
       });
     });
   }
 
-  deleteRecording(recordingId) {
+  async deleteRecording(recordingId) {
     const deleteRecordingPromise = new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db.collection(this.RECORDING_COLLECTION).deleteOne({ id: recordingId }, (err, r) => {
           if (err) {
+            this.disconnect().then(() => {
+              this.connect();
+            });
             reject(err);
           } else {
             resolve(r);
           }
         });
+      }, (reason) => {
+        reject(reason);
       });
     });
 
@@ -184,11 +237,14 @@ class MongoDbManager extends DbManagerBase {
         const filter = { recordingId };
         db.collection(this.TRACKER_COLLECTION).deleteMany(filter, (err, r) => {
           if (err) {
+            this.disconnect();
             reject(err);
           } else {
             resolve(r);
           }
         });
+      }, (reason) => {
+        reject(reason);
       });
     });
 
@@ -200,7 +256,7 @@ class MongoDbManager extends DbManagerBase {
   // Or maybe try to batch update not on every frame
   // I think a simple fix would be to store trackerData in it's own collection
   // db.collection(recordingId.toString()).insertOne(trackerEntry);
-  updateRecordingWithNewframe(
+  async updateRecordingWithNewframe(
     recordingId,
     frameDate,
     counterSummary,
@@ -238,6 +294,9 @@ class MongoDbManager extends DbManagerBase {
           updateRequest,
           (err, r) => {
             if (err) {
+              this.disconnect().then(() => {
+                this.connect();
+              });
               reject(err);
             } else {
               resolve(r);
@@ -248,11 +307,13 @@ class MongoDbManager extends DbManagerBase {
         if (trackerEntry.objects != null && trackerEntry.objects.length > 0) {
           db.collection(this.TRACKER_COLLECTION).insertOne(trackerEntry);
         }
+      }, (reason) => {
+        reject(reason);
       });
     });
   }
 
-  getRecordings(limit = 30, offset = 0) {
+  async getRecordings(limit = 30, offset = 0) {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db
@@ -264,16 +325,21 @@ class MongoDbManager extends DbManagerBase {
           .skip(offset)
           .toArray((err, docs) => {
             if (err) {
+              this.disconnect().then(() => {
+                this.connect();
+              });
               reject(err);
             } else {
               resolve(docs);
             }
           });
+      }, (reason) => {
+        reject(reason);
       });
     });
   }
 
-  getRecording(recordingId) {
+  async getRecording(recordingId) {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db
@@ -283,33 +349,43 @@ class MongoDbManager extends DbManagerBase {
             { projection: { counterHistory: 0, areas: 0 } },
             (err, doc) => {
               if (err) {
+                this.disconnect().then(() => {
+                  this.connect();
+                });
                 reject(err);
               } else {
                 resolve(doc);
               }
             },
           );
+      }, (reason) => {
+        reject(reason);
       });
     });
   }
 
-  getRecordingsCount() {
+  async getRecordingsCount() {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db
           .collection(this.RECORDING_COLLECTION)
           .countDocuments({}, (err, res) => {
             if (err) {
+              this.disconnect().then(() => {
+                this.connect();
+              });
               reject(err);
             } else {
               resolve(res);
             }
           });
+      }, (reason) => {
+        reject(reason);
       });
     });
   }
 
-  getTrackerHistoryOfRecording(recordingId) {
+  async getTrackerHistoryOfRecording(recordingId) {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db
@@ -319,16 +395,21 @@ class MongoDbManager extends DbManagerBase {
           )
           .toArray((err, docs) => {
             if (err) {
+              this.disconnect().then(() => {
+                this.connect();
+              });
               reject(err);
             } else {
               resolve(docs);
             }
           });
+      }, (reason) => {
+        reject(reason);
       });
     });
   }
 
-  getCounterHistoryOfRecording(recordingId) {
+  async getCounterHistoryOfRecording(recordingId) {
     return new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         db
@@ -338,6 +419,9 @@ class MongoDbManager extends DbManagerBase {
           )
           .toArray((err, docs) => {
             if (err) {
+              this.disconnect().then(() => {
+                this.connect();
+              });
               reject(err);
             } else if (docs.length === 0) {
               resolve({});
@@ -345,6 +429,8 @@ class MongoDbManager extends DbManagerBase {
               resolve(docs[0]);
             }
           });
+      }, (reason) => {
+        reject(reason);
       });
     });
   }

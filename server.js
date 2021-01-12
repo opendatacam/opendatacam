@@ -24,6 +24,7 @@ const configHelper = require('./server/utils/configHelper');
 const GpsTracker = require('./server/tracker/GpsTracker');
 const packageJson = require('./package.json');
 const { YoloDarknet } = require('./server/processes/YoloDarknet');
+const { MongoDbManager } = require('./server/db/MongoDbManager');
 
 if (packageJson.version !== config.OPENDATACAM_VERSION) {
   console.log('-----------------------------------');
@@ -96,7 +97,6 @@ Opendatacam.setTracker(tracker);
 // Init connection to db
 let dbManager = null;
 if (config.DATABASE === 'mongo') {
-  const { MongoDbManager } = require('./server/db/MongoDbManager');
   const mongoUrl = config.DATABASE_PARAMS.mongo.url;
   dbManager = new MongoDbManager(mongoUrl);
 }
