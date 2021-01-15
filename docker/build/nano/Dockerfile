@@ -1,18 +1,10 @@
-FROM resinplayground/jetson-nano-cuda-cudnn-opencv:v0.2-slim
+FROM opendatacam/opendatacam-darknet-base:nano
 
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get install -y jq wget
 
-# Start Darknet Install
-RUN git clone --depth 1 -b odc https://github.com/opendatacam/darknet /var/local/darknet
-
 WORKDIR /var/local/darknet
-
-# COPY Makefile
-COPY docker/build/nano/Makefile Makefile
-
-RUN make
 
 # COPY weights, get them localy in the Dockerfile folder previously as they are slow to download each time
 # Links: https://github.com/AlexeyAB/darknet#pre-trained-models
