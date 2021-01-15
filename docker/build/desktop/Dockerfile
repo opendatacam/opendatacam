@@ -1,19 +1,10 @@
-FROM opendatacam/base-desktop-nvidia-cuda-opencv-gstreamer:1.0
+FROM opendatacam/opendatacam-darknet-base:desktop
 
 ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get install -y jq wget
 
-# Start Darknet Install
-RUN git clone --depth 1 -b odc https://github.com/opendatacam/darknet /var/local/darknet
-
 WORKDIR /var/local/darknet
-
-RUN sed -i -e s/GPU=0/GPU=1/ Makefile;
-RUN sed -i -e s/CUDNN=0/CUDNN=1/ Makefile;
-RUN sed -i -e s/OPENCV=0/OPENCV=1/ Makefile;
-
-RUN make
 
 # COPY weights, get them localy in the Dockerfile folder previously as they are slow to download each time
 # Links: https://github.com/AlexeyAB/darknet#pre-trained-models
