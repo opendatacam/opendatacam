@@ -18,17 +18,17 @@ RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
     apt-get install -y nodejs
 
 # Copy source into Docker image
-COPY ./ /var/local/opendatacam
-
+COPY ./package*.json /var/local/opendatacam/
 WORKDIR /var/local/opendatacam
-
 RUN npm install
+
+COPY ./ /var/local/opendatacam
 RUN npm run build
 
 # Set default settings for Desktop run
-RUN sed -i -e 's+TO_REPLACE_PATH_TO_DARKNET+/var/local/darknet+g' config.json;
-RUN sed -i -e 's+TO_REPLACE_VIDEO_INPUT+file+g' config.json;
-RUN sed -i -e 's+TO_REPLACE_NEURAL_NETWORK+yolov4+g' config.json;
+RUN sed -i -e 's+TO_REPLACE_PATH_TO_DARKNET+/var/local/darknet+g' config.json && \
+  sed -i -e 's+TO_REPLACE_VIDEO_INPUT+file+g' config.json && \
+  sed -i -e 's+TO_REPLACE_NEURAL_NETWORK+cleenrcam+g' config.json
 
 EXPOSE 8080 8070 8090
 
