@@ -28,7 +28,7 @@ RUN npm run build
 # Set default settings for Desktop run
 RUN sed -i -e 's+TO_REPLACE_PATH_TO_DARKNET+/var/local/darknet+g' config.json && \
   sed -i -e 's+TO_REPLACE_VIDEO_INPUT+file+g' config.json && \
-  sed -i -e 's+TO_REPLACE_NEURAL_NETWORK+cleenrcam+g' config.json
+  sed -i -e 's+TO_REPLACE_NEURAL_NETWORK+yolov4+g' config.json
 
 EXPOSE 8080 8070 8090
 
