@@ -14,6 +14,7 @@
     - [6. Test Opendatacam](#6-test-opendatacam)
     - [7. Access Opendatacam via Wifi hotspot](#7-access-opendatacam-via-wifi-hotspot)
     - [8. Tips](#8-tips)
+      - [8.1. Deep Sleep Mode](#81-deep-sleep-mode)
     - [9. Build a case](#9-build-a-case)
 
 ### Limitations
@@ -192,6 +193,48 @@ You should be able to operate Opendatacam without lag issues.
 - You'll notice there are no button to power on / off button your Jetson Nano. When you plug the power supply it will power on immediately. If you want to restart you can just un-plug / re-plug if you are not connected via a Monitor or SSH. There is a way to add power buttons via the J40 pins, [see nvidia forum](https://devtalk.nvidia.com/default/topic/1050888/jetson-nano/power-and-suspend-buttons-for-jetson-nano/post/5333577/#5333577).
 
 - You can connect your Jetson to ethernet and SSH into it to do all the setup without having to connect a monitor (after having setup a fixed IP)
+
+#### 8.1. Deep Sleep Mode
+
+If you need to conserve power, you can put Jetson Nano into a deep sleep mode using `rtcwake`.
+Example:
+
+```sh
+# Ensure HW clock is in sync with System Clock
+sudo hwclock --systohc
+
+# Put Jetson Nano to sleep for 60 seconds
+sudo rtcwake --device /dev/rtc1 --mode mem --seconds 60
+```
+
+*Note* Sometimes the RTC shows up as `/dev/rtc0`.
+
+This will put the CPU and GPU into a deep sleep.
+Any connected USB peripherals will remain fully powered.
+To turn off USB consumers you can use [uhubctl](https://github.com/mvp/uhubctl)
+
+```sh
+# Install uhubctl
+git clone https://github.com/mvp/uhubctl.git
+cd uhubctl
+make
+
+# Turn off USB power
+sudo uhubctl -l 1-2 -a off
+
+# Turn on USB power
+sudo uhubctl -l 1-2 -a on
+```
+
+Both commands can be combined for to reduce energy consumption to a minimum:
+
+```sh
+# Turn off USB, deep sleep for 60 seconds and then re-enable USB again
+sudo ./uhubctl -l 1-2 -a off &&
+  sudo hwclock --systohc &&
+  sudo rtcwake --device /dev/rtc1 --mode mem --seconds 60 &&
+  sudo ./uhubctl -l 1-2 -a on
+```
 
 #### 9. Build a case
 
