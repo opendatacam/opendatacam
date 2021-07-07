@@ -19,10 +19,7 @@ We'll be doing much of our next install steps using command line instructions. *
 
 ##### Make sure CUDA is in your PATH!
 
-Try the following command:
-```bash
-nvcc --version
-```
+Try the following command `nvcc --version`
 If your output looks like:
 ```bash
 bash: nvcc: command not found
@@ -30,27 +27,19 @@ bash: nvcc: command not found
 then you'll need to do the next steps.
 
 Edit the '.bashrc' file in your home folder with the command `sudo gedit .bashrc`
-Copy and paste the lines below to the bottom of `.bashrc`:
-
+Copy and paste the lines below to the bottom of `.bashrc`, then save and close the editor:
 ```bash
 # Add CUDA to PATH
 export PATH=${PATH}:/usr/local/cuda/bin
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda/lib64
 ```
 
-Either:
-  1. Reload PATH and LD_LIBRARY_PATH
-```bash
-source .bashrc
-```
-Or
-  2. Close the Terminal and open it again
+Do either:
+  * Reload PATH and LD_LIBRARY_PATH with `source .bashrc`
+  * Close the Terminal and open it again
 
-Try again:
-```bash
-nvcc --version
-```
-Output in the terminal should look like:
+Try again: `nvcc --version`
+Output in the terminal should now look like:
 ```bash
 nvcc: NVIDIA (R) Cuda complier driver
 Copyright (c) 2005-2019 NVIDIA Corporation
