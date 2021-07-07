@@ -14,11 +14,10 @@ Continue following at step 2 to write the image to your microSD card.
 Once you've got to the page **Next Steps** or you've managed to get a successful first boot then you are ready to proceed.
 
 ##### Ubuntu Terminal
+Once you've got your jetson-nano running, congratulations! We'll be doing much of our next install steps using command line instructions. *Absolute beginners unfamiliar with using a terminal shell can get a quick start guide [here](https://ubuntu.com/tutorials/command-line-for-beginners#3-opening-a-terminal) for opening and using a terminal.*
 ![shell](https://ubuntucommunity.s3.dualstack.us-east-2.amazonaws.com/optimized/2X/8/85e591c2bdc94b4159329bf19cc1d6740f233b84_2_690x175.png)
 
-Once you've got your jetson-nano running, congratulations! We'll be doing much of our next install steps using command line instructions. *Absolute beginners unfamiliar with using a terminal shell can get a quick start guide [here](https://ubuntu.com/tutorials/command-line-for-beginners#3-opening-a-terminal) for opening and using a terminal.*
-
-1. Make sure CUDA is in your PATH!
+#### Make sure CUDA is in your PATH!
 
 Try the following command:
 ```bash
@@ -48,14 +47,16 @@ Either:
 source .bashrc
 ```
 Or
-  1. Close the Terminal and open it again
+  2. Close the Terminal and open it again
 
 Try again:
 ```bash
 nvcc --version
 ```
 
-#### How to find out my Jetpack version
+Once this is done, you can return to the main [Jetson Nano QuickStart](JETSON_NANO.md)
+
+#### How to find out my Jetpack version (Optional)
 
 You can check your Jetpack version with this tool: [https://github.com/rbonghi/jetson_stats](https://github.com/rbonghi/jetson_stats)
 
