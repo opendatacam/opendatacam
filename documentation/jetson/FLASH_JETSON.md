@@ -19,7 +19,7 @@ We'll be doing much of our next install steps using command line instructions. *
 
 ##### Make sure CUDA is in your PATH!
 
-Try the following command `nvcc --version`
+Try the following command `nvcc --version`.
 If your output looks like:
 ```bash
 bash: nvcc: command not found
@@ -38,7 +38,7 @@ Do either:
   * Reload PATH and LD_LIBRARY_PATH with `source .bashrc`
   * Close the Terminal and open it again
 
-Try again: `nvcc --version`
+Try again: `nvcc --version`.
 Output in the terminal should now look like:
 ```bash
 nvcc: NVIDIA (R) Cuda complier driver
@@ -46,7 +46,7 @@ Copyright (c) 2005-2019 NVIDIA Corporation
 ...
 ```
 
-Once this is done, you can return to the main [Jetson Nano QuickStart](JETSON_NANO.md)
+Once this is done, you can return to the main [Jetson Nano QuickStart](JETSON_NANO.md#1. Flash Jetson Nano:)
 
 #### How to find out my Jetpack version (Optional)
 
