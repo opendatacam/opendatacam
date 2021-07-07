@@ -24,6 +24,12 @@ Try the following command:
 ```bash
 nvcc --version
 ```
+Output in the terminal should look like:
+'''bash
+nvcc: NVIDIA (R) Cuda complier driver
+Copyright (c) 2005-2019 NVIDIA Corporation
+...
+'''
 
 If you don't see any output, do the following steps:
 
@@ -36,20 +42,19 @@ export PATH=${PATH}:/usr/local/cuda/bin
 export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda/lib64
 ```
 
-Reload PATH and LD_LIBRARY_PATH (or close the Terminal and open it again)
+Either:
+  1. Reload PATH and LD_LIBRARY_PATH
 ```bash
 source .bashrc
 ```
- Try again:
+Or
+  1. Close the Terminal and open it again
+
+Try again:
 ```bash
 nvcc --version
 ```
-Output:
-'''bash
-nvcc: NVIDIA (R) Cuda complier driver
-Copyright (c) 2005-2019 NVIDIA Corporation
-...
-'''
+
 #### How to find out my Jetpack version
 
 You can check your Jetpack version with this tool: [https://github.com/rbonghi/jetson_stats](https://github.com/rbonghi/jetson_stats)
