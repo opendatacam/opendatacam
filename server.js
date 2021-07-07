@@ -837,11 +837,20 @@ app.prepare()
      */
     express.get('/recording/:id/counter', (req, res) => {
       dbManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
+        if(Object.keys(counterData).length === 0) {
+          res.sendStatus(404);
+          return;
+        }
+
         res.setHeader('Content-Type', 'application/json');
         const startDate = counterData.dateStart.toISOString().split('T')[0];
         const fileName = `counterData-${startDate}-${req.params.id}.json`;
         res.setHeader('Content-disposition', `attachment; filename=${fileName}`);
         res.json(counterData);
+      }).catch((reason) => {
+        console.log('Getting counter records failed');
+        console.log(reason);
+        res.sendStatus(500);
       });
     });
 
