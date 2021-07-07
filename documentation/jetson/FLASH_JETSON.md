@@ -1,7 +1,55 @@
 ### ⚡️Flash Jetson Board:
 
-*We support only jetpack version [4.3](https://developer.nvidia.com/embedded/jetpack) (more recent versions might also work)*
+*We support only jetpack version [4.3](https://developer.nvidia.com/jetpack-43-archive) (more recent versions might also work)*
 
+#### Jetson Nano
+
+1. Directly flash the microSD card with jetpack, follow this guide:
+
+[https://nvidia.com/JetsonNano-Start](https://nvidia.com/JetsonNano-Start)
+⚠️ *On the third page titled "Write Image to the microSD Card", make one slight change:*
+On step 1, rather than download the jetson nano developer kit image from the link provided, download from the jetpack archives for version [4.3](https://developer.nvidia.com/jetpack-43-archive). Click the download link for the appropriate platform you are using.
+Continue following at step 2 to write the image to your microSD card.
+
+Once you've got to the page **Next Steps** or you've managed to get a successful first boot then you are ready to proceed.
+
+##### Ubuntu Terminal
+![shell](https://ubuntucommunity.s3.dualstack.us-east-2.amazonaws.com/optimized/2X/8/85e591c2bdc94b4159329bf19cc1d6740f233b84_2_690x175.png)
+
+Once you've got your jetson-nano running, congratulations! We'll be doing much of our next install steps using command line instructions. *Absolute beginners unfamiliar with using a terminal shell can get a quick start guide [here](https://ubuntu.com/tutorials/command-line-for-beginners#3-opening-a-terminal) for opening and using a terminal.*
+
+1. Make sure CUDA is in your PATH!
+
+Try the following command:
+```bash
+nvcc --version
+```
+
+If you don't see any output, do the following steps:
+
+Edit the '.bashrc' file in your home folder with the command `sudo gedit .bashrc`
+Copy and paste the lines below to the bottom of `.bashrc`:
+
+```bash
+# Add CUDA to PATH
+export PATH=${PATH}:/usr/local/cuda/bin
+export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda/lib64
+```
+
+Reload PATH and LD_LIBRARY_PATH (or close the Terminal and open it again)
+```bash
+source .bashrc
+```
+ Try again:
+```bash
+nvcc --version
+```
+Output:
+'''bash
+nvcc: NVIDIA (R) Cuda complier driver
+Copyright (c) 2005-2019 NVIDIA Corporation
+...
+'''
 #### How to find out my Jetpack version
 
 You can check your Jetpack version with this tool: [https://github.com/rbonghi/jetson_stats](https://github.com/rbonghi/jetson_stats)
@@ -23,34 +71,11 @@ jetson_release
 #  * NV Power Mode: MAXN - Type: 0
 ```
 
-#### Jetson Nano
-
-Directly flash the microSD card with jetpack, follow this guide:
-
-[https://nvidia.com/JetsonNano-Start](https://nvidia.com/JetsonNano-Start)
-
-Make sure CUDA is in your PATH! Copy and paste the lines below to `.bashrc` in your home folder, edit it with `sudo gedit .bashrc`.
-
-```bash
-export PATH=${PATH}:/usr/local/cuda/bin
-export LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:/usr/local/cuda/lib64
-```
-
-Reload PATH and LD_LIBRARY_PATH (or close the Terminal and open it again)
-```bash
-source .bashrc
-```
-
-```bash
-# Verify, this command should work now
-nvcc --version
-```
-
 #### Jetson TX2 / Jetson Xavier
 
-- Since march 2019, Nvidia has released a SDK manager tool to flash jetson, complete doc is available here: https://docs.nvidia.com/sdk-manager/index.html 
+- Since march 2019, Nvidia has released a SDK manager tool to flash jetson, complete doc is available here: https://docs.nvidia.com/sdk-manager/index.html
 - You need a machine running Ubuntu to install it *(that is not the jetson)*, download link is here: https://developer.nvidia.com/embedded/downloads
-- Then follow the steps of the documentation: https://docs.nvidia.com/sdk-manager/install-with-sdkm-jetson/index.html 
+- Then follow the steps of the documentation: https://docs.nvidia.com/sdk-manager/install-with-sdkm-jetson/index.html
 
 **Common issues:**
 
