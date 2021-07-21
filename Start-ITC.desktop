@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Terminal=true
+Name=Click-Script
+Icon=utilities-terminal
+Exec=sh -c "cd /home/vagif/Desktop/opendatacam && sudo nvpmodel -m 0 && sudo jetson_clocks && npm run start"
+Categories=Application;
+Name[en_IE]=Start_ITC
