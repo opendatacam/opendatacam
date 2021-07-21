@@ -76,7 +76,7 @@ sudo jetson_clocks
   - The second command (`jetson_clocks`) that it is used to set max frequencies to CPU, GPU and EMC clocks.
 
 #### 🔥 (Optional, only for Part 2 - Option A) Create a Desktop file to launch OpenDataCam in a double click
-- Although not necessary, it is possible to create a Desktop script and configure OpenDataCam to run after a double click, as well as set Jetson TX2 to its highest performance setting for running OpenDataCam. To do so, this is the process you should follow(**Note** that if you cloned this repo during your setup you can jump over to step 6):
+- Although not necessary, it is possible to create a Desktop script and configure OpenDataCam to run after a double click, as well as set Jetson TX2 to its highest performance setting for running OpenDataCam. To do so, this is the process you should follow( **Note** that if you cloned this repo during your setup you can jump over to step 6):
   1. Open a terminal, and change directory into your `opendatacam` folder.
   2. From here, run the command `npm i open` to install the [open](https://www.npmjs.com/package/open) library
   3. Open the `server.js` file, and add the line `const open = require('open');` to the top of the file with all the imports
