@@ -2,7 +2,7 @@
   "OPENDATACAM_VERSION": "3.0.1",
   "PATH_TO_YOLO_DARKNET" : "/home/vagif/Documents/darknet",
   "VIDEO_INPUT": "file",
-  "NEURAL_NETWORK": "yolov4-csp",
+  "NEURAL_NETWORK": "yolov4-p6",
   "VIDEO_INPUTS_PARAMS": {
     "file": "/home/vagif/Downloads/Tlc00000-1.m4v",
     "usbcam": "v4l2src device=/dev/video0 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink",
@@ -63,8 +63,32 @@
       "data": "cfg/coco.data",
       "cfg": "cfg/yolov4-csp.cfg",
       "weights": "yolov4-csp.weights"
+    },
+    "yolov4-csp-swish": {
+      "data": "cfg/coco.data",
+      "cfg": "cfg/yolov4-csp-swish.cfg",
+      "weights": "yolov4-csp-swish.weights"
+    },
+    "yolov4-p5": {
+      "data": "cfg/coco.data",
+      "cfg": "cfg/yolov4-p5.cfg",
+      "weights": "yolov4-p5.weights"
+    },
+    "yolov4-p6": {
+      "data": "cfg/coco.data",
+      "cfg": "cfg/yolov4-p6.cfg",
+      "weights": "yolov4-p6.weights"
+    },
+    "yolov4-csp-swish": {
+      "data": "cfg/coco.data",
+      "cfg": "cfg/yolov4-csp-swish.cfg",
+      "weights": "yolov4-csp-swish.weights"
+    },
+    "yolov4-csp-x-swish": {
+      "data": "cfg/coco.data",
+      "cfg": "cfg/yolov4-csp-x-swish.cfg",
+      "weights": "yolov4-csp-x-swish.weights"
     }
-
   },
   "TRACKER_ACCURACY_DISPLAY": {
     "nbFrameBuffer": 300,
