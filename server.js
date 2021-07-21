@@ -17,6 +17,8 @@ const MjpegProxy = require('./server/utils/mjpegproxy').MjpegProxy;
 const intercept = require("intercept-stdout");
 const config = require('./config.json');
 const configHelper = require('./server/utils/configHelper')
+const open = require('open');
+
 
 if(process.env.npm_package_version !== config.OPENDATACAM_VERSION) {
   console.log('-----------------------------------')
@@ -1064,9 +1066,11 @@ app.prepare()
     if (port === 80) {
       console.log(`> Ready on http://localhost`)
       console.log(`> Ready on http://${ip.address()}`)
+      open(`http://${ip.address()}`);
     } else {
       console.log(`> Ready on http://localhost:${port}`)
       console.log(`> Ready on http://${ip.address()}:${port}`)
+      open(`http://localhost:${port}`);
     }
   })
 })
