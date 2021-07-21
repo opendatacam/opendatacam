@@ -67,16 +67,13 @@ The .weights files that need to be in the root of the `/darknet` folder
 ```bash
 cd darknet # if you are not already in the darknet folder
 
+# YOLOv4-csp
+wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4-csp.weights --no-check-certificate
+
 # YOLOv4-tiny
 wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.weights --no-check-certificate
 # YOLOv4
 wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights --no-check-certificate
-```
-
-Or if you want to copy them over SSH from your main machine with scp
-
-```
-scp yolov4-tiny.weights nvidia@192.168.1.210:/home/nvidia/Documents/darknet
 ```
 
 #### (Optional) Test darknet
@@ -158,7 +155,7 @@ sudo systemctl enable mongod
     git clone --depth 1 https://github.com/IrishTrafficSurveysDev/irishtrafficcam.git
     cd irishtrafficcam
     ```
-
+    - We recommend option **B)** as IrishTrafficCam comes with optimzied customizations that OpenDataCam does not have
 
 - Change `"MONGODB_URL"` in `opendatacam/config.json`/ `irishtrafficcam/config.json` (default is the docker service mongo URL)
 
