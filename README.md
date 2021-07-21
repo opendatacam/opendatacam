@@ -34,21 +34,21 @@
 ### 🚀 Part 1 C): Flashing Jetpack onto Jetson TX2
 - [This Video](https://www.youtube.com/watch?v=D7lkth34rgM&t=1s) is hands-down the best tutorial for flashing Jetpack onto Jetson TX2. Please follow this video **exactly**, including the fact that the instructor followed the instructions for **manual installation instead of automatic installation**, as automatic installation created some problems with the setup procedure. In summary, follow the video exactly!
 
-## 🎯 Part 2 - Installing and running OpenDataCam
+## 🎯 Part 2 - Installing and running IrishTrafficCam
 
 - For installing and running OpenDataCam, there are 2 setup options available:
   - An option to setup OpenDataCam **with Docker**
   - An option to setup OpenDataCam **without Docker**
 
-### 🌀 Part 2 - Option A: Setup Open Data Cam *without* Docker (Recommended)
-- You can follow our [guide](https://github.com/IrishTrafficSurveysDev/irishtrafficcam/blob/master/OpenDataCam_CuDNN_Setup.md) on setting up OpenDataCam without Docker, which is more accurate and customized than the [official guide](https://github.com/opendatacam/opendatacam/blob/master/documentation/USE_WITHOUT_DOCKER.md) 
+### 🌀 Part 2 - Option A: Setup IrishTrafficCam *without* Docker (Recommended)
+- You can follow our [guide](https://github.com/IrishTrafficSurveysDev/irishtrafficcam/blob/master/OpenDataCam_CuDNN_Setup.md) on setting up IrishTrafficCam without Docker, which is more accurate and customized than the [official guide](https://github.com/opendatacam/opendatacam/blob/master/documentation/USE_WITHOUT_DOCKER.md) 
 
 
-### 🐋 Part 2 - Option B: Setup OpenDataCam *with* Docker
-- While the documentation states that there is no Docker Build support for Jetson TX2, there actually is for TX2 versions with Jetpack 4.5 installed!
-- To setup OpenDataCam without Docker, follow the official [quick setup guide](https://github.com/opendatacam/opendatacam#-get-started-quick-setup) and follow the instructions and docker build for a Jetson Nano. According to [this](https://github.com/opendatacam/opendatacam/issues/416) issue, the Jetson Nano Docker image should work on TX2 as well
+### 🐋 Part 2 - Option B: Setup IrishTrafficCam *with* Docker
+- While the OpenDataCam documentation states that there is no Docker Build support for Jetson TX2, there actually is for TX2 versions with Jetpack 4.5 installed!
+- To setup OpenDataCam without Docker, follow the official [quick setup guide](https://github.com/opendatacam/opendatacam#-get-started-quick-setup) and follow the instructions and docker build for a Jetson Nano. According to [this](https://github.com/opendatacam/opendatacam/issues/416) issue, the Jetson Nano Docker image should work on TX2 as well. However, note that the Docker image that is provided by OpenDataCam is **not optimized**. That is whe we recommend setting up IrishTrafficCam *without* Docker
 
-#### 🔧 Setup OpenDataCam without Docker - Precautions
+#### 🔧 Setup IrishTrafficCam without Docker - Precautions
 - **If you get an error that is similar to [this](https://github.com/opendatacam/opendatacam/issues/268)**: This is a problem with OpenDataCam's outdated fork of Darknet, as well as s compatibility issue with CUDA and cuDNN, according to the moderator of Darknet, which happens to be a dependency of OpenDataCam([Source](https://github.com/AlexeyAB/darknet/issues/7205#issuecomment-755837883))
   - To combat this, you can try 2 approached:
     1. 🔘 **Option 1:** Disable cuDNN in your `Makefile`.
@@ -56,12 +56,16 @@
         2. Set the `CUDNN` option to 0
     2. 🔘 (Recommended) **Option 2:** Follow [this](https://github.com/IrishTrafficSurveysDev/irishtrafficcam/blob/master/OpenDataCam_CuDNN_Setup.md) tutorial for running OpenDataCam on Jetson TX2 with cuDNN enabled. Note that this tutorial will guide you through the setup **without** using Docker
   
-- **YOLOv4 vs YOLOv4-tiny**: During the configuration, you must download the weights of either **YOLOv4** or either **YOLOv4-tiny** and set it appropriately in your `config.json` file.
-  - 🏁 **Which one should I choose to use?**
-    - 🔘 **YOLOv4-tiny** runs at a faster FPS, but is quite inaccurate and misses cars and other objects if the video is rapid itself
-    - 🔘 **YOLOv4** (Recommended) runs at a much lower FPS, but is much more accurate and is able to correctly detect almost all moving objects
+#### :question: Which YOLO model should I use?
+- By default, IrishTrafficCam already comes setup with configurations for running the `yolov4`, `yolov4-csp`, and `yolov4-tiny` Object Detection models, and all ou are required to do is download the weights of the model you wish o use. While better models exist, we had to find a good trade-off between speed and accuracy, and larger models equate to slower inference, hence causing poor performance. Of the 3 models mentioned, We have ranked them accordingly:
 
-#### 💢 (Optional,  only for Part 2 - Option A) Setting the Jetson TX2 to its highest performance setting for running OpenDataCam
+  1. 🔘 `yolov4-csp` (default): This model has very good accuracy, as well as a quick inference time, making it the best model to use
+  2. 🔘 `yolo-v4`: While this model has a 0.1% increase in accuracy than `yolov4-csp`, it runs at 1 FPS, which is simply too slow
+  3. 🔘 `yolov4-tiny`: This model is the fastest, but also the least accurate, and is unable to capture object at high frame rates
+
+- To find out more about other models and choosing your own custom YOLO model, please see the [YOLO Section]() of the documentation on using custom Neural Network Weights
+
+#### 💢 (Optional,  only for Part 2 - Option A) Setting the Jetson TX2 to its highest performance setting for running IrishTrafficCam
 - It's possible to tweak Jetson TX2 so that it uses all GPU and CPU power to its highest capability. To do so, run the following commands before starting OpenDataCam(i.e before running `npm run start`):
  ``` shell
 sudo nvpmodel -m 0
@@ -72,7 +76,7 @@ sudo jetson_clocks
   - The second command (`jetson_clocks`) that it is used to set max frequencies to CPU, GPU and EMC clocks.
 
 #### 🔥 (Optional, only for Part 2 - Option A) Create a Desktop file to launch OpenDataCam in a double click
-- Although not necessary, it is possible to create a Desktop script and configure OpenDataCam to run after a double click, as well as set Jetson TX2 to its highest performance setting for running OpenDataCam. To do so, this is the process you should follow:
+- Although not necessary, it is possible to create a Desktop script and configure OpenDataCam to run after a double click, as well as set Jetson TX2 to its highest performance setting for running OpenDataCam. To do so, this is the process you should follow(**Note** that if you cloned this repo during your setup you can jump over to step 6):
   1. Open a terminal, and change directory into your `opendatacam` folder.
   2. From here, run the command `npm i open` to install the [open](https://www.npmjs.com/package/open) library
   3. Open the `server.js` file, and add the line `const open = require('open');` to the top of the file with all the imports
@@ -117,8 +121,8 @@ sudo jetson_clocks
 
 
 
-## 💥 Customizing OpenDataCam
-- You can read [this](https://github.com/opendatacam/opendatacam/blob/master/documentation/CONFIG.md) section of the OpenDataCam documentation to learn more about customizing OpenDataCam to suit your needs. We have provided some of our own customizations that you can browse:
+## 💥 Customizing IrishTrafficCam
+- You can read [this](https://github.com/opendatacam/opendatacam/blob/master/documentation/CONFIG.md) section of the OpenDataCam documentation to learn more about customizing IrishTrafficCam to suit your needs. We have provided some of our own customizations that you can browse:
   - 🔘 [Use Custom Neural Network weights for Object Detection](https://github.com/IrishTrafficSurveysDev/irishtrafficcam/blob/master/Using-Custom-NN-Weights.md)
 
 ### 📋 Customization Task List
