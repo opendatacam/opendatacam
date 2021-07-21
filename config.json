@@ -79,11 +79,6 @@
       "cfg": "cfg/yolov4-p6.cfg",
       "weights": "yolov4-p6.weights"
     },
-    "yolov4-csp-swish": {
-      "data": "cfg/coco.data",
-      "cfg": "cfg/yolov4-csp-swish.cfg",
-      "weights": "yolov4-csp-swish.weights"
-    },
     "yolov4-csp-x-swish": {
       "data": "cfg/coco.data",
       "cfg": "cfg/yolov4-csp-x-swish.cfg",
