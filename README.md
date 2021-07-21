@@ -63,7 +63,7 @@
   2. 🔘 `yolo-v4`: While this model has a 0.1% increase in accuracy than `yolov4-csp`, it runs at 1 FPS, which is simply too slow
   3. 🔘 `yolov4-tiny`: This model is the fastest, but also the least accurate, and is unable to capture object at high frame rates
 
-- To find out more about other models and choosing your own custom YOLO model, please see the [YOLO Section]() of the documentation on using custom Neural Network Weights
+- To find out more about other models and choosing your own custom YOLO model, please see the sectino of the documentation on [using Custom Neural Network weights for Object Detection](https://github.com/IrishTrafficSurveysDev/irishtrafficcam/blob/master/Using-Custom-NN-Weights.md)
 
 #### 💢 (Optional,  only for Part 2 - Option A) Setting the Jetson TX2 to its highest performance setting for running IrishTrafficCam
 - It's possible to tweak Jetson TX2 so that it uses all GPU and CPU power to its highest capability. To do so, run the following commands before starting OpenDataCam(i.e before running `npm run start`):
