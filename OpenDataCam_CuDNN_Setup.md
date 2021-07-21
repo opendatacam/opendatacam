@@ -68,12 +68,14 @@ The .weights files that need to be in the root of the `/darknet` folder
 cd darknet # if you are not already in the darknet folder
 
 # YOLOv4-csp
-wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4-csp.weights --no-check-certificate
+ wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-csp.weights --no-check-certificate
+ --no-check-certificate
 
 # YOLOv4-tiny
 wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.weights --no-check-certificate
 # YOLOv4
-wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v3_optimal/yolov4.weights --no-check-certificate
+wget wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4.weights --no-check-certificate
+ --no-check-certificate
 ```
 
 #### (Optional) Test darknet
