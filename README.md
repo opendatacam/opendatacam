@@ -14,7 +14,7 @@
 - Before you can run OpenDataCam on a Jetson TX2, you will need to flash Jetpack onto Jetson TX2, as OpenDataCam requires the use of certian libraries that come with Jetpack. This means that in order to flash Jetpack, you will need a **host machine**, as well as a **target machine**(Jetson TX2).
 
 ### 💻 Part 1 A): Hardware Requirements
-  - **A Host computer** from which you can run the necessary software to flash Jetpack. You **must** ensure that the host machine is running **Ubuntu** with a version of Ubuntu **greater than 16.04 and less than 20.04**. At the time of writing(July 2021), Ubuntu 16.04 has reached end of life, and Jetpack is currently not supported for Ubuntu 20.04. The best Ubuntu version to run is 18.04. If you do not have a Ubuntu machine, please follow the guide on [running Ubuntu on a virutal machine](https://github.com/IrishTrafficSurveysDev/Irish-Traffic-Cam-Guide/blob/main/Ubuntu-VM-Setup-Guide.md)
+  - **A Host computer** from which you can run the necessary software to flash Jetpack. You **must** ensure that the host machine is running **Ubuntu** with a version of Ubuntu **greater than 16.04 and less than 20.04**. At the time of writing(July 2021), Ubuntu 16.04 has reached end of life, and Jetpack is currently not supported for Ubuntu 20.04. The best Ubuntu version to run is 18.04. If you do not have a Ubuntu machine, please follow the guide on [running Ubuntu on a virutal machine](https://github.com/IrishTrafficSurveysDev/irishtrafficcam/blob/master/Ubuntu-VM-Setup-Guide.md)
   - **Jetson TX2 Developer Kit**([Source](https://developer.nvidia.com/embedded/jetson-tx2-developer-kit#resources))
 
 #### 🔧 Hardware Requirements - Precautions
@@ -25,7 +25,7 @@
 ### 📦 Part 1 B): Software Requirements
 - **Nvidia Jetpack SDK manager**: This is a setup wizard that simplifies the process of flashing Jetpack onto TX2 immensely. To download this software, follow these steps:
   1.  Register for an NVIDIA Developer Account. It's free, and you can sign up [here](https://developer.nvidia.com/login)
-  2.  Follow [this](https://developer.nvidia.com/embedded/jetpack) link and make sure to select the **SDK Manager Method** dropdown(See this [image](https://github.com/IrishTrafficSurveysDev/Irish-Traffic-Cam-Guide/blob/main/SDK-Manager-Option.png))
+  2.  Follow [this](https://developer.nvidia.com/embedded/jetpack) link and make sure to select the **SDK Manager Method** dropdown(See this [image](https://github.com/IrishTrafficSurveysDev/irishtrafficcam/blob/master/SDK-Manager-Option.png))
   3. After you have completed registration, download the file onto your host machine
 
 #### 🔧 Software Requirements - Precautions
@@ -41,7 +41,7 @@
   - An option to setup OpenDataCam **without Docker**
 
 ### 🌀 Part 2 - Option A: Setup Open Data Cam *without* Docker (Recommended)
-- You can follow our [guide](https://github.com/IrishTrafficSurveysDev/Irish-Traffic-Cam-Guide/blob/main/OpenDataCam_CuDNN_Setup.md) on setting up OpenDataCam without Docker, which is more accurate and customized than the [official guide](https://github.com/opendatacam/opendatacam/blob/master/documentation/USE_WITHOUT_DOCKER.md) 
+- You can follow our [guide](https://github.com/IrishTrafficSurveysDev/irishtrafficcam/blob/master/OpenDataCam_CuDNN_Setup.md) on setting up OpenDataCam without Docker, which is more accurate and customized than the [official guide](https://github.com/opendatacam/opendatacam/blob/master/documentation/USE_WITHOUT_DOCKER.md) 
 
 
 ### 🐋 Part 2 - Option B: Setup OpenDataCam *with* Docker
@@ -54,7 +54,7 @@
     1. 🔘 **Option 1:** Disable cuDNN in your `Makefile`.
         1. Locate your `Makefile` (`/path/to/darket/Makefile`) and open it in a text editor
         2. Set the `CUDNN` option to 0
-    2. 🔘 (Recommended) **Option 2:** Follow [this](https://github.com/IrishTrafficSurveysDev/Irish-Traffic-Cam-Guide/blob/main/OpenDataCam_CuDNN_Patch.md) tutorial for running OpenDataCam on Jetson TX2 with cuDNN enabled. Note that this tutorial will guide you through the setup **without** using Docker
+    2. 🔘 (Recommended) **Option 2:** Follow [this](https://github.com/IrishTrafficSurveysDev/irishtrafficcam/blob/master/OpenDataCam_CuDNN_Setup.md) tutorial for running OpenDataCam on Jetson TX2 with cuDNN enabled. Note that this tutorial will guide you through the setup **without** using Docker
   
 - **YOLOv4 vs YOLOv4-tiny**: During the configuration, you must download the weights of either **YOLOv4** or either **YOLOv4-tiny** and set it appropriately in your `config.json` file.
   - 🏁 **Which one should I choose to use?**
@@ -111,7 +111,7 @@ sudo jetson_clocks
   })
   })
   ```
-  6. Download and open the file called [`Start_ITC.desktop`](https://github.com/IrishTrafficSurveysDev/Irish-Traffic-Cam-Guide/blob/main/Start-ITC.desktop). Open the file in a text editor, and change the `/path/to/your/opendatacam/` to the path of your `opendatacam` folder. This file also contains the 2 command described abhove for setting the Jetson TX2 to run OpenDataCam at its highest performance settings.
+  6. Download and open the file called [`Start_ITC.desktop`](https://github.com/IrishTrafficSurveysDev/irishtrafficcam/blob/master/Start-ITC.desktop). Open the file in a text editor, and change the `/path/to/your/opendatacam/` to the path of your `opendatacam` folder. This file also contains the 2 command described abhove for setting the Jetson TX2 to run OpenDataCam at its highest performance settings.
   7. Right click on the file, select Properties, give it read and write permissions, and check the `Allow executing file as a program` option.
   8. Double Click the file, click `Trust and Launch` and enter your computer password to give admin rights if prompted to do so, and voila!
 
@@ -119,7 +119,7 @@ sudo jetson_clocks
 
 ## 💥 Customizing OpenDataCam
 - You can read [this](https://github.com/opendatacam/opendatacam/blob/master/documentation/CONFIG.md) section of the OpenDataCam documentation to learn more about customizing OpenDataCam to suit your needs. We have provided some of our own customizations that you can browse:
-  - 🔘 [Use Custom Neural Network weights for Object Detection](https://github.com/IrishTrafficSurveysDev/Irish-Traffic-Cam-Guide/blob/main/Using-Custom-NN-Weights.md)
+  - 🔘 [Use Custom Neural Network weights for Object Detection](https://github.com/IrishTrafficSurveysDev/irishtrafficcam/blob/master/Using-Custom-NN-Weights.md)
 
 ### 📋 Customization Task List
 - [x] Set Jetson TX2 to perform at its highest performance settings when running OpenDataCam
