@@ -139,16 +139,28 @@ sudo systemctl start mongod
 sudo systemctl enable mongod
 ```
 
-### 4. Install opendatacam
+### 4. Install opendatacam/irishtrafficcam
 
-- Download source
 
-```bash
-git clone --depth 1 https://github.com/opendatacam/opendatacam.git
-cd opendatacam
-```
+- Download source. Here you can either:
 
-- Change `"MONGODB_URL"` in `opendatacam/config.json` (default is the docker service mongo URL)
+    A) 🔵 clone opendatacam
+
+    ```bash
+    git clone --depth 1 https://github.com/opendatacam/opendatacam.git
+    cd opendatacam
+    ```
+
+    B) 🔵 clone irishtrafficcam
+
+
+    ```bash
+    git clone --depth 1 https://github.com/IrishTrafficSurveysDev/irishtrafficcam.git
+    cd irishtrafficcam
+    ```
+
+
+- Change `"MONGODB_URL"` in `opendatacam/config.json`/ `irishtrafficcam/config.json` (default is the docker service mongo URL)
 
 ```json
 {
@@ -156,7 +168,7 @@ cd opendatacam
 }
 ```
 
-- Specify **ABSOLUTE** `PATH_TO_YOLO_DARKNET` path in `opendatacam/config.json`
+- Specify **ABSOLUTE** `PATH_TO_YOLO_DARKNET` path in `opendatacam/config.json` / `irishtrafficcam/config.json`
 
 ```json
 {
@@ -169,20 +181,20 @@ cd opendatacam
 pwd .
 ```
 
-- Specify `VIDEO_INPUT` and `NEURAL_NETWORK` in `opendatacam/config.json` 
+- Specify `VIDEO_INPUT` and `NEURAL_NETWORK` in `opendatacam/config.json` / `irishtrafficcam/config.json`
 
-*For Jetson TX2 (recommanded)*
+*For Jetson TX2 (recommended)*
 
 ```json
 {
   "VIDEO_INPUT": "usbcam",
-  "NEURAL_NETWORK": "yolov4"
+  "NEURAL_NETWORK": "yolov4-csp"
 }
 ```
 
 Learn more in the [config documentation](CONFIG.md) page.
 
-- Install **OpenDataCam**
+- Install **OpenDataCam** / **IrishTrafficCam**
 
 ```bash
 cd <path/to/open-data-cam>
@@ -190,10 +202,10 @@ npm install
 npm run build
 ```
 
-- Run **OpenDataCam**
+- Run **OpenDataCam** / **IrishTrafficCam**
 
 ```bash
-cd <path/to/open-data-cam>
+cd <path/to/open-data-cam> / <path/to/irish-traffic-cam>
 npm run start
 ```
 
@@ -203,8 +215,8 @@ npm run start
 # install pm2
 npm install pm2 -g |
 
-# go to opendatacam folder
-cd <path/to/open-data-cam>
+# go to opendatacam/irishtrafficcam folder
+cd <path/to/open-data-cam> / <path/to/irish-traffic-cam>
 # launch pm2 at startup
 # this command gives you instructions to configure pm2 to
 # start at ubuntu startup, follow them
