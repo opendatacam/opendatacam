@@ -70,11 +70,28 @@ cd darknet # if you are not already in the darknet folder
 # YOLOv4-csp
  wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-csp.weights --no-check-certificate
  --no-check-certificate
+ 
+ # YOLOv4-csp-swish
+ wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-csp-swish.weights --no-check-certificate
+ --no-check-certificate
+ 
+ # YOLOv4-csp-x-swish
+ wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-csp-x-swish.weights --no-check-certificate
+ --no-check-certificate
 
 # YOLOv4-tiny
 wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.weights --no-check-certificate
+
 # YOLOv4
 wget wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4.weights --no-check-certificate
+ --no-check-certificate
+ 
+ # YOLOv4-P5
+wget wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-p5.weights --no-check-certificate
+ --no-check-certificate
+ 
+ # YOLOv4-P6
+wget wget https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-p6.weights --no-check-certificate
  --no-check-certificate
 ```
 

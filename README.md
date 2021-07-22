@@ -57,13 +57,17 @@
     2. 🔘 (Recommended) **Option 2:** Follow [this](https://github.com/IrishTrafficSurveysDev/irishtrafficcam/blob/master/OpenDataCam_CuDNN_Setup.md) tutorial for running OpenDataCam on Jetson TX2 with cuDNN enabled. Note that this tutorial will guide you through the setup **without** using Docker
   
 #### :question: Which YOLO model should I use?
-- By default, IrishTrafficCam already comes setup with configurations for running the `yolov4`, `yolov4-csp`, and `yolov4-tiny` Object Detection models, and all ou are required to do is download the weights of the model you wish o use. While better models exist, we had to find a good trade-off between speed and accuracy, and larger models equate to slower inference, hence causing poor performance. Of the 3 models mentioned, We have ranked them accordingly:
+- By default, IrishTrafficCam already comes setup with configurations for several YOLO Object Detection models listed below. All you are required to do is download the weights of the model you wish to use, which is highlighted in [this](https://github.com/IrishTrafficSurveysDev/irishtrafficcam/blob/master/OpenDataCam_CuDNN_Setup.md#download-weight-file) section of the guide. We modified the Bounding Box size of our object detection models for more accuracy, so be sure to clone our [Darknet fork](https://github.com/IrishTrafficSurveysDev/darknet) when going through the setup. For convenience, We have ranked all default models by their accuracy(you can find out more about accuracy metrics [here](https://github.com/AlexeyAB/darknet#geforce-rtx-2080-ti)):
+  1. 🔘 `yolov4-p6` (default)(512x512)
+  3. 🔘 `yolov4-p5`(512x512)
+  4. 🔘 `yolov4-csp-x-swish`(512x512)
+  5. 🔘 `yolov4-csp-swish`(512x512)
+  6. 🔘 `yolov4-csp`(512x512)
+  7. 🔘 `yolo-v4`(416x416)
+  8. 🔘 `yolov4-tiny`(416x416)
 
-  1. 🔘 `yolov4-csp` (default): This model has very good accuracy, as well as a quick inference time, making it the best model to use
-  2. 🔘 `yolo-v4`: While this model has a 0.1% increase in accuracy than `yolov4-csp`, it runs at 1 FPS, which is simply too slow
-  3. 🔘 `yolov4-tiny`: This model is the fastest, but also the least accurate, and is unable to capture object at high frame rates
-
-- To find out more about other models and choosing your own custom YOLO model, please see the sectino of the documentation on [using Custom Neural Network weights for Object Detection](https://github.com/IrishTrafficSurveysDev/irishtrafficcam/blob/master/Using-Custom-NN-Weights.md)
+- However, tihs does not mean that `yolov4-p6` is the is the best model for all tasks at hand. It has proved to be most accurate for **fasty-moving cars** in videos, but for slower videos, `yolov4-p5` or `yolov4-csp-x-swish` may be better suited, as there is faster inference time. So, before configuring YOLO, be sure to try out various models. If ever unsure, we recommend sticking with the default
+-  To find out more about other models and choosing your own custom YOLO model, please see the section of the documentation on [using Custom Neural Network weights for Object Detection](https://github.com/IrishTrafficSurveysDev/irishtrafficcam/blob/master/Using-Custom-NN-Weights.md)
 
 #### 💢 (Optional,  only for Part 2 - Option A) Setting the Jetson TX2 to its highest performance setting for running IrishTrafficCam
 - It's possible to tweak Jetson TX2 so that it uses all GPU and CPU power to its highest capability. To do so, run the following commands before starting OpenDataCam(i.e before running `npm run start`):
