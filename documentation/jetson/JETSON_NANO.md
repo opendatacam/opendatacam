@@ -110,6 +110,7 @@ sudo apt-get install -y libffi-dev
 sudo apt-get install -y python-openssl
 sudo apt-get install -y libssl-dev
 
+sudo -H pip3 install --upgrade pip
 sudo -H pip3 install docker-compose
 ```
 
