@@ -18,7 +18,7 @@ jetson_release
 
 # Output should be something like:
 # - NVIDIA Jetson TX2
-#  * Jetpack 4.2 [L4T 32.1.0]
+#  * Jetpack 4.3 [L4T 32.3.1]
 #  * CUDA GPU architecture 6.2
 #  * NV Power Mode: MAXN - Type: 0
 ```
@@ -48,9 +48,9 @@ nvcc --version
 
 #### Jetson TX2 / Jetson Xavier
 
-- Since march 2019, Nvidia has released a SDK manager tool to flash jetson, complete doc is available here: https://docs.nvidia.com/sdk-manager/index.html 
+- Since march 2019, Nvidia has released a SDK manager tool to flash jetson, complete doc is available here: https://docs.nvidia.com/sdk-manager/index.html
 - You need a machine running Ubuntu to install it *(that is not the jetson)*, download link is here: https://developer.nvidia.com/embedded/downloads
-- Then follow the steps of the documentation: https://docs.nvidia.com/sdk-manager/install-with-sdkm-jetson/index.html 
+- Then follow the steps of the documentation: https://docs.nvidia.com/sdk-manager/install-with-sdkm-jetson/index.html
 
 **Common issues:**
 
