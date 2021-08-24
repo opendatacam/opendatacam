@@ -108,9 +108,10 @@ sudo apt install python3-pip
 
 sudo apt-get install -y libffi-dev
 sudo apt-get install -y python-openssl
-sudo apt-get install libssl-dev
+sudo apt-get install -y libssl-dev
 
-sudo pip3 install docker-compose
+sudo -H pip3 install --upgrade pip
+sudo -H pip3 install docker-compose
 ```
 
 And then install OpenDataCam
@@ -196,5 +197,3 @@ You should be able to operate Opendatacam without lag issues.
 #### 9. Build a case
 
 [Here are the steps to set up the Jetson NANO in the Wildlife Cam Casing from Naturebytes.](HOUSING.md)
-
-
