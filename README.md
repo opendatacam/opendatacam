@@ -80,7 +80,7 @@ sudo pip3 install docker-compose
 
 #### For Desktop machine: Nvidia container toolkit 🔧
 
-- [Docker installed](https://docs.docker.com/install/linux/docker-ce/ubuntu/)  
+- [Docker installed](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
 - [Docker compose installed](https://docs.docker.com/compose/install/)
 - [Nvidia drivers installed](https://developer.nvidia.com/cuda-downloads) (you don't need all CUDA but we didn't found a easy install process for only the drivers)
 - [Nvidia Container toolkit installed](https://github.com/NVIDIA/nvidia-docker)
@@ -198,7 +198,7 @@ chmod 777 install-opendatacam.sh
 
 __balenaCloud Install:__
 
-If you have a fleet of one or more devices, you can use [balena](https://www.balena.io/) to streamline deployment and management of OpenDataCam. You can sign up for a free account [here](https://dashboard.balena-cloud.com/signup) and add up to ten devices at no charge. Use the button below to build OpenDataCam for a Jetson Nano, TX2, or Xavier. You can then download an image containing the OS, burn it to an SD card, and use balenaCloud to push OpenDataCam to your devices. 
+If you have a fleet of one or more devices, you can use [balena](https://www.balena.io/) to streamline deployment and management of OpenDataCam. You can sign up for a free account [here](https://dashboard.balena-cloud.com/signup) and add up to ten devices at no charge. Use the button below to build OpenDataCam for a Jetson Nano, TX2, or Xavier. You can then download an image containing the OS, burn it to an SD card, and use balenaCloud to push OpenDataCam to your devices.
 
 [![](https://www.balena.io/deploy.png)](https://dashboard.balena-cloud.com/deploy?repoUrl=https://github.com/balenalabs-incubator/opendatacam)
 
