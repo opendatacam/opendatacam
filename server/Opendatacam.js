@@ -11,10 +11,17 @@ const DBManager = require('./db/DBManager');
 const Logger = require('./utils/Logger');
 const configHelper = require('./utils/configHelper');
 
+
 // YOLO process max retries
 const HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS = 30;
 // Max wait time for YOLO to start is 3 min = 180s
 const HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES = 180 * (1000 / HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS);
+
+const startTime = config.VIDEO_INPUTS_PARAMS.startTime
+let counter = 0
+
+let currentDateOffsetted = new Date(startTime)
+let currentDate = new Date( currentDateOffsetted.getTime() + Math.abs(currentDateOffsetted.getTimezoneOffset()*60000) )
 
 const COUNTING_AREA_TYPE = {
   BIDIRECTIONAL: "bidirectional",
@@ -23,7 +30,7 @@ const COUNTING_AREA_TYPE = {
 }
 
 const initialState = {
-  timeLastFrameFPSComputed: new Date(),
+  timeLastFrameFPSComputed: currentDate,
   indexLastFrameFPSComputed: 0,
   currentFrame: 0,
   countedItemsHistory: [],
@@ -143,11 +150,15 @@ module.exports = {
     }
   },
 
+  updateDate: function() {
+    currentDate.setSeconds(currentDate.getSeconds() + 1.35);
+  },
+
   countItem: function(trackedItem, countingAreaKey, frameId, countingDirection, angleWithCountingLine) {
     if(Opendatacam.recordingStatus.isRecording) {
       var countedItem = {
         frameId: frameId,
-        timestamp: new Date(),
+        timestamp: currentDate,
         area: countingAreaKey,
         name: trackedItem.name,
         id: trackedItem.id,
@@ -161,7 +172,7 @@ module.exports = {
     // Mark tracked item as counted this frame for display
     trackedItem.counted.push({
       areaKey: countingAreaKey,
-      timeMs: new Date().getTime()
+      timeMs: currentDate.getTime()
     });
     return countedItem;
   },
@@ -202,6 +213,7 @@ module.exports = {
       countedItemsForThisFrame,
       trackerEntry
     ).then(() => {
+      
       // console.log('success updateRecordingWithNewframe');
     }, (error) => {
       console.log(error);
@@ -210,6 +222,16 @@ module.exports = {
   },
 
   updateWithNewFrame: function(detectionsOfThisFrame, frameId) {
+    counter += 1
+    
+    if ((counter % 10 == 0) && (counter > 1) ) {
+      this.updateDate()
+
+    }
+    
+    console.log(currentDate);
+    console.log(counter);
+
     // Set yolo status to started if it's not the case
     if(!Opendatacam.isListeningToYOLO) {
       Opendatacam.isListeningToYOLO = true;
@@ -228,7 +250,7 @@ module.exports = {
     }
 
     // Compute FPS
-    const frameTimestamp = new Date();
+    let frameTimestamp = currentDate
     if(Opendatacam.indexLastFrameFPSComputed + 3 <= frameId) {
       const timeDiff = Math.abs(frameTimestamp.getTime() - Opendatacam.timeLastFrameFPSComputed.getTime());
       const frameDiff = frameId - Opendatacam.indexLastFrameFPSComputed;
@@ -581,7 +603,7 @@ module.exports = {
   startRecording(isFile) {
     console.log('Start recording');
     Opendatacam.recordingStatus.isRecording = true;
-    Opendatacam.recordingStatus.dateStarted = new Date();
+    Opendatacam.recordingStatus.dateStarted = new Date(startTime);
     Opendatacam.totalItemsTracked = 0;
     const filename = isFile ? YOLO.getVideoParams().split('/').pop() : '';
     Opendatacam.recordingStatus.filename = filename;
@@ -788,6 +810,11 @@ module.exports = {
     const filename = YOLO.getVideoParams().split('/').pop();
     Opendatacam.recordingStatus.filename = filename;
     console.log('Ask YOLO to restart to record on a file ');
+    counter = -8;
+    currentDateOffsetted = new Date(startTime)
+    currentDate = new Date( currentDateOffsetted.getTime() + Math.abs(currentDateOffsetted.getTimezoneOffset()*60000) )
+
+
     YOLO.restart();
   },
 

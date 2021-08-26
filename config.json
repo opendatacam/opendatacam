@@ -4,7 +4,8 @@
   "VIDEO_INPUT": "file",
   "NEURAL_NETWORK": "yolov4-p6",
   "VIDEO_INPUTS_PARAMS": {
-    "file": "/home/vagif/Downloads/Tlc00000-1.m4v",
+    "file": "/home/vagif/Downloads/Tlc00001-2.m4v",
+    "startTime": "2020/09/08, 07:53:51",
     "usbcam": "v4l2src device=/dev/video0 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink",
     "raspberrycam": "nvarguscamerasrc ! video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12 ! nvvidconv ! video/x-raw, format=BGRx, width=640, height=360 ! videoconvert ! video/x-raw, format=BGR ! appsink",
     "remote_cam": "YOUR IP CAM STREAM (can be .m3u8, MJPEG ...), anything supported by opencv",
