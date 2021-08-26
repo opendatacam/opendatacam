@@ -9,6 +9,8 @@ on:
   pull_request:
     branches-ignore:
       - 'gh-pages'
+  release:
+    types: [created]
 
 jobs:
   # Runs automated test and other checks on the Node.js Code Base
@@ -52,7 +54,7 @@ jobs:
       #
       # - we have a change in the development branch
       # - we have a new tag
-      DOCKERHUB_PUBLISH: ${{ github.event_name == 'push' && (github.event.ref == 'refs/heads/development' || startsWith(github.event.ref, 'refs/tags/')) && secrets.DOCKERHUB_USERNAME != '' }}
+      DOCKERHUB_PUBLISH: ${{ (github.event_name == 'push' && (github.event.ref == 'refs/heads/development' || startsWith(github.event.ref, 'refs/tags/')) || github.event_name == 'release') && secrets.DOCKERHUB_USERNAME != '' }}
       # In case we run a pull request, the secrets are not available to us. Therefore check first
       # and assign a 'dummy' dockerhub username
       DOCKERHUB_USERNAME: ${{ ( secrets.DOCKERHUB_USERNAME != '' && secrets.DOCKERHUB_USERNAME ) || 'dummy' }}
