@@ -1,6 +1,6 @@
 ### ⚡️Flash Jetson Board:
 
-*We support only jetpack version [4.3](https://developer.nvidia.com/embedded/jetpack) (more recent versions might also work)*
+*We support only jetpack version [4.3](https://developer.nvidia.com/jetpack-43-archive) (more recent versions might also work)*
 
 #### How to find out my Jetpack version
 
