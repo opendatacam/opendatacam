@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Terminal=true
+Name=Click-Script
+Icon=utilities-terminal
+Exec=sh -c "cd /home/vagif/Desktop/opendatacam && gedit config.json"
+Categories=Application;
+Name[en_IE]=Open_Config
