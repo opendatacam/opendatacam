@@ -11,7 +11,7 @@ Official releases must use the workflow described in the [development notes](../
 
 #### 1.2 Software pre-requisite
 
-- [Docker installed](https://docs.docker.com/install/linux/docker-ce/ubuntu/)  
+- [Docker installed](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
 - [Docker compose installed](https://docs.docker.com/compose/install/)
 - [Nvidia drivers installed](https://developer.nvidia.com/cuda-downloads) (you don't need all CUDA but we didn't found a easy install process for only the drivers)
 - [Nvidia Container toolkit installed](https://github.com/NVIDIA/nvidia-docker)
