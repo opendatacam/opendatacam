@@ -1,7 +1,7 @@
 ## How to create / update a docker image for a desktop machine
 
 **Important:** These instructions are for creating your own OpenDataCam image/fork.
-Official releases must use the workflow described in the [development notes](../DEVELOPMENT_NOTES.md).
+Official releases must use the workflow described in the [development notes](DEVELOPMENT_NOTES.md).
 
 ### 1. Pre-requisite
 

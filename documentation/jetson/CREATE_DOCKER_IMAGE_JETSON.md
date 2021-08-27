@@ -1,7 +1,7 @@
 ## How to create / update a docker image for a Jetson device
 
 **Important:** These instructions are for creating your own OpenDataCam image/fork.
-Official releases must use the workflow described in the [development notes](../../DEVELOPMENT_NOTES.md).
+Official releases must use the workflow described in the [development notes](../DEVELOPMENT_NOTES.md).
 
 ### 1 Hardware pre-requisite
 
