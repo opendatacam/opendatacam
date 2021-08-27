@@ -221,7 +221,7 @@ app.prepare()
    * @apiParam {Object} point2 Second point of the counter line definition
    * @apiParam {Object} refResolution Resolution of client side canvas where the line is drawn
    * @apiParam {string="bidirectional","leftright_topbottom", "rightleft_bottomtop"} Direction of counting, if object passes the other direction, it won't be counted
-   * 
+   *
    * @apiParamExample {json} Request Example:
    *     {
             "countingAreas": {
@@ -838,7 +838,7 @@ app.prepare()
    *
    * @apiSuccessExample {json} Success Response:
    * {
-      "OPENDATACAM_VERSION": "3.0.1",
+      "OPENDATACAM_VERSION": "3.0.2",
       "PATH_TO_YOLO_DARKNET": "/darknet",
       "VIDEO_INPUT": "TO_REPLACE_VIDEO_INPUT",
       "NEURAL_NETWORK": "TO_REPLACE_NEURAL_NETWORK",
@@ -952,14 +952,14 @@ app.prepare()
       cb(null, file.originalname)
     }
   })
-  var uploadMulter = multer({ 
-    storage: storage, 
+  var uploadMulter = multer({
+    storage: storage,
     fileFilter: function (req, file, cb) {
       if (!file.originalname.match(/\.(mp4|avi|mov)$/)) {
         return cb(new Error('Only video files are allowed!'));
       }
       cb(null, true);
-    } 
+    }
   }).single('video')
 
   // API to Upload file and restart yolo on that file
@@ -1000,7 +1000,7 @@ app.prepare()
     })
   })
 
-  
+
 
 
   /**
