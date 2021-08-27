@@ -41,7 +41,7 @@ spec:
         tier: frontend
     spec:
       containers:
-      - image: opendatacam/opendatacam:v3.0.1-nano
+      - image: opendatacam/opendatacam:v3.0.2-nano
         command: ["/bin/bash"]
         args: ["-c", "/var/local/opendatacam/launch.sh"]
         name: opendatacam

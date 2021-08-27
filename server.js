@@ -838,7 +838,7 @@ app.prepare()
    *
    * @apiSuccessExample {json} Success Response:
    * {
-      "OPENDATACAM_VERSION": "3.0.1",
+      "OPENDATACAM_VERSION": "3.0.2",
       "PATH_TO_YOLO_DARKNET": "/darknet",
       "VIDEO_INPUT": "TO_REPLACE_VIDEO_INPUT",
       "NEURAL_NETWORK": "TO_REPLACE_NEURAL_NETWORK",

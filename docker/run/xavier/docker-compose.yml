@@ -2,7 +2,7 @@ version: "2.3"
 services:
   opendatacam:
     restart: always
-    image: opendatacam/opendatacam:v3.0.1-xavier
+    image: opendatacam/opendatacam:v3.0.2-xavier
     privileged: true
     volumes:
       - './config.json:/var/local/opendatacam/config.json'
