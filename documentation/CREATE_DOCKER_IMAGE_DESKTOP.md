@@ -1,5 +1,8 @@
 ## How to create / update a docker image for a desktop machine
 
+**Important:** These instructions are for creating your own OpenDataCam image/fork.
+Official releases must use the workflow described in the [development notes](DEVELOPMENT_NOTES.md).
+
 ### 1. Pre-requisite
 
 #### 1.1 Hardware pre-requisite
@@ -8,7 +11,7 @@
 
 #### 1.2 Software pre-requisite
 
-- [Docker installed](https://docs.docker.com/install/linux/docker-ce/ubuntu/)  
+- [Docker installed](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
 - [Docker compose installed](https://docs.docker.com/compose/install/)
 - [Nvidia drivers installed](https://developer.nvidia.com/cuda-downloads) (you don't need all CUDA but we didn't found a easy install process for only the drivers)
 - [Nvidia Container toolkit installed](https://github.com/NVIDIA/nvidia-docker)
@@ -39,7 +42,7 @@ cp ../../../config.json .
 # NEURAL_NETWORK=yolov4
 
 #tag the local image
-sudo docker tag 7ef920844953 opendatacam/opendatacam:v3.0.1-desktop
+sudo docker tag <IMAGEID> <your dockerhub username>/opendatacam:<version>-desktop
 
 # start containers
 sudo docker-compose up
@@ -57,11 +60,11 @@ sudo docker images
 # opendatacam             latest    023ab91c6291     3 minutes ago     1.975 GB
 
 # Tag your image
-sudo docker tag 7ef920844953 opendatacam/opendatacam:v3.0.1-desktop
+sudo docker tag <IMAGEID> <your dockerhub username>/opendatacam:<version>-desktop
 
 # Untag image (if you made a tipo)
-sudo docker rmi opendatacam/opendatacam:v3.0.1-desktop
+sudo docker rmi <IMAGEID> <your dockerhub username>/opendatacam:<version>-desktop
 
 # Push image
-sudo docker push opendatacam/opendatacam:v3.0.1-desktop
+sudo docker push <IMAGEID> <your dockerhub username>/opendatacam:<version>-desktop
 ```

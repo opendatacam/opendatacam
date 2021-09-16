@@ -1,5 +1,8 @@
 ## How to create / update a docker image for a Jetson device
 
+**Important:** These instructions are for creating your own OpenDataCam image/fork.
+Official releases must use the workflow described in the [development notes](../DEVELOPMENT_NOTES.md).
+
 ### 1 Hardware pre-requisite
 
 In order to build the docker image, you need to build the docker image on the same architecture as the target device that will use the docker image. (ie: build docker image for Jetson Xavier on a Jetson Xavier)
@@ -43,8 +46,7 @@ cp ../../../config.json .
 # NEURAL_NETWORK=yolov4 (xavier) | yolov4-tiny (nano)
 
 # Tag the local image
-sudo docker tag <IMAGEID> opendatacam/opendatacam:v3.0.1-nano
-sudo docker tag <IMAGEID> opendatacam/opendatacam:v3.0.1-xavier
+sudo docker tag <IMAGEID> <your dockerhub username>/opendatacam:<version>-<platform, e.g. nano or xavier>
 # Spin containers
 sudo docker-compose up
 ```
@@ -61,15 +63,13 @@ sudo docker images
 # opendatacam             latest    023ab91c6291     3 minutes ago     1.975 GB
 
 # Tag your image
-sudo docker tag <IMAGEID> opendatacam/opendatacam:v3.0.1-nano
-
-# Or for xavier : opendatacam/opendatacam:v3.0.1-xavier
+sudo docker tag <IMAGEID> <your dockerhub username>/opendatacam:<version>-<platform, e.g. nano or xavier>
 
 # Push image
-sudo docker push opendatacam/opendatacam:v3.0.1-nano
+sudo docker push <your dockerhub username>/opendatacam:<version>-<platform, e.g. nano or xavier>
 
 # (optional) Useful Untag image (if you made a tipo)
-sudo docker rmi opendatacam/opendatacam:v3.0.1-nano
+sudo docker rmi <your dockerhub username>/opendatacam:<version>-<platform, e.g. nano or xavier>
 ```
 
 

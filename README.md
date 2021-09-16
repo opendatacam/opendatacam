@@ -1,4 +1,4 @@
-# OpenDataCam 3.0.1 – An open source tool to quantify the world
+# OpenDataCam 3.0.2 – An open source tool to quantify the world
 
 OpenDataCam is an open source tool to quantify the world. It quantifies and tracks moving objects with live video analysis. It is designed to be an accessible, affordable and open-source solution to better understand interactions in urban environments.
 
@@ -22,7 +22,7 @@ Until v3.0.0 OpenDataCam has been mainly supported by [move lab](https://www.mov
 
 ## Table of content
 
-- [OpenDataCam 3.0.1 – An open source tool to quantify the world](#opendatacam-301--an-open-source-tool-to-quantify-the-world)
+- [OpenDataCam 3.0.2 – An open source tool to quantify the world](#opendatacam-302--an-open-source-tool-to-quantify-the-world)
   - [Demo Videos](#demo-videos)
   - [Table of content](#table-of-content)
   - [💻 Hardware pre-requisite](#-hardware-pre-requisite)
@@ -61,7 +61,7 @@ _For Jetson Nano, [you can follow this dedicated quick start guide](documentatio
 
 #### For Jetson: Flash Jetson board to jetpack 4.3 ⚡️
 
-- [Jetpack 4.3](https://developer.nvidia.com/embedded/jetpack) : [How to find out your jetpack version](documentation/jetson/FLASH_JETSON.md#How-to-find-out-my-Jetpack-version), [Guide to flash your jetson](documentation/jetson/FLASH_JETSON.md)
+- [Jetpack 4.3](https://developer.nvidia.com/jetpack-43-archive) : [How to find out your jetpack version](documentation/jetson/FLASH_JETSON.md#How-to-find-out-my-Jetpack-version), [Guide to flash your jetson](documentation/jetson/FLASH_JETSON.md)
 
 _!!! Warning !!! Note that [there is a performance drop](https://forums.developer.nvidia.com/t/darknet-slower-using-jetpack-4-4-cudnn-8-0-0-cuda-10-2-than-jetpack-4-3-cudnn-7-6-3-cuda-10-0/121579) if you use Jetpack 4.4 DP ([see nvidia forum open issue](https://forums.developer.nvidia.com/t/darknet-slower-using-jetpack-4-4-cudnn-8-0-0-cuda-10-2-than-jetpack-4-3-cudnn-7-6-3-cuda-10-0/121579))_
 
@@ -80,7 +80,7 @@ sudo pip3 install docker-compose
 
 #### For Desktop machine: Nvidia container toolkit 🔧
 
-- [Docker installed](https://docs.docker.com/install/linux/docker-ce/ubuntu/)  
+- [Docker installed](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
 - [Docker compose installed](https://docs.docker.com/compose/install/)
 - [Nvidia drivers installed](https://developer.nvidia.com/cuda-downloads) (you don't need all CUDA but we didn't found a easy install process for only the drivers)
 - [Nvidia Container toolkit installed](https://github.com/NVIDIA/nvidia-docker)
@@ -132,7 +132,7 @@ __Install commands:__
 
 ```bash
 # Download install script
-wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v3.0.1/docker/install-opendatacam.sh
+wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v3.0.2/docker/install-opendatacam.sh
 
 # Give exec permission
 chmod 777 install-opendatacam.sh
@@ -198,7 +198,7 @@ chmod 777 install-opendatacam.sh
 
 __balenaCloud Install:__
 
-If you have a fleet of one or more devices, you can use [balena](https://www.balena.io/) to streamline deployment and management of OpenDataCam. You can sign up for a free account [here](https://dashboard.balena-cloud.com/signup) and add up to ten devices at no charge. Use the button below to build OpenDataCam for a Jetson Nano, TX2, or Xavier. You can then download an image containing the OS, burn it to an SD card, and use balenaCloud to push OpenDataCam to your devices. 
+If you have a fleet of one or more devices, you can use [balena](https://www.balena.io/) to streamline deployment and management of OpenDataCam. You can sign up for a free account [here](https://dashboard.balena-cloud.com/signup) and add up to ten devices at no charge. Use the button below to build OpenDataCam for a Jetson Nano, TX2, or Xavier. You can then download an image containing the OS, burn it to an SD card, and use balenaCloud to push OpenDataCam to your devices.
 
 [![](https://www.balena.io/deploy.png)](https://dashboard.balena-cloud.com/deploy?repoUrl=https://github.com/balenalabs-incubator/opendatacam)
 

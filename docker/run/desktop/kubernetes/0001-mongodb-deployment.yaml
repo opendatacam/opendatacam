@@ -3,7 +3,7 @@ kind: Service
 metadata:
   labels:
     app: opendatacam
-  name: opendatacam-mongo
+  name: mongo
 spec:
   ports:
   - name: "27017"

@@ -33,31 +33,10 @@ If you have an error while doing `npm install` it is probably a problem with nod
 - Make sure correct version in JETSON_NANO.md "Install OpenDataCam" wget install script
 - Make sure correct VERSION in /docker/install-opendatacam.sh
 - Generate up to date api documentation `npm run generateapidoc` (not needed anymore since https://github.com/opendatacam/opendatacam/pull/336)
-- Push and Tag version on github
-- Compile docker image on 4 platforms ( nano, tx2, xavier, nvidia-docker ) , upload them to dockerhub and tag them properly
 - Add Release on github
 
-### Tags commands
-
-```
-# Tag latest commit
-git tag v3.0.1
-
-# Push tag
-git push origin v3.0.1
-
-# List tags
-git tag --list
-
-# Remove tag on remote
-git push origin :v3.0.1
-
-# Delete local tag
-git tag --delete v3.0.1
-
-# Push all tag
-git push --tags
-```
+After you've added the release to GitHub, a GitHub Action Workflow will create the Docker images and automatically upload them to Docker Hub.
+It is no longer necessary to create a git tag or Docker Images manually.
 
 ### Markdown table of content generator
 

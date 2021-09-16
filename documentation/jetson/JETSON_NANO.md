@@ -39,7 +39,7 @@ The minimum setup for 5W power mode is:
 For 10W power mode _(this is good for desktop use when you plug the screen, the mouse, the keyboard, it draws powers from the peripherics)_
 
 - Power supply: [5V⎓4A DC barrel jack adapter, 5.5mm OD x 2.1mm ID x 9.5mm length, center-positive](https://www.adafruit.com/product/1466)
-- 1x [2.54mm Standard Computer Jumper](https://www.amazon.com/2-54mm-Standard-Computer-Jumper-100pack/dp/B00N552DWK/) This is used on the J48 Pin when supplying power from the jack entry instead of the microUSB. It tells the Jetson to by-pass the microUSD power entry.
+- 1x [2.54mm Standard Computer Jumper](https://www.amazon.com/2-54mm-Standard-Computer-Jumper-100pack/dp/B00N552DWK/) This is used on the J48 Pin when supplying power from the jack entry instead of the microUSB. It tells the Jetson to by-pass the microUSB power entry.
 
 For setup:
 
@@ -108,16 +108,17 @@ sudo apt install python3-pip
 
 sudo apt-get install -y libffi-dev
 sudo apt-get install -y python-openssl
-sudo apt-get install libssl-dev
+sudo apt-get install -y libssl-dev
 
-sudo pip3 install docker-compose
+sudo -H pip3 install --upgrade pip
+sudo -H pip3 install docker-compose
 ```
 
 And then install OpenDataCam
 
 ```bash
 # Download install script
-wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v3.0.1/docker/install-opendatacam.sh
+wget -N https://raw.githubusercontent.com/opendatacam/opendatacam/v3.0.2/docker/install-opendatacam.sh
 
 # Give exec permission
 chmod 777 install-opendatacam.sh
@@ -196,5 +197,3 @@ You should be able to operate Opendatacam without lag issues.
 #### 9. Build a case
 
 [Here are the steps to set up the Jetson NANO in the Wildlife Cam Casing from Naturebytes.](HOUSING.md)
-
-
