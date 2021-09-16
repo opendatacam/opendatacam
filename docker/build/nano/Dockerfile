@@ -1,4 +1,4 @@
-FROM opendatacam/opendatacam-darknet-base:nano
+FROM opendatacam/opendatacam-darknet-base:v1.0.0-odc-Yolo-v3-nano
 
 ENV DEBIAN_FRONTEND noninteractive
 
