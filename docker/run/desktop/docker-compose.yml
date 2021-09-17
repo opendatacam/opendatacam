@@ -3,7 +3,7 @@ services:
   opendatacam:
     restart: always
     runtime: nvidia
-    image: opendatacam/opendatacam:v3.0.1-desktop
+    image: opendatacam/opendatacam:v3.0.2-desktop
     privileged: true
     volumes:
       - './config.json:/var/local/opendatacam/config.json'
