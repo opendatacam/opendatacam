@@ -4,7 +4,7 @@
 set -e
 
 # Each OpenDataCam release should set the correct version here and tag appropriatly on github
-VERSION=v3.0.1
+VERSION=v3.0.2
 # PLATFORM in ["nano","xavier","tx2","nvidiadocker"]
 PLATFORM=undefined
 VIDEO_INPUT=undefined
@@ -23,13 +23,13 @@ display_usage() {
   echo
   echo "Usage: $0"
   echo -n " -p, --platform       Specify platform: "
-  for i in "${PLATFORM_OPTIONS[@]}" 
+  for i in "${PLATFORM_OPTIONS[@]}"
   do
     echo -n "$i "
   done
   echo
   echo -n " -o, --orchestrator   Specify orchestrator: "
-  for i in "${ORCHESTRATOR_OPTIONS[@]}" 
+  for i in "${ORCHESTRATOR_OPTIONS[@]}"
   do
     echo -n "$i "
   done
@@ -49,7 +49,7 @@ function index(){
   shift
 
   i=0
-  for word in "$@" 
+  for word in "$@"
   do
     if [ "${word}" == "${elem}" ]; then
       echo ${i}
@@ -80,7 +80,7 @@ function k8s_setup() {
 
   kubectl create configmap opendatacam --from-file=config.json --dry-run -o yaml | kubectl apply -f -
   kubectl apply -f opendatacam
-  
+
   #Print deployment information
   kubectl get pods
   kubectl get service
