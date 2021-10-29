@@ -241,7 +241,7 @@ Learn more in the [config documentation](CONFIG.md) page.
 - Install **OpenDataCam**
 
 ```bash
-cd <path/to/open-data-cam>
+cd <path/to/opendatacam>
 npm install
 npm run build
 ```
@@ -249,7 +249,7 @@ npm run build
 - Run **OpenDataCam**
 
 ```bash
-cd <path/to/open-data-cam>
+cd <path/to/opendatacam>
 npm run start
 ```
 
@@ -260,7 +260,7 @@ npm run start
 npm install pm2 -g |
 
 # go to opendatacam folder
-cd <path/to/open-data-cam>
+cd <path/to/opendatacam>
 # launch pm2 at startup
 # this command gives you instructions to configure pm2 to
 # start at ubuntu startup, follow them
