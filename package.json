@@ -10,7 +10,7 @@
     "test": "scripts/npm/test.sh"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "body-parser": "^1.19.0",
     "csv-express": "^1.2.2",
     "dayjs": "^1.8.28",
