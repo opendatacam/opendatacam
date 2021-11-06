@@ -1,6 +1,11 @@
 {
   "name": "OpenDataCam",
   "version": "3.0.2",
+   "license" : "MIT license",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/opendatacam/opendatacam.git"
+  },
   "scripts": {
     "dev": "scripts/npm/startServer.sh",
     "lint": "scripts/npm/lint.sh",
