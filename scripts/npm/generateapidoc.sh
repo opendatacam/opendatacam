@@ -5,4 +5,4 @@
 REPO_ROOT=$( git rev-parse --show-toplevel 2> /dev/null || echo . )
 
 npx browserslist@latest --update-db
-npx apidoc -i $REPO_ROOT -e node_modules/ -e .build/apidoc -o .build/apidoc/
+npx apidoc -i $REPO_ROOT -e node_modules/ -e .build/apidoc/ -o .build/apidoc/
