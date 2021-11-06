@@ -22,7 +22,6 @@ jobs:
           - 12.x
           - 14.x
           - 16.x
-          - 17.x
         architecture:
           - x64
           # FIXME: GitHub does not offer arm64 runners at the moment.
