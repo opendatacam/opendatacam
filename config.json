@@ -96,5 +96,7 @@
     "hostname": "localhost",
     "signalLossTimeoutSeconds": 60,
     "csvExportOpenStreetMapsUrl": true
-  }
+  },
+  "HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS":30,
+  "HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES":180
 }
