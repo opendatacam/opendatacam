@@ -1,7 +1,7 @@
 {
   "name": "OpenDataCam",
   "version": "3.0.2",
-   "license" : "MIT license",
+  "license" : "MIT license",
   "repository": {
     "type": "git",
     "url": "git://github.com/opendatacam/opendatacam.git"
