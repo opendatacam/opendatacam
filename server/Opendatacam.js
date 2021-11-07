@@ -18,9 +18,10 @@ const config = require('../config.json');
 const pipeline = promisify(stream.pipeline);
 
 // YOLO process max retries
-const HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS = 30;
-// Max wait time for YOLO to start is 3 min = 180s
-const HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES = 180 * (1000 / HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS);
+// YOLO delay between retry attempts - default: 30 ms
+const HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS = config.HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS;
+// YOLO max wait time to start - default: 3 min = 180s
+const HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES = config.HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES * (1000 / HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS);
 
 // How long should we keep a rolling buffer of the current counting
 // need to be capped otherwise can lead to a big memory leak after a few days
