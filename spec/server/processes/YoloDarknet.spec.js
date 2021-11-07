@@ -11,7 +11,7 @@ describe('YoloDarknet', () => {
         weights: 'yolov4-tiny.weights',
       },
       videoType: 'file',
-      videoParams: 'opendatacam_videos/demo.mp4',
+      videoParams: 'opendatacam_videos_uploaded/demo.mp4',
       jsonStreamPort: 8070,
       mjpegStreamPort: 8090,
       darknetPath: './spec/scripts/',

@@ -13,7 +13,7 @@ class FileSystemManager {
         fs.mkdirSync(this.filesPath);
       }
     } catch (error) {
-      console.log('Failed to create directory opendatacam_videos_uploaded, it might already exists or you are in simulation mode');
+      console.log('Failed to create directory opendatacam_videos_uploaded_uploaded, it might already exists or you are in simulation mode');
     }
   }
 

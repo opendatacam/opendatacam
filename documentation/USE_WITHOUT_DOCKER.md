@@ -135,7 +135,7 @@ cd darknet
 ./darknet detector demo cfg/coco.data cfg/yolov4-tiny.cfg yolov4-tiny.weights "v4l2src ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink" -ext_output -dont_show
 
 # Run darknet on file
-./darknet detector demo cfg/coco.data cfg/yolov4-tiny.cfg yolov4-tiny.weights opendatacam_videos/demo.mp4 -ext_output -dont_show
+./darknet detector demo cfg/coco.data cfg/yolov4-tiny.cfg yolov4-tiny.weights opendatacam_videos_uploaded/demo.mp4 -ext_output -dont_show
 
 # Run darknet on raspberrycam
 ./darknet detector demo cfg/coco.data cfg/yolov4-tiny.cfg yolov4-tiny.weights "nvarguscamerasrc ! video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12 ! nvvidconv ! video/x-raw, format=BGRx, width=640, height=360 ! videoconvert ! video/x-raw, format=BGR ! appsink" -ext_output -dont_show

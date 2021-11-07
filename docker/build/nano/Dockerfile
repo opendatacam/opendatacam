@@ -11,7 +11,7 @@ WORKDIR /var/local/darknet
 COPY yolov4-tiny.weights yolov4-tiny.weights
 
 # Include demo.mp4 file
-RUN mkdir opendatacam_videos && cd opendatacam_videos && wget https://github.com/opendatacam/opendatacam/raw/development/public/static/demo/demo.mp4
+RUN mkdir opendatacam_videos_uploaded && cd opendatacam_videos_uploaded && wget https://github.com/opendatacam/opendatacam/raw/development/public/static/demo/demo.mp4
 
 # Install node.js
 RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \

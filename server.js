@@ -978,7 +978,7 @@ app.prepare()
         "VIDEO_INPUT": "TO_REPLACE_VIDEO_INPUT",
         "NEURAL_NETWORK": "TO_REPLACE_NEURAL_NETWORK",
         "VIDEO_INPUTS_PARAMS": {
-          "file": "opendatacam_videos/demo.mp4",
+          "file": "opendatacam_videos_uploaded/demo.mp4",
           "usbcam": "v4l2src device=/dev/video0 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink",
           "experimental_raspberrycam_docker": "v4l2src device=/dev/video2 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink",
           "raspberrycam_no_docker": "nvarguscamerasrc ! video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12 ! nvvidconv ! video/x-raw, format=BGRx, width=640, height=360 ! videoconvert ! video/x-raw, format=BGR ! appsink",
@@ -1066,9 +1066,9 @@ app.prepare()
       res.json(config);
     });
 
-    // API to read opendatacam_videos directory and return list of videos available
+    // API to read opendatacam_videos_uploaded directory and return list of videos available
     // TODO JSDOC
-    // Get video files available in opendatacam_videos directory
+    // Get video files available in opendatacam_videos_uploaded directory
     express.get('/files', (req, res) => {
       FileSystemManager.getFiles().then((files) => {
         res.json(files);

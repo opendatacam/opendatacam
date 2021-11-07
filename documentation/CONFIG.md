@@ -239,7 +239,7 @@ This is configurable via the `VIDEO_INPUT` ans `VIDEO_INPUTS_PARAMS` settings.
 
 ```json
 "VIDEO_INPUTS_PARAMS": {
-  "file": "opendatacam_videos/demo.mp4",
+  "file": "opendatacam_videos_uploaded/demo.mp4",
   "usbcam": "v4l2src device=/dev/video0 ! video/x-raw, framerate=30/1, width=640, height=360 ! videoconvert ! appsink",
   "raspberrycam": "nvarguscamerasrc ! video/x-raw(memory:NVMM),width=1280, height=720, framerate=30/1, format=NV12 ! nvvidconv ! video/x-raw, format=BGRx, width=640, height=360 ! videoconvert ! video/x-raw, format=BGR ! appsink",
   "remote_cam": "YOUR IP CAM STREAM (can be .m3u8, MJPEG ...), anything supported by opencv",
@@ -296,17 +296,17 @@ For example, you have a `file.mp4` you want to run OpenDataCam on :
 
 You need to mount the file in the docker container, copy the file in the folder where you have the `docker-compose.yml` file
 
-- create a folder called `opendatacam_videos` and put the file in it
+- create a folder called `opendatacam_videos_uploaded` and put the file in it
 
-- mount the `opendatacam_videos` folder using `volumes` in the `docker-compose.yml` file
+- mount the `opendatacam_videos_uploaded` folder using `volumes` in the `docker-compose.yml` file
 
 ```yaml
 volumes:
   - './config.json:/var/local/opendatacam/config.json'
-  - './opendatacam_videos:/var/local/darknet/opendatacam_videos'
+  - './opendatacam_videos_uploaded:/var/local/darknet/opendatacam_videos_uploaded'
 ```
 
-Once you do have the video file inside the `opendatacam_videos` folder, you can modify the `config.json` the following way:
+Once you do have the video file inside the `opendatacam_videos_uploaded` folder, you can modify the `config.json` the following way:
 
 1. Change `VIDEO_INPUT` to `"file"`
 
@@ -318,7 +318,7 @@ Once you do have the video file inside the `opendatacam_videos` folder, you can 
 
 ```json
 "VIDEO_INPUTS_PARAMS": {
-  "file": "opendatacam_videos/file.mp4"
+  "file": "opendatacam_videos_uploaded/file.mp4"
 }
 ```
 
@@ -330,7 +330,7 @@ sudo docker-compose restart
 
 **For a non docker install of OpenDataCam:**
 
-Same steps as above but instead of mountin the `opendatacam_videos` you should just create in in the `/darknet` folder.
+Same steps as above but instead of mountin the `opendatacam_videos_uploaded` you should just create in in the `/darknet` folder.
 
 ##### Run from IP cam
 
