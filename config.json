@@ -64,7 +64,9 @@
       "data": "cfg/coco.data",
       "cfg": "cfg/yolov4-tiny.cfg",
       "weights": "yolov4-tiny.weights"
-    }
+    },
+    "retry_delay_ms":30,
+    "max_retries_seconds":180
   },
   "TRACKER_ACCURACY_DISPLAY": {
     "nbFrameBuffer": 300,
@@ -96,7 +98,5 @@
     "hostname": "localhost",
     "signalLossTimeoutSeconds": 60,
     "csvExportOpenStreetMapsUrl": true
-  },
-  "HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS":30,
-  "HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES":180
+  }
 }
