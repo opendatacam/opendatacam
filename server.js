@@ -183,6 +183,7 @@ app.prepare()
      */
     express.get('/webcam/stream', (req, res) => {
     // Proxy MJPEG stream from darknet to avoid freezing issues
+      if(!Opendatacam.isListeningToYOLO && mjpgProxy !== null) mjpgProxy = null; //This clears the mjpgProxy object in case YOLO is restarting otherwise a grey screen appears in the UI.
       if (mjpgProxy == null) {
         const urlData = getURLData(req);
         mjpgProxy = new MjpegProxy(`http://${urlData.address}:${config.PORTS.darknet_mjpeg_stream}`);
