@@ -32,6 +32,7 @@ We offer several customization options:
     - [Use Custom Neural Network weights](#use-custom-neural-network-weights)
     - [Tracker settings](#tracker-settings)
     - [Counter settings](#counter-settings)
+    - [Monitor settings](#monitor-settings)
     - [Database](#database)
       - [MongoDB](#mongodb)
     - [Ports](#ports)
@@ -517,6 +518,19 @@ You can tweak some settings of the tracker to optimize OpenDataCam better for yo
 ![CounterBuffer](https://user-images.githubusercontent.com/533590/84810794-1ebcb080-b00c-11ea-9cae-065fc066e10f.jpg)
 
 NB: if the object has changed ID in the past frames, it will take the last past frame known with the same ID.
+
+#### Monitor settings
+
+```json
+"MONITOR_SETTINGS": {
+    "retry_delay_ms":30,
+    "max_retries_seconds":180
+}
+```
+
+- `retry_delay_ms`: If a monitored service fails, i.e. Darknet YOLO, how long, in milliseconds, should ODC wait before trying to connect again
+
+- `max_retries_seconds`: If a monitored service fails, i.e. Darknet YOLO, how long, in seconds, should ODC keep trying to connect
 
 #### Database
 
