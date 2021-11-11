@@ -13,6 +13,10 @@
     "remote_hls_gstreamer": "souphttpsrc location=http://YOUR_HLSSTREAM_URL_HERE.m3u8 ! hlsdemux ! decodebin ! videoconvert ! videoscale ! appsink",
     "simulation": "--yolo_json public/static/placeholder/alexeydetections30FPS.json --video_file_or_folder public/static/placeholder/frames --isLive true --jsonFps 20 --mjpgFps 0.2"
   },
+  "MONITOR_SETTINGS": {
+    "retry_delay_ms":30,
+    "max_retries_seconds":180
+  },
   "TRACKER_SETTINGS": {
     "objectMaxAreaInPercentageOfFrame": 80,
     "confidence_threshold": 0.2,
@@ -64,9 +68,7 @@
       "data": "cfg/coco.data",
       "cfg": "cfg/yolov4-tiny.cfg",
       "weights": "yolov4-tiny.weights"
-    },
-    "retry_delay_ms":30,
-    "max_retries_seconds":180
+    }
   },
   "TRACKER_ACCURACY_DISPLAY": {
     "nbFrameBuffer": 300,

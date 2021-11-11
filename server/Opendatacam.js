@@ -19,9 +19,9 @@ const pipeline = promisify(stream.pipeline);
 
 // YOLO process max retries
 // YOLO delay between retry attempts - default: 30 ms
-const HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS = config.NEURAL_NETWORK_PARAMS.retry_delay_ms;
+const HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS = config.MONITOR_SETTINGS.retry_delay_ms;
 // YOLO max wait time to start - default: 3 min = 180s
-const HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES = config.NEURAL_NETWORK_PARAMS.max_retries_seconds * (1000 / HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS);
+const HTTP_REQUEST_LISTEN_TO_YOLO_MAX_RETRIES = config.MONITOR_SETTINGS.max_retries_seconds * (1000 / HTTP_REQUEST_LISTEN_TO_YOLO_RETRY_DELAY_MS);
 
 // How long should we keep a rolling buffer of the current counting
 // need to be capped otherwise can lead to a big memory leak after a few days
