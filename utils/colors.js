@@ -13,7 +13,7 @@ export function getCounterColor(colorLabel) {
   }
   // Maybe if colors have been modified and old recording are in DB, we need to render a default
   // color
-  return '#000';
+  return '#AEAEAE';
 }
 
 export function getAvailableCounterColors() {
