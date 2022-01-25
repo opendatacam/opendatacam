@@ -111,12 +111,25 @@ const MjpegProxy = exports.MjpegProxy = function (mjpegUrl) {
           }
         });
         mjpegResponse.on('close', () => {
-          // console.log("...close");
+          console.info("MJPEG-Proxy: Close");
+          self.audienceResponses.forEach(response => response.end());
+          self.audienceResponses = [];
+          if (self.audienceResponses.length == 0) {
+            self.mjpegRequest = null;
+            self.globalMjpegResponse.destroy();
+          }
         });
       });
 
       self.mjpegRequest.on('error', (e) => {
-        console.error('problem with request: ', e);
+        console.error('MJPEG-Proxy: Problem with request: ', e);
+        console.error(e);
+        self.audienceResponses.forEach(response => response.end());
+        self.audienceResponses = [];
+        if (self.audienceResponses.length == 0) {
+          self.mjpegRequest = null;
+          self.globalMjpegResponse.destroy();
+        }
       });
     }
   };
