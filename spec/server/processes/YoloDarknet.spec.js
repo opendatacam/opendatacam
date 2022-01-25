@@ -58,14 +58,14 @@ describe('YoloDarknet', () => {
       });
 
       it('is live if set to live', () => {
-        yoloConfig.videoParams = yoloConfig.videoParams + ' --isLive true';
+        yoloConfig.videoParams += ' --isLive true';
         yolo = new YoloDarknet(yoloConfig);
 
         expect(yolo.isLive()).toBeTrue();
       });
 
       it('is live if set to live', () => {
-        yoloConfig.videoParams = yoloConfig.videoParams + ' --isLive false';
+        yoloConfig.videoParams += ' --isLive false';
         yolo = new YoloDarknet(yoloConfig);
 
         expect(yolo.isLive()).toBeFalse();
