@@ -243,7 +243,8 @@ class YoloSimulation extends YoloDarknet {
         // We've went through all frames. So now check if we simulate a live
         // source or if we need to stop.
         if (!this.isLive()) {
-          this.restart();
+          clearInterval(timer);
+          this.stop();
           return;
         }
         detectionsNb = 0;
