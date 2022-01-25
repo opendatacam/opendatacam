@@ -67,7 +67,7 @@ if (config.VIDEO_INPUT === 'simulation') {
     };
   }
 }
-const YOLO = new YoloDarknet(yoloConfig);
+let YOLO = new YoloDarknet(yoloConfig);
 
 // Select tracker, based on GPS settings in config
 let tracker = Tracker;
@@ -1122,7 +1122,7 @@ app.prepare()
           const yoloConfigClone = cloneDeep(yoloConfig);
           yoloConfigClone.videoParams = req.file.path;
           yoloConfigClone.videoType = 'file';
-          YOLO.init(yoloConfigClone);
+          YOLO = new YoloDarknet(yoloConfigClone);
 
           YOLO.start();
           Opendatacam.recordingStatus.filename = req.file.filename;
