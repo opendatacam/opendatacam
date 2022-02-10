@@ -232,6 +232,8 @@ class YoloSimulation extends YoloDarknet {
           } else {
             isSendingJpeg = false;
           }
+        } else {
+          isSendingJpeg = false;
         }
       };
 
@@ -320,6 +322,7 @@ class YoloSimulation extends YoloDarknet {
         fs.readFile(filePath, callback);
       } else {
         console.error(`Could not open ${filePath}`);
+        callback(`Could not open ${filePath}`, null);
       }
     });
   }
@@ -330,7 +333,7 @@ class YoloSimulation extends YoloDarknet {
 
     execFile('ffmpeg', args, { encoding: 'binary' }, (error, stdout) => {
       if (error) {
-        throw error;
+        callback(`Could not extract frame ${frameNb} from ${file}`, null);
       }
 
       callback(error, stdout);

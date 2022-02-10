@@ -26,6 +26,10 @@ describe('YoloSimulation', () => {
     yolo = new YoloSimulation(yoloConfig);
   });
 
+  afterEach(function() {
+    yolo.stop();
+  });
+
   describe('videoResolution', () => {
     it('has 0x0 on creation', () => {
       expect(yolo.getVideoResolution()).toEqual({ w: 0, h: 0 });
@@ -141,6 +145,34 @@ describe('YoloSimulation', () => {
     it('handles YoloDarknet invokation', () => {
       expect(invokeParser(yoloDarknetInvokation)).not.toThrow();
       expect(cfg).toEqual(expectedConfig);
+    });
+  });
+
+  describe('runs from file not live', () => {
+    beforeEach(function() {
+      jasmine.clock().install();
+    });
+
+    afterEach(function() {
+      jasmine.clock().uninstall();
+    });
+
+    it('is not live', () => {
+      expect(yolo.isLive()).toBeFalse();
+    })
+
+    it('starts', async () => {
+      expect(yolo.isStarting).toBeFalse();
+      expect(yolo.isStarted).toBeFalse();
+
+      yolo.start();
+
+      expect(yolo.isStarting).toBeTrue();
+      expect(yolo.isStarted).toBeFalse();
+
+      jasmine.clock().tick(10 * 1000);
+
+      expect(yolo.isStarted).toBeTrue();
     });
   });
 });

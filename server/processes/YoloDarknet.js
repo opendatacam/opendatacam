@@ -147,6 +147,8 @@ class YoloDarknet extends EventEmitter {
           resolve();
         });
         this.process.stop();
+      } else {
+        resolve();
       }
     });
   }
