@@ -18,7 +18,8 @@
     "confidence_threshold": 0.2,
     "iouLimit": 0.05,
     "unMatchedFrameTolerance": 5,
-    "fastDelete": true
+    "fastDelete": true,
+    "matchingAlgorithm": "kdTree"
   },
   "COUNTER_SETTINGS": {
     "countingAreaMinFramesInsideToBeCounted": 1,

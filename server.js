@@ -82,7 +82,8 @@ if (config.TRACKER_SETTINGS) {
     'unMatchedFrameTolerance',
     'fastDelete',
     'distanceFunc',
-    'distanceLimit'];
+    'distanceLimit',
+    'matchingAlgorithm'];
 
   paramKeys.forEach((key) => {
     if (key in config.TRACKER_SETTINGS) {
