@@ -443,13 +443,13 @@ volumes:
 "NEURAL_NETWORK": "yolov3-tiny-prn"
 ```
 
-- If you've added new volumes to your `docker-compose.yml`, you need to update the container using : 
+- If you've added new volumes to your `docker-compose.yml`, you need to update the container using:
 
 ```
 sudo docker-compose up -d
 ```
 
-- Otherwise, if you just updated files from existing volumes, you need to restart the container using  : 
+- Otherwise, if you just updated files from existing volumes, you need to restart the container using:
 
 ```
 sudo docker-compose restart
@@ -475,7 +475,8 @@ You can tweak some settings of the tracker to optimize OpenDataCam better for yo
   "confidence_threshold": 0.2,
   "iouLimit": 0.05,
   "unMatchedFrameTolerance": 5,
-  "fastDelete": true
+  "fastDelete": true,
+  "matchingAlgorithm": "kdTree"
 }
 ```
 
@@ -488,6 +489,8 @@ You can tweak some settings of the tracker to optimize OpenDataCam better for yo
 - `unMatchedFrameTolerance`: This the number of frame we keep predicting the object trajectory if it is not matched by the next frame list of detections. Setting this higher will cause less ID switches, but more potential false positive with an ID going to another object.
 
 - `fastDelete`: If false, detections will always be kept for `unMatchedFrameTolerance` in the buffer. Otherwise, detections will be dropped from the tracker buffer if they can not be machted the next frame they appeared. Setting this to `false` can help with tracking difficult objects, but may have side effects like more frequent object ID switches or lower FPS as more objects will be kept in the buffer.
+
+- `matchingAlgorithm`: The algorithm used to match tracks with new detections. Can be either `kdTree` or `munkres`. See https://github.com/opendatacam/node-moving-things-tracker/pull/21 for differences in performance of the matching algorithms.
 
 #### Counter settings
 
