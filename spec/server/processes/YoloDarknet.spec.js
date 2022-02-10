@@ -21,6 +21,10 @@ describe('YoloDarknet', () => {
     yolo = new YoloDarknet(yoloConfig);
   });
 
+  afterEach(async () => {
+    await yolo.stop();
+  });
+
   describe('videoResolution', () => {
     it('has 0x0 on creation', () => {
       expect(yolo.getVideoResolution()).toEqual({ w: 0, h: 0 });
