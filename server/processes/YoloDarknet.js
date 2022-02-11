@@ -167,12 +167,12 @@ class YoloDarknet extends EventEmitter {
    */
   isLive() {
     // Files are recorded
-    if(this.config.videoType === "file") {
+    if (this.config.videoType === 'file') {
       return false;
     }
 
     // Simulations we need to check the parameters
-    if(this.config.videoType === "simulation") {
+    if (this.config.videoType === 'simulation') {
       // Explicitly check if live is set to false, as default is true if "-isLive" is omitted.
       const isLiveSimulation = !this.config.videoParams.includes('-isLive false');
       return isLiveSimulation;

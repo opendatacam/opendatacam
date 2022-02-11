@@ -4,7 +4,6 @@ const {
   getAppPort,
   getJsonStreamPort,
   getMjpegStreamPort,
-  getMongoUrl,
 } = require('../../../server/utils/configHelper');
 
 describe('configHelper', () => {

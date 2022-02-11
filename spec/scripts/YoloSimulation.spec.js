@@ -26,7 +26,7 @@ describe('YoloSimulation', () => {
     yolo = new YoloSimulation(yoloConfig);
   });
 
-  afterEach(function() {
+  afterEach(() => {
     yolo.stop();
   });
 
@@ -149,17 +149,17 @@ describe('YoloSimulation', () => {
   });
 
   describe('runs from file not live', () => {
-    beforeEach(function() {
+    beforeEach(() => {
       jasmine.clock().install();
     });
 
-    afterEach(function() {
+    afterEach(() => {
       jasmine.clock().uninstall();
     });
 
     it('is not live', () => {
       expect(yolo.isLive()).toBeFalse();
-    })
+    });
 
     it('starts', async () => {
       expect(yolo.isStarting).toBeFalse();
