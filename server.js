@@ -1,6 +1,9 @@
 // Ignore long apidoc comments while keeping the code to 100 chars per line.
 /* eslint max-len: ["warn", { "ignoreComments": true , "code": 100, "tabWidth": 2, "ignoreUrls": true }] */
 
+// Allow console output
+/* eslint no-console: "off" */
+
 const express = require('express')();
 const multer = require('multer');
 const serveStatic = require('serve-static');
@@ -838,7 +841,7 @@ app.prepare()
      */
     express.get('/recording/:id/counter', (req, res) => {
       dbManager.getCounterHistoryOfRecording(req.params.id).then((counterData) => {
-        if(Object.keys(counterData).length === 0) {
+        if (Object.keys(counterData).length === 0) {
           res.sendStatus(404);
           return;
         }

@@ -23,20 +23,22 @@ const url = require('url');
 const http = require('http');
 
 function extractBoundary(contentType) {
-  contentType = contentType.replace(/\s+/g, '');
+  const contentTypeSanitized = contentType.replace(/\s+/g, '');
 
-  const startIndex = contentType.indexOf('boundary=');
-  let endIndex = contentType.indexOf(';', startIndex);
-  if (endIndex == -1) { // boundary is the last option
+  const startIndex = contentTypeSanitized.indexOf('boundary=');
+  let endIndex = contentTypeSanitized.indexOf(';', startIndex);
+  if (endIndex === -1) { // boundary is the last option
     // some servers, like mjpeg-streamer puts a '\r' character at the end of each line.
-    if ((endIndex = contentType.indexOf('\r', startIndex)) == -1) {
-      endIndex = contentType.length;
+    (endIndex = contentTypeSanitized.indexOf('\r', startIndex));
+    if (endIndex === -1) {
+      endIndex = contentTypeSanitized.length;
     }
   }
-  return contentType.substring(startIndex + 9, endIndex).replace(/"/gi, '').replace(/^\-\-/gi, '');
+  // eslint-disable-next-line no-useless-escape
+  return contentTypeSanitized.substring(startIndex + 9, endIndex).replace(/"/gi, '').replace(/^\-\-/gi, '');
 }
 
-const MjpegProxy = exports.MjpegProxy = function (mjpegUrl) {
+exports.MjpegProxy = (mjpegUrl) => {
   const self = this;
 
   if (!mjpegUrl) throw new Error('Please provide a source MJPEG URL');
@@ -50,14 +52,14 @@ const MjpegProxy = exports.MjpegProxy = function (mjpegUrl) {
   self.globalMjpegResponse = null;
   self.mjpegRequest = null;
 
-  self.proxyRequest = function (req, res) {
+  self.proxyRequest = (req, res) => {
     if (res.socket == null) {
       return;
     }
 
     // There is already another client consuming the MJPEG response
     if (self.mjpegRequest !== null) {
-      self._newClient(req, res);
+      self.newClient(req, res);
     } else {
       // Send source MJPEG request
       self.mjpegRequest = http.get(self.mjpegOptions, (mjpegResponse) => {
@@ -65,19 +67,23 @@ const MjpegProxy = exports.MjpegProxy = function (mjpegUrl) {
         self.globalMjpegResponse = mjpegResponse;
         self.boundary = extractBoundary(mjpegResponse.headers['content-type']);
 
-        self._newClient(req, res);
+        self.newClient(req, res);
 
         let lastByte1 = null;
         let lastByte2 = null;
 
-        mjpegResponse.on('data', (chunk) => {
+        mjpegResponse.on('data', (data) => {
+          let chunk = data;
+
           // Fix CRLF issue on iOS 6+: boundary should be preceded by CRLF.
           if (lastByte1 != null && lastByte2 != null) {
             const oldheader = `--${self.boundary}`;
 
-            var p = chunk.indexOf(oldheader);
+            const p = chunk.indexOf(oldheader);
 
-            if (p == 0 && !(lastByte2 == 0x0d && lastByte1 == 0x0a) || p > 1 && !(chunk[p - 2] == 0x0d && chunk[p - 1] == 0x0a)) {
+            const cond1 = p === 0 && !((lastByte2 === 0x0d) && (lastByte1 === 0x0a));
+            const cond2 = (p > 1) && (!(chunk[p - 2] === 0x0d) && (chunk[p - 1] === 0x0a));
+            if (cond1 || cond2) {
               const b1 = chunk.slice(0, p);
               const b2 = Buffer.from(`\r\n--${self.boundary}`);
               const b3 = chunk.slice(p + oldheader.length);
@@ -88,45 +94,44 @@ const MjpegProxy = exports.MjpegProxy = function (mjpegUrl) {
           lastByte1 = chunk[chunk.length - 1];
           lastByte2 = chunk[chunk.length - 2];
 
-          for (let i = self.audienceResponses.length; i--;) {
-            const res = self.audienceResponses[i];
-
+          self.audienceResponses.forEach((response) => {
             // First time we push data... lets start at a boundary
-            if (self.newAudienceResponses.indexOf(res) >= 0) {
-              var p = chunk.indexOf(`--${self.boundary}`);
+            if (self.newAudienceResponses.indexOf(response) >= 0) {
+              const p = chunk.indexOf(`--${self.boundary}`);
               if (p >= 0) {
-                res.write(chunk.slice(p));
-                self.newAudienceResponses.splice(self.newAudienceResponses.indexOf(res), 1); // remove from new
+                response.write(chunk.slice(p));
+                // remove from new
+                self.newAudienceResponses.splice(self.newAudienceResponses.indexOf(response), 1);
               }
             } else {
-              res.write(chunk);
+              response.write(chunk);
             }
-          }
+          });
         });
         mjpegResponse.on('end', () => {
           // console.log("...end");
-          for (let i = self.audienceResponses.length; i--;) {
-            const res = self.audienceResponses[i];
-            res.end();
-          }
+          self.audienceResponses.forEach((response) => {
+            response.end();
+          });
         });
         mjpegResponse.on('close', () => {
-          console.info("MJPEG-Proxy: Close");
-          self.audienceResponses.forEach(response => response.end());
+          // console.info('MJPEG-Proxy: Close');
+          self.audienceResponses.forEach((response) => response.end());
           self.audienceResponses = [];
-          if (self.audienceResponses.length == 0) {
+          if (self.audienceResponses.length === 0) {
             self.mjpegRequest = null;
             self.globalMjpegResponse.destroy();
           }
         });
       });
 
+      // eslint-disable-next-line no-unused-vars
       self.mjpegRequest.on('error', (e) => {
-        console.error('MJPEG-Proxy: Problem with request: ', e);
-        console.error(e);
-        self.audienceResponses.forEach(response => response.end());
+        // console.error('MJPEG-Proxy: Problem with request: ', e);
+        // console.error(e);
+        self.audienceResponses.forEach((response) => response.end());
         self.audienceResponses = [];
-        if (self.audienceResponses.length == 0) {
+        if (self.audienceResponses.length === 0) {
           self.mjpegRequest = null;
           self.globalMjpegResponse.destroy();
         }
@@ -134,7 +139,7 @@ const MjpegProxy = exports.MjpegProxy = function (mjpegUrl) {
     }
   };
 
-  self._newClient = function (req, res) {
+  self.newClient = (req, res) => {
     res.writeHead(200, {
       Expires: 'Mon, 01 Jul 1980 00:00:00 GMT',
       'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -150,10 +155,11 @@ const MjpegProxy = exports.MjpegProxy = function (mjpegUrl) {
 
       self.audienceResponses.splice(self.audienceResponses.indexOf(res), 1);
       if (self.newAudienceResponses.indexOf(res) >= 0) {
-        self.newAudienceResponses.splice(self.newAudienceResponses.indexOf(res), 1); // remove from new
+        // remove from new
+        self.newAudienceResponses.splice(self.newAudienceResponses.indexOf(res), 1);
       }
 
-      if (self.audienceResponses.length == 0) {
+      if (self.audienceResponses.length === 0) {
         self.mjpegRequest = null;
         self.globalMjpegResponse.destroy();
       }

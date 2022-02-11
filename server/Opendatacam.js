@@ -805,9 +805,9 @@ module.exports = {
       });
       self.HTTPRequestListeningToYOLO.on('error', (e) => {
         // When using a file or YOLO is restarting, reset to false and force an update to the UI so an initializing screen is shown
-        if(Opendatacam.isListeningToYOLO) {
-            Opendatacam.isListeningToYOLO = false;
-            this.sendUpdateToClients();
+        if (Opendatacam.isListeningToYOLO) {
+          Opendatacam.isListeningToYOLO = false;
+          this.sendUpdateToClients();
         }
         res.emit('error', e);
       });
