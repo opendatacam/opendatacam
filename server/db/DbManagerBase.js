@@ -18,9 +18,11 @@ class DbManagerBase {
   /**
    * Creates a database connection object
    *
-   * @param {*} connectionParams The credentials to setup the connection
+   * The configuration options will be defined by the extending classes.
+   *
+   * @param {*} config The credentials to setup the connection and other configurations
    */
-  constructor(connectionParams) {}
+  constructor(config) { }
 
   /**
    * Connect to the opendatacam database

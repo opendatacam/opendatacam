@@ -5,11 +5,10 @@ class MongoDbManager extends DbManagerBase {
   /**
    * Creates a new MongoDbManager object
    *
-   * If connectionStringOrDbObject is a
+   * The `code` is an object with the following fields
    *
-   * - MongoClient: the MongoClient to use
-   * - String: The string will be used to create a new connection to the database and then the
-   *   "opendatacam" database will be used
+   * - url (string): The URL of the Mongo Server as a string
+   * - client (MongoClient): If a Mongo client already exists the object can be passed here
    *
    * After creation {@link MongoDbManager.connect} must be called.
    *
@@ -19,9 +18,9 @@ class MongoDbManager extends DbManagerBase {
    * will be lost, while counter data should recover as Opendatacam always updates the whole counter
    * state.
    *
-   * @param {*} connectionStringOrMongoClient The MongoClient to use or credentials to create one
+   * @param {*} config The MongoClient to use or credentials to create one
    */
-  constructor(connectionStringOrMongoClient) {
+  constructor(config) {
     super();
 
     /**
@@ -49,7 +48,7 @@ class MongoDbManager extends DbManagerBase {
      */
     this.DATABASE_NAME = 'opendatacam';
 
-    this.connectionStringOrMongoClient = connectionStringOrMongoClient;
+    this.config = config;
     /**
      * The connection string used or null if a Db object was used for the connection or the
      * connection has not been established yet.
@@ -72,13 +71,13 @@ class MongoDbManager extends DbManagerBase {
       trackerCollection.createIndex({ recordingId: 1 });
     };
 
-    const isConnectionString = typeof this.connectionStringOrMongoClient === 'string'
-      || this.connectionStringOrMongoClient instanceof String;
-    const isClientObject = typeof this.connectionStringOrMongoClient === 'object';
+    const isConnectionString = this.config.url !== undefined
+      && (typeof this.config.url === 'string' || this.config.url instanceof String);
+    const isClientObject = this.config.client !== undefined && typeof this.config.client === 'object';
 
     if (isConnectionString) {
       return new Promise((resolve, reject) => {
-        this.connectionString = this.connectionStringOrMongoClient;
+        this.connectionString = this.config.url;
         const mongoConnectParams = { useNewUrlParser: true, useUnifiedTopology: true };
         MongoClient.connect(this.connectionString, mongoConnectParams, (err, client) => {
           if (err) {
@@ -94,8 +93,9 @@ class MongoDbManager extends DbManagerBase {
           }
         });
       });
-    } if (isClientObject) {
-      this.client = this.connectionStringOrMongoClient;
+    }
+    if (isClientObject) {
+      this.client = this.config.client;
       if (!this.isConnected()) {
         return new Promise((resolve, reject) => {
           this.client.connect((err, client) => {
@@ -117,7 +117,7 @@ class MongoDbManager extends DbManagerBase {
       createCollectionsAndIndex(this.db);
       return Promise.resolve(this.db);
     }
-    return new Error();
+    return Promise.reject(new Error());
   }
 
   async disconnect() {

@@ -53,23 +53,29 @@ describe('MongoDbManager', () => {
 
   describe('connection', () => {
     it('is disconnected at start', () => {
-      const connectionString = 'mongo://foo:218';
-      const db = new MongoDbManager(connectionString);
+      const config = {
+        url: 'mongo://foo:218',
+      };
+      const db = new MongoDbManager(config);
       expect(db.isConnected()).toBeFalse();
     });
 
     it('uses connection string', async () => {
-      const connectionString = 'mongo://foo:218';
-      const db = new MongoDbManager(connectionString);
-      db.connect(connectionString).then(
+      const config = {
+        url: 'mongo://foo:218',
+      };
+      const db = new MongoDbManager(config);
+      db.connect(config).then(
         () => { fail(); },
-        () => { expect(db.connectionString).toEqual(connectionString); },
+        () => { expect(db.config).toEqual(config); },
       );
     });
 
     it('rejets operations before connect', async () => {
-      const connectionString = 'mongo://foo:218';
-      const db = new MongoDbManager(connectionString);
+      const config = {
+        url: 'mongo://foo:218',
+      };
+      const db = new MongoDbManager(config);
       await expectAsync(db.persistAppSettings(null)).toBeRejected();
       await expectAsync(db.getAppSettings()).toBeRejected();
       await expectAsync(db.insertRecording(null)).toBeRejected();
@@ -82,10 +88,15 @@ describe('MongoDbManager', () => {
       await expectAsync(db.getCounterHistoryOfRecording('1')).toBeRejected();
     });
 
+    it('fails if no url or client', async () => {
+      const db = new MongoDbManager(null);
+      await expectAsync(db.connect()).toBeRejectedWithError();
+    });
+
     describe('mongoclient', () => {
       let connectionPromise = null;
       beforeEach(() => {
-        mdbm = new MongoDbManager(clientSpy);
+        mdbm = new MongoDbManager({ client: clientSpy });
         connectionPromise = mdbm.connect();
       });
 
@@ -95,7 +106,7 @@ describe('MongoDbManager', () => {
 
       it('connects if client is not connected', async () => {
         clientSpy.isConnected.and.returnValue(false);
-        mdbm = new MongoDbManager(clientSpy);
+        mdbm = new MongoDbManager({ client: clientSpy });
         await mdbm.connect();
 
         expect(clientSpy.connect).toHaveBeenCalled();
@@ -254,7 +265,7 @@ describe('MongoDbManager', () => {
     ];
 
     beforeEach(async () => {
-      mdbm = new MongoDbManager(clientSpy);
+      mdbm = new MongoDbManager({ client: clientSpy });
       await mdbm.connect();
     });
 
@@ -276,7 +287,7 @@ describe('MongoDbManager', () => {
 
   describe('deleteRecording', () => {
     beforeEach(async () => {
-      mdbm = new MongoDbManager(clientSpy);
+      mdbm = new MongoDbManager({ client: clientSpy });
       await mdbm.connect();
 
       dbSpy.collection.calls.reset();
