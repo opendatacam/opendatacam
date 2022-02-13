@@ -67,7 +67,7 @@ describe('MongoDbManager', () => {
       const db = new MongoDbManager(config);
       db.connect(config).then(
         () => { fail(); },
-        () => { expect(db.config).toEqual(config); },
+        () => { expect(db.config.url).toEqual(config.url); },
       );
     });
 
@@ -269,17 +269,30 @@ describe('MongoDbManager', () => {
       await mdbm.connect();
     });
 
-    it('inserts tracker data with detections', async () => {
-      await mdbm.updateRecordingWithNewframe(...argsWithDetection);
+    describe('enabled tracker persistance', () => {
+      beforeEach(async () => {
+        mdbm = new MongoDbManager({ client: clientSpy, persistTracker: true });
+        await mdbm.connect();
+      });
 
-      expect(collectionSpy.insertOne).toHaveBeenCalled();
+      it('inserts tracker data with detections', async () => {
+        await mdbm.updateRecordingWithNewframe(...argsWithDetection);
+
+        expect(collectionSpy.insertOne).toHaveBeenCalled();
+      });
+
+      it('does not insert empty tracker frames', async () => {
+        const argsWithoutDetection = cloneDeep(argsWithDetection);
+        argsWithoutDetection[5].objects = [];
+
+        await mdbm.updateRecordingWithNewframe(...argsWithoutDetection);
+
+        expect(collectionSpy.insertOne).not.toHaveBeenCalled();
+      });
     });
 
-    it('does not insert empty tracker frames', async () => {
-      const argsWithoutDetection = cloneDeep(argsWithDetection);
-      argsWithoutDetection[5].objects = [];
-
-      await mdbm.updateRecordingWithNewframe(...argsWithoutDetection);
+    it('does not insert if tracker persistance is disabled', async () => {
+      await mdbm.updateRecordingWithNewframe(...argsWithDetection);
 
       expect(collectionSpy.insertOne).not.toHaveBeenCalled();
     });

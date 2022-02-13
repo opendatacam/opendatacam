@@ -9,6 +9,7 @@ class MongoDbManager extends DbManagerBase {
    *
    * - url (string): The URL of the Mongo Server as a string
    * - client (MongoClient): If a Mongo client already exists the object can be passed here
+   * - persistTracker (bool): Store raw tracker information. Default, false
    *
    * After creation {@link MongoDbManager.connect} must be called.
    *
@@ -48,7 +49,20 @@ class MongoDbManager extends DbManagerBase {
      */
     this.DATABASE_NAME = 'opendatacam';
 
-    this.config = config;
+    /**
+     * Store the configuration
+     */
+    this.config = {
+      persistTracker: false
+    };
+
+    // Override default config
+    if (config) {
+      Object.keys(config).forEach((key) => {
+        this.config[key] = config[key];
+      });
+    }
+
     /**
      * The connection string used or null if a Db object was used for the connection or the
      * connection has not been established yet.
@@ -304,7 +318,8 @@ class MongoDbManager extends DbManagerBase {
           },
         );
 
-        if (trackerEntry.objects != null && trackerEntry.objects.length > 0) {
+        const isNotEmptyFrame = trackerEntry.objects != null && trackerEntry.objects.length > 0;
+        if (isNotEmptyFrame && this.config.persistTracker) {
           db.collection(this.TRACKER_COLLECTION).insertOne(trackerEntry);
         }
       }, (reason) => {
