@@ -53,7 +53,7 @@ class MongoDbManager extends DbManagerBase {
      * Store the configuration
      */
     this.config = {
-      persistTracker: false
+      persistTracker: false,
     };
 
     // Override default config
