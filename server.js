@@ -101,8 +101,7 @@ Opendatacam.setTracker(tracker);
 // Init connection to db
 let dbManager = null;
 if (config.DATABASE === 'mongo') {
-  const mongoUrl = config.DATABASE_PARAMS.mongo.url;
-  dbManager = new MongoDbManager(mongoUrl);
+  dbManager = new MongoDbManager(config.DATABASE_PARAMS.mongo);
 }
 
 if (dbManager !== null) {

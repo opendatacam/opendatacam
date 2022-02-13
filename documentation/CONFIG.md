@@ -528,15 +528,19 @@ See below for a list of supported database backends.
 
 ##### MongoDB
 
-By default Opendatacam will use the MongoDB instance running locally under the same docker compose
+The following configuration options exists for MongoDB
+
+- `url`: By default Opendatacam will use the MongoDB instance running locally under the same docker compose
 file.
 If you want to persist the data on a remote mongodb instance, you can change the setting `url`.
 See the example below:
+- `persistTracker`: If `true`, raw Tracker output will be stored. This allows for in-dept analysis of trajectories.
 
 ```
 "DATABASE_PARAMS": {
   "mongo": {
-    "url": "mongodb://my-mongo-server.domain.tld:27017"
+    "url": "mongodb://my-mongo-server.domain.tld:27017",
+    "persistTracker": false
   }
 }
 ```
