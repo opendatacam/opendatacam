@@ -144,7 +144,12 @@ app.prepare()
     express.get('/', (req, res) => {
       YOLO.start(); // Inside yolo process will check is started
 
-      const urlData = getURLData(req);
+      const urlData = {
+        hostname: 'localhost',
+        port: configHelper.getJsonStreamPort(),
+        path: '/',
+        method: 'GET',
+      };
       Opendatacam.listenToYOLO(YOLO, urlData);
 
       return app.render(req, res, '/');
@@ -187,8 +192,7 @@ app.prepare()
     express.get('/webcam/stream', (req, res) => {
     // Proxy MJPEG stream from darknet to avoid freezing issues
       if (mjpgProxy == null) {
-        const urlData = getURLData(req);
-        mjpgProxy = new MjpegProxy(`http://${urlData.address}:${config.PORTS.darknet_mjpeg_stream}`);
+        mjpgProxy = new MjpegProxy(`http://localhost:${config.PORTS.darknet_mjpeg_stream}`);
       }
       return mjpgProxy.proxyRequest(req, res);
     });
