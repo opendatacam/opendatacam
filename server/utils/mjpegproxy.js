@@ -166,7 +166,7 @@ class MjpegProxy {
         }
       });
     };
-  };
+  }
 }
 
 module.exports = { MjpegProxy };
