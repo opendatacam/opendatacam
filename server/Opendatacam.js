@@ -788,15 +788,8 @@ module.exports = {
       return;
     }
 
-    const options = {
-      hostname: urlData.address,
-      port: configHelper.getJsonStreamPort(),
-      path: '/',
-      method: 'GET',
-    };
-
     Logger.log('Send request to connect to YOLO JSON Stream');
-    self.HTTPRequestListeningToYOLO = http.get(options);
+    self.HTTPRequestListeningToYOLO = http.get(urlData);
 
     once(self.HTTPRequestListeningToYOLO, 'response').then(([res]) => {
       // re-emit request errors on response (so the pipeline fails, and we catch them)
