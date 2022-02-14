@@ -685,10 +685,6 @@ module.exports = {
     };
   },
 
-  getCounterHistory() {
-    return Opendatacam.countedItemsHistory;
-  },
-
   getCountingAreas() {
     return Opendatacam.countingAreas;
   },
