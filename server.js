@@ -48,6 +48,7 @@ console.log('-     Opendatacam initialized     -');
 console.log('- Config loaded:                  -');
 console.log(JSON.stringify(config, null, 2));
 console.log('-----------------------------------');
+Opendatacam.setConfig(config);
 
 // Initial YOLO config
 const yoloConfig = {

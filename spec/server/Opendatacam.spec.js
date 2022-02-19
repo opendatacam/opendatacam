@@ -5,17 +5,13 @@ const demoDetections = require('../../public/static/placeholder/alexeydetections
 const config = require('../../config.json');
 
 describe('Opendatacam', () => {
-  let configBackup;
-
-  beforeAll(() => {
-    configBackup = cloneDeep(config);
-  });
-
   beforeEach(() => {
     Opendatacam.setVideoResolution({ w: 1280, h: 720 });
 
-    config.TRACKER_SETTINGS.confidence_threshold = 0.5;
-    config.TRACKER_SETTINGS.objectMaxAreaInPercentageOfFrame = 50;
+    const testConfig = cloneDeep(config);
+    testConfig.TRACKER_SETTINGS.confidence_threshold = 0.5;
+    testConfig.TRACKER_SETTINGS.objectMaxAreaInPercentageOfFrame = 50;
+    Opendatacam.setConfig(testConfig);
 
     Tracker.reset();
     Tracker.setParams({
@@ -40,11 +36,6 @@ describe('Opendatacam', () => {
         name: 'test',
       },
     });
-  });
-
-  afterEach(() => {
-    config.TRACKER_SETTINGS.confidence_threshold = configBackup.TRACKER_SETTINGS.confidence_threshold; // eslint-disable-line max-len
-    config.TRACKER_SETTINGS.objectMaxAreaInPercentageOfFrame = configBackup.TRACKER_SETTINGS.objectMaxAreaInPercentageOfFrame; // eslint-disable-line max-len
   });
 
   describe('recording', () => {
