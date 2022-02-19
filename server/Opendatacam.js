@@ -299,18 +299,19 @@ module.exports = {
     }
 
     // If confidence_threshold is set, we should keep only those and filter out the rest
-    if (Opendatacam.config.TRACKER_SETTINGS && Opendatacam.config.TRACKER_SETTINGS.confidence_threshold) {
+    const trackerSettings = Opendatacam.config.TRACKER_SETTINGS;
+    if (trackerSettings && trackerSettings.confidence_threshold) {
       detectionScaledOfThisFrame = detectionScaledOfThisFrame.filter(
-        (detection) => detection.confidence >= Opendatacam.config.TRACKER_SETTINGS.confidence_threshold,
+        (detection) => detection.confidence >= trackerSettings.confidence_threshold,
       );
     }
 
     // If objectMaxAreaInPercentageOfFrame is set, we should filter out detection that are too large
-    if (Opendatacam.config.TRACKER_SETTINGS && Opendatacam.config.TRACKER_SETTINGS.objectMaxAreaInPercentageOfFrame) {
+    if (trackerSettings && trackerSettings.objectMaxAreaInPercentageOfFrame) {
       detectionScaledOfThisFrame = detectionScaledOfThisFrame.filter((detection) => {
         const detectionArea = (detection.w * detection.h);
         const screenArea = (Opendatacam.videoResolution.w * Opendatacam.videoResolution.h);
-        const maxAreaScale = (Opendatacam.config.TRACKER_SETTINGS.objectMaxAreaInPercentageOfFrame / 100);
+        const maxAreaScale = (trackerSettings.objectMaxAreaInPercentageOfFrame / 100);
         return detectionArea <= screenArea * maxAreaScale;
       });
     }
@@ -392,25 +393,25 @@ module.exports = {
 
   runCountingLogic(trackerDataForThisFrame, frameId) {
     const countedItemsForThisFrame = [];
-
+    const counterSettings = Opendatacam.config.COUNTER_SETTINGS;
     let NBFRAME_TO_BUFFER_FOR_COUNTER = 2;
-    if (Opendatacam.config.COUNTER_SETTINGS && Opendatacam.config.COUNTER_SETTINGS.computeTrajectoryBasedOnNbOfPastFrame) {
-      NBFRAME_TO_BUFFER_FOR_COUNTER = Opendatacam.config.COUNTER_SETTINGS.computeTrajectoryBasedOnNbOfPastFrame;
+    if (counterSettings && counterSettings.computeTrajectoryBasedOnNbOfPastFrame) {
+      NBFRAME_TO_BUFFER_FOR_COUNTER = counterSettings.computeTrajectoryBasedOnNbOfPastFrame;
     }
 
     let MIN_ANGLE_THRESHOLD = 0;
-    if (Opendatacam.config.COUNTER_SETTINGS && Opendatacam.config.COUNTER_SETTINGS.minAngleWithCountingLineThreshold) {
-      MIN_ANGLE_THRESHOLD = Opendatacam.config.COUNTER_SETTINGS.minAngleWithCountingLineThreshold;
+    if (counterSettings && counterSettings.minAngleWithCountingLineThreshold) {
+      MIN_ANGLE_THRESHOLD = counterSettings.minAngleWithCountingLineThreshold;
     }
 
     let COUNTING_AREA_MIN_FRAMES_INSIDE = 1;
-    if (Opendatacam.config.COUNTER_SETTINGS && Opendatacam.config.COUNTER_SETTINGS.countingAreaMinFramesInsideToBeCounted) {
-      COUNTING_AREA_MIN_FRAMES_INSIDE = Opendatacam.config.COUNTER_SETTINGS.countingAreaMinFramesInsideToBeCounted;
+    if (counterSettings && counterSettings.countingAreaMinFramesInsideToBeCounted) {
+      COUNTING_AREA_MIN_FRAMES_INSIDE = counterSettings.countingAreaMinFramesInsideToBeCounted;
     }
 
     let COUNTING_AREA_VERIFY_IF_OBJECT_ENTERS_CROSSING_ONE_EDGE = true;
-    if (Opendatacam.config.COUNTER_SETTINGS && Opendatacam.config.COUNTER_SETTINGS.countingAreaVerifyIfObjectEntersCrossingOneEdge !== undefined) {
-      COUNTING_AREA_VERIFY_IF_OBJECT_ENTERS_CROSSING_ONE_EDGE = Opendatacam.config.COUNTER_SETTINGS.countingAreaVerifyIfObjectEntersCrossingOneEdge;
+    if (counterSettings && counterSettings.countingAreaVerifyIfObjectEntersCrossingOneEdge !== undefined) {
+      COUNTING_AREA_VERIFY_IF_OBJECT_ENTERS_CROSSING_ONE_EDGE = counterSettings.countingAreaVerifyIfObjectEntersCrossingOneEdge;
     }
 
     // Populate trackerDataBuffer
@@ -976,5 +977,5 @@ module.exports = {
 
   setConfig(config) {
     Opendatacam.config = config;
-  }
+  },
 };
