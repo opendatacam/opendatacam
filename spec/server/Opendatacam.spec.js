@@ -5,6 +5,8 @@ const demoDetections = require('../../public/static/placeholder/alexeydetections
 const config = require('../../config.json');
 
 describe('Opendatacam', () => {
+  let dbSpy = null;
+
   beforeEach(() => {
     Opendatacam.setVideoResolution({ w: 1280, h: 720 });
 
@@ -12,6 +14,27 @@ describe('Opendatacam', () => {
     testConfig.TRACKER_SETTINGS.confidence_threshold = 0.5;
     testConfig.TRACKER_SETTINGS.objectMaxAreaInPercentageOfFrame = 50;
     Opendatacam.setConfig(testConfig);
+
+    dbSpy = jasmine.createSpyObj('DbManager', [
+      'connect',
+      'disconnect',
+      'isConnected',
+      'persistAppSettings',
+      'getAppSettings',
+      'insertRecording',
+      'getRecording',
+      'deleteRecording',
+      'updateRecordingWithNewframe',
+      'getRecordings',
+      'getRecordingsCount',
+      'getTrackerHistoryOfRecording',
+      'getCounterHistoryOfRecording',
+    ]);
+    dbSpy.insertRecording.and.resolveTo({ id: Math.random().toString() });
+    dbSpy.getAppSettings.and.resolveTo(null);
+    dbSpy.persistAppSettings.and.resolveTo();
+    dbSpy.updateRecordingWithNewframe.and.resolveTo();
+    Opendatacam.setDatabase(dbSpy);
 
     Tracker.reset();
     Tracker.setParams({
@@ -51,15 +74,33 @@ describe('Opendatacam', () => {
       expect(Opendatacam.isRecording()).toBeTrue();
     });
 
-    it('counts demo cars', () => {
-      demoDetections.forEach((frame) => {
-        Opendatacam.updateWithNewFrame(frame.objects, frame.frame_id);
-      });
-
-      expect(Opendatacam.getCounterSummary()).toEqual({
+    describe('counts demo cars', () => {
+      const expectSummary = {
         'cc8354b6-d8ec-41d3-ab12-38ced6811f7c': {
           _total: 41, car: 41,
         },
+      };
+
+      beforeEach(() => {
+        demoDetections.forEach((frame) => {
+          Opendatacam.updateWithNewFrame(frame.objects, frame.frame_id);
+        });
+      });
+
+      it('returns correct summary while counting', () => {
+        expect(dbSpy.updateRecordingWithNewframe).toHaveBeenCalledTimes(demoDetections.length);
+        expect(dbSpy.updateRecordingWithNewframe.calls.mostRecent().args[2]).toEqual(expectSummary);
+        expect(Opendatacam.getCounterSummary()).toEqual(expectSummary);
+      });
+
+      it('does not change summary after recording stopped', () => {
+        expect(dbSpy.updateRecordingWithNewframe).toHaveBeenCalledTimes(demoDetections.length);
+        expect(dbSpy.updateRecordingWithNewframe.calls.mostRecent().args[2]).toEqual(expectSummary);
+
+        Opendatacam.stopRecording();
+
+        expect(dbSpy.updateRecordingWithNewframe).toHaveBeenCalledTimes(demoDetections.length);
+        expect(dbSpy.updateRecordingWithNewframe.calls.mostRecent().args[2]).toEqual(expectSummary);
       });
     });
   });
