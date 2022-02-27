@@ -46,7 +46,19 @@ const initialState = {
   timeLastFrameFPSComputed: new Date(),
   indexLastFrameFPSComputed: 0,
   currentFrame: 0,
-  countedItemsHistory: [],
+  /**
+   * The counter summary for all currently configured areas.
+   *
+   * Example for a single area counting cars
+   *
+   * {
+   *     'cc8354b6-d8ec-41d3-ab12-38ced6811f7c': {
+   *         _total: 41,
+   *         car: 41,
+   *     },
+   * }
+  */
+  counterSummary: {},
   counterBuffer: {},
   videoResolution: null,
   countingAreas: {},
@@ -128,6 +140,8 @@ module.exports = {
     Object.keys(countingAreas).map((countingAreaKey) => {
       if (countingAreas[countingAreaKey]) {
         this.registerSingleCountingArea(countingAreaKey, countingAreas[countingAreaKey]);
+        // Set each counting area to 0
+        Opendatacam.counterSummary[countingAreaKey] = { _total: 0 };
       }
     });
   },
@@ -195,8 +209,15 @@ module.exports = {
         countedItem.gpsTimestamp = trackedItem.gpsTimestamp;
       }
 
-      // Add it to the history
-      Opendatacam.countedItemsHistory.push(countedItem);
+      // Add it to the summary
+      if (countedItem.countingDirection !== COUNTING_DIRECTION.LEAVING_ZONE) {
+        if (!Opendatacam.counterSummary[countedItem.area][countedItem.name]) {
+          Opendatacam.counterSummary[countedItem.area][countedItem.name] = 1;
+        } else {
+          Opendatacam.counterSummary[countedItem.area][countedItem.name] += 1;
+        }
+        Opendatacam.counterSummary[countedItem.area]._total++;
+      }
     }
     if (countingDirection !== COUNTING_DIRECTION.LEAVING_ZONE) {
       // Mark tracked item as counted this frame for display
@@ -238,7 +259,10 @@ module.exports = {
       Opendatacam.database.updateRecordingWithNewframe(
         Opendatacam.recordingStatus.recordingId,
         frameTimestamp,
-        counterSummary,
+        // We pass a clone of the counter summary, becausee passing a summary is vulnerable to
+        // race conditioons, as in rare cases (e.g. end of recording), the summary may get reset
+        // before the DbManager has a chance to persist it.
+        cloneDeep(counterSummary),
         trackerSummary,
         countedItemsForThisFrame,
         trackerEntry,
@@ -689,43 +713,7 @@ module.exports = {
   },
 
   getCounterSummary() {
-    // Generate dashboard from countingHistory
-    // example
-    // {
-    //   "turquoise": {
-    //     {
-    //       car: 0,
-    //       truck: 0,
-    //       person: 0,
-    //       bicycle: 0,
-    //       motorbike: 0,
-    //       bus: 0,
-    //       _total: 0
-    //     }
-    //   }
-    //   "blablal": {
-    //   }
-    // }
-
-    const counterSummary = {};
-
-    Opendatacam.countedItemsHistory.forEach((countedItem) => {
-      if (!counterSummary[countedItem.area]) {
-        counterSummary[countedItem.area] = {};
-        counterSummary[countedItem.area]._total = 0;
-      }
-
-      if (countedItem.countingDirection !== COUNTING_DIRECTION.LEAVING_ZONE) {
-        if (!counterSummary[countedItem.area][countedItem.name]) {
-          counterSummary[countedItem.area][countedItem.name] = 1;
-        } else {
-          counterSummary[countedItem.area][countedItem.name]++;
-        }
-        counterSummary[countedItem.area]._total++;
-      }
-    });
-
-    return counterSummary;
+    return Opendatacam.counterSummary;
   },
 
   getTrackerSummary() {
@@ -769,6 +757,11 @@ module.exports = {
     }
     Opendatacam._refTrackedItemIdWhenRecordingStarted = maxTrackerId - currentlyTrackedItems.length;
 
+    // Reset the counting areas
+    Object.keys(Opendatacam.counterSummary).forEach((key) => {
+      Opendatacam.counterSummary[key] = { _total: 0 };
+    });
+
     // Persist recording
     const newRecording = new Recording(
       Opendatacam.recordingStatus.dateStarted,
@@ -791,7 +784,9 @@ module.exports = {
     // Reset counters
     Opendatacam.recordingStatus.isRecording = false;
     Opendatacam.counterBuffer = {};
-    Opendatacam.countedItemsHistory = [];
+    Object.keys(Opendatacam.counterSummary).forEach((key) => {
+      Opendatacam.counterSummary[key] = { _total: 0 };
+    });
   },
 
   setVideoResolution(videoResolution) {
