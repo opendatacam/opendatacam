@@ -11,8 +11,20 @@ describe('Opendatacam', () => {
     Opendatacam.setVideoResolution({ w: 1280, h: 720 });
 
     const testConfig = cloneDeep(config);
-    testConfig.TRACKER_SETTINGS.confidence_threshold = 0.5;
-    testConfig.TRACKER_SETTINGS.objectMaxAreaInPercentageOfFrame = 50;
+    testConfig.TRACKER_SETTINGS = {
+      objectMaxAreaInPercentageOfFrame: 50,
+      confidence_threshold: 0.5,
+      iouLimit: 0.05,
+      unMatchedFrameTolerance: 5,
+      fastDelete: true,
+      matchingAlgorithm: "kdTree",
+    };
+    testConfig.COUNTER_SETTINGS = {
+      countingAreaMinFramesInsideToBeCounted: 1,
+      countingAreaVerifyIfObjectEntersCrossingOneEdge: false,
+      minAngleWithCountingLineThreshold: 5,
+      computeTrajectoryBasedOnNbOfPastFrame: 5,
+    };
     Opendatacam.setConfig(testConfig);
 
     dbSpy = jasmine.createSpyObj('DbManager', [
