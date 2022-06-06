@@ -25,9 +25,6 @@ class WebcamStream extends PureComponent {
   }
 
   componentDidMount() {
-    this.setState({
-      url: `/webcam/stream?date=${new Date().getTime()}`,
-    });
   }
 
   render() {

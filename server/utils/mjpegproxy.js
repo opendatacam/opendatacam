@@ -49,6 +49,7 @@ class MjpegProxy {
     self.audienceResponses = [];
     self.newAudienceResponses = [];
 
+    /** The MJPEG boundary to split individua frames. */
     self.boundary = null;
     self.globalMjpegResponse = null;
     self.mjpegRequest = null;
@@ -63,8 +64,9 @@ class MjpegProxy {
         self.newClient(req, res);
       } else {
         // Send source MJPEG request
+        // console.info('MJPEG-Proxy: HTTP Begin Get');
         self.mjpegRequest = http.get(self.mjpegOptions, (mjpegResponse) => {
-          // console.log('request');
+          // console.info('MJPEG-Proxy: HTTP Get');
           self.globalMjpegResponse = mjpegResponse;
           self.boundary = extractBoundary(mjpegResponse.headers['content-type']);
 
@@ -98,19 +100,22 @@ class MjpegProxy {
             self.audienceResponses.forEach((response) => {
               // First time we push data... lets start at a boundary
               if (self.newAudienceResponses.indexOf(response) >= 0) {
+                // console.info('MJPEG-Proxy: Try send frist Frame');
                 const p = chunk.indexOf(`--${self.boundary}`);
                 if (p >= 0) {
+                  // console.info('MJPEG-Proxy: Send frist Frame');
                   response.write(chunk.slice(p));
                   // remove from new
                   self.newAudienceResponses.splice(self.newAudienceResponses.indexOf(response), 1);
                 }
               } else {
+                // console.info('MJPEG-Proxy: Send follow up Frame');
                 response.write(chunk);
               }
             });
           });
           mjpegResponse.on('end', () => {
-            // console.log("...end");
+            // console.info('MJPEG-Proxy: End');
             self.audienceResponses.forEach((response) => {
               response.end();
             });
@@ -141,6 +146,10 @@ class MjpegProxy {
     };
 
     self.newClient = (req, res) => {
+      // console.log('MJPEG-Proxy: Client New');
+      if(!self.boundary) {
+        throw new Error('Can not send header, boundary still unknown!');
+      }
       res.writeHead(200, {
         Expires: 'Mon, 01 Jul 1980 00:00:00 GMT',
         'Cache-Control': 'no-cache, no-store, must-revalidate',
@@ -152,7 +161,7 @@ class MjpegProxy {
       self.newAudienceResponses.push(res);
 
       res.socket.on('close', () => {
-        // console.log('exiting client!');
+        // console.log('MJPEG-Proxy: Client Cose');
 
         self.audienceResponses.splice(self.audienceResponses.indexOf(res), 1);
         if (self.newAudienceResponses.indexOf(res) >= 0) {
