@@ -1,10 +1,13 @@
+const path = require('path');
+
 const { YoloSimulation } = require('../../scripts/YoloSimulation');
 
 describe('YoloSimulation', () => {
   let yolo = null;
+  let yoloConfig = null;
 
   beforeEach(() => {
-    const yoloConfig = {
+    yoloConfig = {
       yoloParams: {
         data: 'cfg/coco.data',
         cfg: 'cfg/yolov4-tiny.cfg',
@@ -12,7 +15,7 @@ describe('YoloSimulation', () => {
       },
       videoType: 'file',
       videoParams: {
-        yolo_json: 'public/static/placeholder/alexeydetections30FPS.json',
+        detections: 'public/static/placeholder/alexeydetections30FPS.json',
         video_file_or_folder: 'public/static/placeholder/frames',
         isLive: false,
         jsonFps: 20,
@@ -52,7 +55,7 @@ describe('YoloSimulation', () => {
   describe('cmd line args', () => {
     const expectedConfig = {
       videoParams: {
-        yolo_json: 'public/static/placeholder/alexeydetections30FPS.json',
+        detections: 'public/static/placeholder/alexeydetections30FPS.json',
         video_file_or_folder: 'public/static/placeholder/frames',
         isLive: false,
         jsonFps: 40,
@@ -79,8 +82,11 @@ describe('YoloSimulation', () => {
       '--darknetStdout', expectedConfig.darknetStdout,
     ];
     const argsValidNoDarknet = [
-      '--yolo_json', expectedConfig.videoParams.yolo_json,
+      '--yolo_json', expectedConfig.videoParams.detections,
     ].concat(argsMissingRequiredNoDarknet);
+    const argsValidDetections = argsDarknetPrefix.concat(
+        [ '--detections', expectedConfig.videoParams.detections ]
+      ).concat(argsMissingRequiredNoDarknet).concat(argsDarknetSuffix);
     const argsValidDarknet = argsDarknetPrefix.concat(argsValidNoDarknet).concat(argsDarknetSuffix);
     // YoloDarknet invokes it in a weird way that we have to handle separately
     const yoloDarknetInvokation = [
@@ -91,7 +97,7 @@ describe('YoloSimulation', () => {
       'cfg/coco.data',
       'cfg/yolov4-416x416.cfg',
       'yolov4.weights',
-      `--yolo_json ${expectedConfig.videoParams.yolo_json} --video_file_or_folder ${expectedConfig.videoParams.video_file_or_folder} --isLive ${expectedConfig.videoParams.isLive} --jsonFps ${expectedConfig.videoParams.jsonFps} --mjpgFps ${expectedConfig.videoParams.mjpgFps} --darknetStdout ${expectedConfig.darknetStdout}`,
+      `--yolo_json ${expectedConfig.videoParams.detections} --video_file_or_folder ${expectedConfig.videoParams.video_file_or_folder} --isLive ${expectedConfig.videoParams.isLive} --jsonFps ${expectedConfig.videoParams.jsonFps} --mjpgFps ${expectedConfig.videoParams.mjpgFps} --darknetStdout ${expectedConfig.darknetStdout}`,
       '-ext_output',
       '-dont_show',
       '-dontdraw_bbox',
@@ -137,6 +143,11 @@ describe('YoloSimulation', () => {
       );
     });
 
+    it('accepts detections as alias for yolo_json', () => {
+      expect(invokeParser(argsValidDetections)).not.toThrow();
+      expect(cfg).toEqual(expectedConfig);
+    });
+
     it('ignores darknet args', () => {
       expect(invokeParser(argsValidDarknet)).not.toThrow();
       expect(cfg).toEqual(expectedConfig);
@@ -173,6 +184,72 @@ describe('YoloSimulation', () => {
       jasmine.clock().tick(10 * 1000);
 
       expect(yolo.isStarted).toBeTrue();
+    });
+  });
+
+  describe('run MOT', () => {
+    beforeEach(() => {
+      yoloConfig.videoParams = {
+        detections: path.join(__dirname, '../res/YoloSimulation/MOT_Sample/'),
+        isLive: false,
+        jsonFps: 20,
+        mjpgFps: 0.2,
+      }
+      yolo = new YoloSimulation(yoloConfig);
+    });
+
+    it('initializes video_file_or_folder', () => {
+      const expectedImgFolder = path.join(yoloConfig.videoParams.detections, 'img1');
+      expect(yolo.config.videoParams.video_file_or_folder).toEqual(expectedImgFolder);
+    });
+
+    it('parses emits videoresolutionevent', async () => {
+      let emittedResolution = null;
+      yolo.on('videoresolution', (resolution) => { emittedResolution = resolution; });
+      yolo.start();
+
+      // Give yolo 100ms to start the subprocess
+      await new Promise((resolve) => setTimeout(resolve, 100));
+
+      const expectedResolution = { w: 1920, h: 1080 };
+      expect(yolo.getVideoResolution()).toEqual(expectedResolution);
+      expect(emittedResolution).toEqual(expectedResolution);
+    });
+
+    describe('detections', () => {
+      it('converts single lines', () => {
+        const actual = YoloSimulation.convertMotDetection({ w: 1920, h: 1080 },
+          '1,-1,1569,361,88.1,243.1,1');
+        const expected = {
+          class_id: 1,
+          name: "person",
+          relative_coordinates: {
+            center_x: 0.84013,
+            center_y: 0.446805,
+            width: 0.045885,
+            height: 0.225092
+          },
+          confidence: 1
+        };
+
+        expect(actual.class_id).toEqual(expected.class_id);
+        expect(actual.name).toEqual(expected.name);
+        expect(actual.confidence).toEqual(expected.confidence);
+        expect(actual.relative_coordinates.center_x).toBeCloseTo(expected.relative_coordinates.center_x);
+        expect(actual.relative_coordinates.center_y).toBeCloseTo(expected.relative_coordinates.center_y);
+        expect(actual.relative_coordinates.width).toBeCloseTo(expected.relative_coordinates.width);
+        expect(actual.relative_coordinates.height).toBeCloseTo(expected.relative_coordinates.height);
+      });
+    });
+
+    it('takes detections', () => {
+      expect(yolo.detections.length).toEqual(3);
+      expect(yolo.detections[0].frame_id).toEqual(1);
+      expect(yolo.detections[0].objects.length).toEqual(11);
+      expect(yolo.detections[1].frame_id).toEqual(2);
+      expect(yolo.detections[1].objects.length).toEqual(12);
+      expect(yolo.detections[2].frame_id).toEqual(3);
+      expect(yolo.detections[2].objects.length).toEqual(12);
     });
   });
 });

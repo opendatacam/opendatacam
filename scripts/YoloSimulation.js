@@ -18,7 +18,7 @@ class YoloSimulation extends YoloDarknet {
 
     this.config = {
       videoParams: {
-        yolo_json: null,
+        detections: null,
         video_file_or_folder: null,
         // If true, simulation will behave like a webcam and silently restart at
         // the end. If false, it behaves like a file and will cause the streams
@@ -44,28 +44,17 @@ class YoloSimulation extends YoloDarknet {
     this.simulationMJPEGServe = null;
     this.simulationJSONHTTPStreamServer = null;
 
-    // Take the values form the config first and then normalize what you have to.
     YoloSimulation.copyConfig(this.config, config);
-    this.config.videoParams.yolo_json = YoloSimulation.normalizePath(config.videoParams.yolo_json);
-    // eslint-disable-next-line max-len
-    this.config.videoParams.video_file_or_folder = YoloSimulation.normalizePath(config.videoParams.video_file_or_folder);
+    // Set Video Resolution to 0x0 on start up.
+    this.videoResolution = { w: 0, h: 0};
+    // Use this value for videoResolution once .start has been called
+    this.videoResolutionToBeReported = { w: 0, h: 0};
 
-    // parse JSON string to JSON object
-    const data = fs.readFileSync(this.config.videoParams.yolo_json);
-    this.detections = JSON.parse(data);
-
-    // Check if the video source is a file and determine the fps
-    try {
-      // eslint-disable-next-line max-len
-      this.isVideoDirectory = fs.lstatSync(this.config.videoParams.video_file_or_folder).isDirectory();
-      this.videoFileOrFolderExists = true;
-    } catch (err) {
-      console.warn(`Could not open simulation video file or folder ${this.config.videoParams.video_file_or_folder}`);
-      this.videoFileOrFolderExists = false;
-    }
-    if (this.videoFileOrFolderExists && !this.isVideoDirectory) {
-      // eslint-disable-next-line max-len
-      this.videoFileFps = YoloSimulation.getFpsForFile(this.config.videoParams.video_file_or_folder);
+    const isDirectory = fs.lstatSync(config.videoParams.detections).isDirectory();
+    if(isDirectory) {
+      this.initMot(config);
+    } else {
+      this.initYoloJson(config);
     }
 
     console.log('Process YOLO initialized');
@@ -108,12 +97,98 @@ class YoloSimulation extends YoloDarknet {
     });
   }
 
+  static convertMotDetection(resolution, motDetectionString) {
+    const parts = motDetectionString.split(',');
+    const w = Number.parseFloat(parts[4]) / resolution.w;
+    const h = Number.parseFloat(parts[5]) / resolution.h;
+    const x = (Number.parseFloat(parts[2]) / resolution.w) + (w / 2);
+    const y = (Number.parseFloat(parts[3]) / resolution.h) + (h / 2);
+    return {
+      class_id: 1,
+      name: "person",
+      confidence: Number.parseFloat(parts[6]),
+      relative_coordinates: {
+        center_x: x,
+        center_y: y,
+        width: w,
+        height: h
+      }
+    }
+  }
+
+  initMot(config) {
+    function getValue(seqinfoLines, value) {
+      const line = seqinfoLines.find((x) => x.startsWith(value));
+      return line.split('=')[1];
+    }
+
+    const seqinfoPath = path.join(config.videoParams.detections, 'seqinfo.ini');
+    const seqinfoLines = fs.readFileSync(seqinfoPath, 'utf-8').split(/\r?\n/);
+
+    this.config.videoParams.video_file_or_folder = path.join(config.videoParams.detections,
+      getValue(seqinfoLines, 'imDir'));
+    this.isVideoDirectory = true;
+    this.videoFileOrFolderExists = true;
+
+    this.videoResolutionToBeReported.w = Number.parseInt(getValue(seqinfoLines, 'imWidth'));
+    this.videoResolutionToBeReported.h = Number.parseInt(getValue(seqinfoLines, 'imHeight'));
+
+    const detPath = path.join(config.videoParams.detections, 'det', 'det.txt');
+    const detectionLines = fs.readFileSync(detPath, 'utf-8').split(/\r?\n/);
+    this.detections = [];
+    detectionLines.forEach(d => {
+      if(d === '') {
+        return;
+      }
+
+      const frame_id = Number.parseInt(d.split(',')[0]);
+
+      while(this.detections.length < frame_id) {
+        this.detections.push({
+          frame_id: this.detections.length + 1,
+          objects: []
+        });
+      }
+
+      this.detections[frame_id - 1].objects.push(YoloSimulation.convertMotDetection(this.videoResolutionToBeReported, d));
+    });
+  }
+
+  initYoloJson(config) {
+    // Take the values form the config first and then normalize what you have to.
+    this.config.videoParams.detections = YoloSimulation.normalizePath(config.videoParams.detections);
+    // eslint-disable-next-line max-len
+    this.config.videoParams.video_file_or_folder = YoloSimulation.normalizePath(config.videoParams.video_file_or_folder);
+
+    // parse JSON string to JSON object
+    const data = fs.readFileSync(this.config.videoParams.detections);
+    this.detections = JSON.parse(data);
+
+    // Check if the video source is a file and determine the fps
+    try {
+      // eslint-disable-next-line max-len
+      this.isVideoDirectory = fs.lstatSync(this.config.videoParams.video_file_or_folder).isDirectory();
+      this.videoFileOrFolderExists = true;
+    } catch (err) {
+      console.warn(`Could not open simulation video file or folder ${this.config.videoParams.video_file_or_folder}`);
+      this.videoFileOrFolderExists = false;
+    }
+    if (this.videoFileOrFolderExists && !this.isVideoDirectory) {
+      // eslint-disable-next-line max-len
+      this.videoFileFps = YoloSimulation.getFpsForFile(this.config.videoParams.video_file_or_folder);
+    }
+
+    // TODO: Determine resolution from video or jpg files.
+    this.videoResolutionToBeReported.w = 1280;
+    this.videoResolutionToBeReported.h = 720;
+  }
+
   isLive() {
     return this.config.videoParams.isLive;
   }
 
   getVideoParams() {
-    return this.config.videoParams.yolo_json;
+    return this.config.videoParams.detections;
   }
 
   start() {
@@ -129,9 +204,7 @@ class YoloSimulation extends YoloDarknet {
       // Simulate 5s to start yolo
 
       // Fix Video Resolution
-      // TODO: Determine resolution from video or jpg files.
-      this.videoResolution.w = 1280;
-      this.videoResolution.h = 720;
+      this.videoResolution = { ...this.videoResolutionToBeReported };
       this.emit('videoresolution', this.videoResolution);
 
       this.startYOLOSimulation(() => {
@@ -321,8 +394,16 @@ class YoloSimulation extends YoloDarknet {
       if (!err) {
         fs.readFile(filePath, callback);
       } else {
-        console.error(`Could not open ${filePath}`);
-        callback(`Could not open ${filePath}`, null);
+        const frameFileName = `${String(frameNb).padStart(6, '0')}.jpg`;
+        const filePath = path.join(folder, frameFileName);
+        fs.access(filePath, fs.constants.R_OK, (err) => {
+          if (!err) {
+            fs.readFile(filePath, callback);
+          } else {
+            console.error(`Could not open ${filePath}`);
+            callback(`Could not open ${filePath}`, null);
+          }
+        });
       }
     });
   }
@@ -351,9 +432,10 @@ class YoloSimulation extends YoloDarknet {
    */
   static parseCmdLine(argv) {
     const simulationYargs = yargs
-      .option('yolo_json', {
+      .option('detections', {
         requiresArg: true,
       })
+      .alias('detections', 'yolo_json')
       .option('video_file_or_folder', {
         requiresArg: true,
         default: '',
@@ -386,7 +468,7 @@ class YoloSimulation extends YoloDarknet {
         requiresArg: true,
         default: 8090,
       })
-      .demandOption(['yolo_json'])
+      .demandOption('detections')
       .fail((msg, err, yYargs) => {
         const errMsg = msg + os.EOL + os.EOL + yYargs.help();
         throw new Error(errMsg);
@@ -414,7 +496,7 @@ class YoloSimulation extends YoloDarknet {
 
     return {
       videoParams: {
-        yolo_json: simulationArgv.yolo_json,
+        detections: simulationArgv.detections,
         video_file_or_folder: simulationArgv.video_file_or_folder,
         isLive: simulationArgv.isLive,
         jsonFps: simulationArgv.jsonFps,
