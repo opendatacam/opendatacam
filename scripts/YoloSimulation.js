@@ -46,12 +46,12 @@ class YoloSimulation extends YoloDarknet {
 
     YoloSimulation.copyConfig(this.config, config);
     // Set Video Resolution to 0x0 on start up.
-    this.videoResolution = { w: 0, h: 0};
+    this.videoResolution = { w: 0, h: 0 };
     // Use this value for videoResolution once .start has been called
-    this.videoResolutionToBeReported = { w: 0, h: 0};
+    this.videoResolutionToBeReported = { w: 0, h: 0 };
 
     const isDirectory = fs.lstatSync(config.videoParams.detections).isDirectory();
-    if(isDirectory) {
+    if (isDirectory) {
       this.initMot(config);
     } else {
       this.initYoloJson(config);
@@ -105,15 +105,15 @@ class YoloSimulation extends YoloDarknet {
     const y = (Number.parseFloat(parts[3]) / resolution.h) + (h / 2);
     return {
       class_id: 1,
-      name: "person",
+      name: 'person',
       confidence: Number.parseFloat(parts[6]),
       relative_coordinates: {
         center_x: x,
         center_y: y,
         width: w,
-        height: h
-      }
-    }
+        height: h,
+      },
+    };
   }
 
   initMot(config) {
@@ -130,32 +130,34 @@ class YoloSimulation extends YoloDarknet {
     this.isVideoDirectory = true;
     this.videoFileOrFolderExists = true;
 
-    this.videoResolutionToBeReported.w = Number.parseInt(getValue(seqinfoLines, 'imWidth'));
-    this.videoResolutionToBeReported.h = Number.parseInt(getValue(seqinfoLines, 'imHeight'));
+    this.videoResolutionToBeReported.w = Number.parseInt(getValue(seqinfoLines, 'imWidth'), 10);
+    this.videoResolutionToBeReported.h = Number.parseInt(getValue(seqinfoLines, 'imHeight'), 10);
 
     const detPath = path.join(config.videoParams.detections, 'det', 'det.txt');
     const detectionLines = fs.readFileSync(detPath, 'utf-8').split(/\r?\n/);
     this.detections = [];
-    detectionLines.forEach(d => {
-      if(d === '') {
+    detectionLines.forEach((d) => {
+      if (d === '') {
         return;
       }
 
-      const frame_id = Number.parseInt(d.split(',')[0]);
+      const frameId = Number.parseInt(d.split(',')[0], 10);
 
-      while(this.detections.length < frame_id) {
+      while (this.detections.length < frameId) {
         this.detections.push({
           frame_id: this.detections.length + 1,
-          objects: []
+          objects: [],
         });
       }
 
-      this.detections[frame_id - 1].objects.push(YoloSimulation.convertMotDetection(this.videoResolutionToBeReported, d));
+      const yoloDetection = YoloSimulation.convertMotDetection(this.videoResolutionToBeReported, d);
+      this.detections[frameId - 1].objects.push(yoloDetection);
     });
   }
 
   initYoloJson(config) {
     // Take the values form the config first and then normalize what you have to.
+    // eslint-disable-next-line max-len
     this.config.videoParams.detections = YoloSimulation.normalizePath(config.videoParams.detections);
     // eslint-disable-next-line max-len
     this.config.videoParams.video_file_or_folder = YoloSimulation.normalizePath(config.videoParams.video_file_or_folder);
@@ -387,17 +389,17 @@ class YoloSimulation extends YoloDarknet {
   }
 
   static getJpgForFrameFromFolder(folder, frameNb, callback) {
-    const frameFileName = `${String(frameNb).padStart(3, '0')}.jpg`;
-    const filePath = path.join(folder, frameFileName);
+    let frameFileName = `${String(frameNb).padStart(3, '0')}.jpg`;
+    let filePath = path.join(folder, frameFileName);
 
     fs.access(filePath, fs.constants.R_OK, (err) => {
       if (!err) {
         fs.readFile(filePath, callback);
       } else {
-        const frameFileName = `${String(frameNb).padStart(6, '0')}.jpg`;
-        const filePath = path.join(folder, frameFileName);
-        fs.access(filePath, fs.constants.R_OK, (err) => {
-          if (!err) {
+        frameFileName = `${String(frameNb).padStart(6, '0')}.jpg`;
+        filePath = path.join(folder, frameFileName);
+        fs.access(filePath, fs.constants.R_OK, (errMot) => {
+          if (!errMot) {
             fs.readFile(filePath, callback);
           } else {
             console.error(`Could not open ${filePath}`);

@@ -85,8 +85,8 @@ describe('YoloSimulation', () => {
       '--yolo_json', expectedConfig.videoParams.detections,
     ].concat(argsMissingRequiredNoDarknet);
     const argsValidDetections = argsDarknetPrefix.concat(
-        [ '--detections', expectedConfig.videoParams.detections ]
-      ).concat(argsMissingRequiredNoDarknet).concat(argsDarknetSuffix);
+      ['--detections', expectedConfig.videoParams.detections],
+    ).concat(argsMissingRequiredNoDarknet).concat(argsDarknetSuffix);
     const argsValidDarknet = argsDarknetPrefix.concat(argsValidNoDarknet).concat(argsDarknetSuffix);
     // YoloDarknet invokes it in a weird way that we have to handle separately
     const yoloDarknetInvokation = [
@@ -194,7 +194,7 @@ describe('YoloSimulation', () => {
         isLive: false,
         jsonFps: 20,
         mjpgFps: 0.2,
-      }
+      };
       yolo = new YoloSimulation(yoloConfig);
     });
 
@@ -222,23 +222,23 @@ describe('YoloSimulation', () => {
           '1,-1,1569,361,88.1,243.1,1');
         const expected = {
           class_id: 1,
-          name: "person",
+          name: 'person',
           relative_coordinates: {
             center_x: 0.84013,
             center_y: 0.446805,
             width: 0.045885,
-            height: 0.225092
+            height: 0.225092,
           },
-          confidence: 1
+          confidence: 1,
         };
 
         expect(actual.class_id).toEqual(expected.class_id);
         expect(actual.name).toEqual(expected.name);
         expect(actual.confidence).toEqual(expected.confidence);
-        expect(actual.relative_coordinates.center_x).toBeCloseTo(expected.relative_coordinates.center_x);
-        expect(actual.relative_coordinates.center_y).toBeCloseTo(expected.relative_coordinates.center_y);
+        expect(actual.relative_coordinates.center_x).toBeCloseTo(expected.relative_coordinates.center_x); /* eslint-disable-line max-len */
+        expect(actual.relative_coordinates.center_y).toBeCloseTo(expected.relative_coordinates.center_y); /* eslint-disable-line max-len */
         expect(actual.relative_coordinates.width).toBeCloseTo(expected.relative_coordinates.width);
-        expect(actual.relative_coordinates.height).toBeCloseTo(expected.relative_coordinates.height);
+        expect(actual.relative_coordinates.height).toBeCloseTo(expected.relative_coordinates.height); /* eslint-disable-line max-len */
       });
     });
 
