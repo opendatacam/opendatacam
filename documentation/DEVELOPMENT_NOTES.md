@@ -36,11 +36,12 @@ The simulation can be customized in the OpenDataCam config by adding it as a new
 
 Whereas
 
-- `yolo_json`: A relative or absolute path to the JSON file to use.
+- `detections` A relative or absolute path to a [MOT challenge](https://motchallenge.net/), or the JSON file with Darknet detections to use.
   For relative paths, the repository root will be used as the base.
 - `video_file_or_folder`: A file or folder to find JPGs.
+  If `detections` points to a MOT challenge, the image folder will be taken for MOT's `seqinfo.ini`.
   If it's a file the images will be extracted using `ffmpeg`.
-  If it's a file it will expect `001.jpg`, `002.jpg`, ..., `101.jpg`, ... to be present there.
+  If it's a folder it will expect the images in MOT format, or short format (`001.jpg`, `002.jpg`, ..., `101.jpg`, `102.jpg`, ...) to be present there.
 - `isLive`: Should the simulation behave like a live source (e.g. WebCam), or like a file.
   If `true`, the simulation will silently loop from the beginning without killing the stream.
   If `false`, the simulation will kill the streams at the end of JSON file just like Darknet.
@@ -50,6 +51,7 @@ Whereas
 - `darknetStdout`: If the simulation should mimic the output of Darknet on stdout.
 - `json_port`: The TCP port for JSON streaming
 - `mjpg_port`: The TCP port for MJGP streeaming
+- `yolo_json`: Deprecated. Use `detection` instead
 
 The simulation JSON and MJPG streams can also be started without Opendatacam by invoking `node scripts/YoloSimulation.js` from the repository root folder.
 
