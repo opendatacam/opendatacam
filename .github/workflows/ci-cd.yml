@@ -71,6 +71,9 @@ jobs:
         - platform: nano
           docker-platform: linux/arm64
           weights: https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.weights
+        - platform: cpu-amd64
+          docker-platform: linux/amd64
+          weights: https://github.com/AlexeyAB/darknet/releases/download/darknet_yolo_v4_pre/yolov4-tiny.weights
     steps:
       - name: Checkout
         uses: actions/checkout@v2
