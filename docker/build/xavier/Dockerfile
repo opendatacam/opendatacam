@@ -1,4 +1,4 @@
-FROM opendatacam/opendatacam-darknet-base:v1.0.1-odc-Yolo-v3-xavier
+FROM opendatacam/opendatacam-darknet-base:v1.1.0-odc-Yolo-v3-xavier
 
 ENV DEBIAN_FRONTEND noninteractive
 
