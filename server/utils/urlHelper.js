@@ -5,18 +5,21 @@ module.exports = {
       protocol = 'https';
     }
 
+    let ret;
     const parsedUrl = req.get('Host').split(':');
     if (parsedUrl.length > 1) {
-      return {
+      ret = {
         address: parsedUrl[0],
         port: parsedUrl[1],
         protocol,
       };
+    } else {
+      ret = {
+        address: req.get('Host'),
+        port: 80,
+        protocol: req.protocol,
+      };
     }
-    return {
-      address: parsedUrl[0],
-      port: 80,
-      protocol,
-    };
+    return ret;
   },
 };
