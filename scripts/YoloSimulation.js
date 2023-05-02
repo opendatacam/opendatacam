@@ -280,7 +280,7 @@ class YoloSimulation extends YoloDarknet {
   }
 
   startStream(simulationState) {
-    let detectionsNb = 0;
+    let detectionsNb = this.detections[0].frame_id;
     let isSendingJpeg = false;
     let lastJpegTimestamp = 0;
     const self = this;
@@ -324,9 +324,8 @@ class YoloSimulation extends YoloDarknet {
           this.stop();
           return;
         }
-        detectionsNb = 0;
       }
-      const detection = this.detections[detectionsNb];
+      const rawDetectionToBeSent = this.detections[detectionsNb % this.detections.length];
 
       // It could be that extracting the frame from a video file and
       // transmitting it, takes longer than for the callback to fire.
@@ -342,7 +341,7 @@ class YoloSimulation extends YoloDarknet {
           isSendingJpeg = true;
           YoloSimulation.getJpgForFrameFromFolder(
             this.config.videoParams.video_file_or_folder,
-            detection.frame_id,
+            rawDetectionToBeSent.frame_id,
             sendJPGData,
           );
         } else if (performance.now() - lastJpegTimestamp > sleepMillis) {
@@ -352,7 +351,7 @@ class YoloSimulation extends YoloDarknet {
           // Seeking is not exact and updating the stream takes some time as
           // well, therefore jump a few frames ahead
           const maxFrameId = this.detections[this.detections.length - 1].frame_id;
-          let frameId = detection.frame_id + Math.ceil(this.videoFileFps / 10);
+          let frameId = rawDetectionToBeSent.frame_id + Math.ceil(this.videoFileFps / 10);
           if (frameId > maxFrameId) {
             frameId = maxFrameId;
           }
@@ -365,8 +364,11 @@ class YoloSimulation extends YoloDarknet {
         }
       }
 
-      // Update Yolo as well
-      YoloSimulation.sendYoloJson(simulationState.JSONStreamRes, this.detections[detectionsNb]);
+      // Update Yolo as well but make sure the detections number keeps counting otherwise frameIDs
+      // will repeat and that will confuse ODC
+      const detectionFixedFrameID = { ...rawDetectionToBeSent };
+      detectionFixedFrameID.frame_id = detectionsNb;
+      YoloSimulation.sendYoloJson(simulationState.JSONStreamRes, detectionFixedFrameID);
 
       // Move on to next detection
       detectionsNb += 1;
