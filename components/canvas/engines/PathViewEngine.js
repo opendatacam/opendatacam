@@ -27,7 +27,7 @@ class PathViewEngine {
       // If this tracked Item was already there in last frame
       const lastFrameTrackedItem = this.lastFrameData.find((lastFrameItemTracked) => trackedItemScaled.id === lastFrameItemTracked.id);
       if (lastFrameTrackedItem) {
-        const color = lastFrameTrackedItem.color ? lastFrameTrackedItem.color : this.pathsColors[Math.floor(Math.random() * this.pathsColors.length)];
+        const color = lastFrameTrackedItem.color ? lastFrameTrackedItem.color : this.pathsColors[lastFrameTrackedItem.id % this.pathsColors.length];
         trackedItemScaled.color = color;
         this.drawLine(context, {
           pointA: {
