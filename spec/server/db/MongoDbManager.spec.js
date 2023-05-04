@@ -238,30 +238,49 @@ describe('MongoDbManager', () => {
   });
 
   describe('updateRecordingWithNewframe', () => {
+    const frameDate = new Date('2020-11-10T17:03:36.477Z');
+    const counterSummary = {
+      '07b765a7-f05c-47b7-988b-7be06cbe3e53': { _total: 1289, car: 1289 },
+    };
+    const trackerSummary = { totalItemsTracked: 63 };
+    const counterEntry = [
+      {
+        frameId: 1192,
+        timestamp: frameDate,
+        area: '07b765a7-f05c-47b7-988b-7be06cbe3e53',
+        name: 'car',
+        id: 273,
+        bearing: 308.6598082540901,
+        countingDirection: 'rightleft_bottomtop',
+        angleWithCountingLine: 63.0669522865207,
+      },
+    ];
+    const trackerEntry = {
+      recordingId: RECORDING_ID,
+      frameId: 377,
+      timestamp: frameDate,
+      objects: [
+        {
+          id: 5,
+          x: 351,
+          y: 245,
+          w: 85,
+          h: 49,
+          bearing: 90,
+          confidence: 50,
+          name: 'car',
+          areas: [],
+        },
+      ],
+    };
+
     const argsWithDetection = [
       RECORDING_ID,
-      new Date('2020-11-10T17:03:36.477Z'),
-      {},
-      { totalItemsTracked: 63 },
-      [],
-      {
-        recordingId: RECORDING_ID,
-        frameId: 377,
-        timestamp: new Date('2020-11-10T17:03:36.477Z'),
-        objects: [
-          {
-            id: 5,
-            x: 351,
-            y: 245,
-            w: 85,
-            h: 49,
-            bearing: 90,
-            confidence: 50,
-            name: 'car',
-            areas: [],
-          },
-        ],
-      },
+      frameDate,
+      counterSummary,
+      trackerSummary,
+      counterEntry,
+      trackerEntry,
     ];
 
     beforeEach(async () => {
@@ -295,6 +314,20 @@ describe('MongoDbManager', () => {
       await mdbm.updateRecordingWithNewframe(...argsWithDetection);
 
       expect(collectionSpy.insertOne).not.toHaveBeenCalled();
+    });
+
+    it('updates recording properties', async () => {
+      await mdbm.updateRecordingWithNewframe(...argsWithDetection);
+
+      expect(collectionSpy.updateOne.calls.mostRecent().args[0]).toEqual({ id: RECORDING_ID });
+      expect(collectionSpy.updateOne.calls.mostRecent().args[1]).toEqual({
+        $set: {
+          dateEnd: frameDate,
+          counterSummary,
+          trackerSummary,
+        },
+        $push: { counterHistory: { $each: counterEntry } },
+      });
     });
   });
 
