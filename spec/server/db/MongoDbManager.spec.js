@@ -27,8 +27,8 @@ describe('MongoDbManager', () => {
       }
     };
     collectionSpy = jasmine.createSpyObj('collection',
-      ['createIndex', 'deleteMany', 'deleteOne', 'updateOne', 'insertOne', 'remove', 'findOne',
-        'find', 'project', 'sort', 'limit', 'skip', 'toArray', 'countDocuments']);
+      ['createIndex', 'deleteMany', 'deleteOne', 'updateOne', 'insertOne', 'insertMany', 'remove',
+        'findOne', 'find', 'project', 'sort', 'limit', 'skip', 'toArray', 'countDocuments']);
     collectionSpy.find.and.returnValue(collectionSpy);
     collectionSpy.project.and.returnValue(collectionSpy);
     collectionSpy.sort.and.returnValue(collectionSpy);
@@ -41,6 +41,7 @@ describe('MongoDbManager', () => {
     collectionSpy.deleteMany.and.callFake(collectionSpyDefaultFake);
     collectionSpy.deleteOne.and.callFake(collectionSpyDefaultFake);
     collectionSpy.insertOne.and.callFake(collectionSpyDefaultFake);
+    collectionSpy.insertMany.and.callFake(collectionSpyDefaultFake);
     collectionSpy.findOne.and.callFake(collectionSpyDefaultFake);
 
     dbSpy = jasmine.createSpyObj('Db', { collection: collectionSpy });
@@ -326,8 +327,10 @@ describe('MongoDbManager', () => {
           counterSummary,
           trackerSummary,
         },
-        $push: { counterHistory: { $each: counterEntry } },
       });
+      expect(collectionSpy.insertMany).toHaveBeenCalledWith(
+        counterEntry.map((e) => ({ ...e, recordingId: RECORDING_ID })),
+      );
     });
   });
 

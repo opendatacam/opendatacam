@@ -37,6 +37,12 @@ class MongoDbManager extends DbManagerBase {
      */
     this.TRACKER_COLLECTION = 'tracker';
     /**
+     * Collection used to store the counter entries
+     *
+     * @private
+     */
+    this.COUNTER_COLLECTION = 'counter';
+    /**
      * Collection to store App Settings
      *
      * @private
@@ -83,6 +89,10 @@ class MongoDbManager extends DbManagerBase {
 
       const trackerCollection = db.collection(this.TRACKER_COLLECTION);
       trackerCollection.createIndex({ recordingId: 1 });
+
+      const counterCollection = db.collection(this.COUNTER_COLLECTION);
+      counterCollection.createIndex({ recordingId: 1 });
+      counterCollection.createIndex({ frameId: 1 });
     };
 
     const isConnectionString = this.config.url !== undefined
@@ -289,18 +299,7 @@ class MongoDbManager extends DbManagerBase {
           counterSummary,
           trackerSummary,
         },
-        // Only add $push if we have a counted item
       };
-
-      const itemsToAdd = {};
-
-      // Add counterHistory when somethings counted
-      if (counterEntry.length > 0) {
-        itemsToAdd.counterHistory = {
-          $each: counterEntry,
-        };
-        updateRequest.$push = itemsToAdd;
-      }
 
       this.getDB().then((db) => {
         db.collection(this.RECORDING_COLLECTION).updateOne(
@@ -317,6 +316,11 @@ class MongoDbManager extends DbManagerBase {
             }
           },
         );
+
+        if (counterEntry.length > 0) {
+          const itemsToAdd = counterEntry.map((e) => ({ ...e, recordingId }));
+          db.collection(this.COUNTER_COLLECTION).insertMany(itemsToAdd);
+        }
 
         const isNotEmptyFrame = trackerEntry.objects != null && trackerEntry.objects.length > 0;
         if (isNotEmptyFrame && this.config.persistTracker) {
@@ -432,16 +436,30 @@ class MongoDbManager extends DbManagerBase {
           .find(
             { id: recordingId },
           )
-          .toArray((err, docs) => {
+          .toArray((err, recordings) => {
             if (err) {
               this.disconnect().then(() => {
                 this.connect();
               });
               reject(err);
-            } else if (docs.length === 0) {
+            } else if (recordings.length === 0) {
               resolve({});
             } else {
-              resolve(docs[0]);
+              db.collection(this.COUNTER_COLLECTION)
+                .find({ recordingId })
+                .project({ _id: 0, recordingId: 0 })
+                .toArray((err2, counterHistory) => {
+                  if (err2) {
+                    this.disconnect().then(() => {
+                      this.connect();
+                    });
+                    reject(err2);
+                  } else {
+                    const recording = { ...recordings[0] };
+                    recording.counterHistory = counterHistory;
+                    resolve(recording);
+                  }
+                });
             }
           });
       }, (reason) => {
