@@ -356,6 +356,12 @@ describe('MongoDbManager', () => {
       expect(collectionSpy.deleteMany.calls.mostRecent().args[0]).toEqual(expectedCall);
     });
 
+    it('deletes counterHistory for recording', () => {
+      expect(dbSpy.collection).toHaveBeenCalledWith(mdbm.COUNTER_COLLECTION);
+      const expectedCall = { recordingId: RECORDING_ID };
+      expect(collectionSpy.deleteMany.calls.first().args[0]).toEqual(expectedCall);
+    });
+
     it('does not call obsolete methods', () => {
       expect(collectionSpy.remove).not.toHaveBeenCalled();
       expect(collectionSpy.deleteOne).toHaveBeenCalled();

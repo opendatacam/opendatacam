@@ -256,6 +256,22 @@ class MongoDbManager extends DbManagerBase {
       });
     });
 
+    const deleteCounterPromise = new Promise((resolve, reject) => {
+      this.getDB().then((db) => {
+        const filter = { recordingId };
+        db.collection(this.COUNTER_COLLECTION).deleteMany(filter, (err, r) => {
+          if (err) {
+            this.disconnect();
+            reject(err);
+          } else {
+            resolve(r);
+          }
+        });
+      }, (reason) => {
+        reject(reason);
+      });
+    });
+
     const deleteTrackerPromise = new Promise((resolve, reject) => {
       this.getDB().then((db) => {
         const filter = { recordingId };
@@ -272,7 +288,7 @@ class MongoDbManager extends DbManagerBase {
       });
     });
 
-    return Promise.all([deleteRecordingPromise, deleteTrackerPromise]);
+    return Promise.all([deleteRecordingPromise, deleteCounterPromise, deleteTrackerPromise]);
   }
 
   // TODO For larges array like the one we are using, we can't do that, perfs are terrible
