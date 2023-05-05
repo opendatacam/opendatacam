@@ -27,8 +27,8 @@ describe('MongoDbManager', () => {
       }
     };
     collectionSpy = jasmine.createSpyObj('collection',
-      ['createIndex', 'deleteMany', 'deleteOne', 'updateOne', 'insertOne', 'remove', 'findOne',
-        'find', 'project', 'sort', 'limit', 'skip', 'toArray', 'countDocuments']);
+      ['createIndex', 'deleteMany', 'deleteOne', 'updateOne', 'insertOne', 'insertMany', 'remove',
+        'findOne', 'find', 'project', 'sort', 'limit', 'skip', 'toArray', 'countDocuments']);
     collectionSpy.find.and.returnValue(collectionSpy);
     collectionSpy.project.and.returnValue(collectionSpy);
     collectionSpy.sort.and.returnValue(collectionSpy);
@@ -41,6 +41,7 @@ describe('MongoDbManager', () => {
     collectionSpy.deleteMany.and.callFake(collectionSpyDefaultFake);
     collectionSpy.deleteOne.and.callFake(collectionSpyDefaultFake);
     collectionSpy.insertOne.and.callFake(collectionSpyDefaultFake);
+    collectionSpy.insertMany.and.callFake(collectionSpyDefaultFake);
     collectionSpy.findOne.and.callFake(collectionSpyDefaultFake);
 
     dbSpy = jasmine.createSpyObj('Db', { collection: collectionSpy });
@@ -238,30 +239,49 @@ describe('MongoDbManager', () => {
   });
 
   describe('updateRecordingWithNewframe', () => {
+    const frameDate = new Date('2020-11-10T17:03:36.477Z');
+    const counterSummary = {
+      '07b765a7-f05c-47b7-988b-7be06cbe3e53': { _total: 1289, car: 1289 },
+    };
+    const trackerSummary = { totalItemsTracked: 63 };
+    const counterEntry = [
+      {
+        frameId: 1192,
+        timestamp: frameDate,
+        area: '07b765a7-f05c-47b7-988b-7be06cbe3e53',
+        name: 'car',
+        id: 273,
+        bearing: 308.6598082540901,
+        countingDirection: 'rightleft_bottomtop',
+        angleWithCountingLine: 63.0669522865207,
+      },
+    ];
+    const trackerEntry = {
+      recordingId: RECORDING_ID,
+      frameId: 377,
+      timestamp: frameDate,
+      objects: [
+        {
+          id: 5,
+          x: 351,
+          y: 245,
+          w: 85,
+          h: 49,
+          bearing: 90,
+          confidence: 50,
+          name: 'car',
+          areas: [],
+        },
+      ],
+    };
+
     const argsWithDetection = [
       RECORDING_ID,
-      new Date('2020-11-10T17:03:36.477Z'),
-      {},
-      { totalItemsTracked: 63 },
-      [],
-      {
-        recordingId: RECORDING_ID,
-        frameId: 377,
-        timestamp: new Date('2020-11-10T17:03:36.477Z'),
-        objects: [
-          {
-            id: 5,
-            x: 351,
-            y: 245,
-            w: 85,
-            h: 49,
-            bearing: 90,
-            confidence: 50,
-            name: 'car',
-            areas: [],
-          },
-        ],
-      },
+      frameDate,
+      counterSummary,
+      trackerSummary,
+      counterEntry,
+      trackerEntry,
     ];
 
     beforeEach(async () => {
@@ -296,6 +316,22 @@ describe('MongoDbManager', () => {
 
       expect(collectionSpy.insertOne).not.toHaveBeenCalled();
     });
+
+    it('updates recording properties', async () => {
+      await mdbm.updateRecordingWithNewframe(...argsWithDetection);
+
+      expect(collectionSpy.updateOne.calls.mostRecent().args[0]).toEqual({ id: RECORDING_ID });
+      expect(collectionSpy.updateOne.calls.mostRecent().args[1]).toEqual({
+        $set: {
+          dateEnd: frameDate,
+          counterSummary,
+          trackerSummary,
+        },
+      });
+      expect(collectionSpy.insertMany).toHaveBeenCalledWith(
+        counterEntry.map((e) => ({ ...e, recordingId: RECORDING_ID })),
+      );
+    });
   });
 
   describe('deleteRecording', () => {
@@ -318,6 +354,12 @@ describe('MongoDbManager', () => {
       expect(dbSpy.collection).toHaveBeenCalledWith(mdbm.TRACKER_COLLECTION);
       const expectedCall = { recordingId: RECORDING_ID };
       expect(collectionSpy.deleteMany.calls.mostRecent().args[0]).toEqual(expectedCall);
+    });
+
+    it('deletes counterHistory for recording', () => {
+      expect(dbSpy.collection).toHaveBeenCalledWith(mdbm.COUNTER_COLLECTION);
+      const expectedCall = { recordingId: RECORDING_ID };
+      expect(collectionSpy.deleteMany.calls.first().args[0]).toEqual(expectedCall);
     });
 
     it('does not call obsolete methods', () => {
