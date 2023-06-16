@@ -379,7 +379,7 @@ Technical architecture overview:
 Please ask any Questions you have around OpenDataCam in the [GitHub Discussions](https://github.com/opendatacam/opendatacam/discussions).
 Bugs, Features and anythings else regarding the development of OpenDataCam is tracked in [GitHub Issues](https://github.com/opendatacam/opendatacam/issues).
 
-For business inquiries or professional support requests please contact [Valentin Sawadski](https://nono.cam/opendatacam/).
+For business inquiries or professional support requests please contact [Valentin Sawadski](https://opendata.cam/#people_involved).
 
 ## 💌 Acknowledgments
 
