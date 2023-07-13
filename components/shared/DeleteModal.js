@@ -1,55 +1,56 @@
 import React, { Component } from 'react';
+import SVG from 'react-inlinesvg';
 import CanvasEngine from '../canvas/CanvasEngine';
 import { CIRCLE_DELETE_RADIUS, CANVAS_RENDERING_MODE } from '../../utils/constants';
-import SVG from 'react-inlinesvg';
 import { getCounterColor } from '../../utils/colors';
 
 class DeleteModal extends Component {
-
   constructor(props) {
     super(props);
     this.escFunction = this.escFunction.bind(this);
   }
 
-  escFunction(event){
-    if(event.keyCode === 27) {
-      this.props.cancel()
+  escFunction(event) {
+    event.stopPropagation();
+    if (event.keyCode === 27) {
+      this.props.cancel();
     }
   }
 
-  componentDidMount(){
-    document.addEventListener("keydown", this.escFunction, false);
+  componentDidMount() {
+    document.addEventListener('keydown', this.escFunction, false);
   }
-  componentWillUnmount(){
-    document.removeEventListener("keydown", this.escFunction, false);
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.escFunction, false);
   }
 
   render() {
-
     return (
       <div className="overlay">
-        {this.props.countingAreasWithCenters.entrySeq().map(([id, countingArea]) =>
+        {this.props.countingAreasWithCenters.entrySeq().map(([id, countingArea]) => (
           <div
             className="circle"
             key={id}
             onClick={() => this.props.delete(id)}
             style={{
-                top: countingArea.getIn(['location','center','y']) - (CIRCLE_DELETE_RADIUS) / 2, 
-                left: countingArea.getIn(['location','center','x']) - (CIRCLE_DELETE_RADIUS) / 2,
-                backgroundColor: getCounterColor(countingArea.get('color'))
+              top: countingArea.getIn(['location', 'center', 'y']) - (CIRCLE_DELETE_RADIUS) / 2,
+              left: countingArea.getIn(['location', 'center', 'x']) - (CIRCLE_DELETE_RADIUS) / 2,
+              backgroundColor: getCounterColor(countingArea.get('color')),
             }}
           >
-            <SVG 
-              className="w-8 h-8 svg-icon flex items-center" 
-              cacheRequests={true}
-              src={`/static/icons/ui/delete.svg`} 
+            <SVG
+              className="w-8 h-8 svg-icon flex items-center"
+              cacheRequests
+              src="/static/icons/ui/delete.svg"
               aria-label="icon close"
             />
           </div>
-        )}
-        
+        ))}
+
         <CanvasEngine mode={CANVAS_RENDERING_MODE.COUNTING_AREAS} />
-        <style jsx>{`
+        <style jsx>
+          {`
           .overlay {
             position: fixed;
             left: 0;
@@ -76,9 +77,10 @@ class DeleteModal extends Component {
             align-items: center;
             justify-content: center;
           }
-        `}</style>
+        `}
+        </style>
       </div>
-    )
+    );
   }
 }
 

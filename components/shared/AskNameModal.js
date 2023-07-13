@@ -1,15 +1,14 @@
-import React, { Component } from 'react'
+import React, { Component } from 'react';
+import SVG from 'react-inlinesvg';
 import CanvasEngine from '../canvas/CanvasEngine';
 import { CANVAS_RENDERING_MODE } from '../../utils/constants';
-import SVG from 'react-inlinesvg';
 
 class AskNameModal extends Component {
-
   constructor(props) {
     super(props);
 
     this.state = {
-      name: props.name || ''
+      name: props.name || '',
     };
 
     this.handleChange = this.handleChange.bind(this);
@@ -17,40 +16,44 @@ class AskNameModal extends Component {
   }
 
   handleChange(event) {
-    this.setState({name: event.target.value});
+    this.setState({ name: event.target.value });
   }
 
-  escFunction(event){
-    if(event.keyCode === 27) {
-      this.props.cancel()
+  escFunction(event) {
+    if (event.keyCode === 27) {
+      this.props.cancel();
     }
   }
 
-  componentDidMount(){
-    document.addEventListener("keydown", this.escFunction, false);
+  componentDidMount() {
+    document.addEventListener('keydown', this.escFunction, false);
   }
-  componentWillUnmount(){
-    document.removeEventListener("keydown", this.escFunction, false);
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.escFunction, false);
   }
 
   render() {
     return (
       <div className="overlay">
-        <form className="ask-name flex" onSubmit={(e) => {
-          e.preventDefault()
-          if(this.state.name !== '') {
-            this.props.save(this.state.name)
-          }
-        }}>
-          <input 
+        <form
+          className="ask-name flex"
+          onSubmit={(e) => {
+            e.preventDefault();
+            if (this.state.name !== '') {
+              this.props.save(this.state.name);
+            }
+          }}
+        >
+          <input
             type="text"
-            className="appearance-none rounded-l py-2 px-3" 
-            value={this.state.name} 
-            onChange={this.handleChange} 
-            placeholder='Counting line name'
+            className="appearance-none rounded-l py-2 px-3"
+            value={this.state.name}
+            onChange={this.handleChange}
+            placeholder="Counter name"
             autoFocus
           />
-          <input 
+          <input
             type="submit"
             className="btn btn-default cursor-pointer"
             value="OK"
@@ -59,16 +62,17 @@ class AskNameModal extends Component {
             className="btn btn-default p-0 rounded-r"
             onClick={() => this.props.cancel()}
           >
-            <SVG 
-              className="w-10 h-10 svg-icon flex items-center" 
-              cacheRequests={true}
-              src={`/static/icons/ui/close.svg`} 
+            <SVG
+              className="w-10 h-10 svg-icon flex items-center"
+              cacheRequests
+              src="/static/icons/ui/close.svg"
               aria-label="icon close"
             />
           </button>
         </form>
         <CanvasEngine mode={CANVAS_RENDERING_MODE.COUNTING_AREAS} />
-        <style jsx>{`
+        <style jsx>
+          {`
           .overlay {
             position: fixed;
             left: 0;
@@ -87,10 +91,11 @@ class AskNameModal extends Component {
             transform: translate(-50%, -50%);
             z-index: 6;
           }
-        `}</style>
+        `}
+        </style>
       </div>
-    )
+    );
   }
 }
 
-export default AskNameModal
+export default AskNameModal;

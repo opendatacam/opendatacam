@@ -1,15 +1,15 @@
-import { fromJS } from 'immutable'
+import { fromJS } from 'immutable';
 
 // Initial state
 const initialState = fromJS({
   trackerData: {
     frameIndex: 0,
-    data: []
-  }
-})
+    data: [],
+  },
+});
 
 // Actions
-const UPDATE_DATA = 'Tracker/UPDATE_DATA'
+const UPDATE_DATA = 'Tracker/UPDATE_DATA';
 
 export function getTrackerAccuracyNbFrameBuffer() {
   return window.CONFIG.TRACKER_ACCURACY_DISPLAY.nbFrameBuffer;
@@ -20,22 +20,21 @@ export function getTrackerAccuracySettings() {
 }
 
 export function updateTrackerData(trackerDataLastFrame) {
-  return (dispatch, getState) => {
-
+  return (dispatch) => {
     // Update tracker raw data
     dispatch({
       type: UPDATE_DATA,
-      payload: trackerDataLastFrame
-    })
-  }
+      payload: trackerDataLastFrame,
+    });
+  };
 }
 
 // Reducer
-export default function TrackerReducer (state = initialState, action = {}) {
+export default function TrackerReducer(state = initialState, action = {}) {
   switch (action.type) {
     case UPDATE_DATA:
-      return state.set("trackerData", fromJS(action.payload));
+      return state.set('trackerData', fromJS(action.payload));
     default:
-      return state
+      return state;
   }
 }

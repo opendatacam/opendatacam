@@ -32,12 +32,14 @@ We offer several customization options:
     - [Use Custom Neural Network weights](#use-custom-neural-network-weights)
     - [Tracker settings](#tracker-settings)
     - [Counter settings](#counter-settings)
-    - [MongoDB URL](#mongodb-url)
+    - [Database](#database)
+      - [MongoDB](#mongodb)
     - [Ports](#ports)
     - [Tracker accuracy display](#tracker-accuracy-display)
     - [Use Environment Variables](#use-environment-variables)
       - [Without Docker](#without-docker)
       - [With docker-compose](#with-docker-compose)
+    - [GPS](#gps)
 
 ### General
 
@@ -134,7 +136,7 @@ By default we are displaying the mobility classes:
 
 ![Display classes](https://user-images.githubusercontent.com/533590/56987855-f0101c00-6b64-11e9-8bf4-afd83a53f991.png)
 
-If you want to customize it you should modify the `DISPLAY_CLASSES` config.  
+If you want to customize it you should modify the `DISPLAY_CLASSES` config.
 
 ```json
 "DISPLAY_CLASSES": [
@@ -213,7 +215,7 @@ For example, you can modify the default from:
 }
 ```
 
-To 
+To
 
 ```json
 "COUNTER_COLORS": {
@@ -251,7 +253,7 @@ _Technical note:_
 
 Behind the hoods, this config input becomes [the input of the darknet](https://github.com/opendatacam/opendatacam/blob/master/server/processes/YOLO.js#L32) process which then get [fed into OpenCV VideoCapture()](https://github.com/AlexeyAB/darknet/blob/master/src/image_opencv.cpp#L577).
 
-As we compile OpenCV with Gstreamer support when installing OpenDataCam, we can use any [Gstreamer pipeline](http://www.einarsundgren.se/gstreamer-basic-real-time-streaming-tutorial/) as input + other VideoCapture supported format like video files / IP cam streams. 
+As we compile OpenCV with Gstreamer support when installing OpenDataCam, we can use any [Gstreamer pipeline](http://www.einarsundgren.se/gstreamer-basic-real-time-streaming-tutorial/) as input + other VideoCapture supported format like video files / IP cam streams.
 
 You can add your own gstreamer pipeline for your needs by adding an entry to `"VIDEO_INPUTS_PARAMS"`
 
@@ -311,9 +313,9 @@ Once you do have the video file inside the `opendatacam_videos` folder, you can 
 ```json
 "VIDEO_INPUT": "file"
 ```
- 
+
 2. Change `VIDEO_INPUTS_PARAMS > file` with the path to your file
- 
+
 ```json
 "VIDEO_INPUTS_PARAMS": {
   "file": "opendatacam_videos/file.mp4"
@@ -472,7 +474,8 @@ You can tweak some settings of the tracker to optimize OpenDataCam better for yo
   "objectMaxAreaInPercentageOfFrame": 80,
   "confidence_threshold": 0.2,
   "iouLimit": 0.05,
-  "unMatchedFrameTolerance": 5
+  "unMatchedFrameTolerance": 5,
+  "fastDelete": true
 }
 ```
 
@@ -484,14 +487,26 @@ You can tweak some settings of the tracker to optimize OpenDataCam better for yo
 
 - `unMatchedFrameTolerance`: This the number of frame we keep predicting the object trajectory if it is not matched by the next frame list of detections. Setting this higher will cause less ID switches, but more potential false positive with an ID going to another object.
 
+- `fastDelete`: If false, detections will always be kept for `unMatchedFrameTolerance` in the buffer. Otherwise, detections will be dropped from the tracker buffer if they can not be machted the next frame they appeared. Setting this to `false` can help with tracking difficult objects, but may have side effects like more frequent object ID switches or lower FPS as more objects will be kept in the buffer.
+
 #### Counter settings
 
 ```json
 "COUNTER_SETTINGS": {
+  "countingAreaMinFramesInsideToBeCounted": 1,
+  "countingAreaVerifyIfObjectEntersCrossingOneEdge": true,
   "minAngleWithCountingLineThreshold": 5,
   "computeTrajectoryBasedOnNbOfPastFrame": 5
 }
 ```
+
+- `countingAreaMinFramesInsideToBeCounted`: this is the minimum number of frames the object needs to remain in the area to be counted
+
+- `countingAreaVerifyIfObjectEntersCrossingOneEdge`: (default `true`)
+
+  - if `true`: in order to count the tracked item, the algorithm checks if the object trajectory crosses one of the edges of the polygon otherwise it won't count it.. this is to avoid to count id reassignment inside the polygon.
+
+  - if `false`: the algorithm for the counting won't check this.. it will be very dump and basically count the item if it remains more than `countingAreaMinFramesInsideToBeCounted` inside the zone.. but if its IDs reassigns inside it could count it twice...
 
 - `minAngleWithCountingLineThreshold`: Count items crossing the counting line only if the angle between their trajectory and the counting line is superior to this angle (in degree). 90 degree would count nothing (or only perfectly perpendicular object) whereas 0 will count everything.
 
@@ -503,15 +518,31 @@ You can tweak some settings of the tracker to optimize OpenDataCam better for yo
 
 NB: if the object has changed ID in the past frames, it will take the last past frame known with the same ID.
 
-#### MongoDB URL
+#### Database
 
-If you want to persist the data on a remote mongodb instance, you can change the setting `MONGODB_URL` .
+Database backend can be selected by setting the `DATABASE` key.
+See below for a list of supported database backends.
+
+##### MongoDB
+
+By default Opendatacam will use the MongoDB instance running locally under the same docker compose
+file.
+If you want to persist the data on a remote mongodb instance, you can change the setting `url`.
+See the example below:
+
+```
+"DATABASE_PARAMS": {
+  "mongo": {
+    "url": "mongodb://my-mongo-server.domain.tld:27017"
+  }
+}
+```
 
 By default the Mongodb will be persisted in the `/data/db` directory of your host machine
 
 #### Ports
 
-You can modify the default ports used by OpenDataCam. 
+You can modify the default ports used by OpenDataCam.
 
 ```json
 "PORTS": {
@@ -582,7 +613,7 @@ Some of the entries in `config.json` can be overwritten using environment variab
 
 If you are running opendatacam without docker you can set these by:
 
-- adding a file called `.env` to the root of the project, 
+- adding a file called `.env` to the root of the project,
   then these will be picked up by the [dotenv](https://www.npmjs.com/package/dotenv) package.
 - adding these variables to your `.bashrc` or `.zshrc` depending on what shell you are using or any other configuration file that gets loaded into your shell sessions.
 - adding them to the command you use to start the opendatacam,
@@ -625,7 +656,72 @@ service:
       - ./.env
 ```
 
-You also can add these variables to the call of  the `docker-compose` command. For example like this `docker-compose up -e PORT_APP=8080`. 
+You also can add these variables to the call of  the `docker-compose` command. For example like this `docker-compose up -e PORT_APP=8080`.
 
+#### GPS
 
+OpenDataCam can obtain the current position of the tracker via GPS and persist it along other counter data.
+This is useful in situations where the OpenDataCam is mobile e.g. used as a dashcam or mounted to a drone.
 
+##### Requirements
+
+To receive GPS position a GPS enabled device must be connected to your Jetson or PC.
+See [GPSD's list of supported devices](https://gpsd.gitlab.io/gpsd/hardware.html).
+
+Additionally you will need GPSD running.
+GPSD can either run in Docker or as a system service.
+
+###### Running GPSD in Docker
+
+The easiest way to run GPSD is through docker using the [opensourcefoundries/gpsd](https://registry.hub.docker.com/r/opensourcefoundries/gpsd) image.
+
+The easiest way is to add the GPSD service to your `docker-compose.yml` the following way.
+
+```yaml
+services:
+  # Add the following service to you docker compose file
+  gpsd:
+    image: opensourcefoundries/gpsd
+    # List your GPS device here and make sure that it matches the device in the entrypoint line
+    devices:
+      - /dev/ttyACM0
+    entrypoint: ["/bin/sh", "-c", "/sbin/syslogd -S -O - -n & exec /usr/sbin/gpsd -N -n -G /dev/ttyACM0", "--"]
+    ports:
+      - "2947:2947"
+    restart: always
+```
+
+If GPSD been added to your Docker compose file, please change your GPS `hostname` setting in `config.json` to the name of your GPSD service.
+In the example above this would be `"hostname": "gpsd"`.
+
+Alternatively, if you don't run OpenDataCam in docker you can only start GPSD via the following command:
+
+```bash
+# This assumes your device is /dev/ttyACM0. Please Change accordingly to your setup.
+GPS_DEVICE=/dev/ttyACM0; docker run -d -p 2947:2947 --device=$GPS_DEVICE opensourcefoundries/gpsd $GPS_DEVICE
+```
+
+###### Running GPSD as system service
+
+Please read your operating system documentation.
+
+##### Configuration
+
+To enable GPS add the following section to your `config.json`
+
+```json
+"GPS": {
+  "enabled": true,
+  "port": 2947,
+  "hostname": "localhost",
+  "signalLossTimeoutSeconds": 60,
+  "csvExportOpenStreetMapsUrl": true
+}
+```
+
+Whereas
+
+- `enabled` is a flag to control the feature
+- `port` and `hostname`: Contain the location of the GPS Deamon.
+- `signalLossTimeoutSeconds`: In case of temporary position loss, the old signal will remain valid for this many seconds.
+- `csvExportOpenStreetMapsUrl`: Besides the raw `lat` and `lon` values, a link to OpenStreetMaps may be added to the exported CSV

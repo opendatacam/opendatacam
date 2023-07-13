@@ -37,16 +37,30 @@ Click on the network icon on the top right > Connection Information
 ![connectioninformatio](https://user-images.githubusercontent.com/533590/60710337-bf58b400-9f12-11e9-8056-987f0b5ea583.png)
 
 
-### On Ubuntu 18.04 via command line
+### Via command line
 
-We accept pull request for this 😁
+This was tested on the Jetson Nano Developer Kit SD Card Image (JP 4.4 released on 2020/07/07).
+But it should work on any Linux distribution with [NetworkManager](https://en.wikipedia.org/wiki/NetworkManager) and [`nmcli`](https://developer.gnome.org/NetworkManager/stable/nmcli.html) installed.
 
+To create an hotspot or ad-hoc WiFi network execute the following command
+
+```
+nmcli device wifi hotspot ifname wlan0 ssid <SSID> password <PASS>
+```
+
+This will create a hotspot with SSID `<SSID>`.
+The hotspot will remain available until the device reboots or the hotspot is closed manually.
+If the hotspot should be automatically created on boot execute the following command after creating the hotspot
+
+```
+nmcli con modify Hotspot connection.autoconnect true
+```
 
 ### ⁉️ Troubleshooting
 
 1.Wifi-Hotspot doesn't show up on other devices
---> go to /etc/modprobe.d/bcmdhd.conf and add the line: options bcmdhd op_mode=2 
---> reboot your device 
-      
-  
+--> go to /etc/modprobe.d/bcmdhd.conf and add the line: options bcmdhd op_mode=2
+--> reboot your device
+
+
 

@@ -1,0 +1,80 @@
+{
+  "OPENDATACAM_VERSION": "3.0.2",
+  "PATH_TO_YOLO" : "/opt/nvidia/deepstream/deepstream-5.1/sources/projects/DeepStream-Yolo/native/",
+  "PATH_TO_DEEPSTREAM_APP" : "/opt/nvidia/deepstream/deepstream-5.1/sources/apps/sample_apps/deepstream-app/deepstream-app2",
+  "PATH_TO_DEEPSTREAM_CONFIG_FILE": "/opt/nvidia/deepstream/deepstream-5.1/sources/projects/DeepStream-Yolo/native/deepstream_app_config.txt",
+  "VIDEO_UPLOAD_FOLDER": "TO_REPLACE_PATH_TO_DARKNET/opendatacam_videos_uploaded",
+  "MJPEG_OPTIONS": "-r 10 -b 4000k -s 640x480",
+  "TRACKER_SETTINGS": {
+    "objectMaxAreaInPercentageOfFrame": 80,
+    "confidence_threshold": 0.2,
+    "iouLimit": 0.05,
+    "unMatchedFrameTolerance": 5,
+    "fastDelete": true
+  },
+  "COUNTER_SETTINGS": {
+    "countingAreaMinFramesInsideToBeCounted": 1,
+    "countingAreaVerifyIfObjectEntersCrossingOneEdge": true,
+    "minAngleWithCountingLineThreshold": 5,
+    "computeTrajectoryBasedOnNbOfPastFrame": 5
+  },
+  "VALID_CLASSES": ["*"],
+  "DISPLAY_CLASSES": [
+    { "class": "bicycle", "hexcode": "1F6B2"},
+    { "class": "person", "hexcode": "1F6B6"},
+    { "class": "truck", "hexcode": "1F69B"},
+    { "class": "motorbike", "hexcode": "1F6F5"},
+    { "class": "car", "hexcode": "1F697"},
+    { "class": "bus", "hexcode": "1F68C"}
+  ],
+  "PATHFINDER_COLORS": [
+    "#1f77b4",
+    "#ff7f0e",
+    "#2ca02c",
+    "#d62728",
+    "#9467bd",
+    "#8c564b",
+    "#e377c2",
+    "#7f7f7f",
+    "#bcbd22",
+    "#17becf"
+  ],
+  "COUNTER_COLORS": {
+    "yellow": "#FFE700",
+    "turquoise": "#A3FFF4",
+    "green": "#a0f17f",
+    "purple": "#d070f0",
+    "red": "#AB4435"
+  },
+  "TRACKER_ACCURACY_DISPLAY": {
+    "nbFrameBuffer": 300,
+    "settings": {
+      "radius": 3.1,
+      "blur": 6.2,
+      "step": 0.1,
+      "gradient": {
+        "0.4":"orange",
+        "1":"red"
+      },
+      "canvasResolutionFactor": 0.1
+    }
+  },
+  "DATABASE": "mongo",
+  "DATABASE_PARAMS": {
+    "mongo": {
+      "url": "mongodb://localhost:27017"
+    }
+  },
+  "PORTS": {
+    "app": 8080,
+    "deepstream_json_stream": 8070,
+    "deeostream_mjpeg_stream": 8020
+  },
+  "GPS": {
+    "enabled": false,
+    "port": 2947,
+    "hostname": "localhost",
+    "signalLossTimeoutSeconds": 60,
+    "csvExportOpenStreetMapsUrl": true
+  }
+}

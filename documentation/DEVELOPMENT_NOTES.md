@@ -22,6 +22,37 @@ npm run dev
 
 If you have an error while doing `npm install` it is probably a problem with node-gyp, you need to install additional dependencies depending on your platform: https://github.com/nodejs/node-gyp#on-unix
 
+#### Simulation Mode
+
+The new simulation mode allows to feed YOLO JSON detections into OpenDataCam. As for the video either pre-extracted frames or a video file where the frames will be extracted using [`ffmpeg`](https://ffmpeg.org/).
+
+The simulation can be customized in the OpenDataCam config by adding it as a new video source.
+
+```json
+"VIDEO_INPUTS_PARAMS": {
+  "simulation": "--yolo_json public/static/placeholder/alexeydetections30FPS.json --video_file_or_folder public/static/placeholder/frames --isLive true --jsonFps 20 --mjpgFps 0.2"
+}
+```
+
+Whereas
+
+- `yolo_json`: A relative or absolute path to the JSON file to use.
+  For relative paths, the repository root will be used as the base.
+- `video_file_or_folder`: A file or folder to find JPGs.
+  If it's a file the images will be extracted using `ffmpeg`.
+  If it's a file it will expect `001.jpg`, `002.jpg`, ..., `101.jpg`, ... to be present there.
+- `isLive`: Should the simulation behave like a live source (e.g. WebCam), or like a file.
+  If `true`, the simulation will silently loop from the beginning without killing the stream.
+  If `false`, the simulation will kill the streams at the end of JSON file just like Darknet.
+- `jsonFps`: Approximate frames per second for the JSON stream.
+- `mjpgFps`: **Only when using `ffmpeg`**. Approximate frames per second for the MJPG stream.
+  Having this set lower than `jsonFps`, will make the video skip a few frames.
+- `darknetStdout`: If the simulation should mimic the output of Darknet on stdout.
+- `json_port`: The TCP port for JSON streaming
+- `mjpg_port`: The TCP port for MJGP streeaming
+
+The simulation JSON and MJPG streams can also be started without Opendatacam by invoking `node scripts/YoloSimulation.js` from the repository root folder.
+
 ### Release checklist
 
 - For next release only: Set $VERSION instead of master for the Kubernete install script, see: https://github.com/opendatacam/opendatacam/pull/247
@@ -52,3 +83,8 @@ v4l2-ctl --list-devices
 
 ![Technical architecture](https://user-images.githubusercontent.com/533590/60489282-3f2d1700-9ca4-11e9-932c-19bf84e04f9a.png)
 
+### Code Style
+
+Opendatacam uses the https://github.com/airbnb/javascript style.
+You can run `npm run lint` to check the whole code base.
+Or `npx eslint yourfile.js` to check only a single file.

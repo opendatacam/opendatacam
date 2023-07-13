@@ -1,1 +1,25 @@
+# Git
+.git
+.gitignore
+
+# GitHub and Development Environments
+.github
+.vscode
+
+# Build Intermediaries
+.build
+.next
+
+# Docker
+Dockerfile
+.dockerignore
+
+# NPM dependencies
 node_modules
+
+# Opendatacam Specific
+documentation
+spec
+.env.example
+.eslintrc.json
+README.md

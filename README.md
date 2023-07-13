@@ -44,6 +44,7 @@ Until v3.0.0 OpenDataCam has been mainly supported by [move lab](https://www.mov
   - [🎯 How accurate is OpenDataCam ?](#-how-accurate-is-opendatacam-)
   - [🚤 How fast is OpenDataCam ?](#-how-fast-is-opendatacam-)
   - [🛠 Development notes](#-development-notes)
+  - [💰️ Funded by the community](#️-funded-by-the-community)
   - [📫️ Contact](#️-contact)
   - [💌 Acknowledgments](#-acknowledgments)
 
@@ -340,14 +341,7 @@ Read [How to use opendatacam without docker](documentation/USE_WITHOUT_DOCKER.md
 
 We host our docker images on [Dockerhub](https://cloud.docker.com/repository/docker/opendatacam/opendatacam)
 
-*For jetson devices:*
-
-See [How to create / update a docker image for a jetson device](documentation/jetson/CREATE_DOCKER_IMAGE_JETSON.md)
-
-*For nvidia-docker machine:*
-
-See [How to create / update a docker image for a nvidia-docker machine](documentation/CREATE_DOCKER_IMAGE_DESKTOP.md)
-
+To build your own images, see [How to create / update a docker image for a jetson device](documentation/CREATE_DOCKER_IMAGE.md)
 
 ## 🎯 How accurate is OpenDataCam ?
 
@@ -374,6 +368,11 @@ See [Development notes](documentation/DEVELOPMENT_NOTES.md)
 Technical architecture overview:
 
 ![Technical architecture](https://user-images.githubusercontent.com/533590/60489282-3f2d1700-9ca4-11e9-932c-19bf84e04f9a.png)
+
+
+## 💰️ Funded by the community
+
+- `@rantgithub` funded work to add Polygon counters and to improve the counting lines
 
 ## 📫️ Contact
 

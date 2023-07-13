@@ -1,22 +1,24 @@
-import React, { Component } from 'react'
-import { connect } from 'react-redux'
+import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import SVG from 'react-inlinesvg';
 
-import { deleteCountingArea, setMode, EDITOR_MODE, restoreCountingAreasFromJSON } from '../../statemanagement/app/CounterStateManagement'
+import {
+  deleteCountingArea, setMode, EDITOR_MODE, restoreCountingAreasFromJSON,
+} from '../../statemanagement/app/CounterStateManagement';
 
 class MenuCountingAreasEditor extends Component {
-
   handleDelete() {
-    if(this.props.countingAreas.size > 1) {
-      this.props.dispatch(setMode(EDITOR_MODE.DELETE))
+    if (this.props.countingAreas.size > 1) {
+      this.props.dispatch(setMode(EDITOR_MODE.DELETE));
     } else {
-      this.props.dispatch(deleteCountingArea(this.props.countingAreas.keySeq().first()))
+      this.props.dispatch(deleteCountingArea(this.props.countingAreas.keySeq().first()));
     }
   }
 
   loadFile() {
-    console.log('loadFile')
-    var input, file, fr;
+    console.log('loadFile');
+    let input; let file; let
+      fr;
 
     if (typeof window.FileReader !== 'function') {
       alert("The file API isn't supported on this browser yet.");
@@ -26,106 +28,117 @@ class MenuCountingAreasEditor extends Component {
     input = document.getElementById('upload');
     if (!input) {
       alert("Um, couldn't find the fileinput element.");
-    }
-    else if (!input.files) {
+    } else if (!input.files) {
       alert("This browser doesn't seem to support the `files` property of file inputs.");
-    }
-    else if (!input.files[0]) {
+    } else if (!input.files[0]) {
       alert("Please select a file before clicking 'Load'");
-    }
-    else {
+    } else {
       file = input.files[0];
       fr = new FileReader();
       fr.onload = (e) => {
-        let lines = e.target.result;
-        var json = JSON.parse(lines); 
+        const lines = e.target.result;
+        const json = JSON.parse(lines);
         this.props.dispatch(restoreCountingAreasFromJSON(json));
       };
       fr.readAsText(file);
     }
   }
 
-  render () {
-
+  render() {
     return (
       <div className="menu-active-areas flex fixed bottom-0 left-0 mb-2 ml-2">
-        {this.props.mode !== EDITOR_MODE.DELETE &&
+        {this.props.mode !== EDITOR_MODE.DELETE
+          && (
           <>
             <button
               className="btn btn-default p-0 rounded-l shadow"
               onClick={() => this.handleDelete()}
             >
-              <SVG 
-                className="w-10 h-10 svg-icon flex items-center" 
-                cacheRequests={true}
-                src={`/static/icons/ui/delete.svg`} 
+              <SVG
+                className="w-10 h-10 svg-icon flex items-center"
+                cacheRequests
+                src="/static/icons/ui/delete.svg"
                 aria-label="icon delete"
               />
             </button>
             <button
-              className="btn btn-default p-0 shadow rounded-r btn-default--active"
+              className={`btn btn-default p-0 shadow ${this.props.mode === EDITOR_MODE.EDIT_LINE ? 'btn-default--active' : ''}`}
+              onClick={() => this.props.dispatch(setMode(EDITOR_MODE.EDIT_LINE))}
             >
-              <SVG 
-                className="w-10 h-10 svg-icon flex items-center" 
-                cacheRequests={true}
-                src={`/static/icons/ui/addline.svg`} 
-                aria-label="icon edit"
+              <SVG
+                className="w-10 h-10 svg-icon flex items-center"
+                cacheRequests
+                src="/static/icons/ui/addline.svg"
+                aria-label="icon addline"
+              />
+            </button>
+            <button
+              className={`btn btn-default p-0 shadow rounded-r ${this.props.mode === EDITOR_MODE.EDIT_POLYGON ? 'btn-default--active' : ''}`}
+              onClick={() => this.props.dispatch(setMode(EDITOR_MODE.EDIT_POLYGON))}
+            >
+              <SVG
+                className="w-10 h-10 svg-icon flex items-center"
+                cacheRequests
+                src="/static/icons/ui/addpolygon.svg"
+                aria-label="icon addpolygon"
               />
             </button>
             <a
-              href={`/counter/areas`} 
-              target="_blank" 
+              href="/counter/areas"
+              target="_blank"
               download
               className="btn btn-default p-0 ml-4 rounded-l shadow"
             >
-              <SVG 
-                className="w-10 h-10 svg-icon flex items-center" 
-                cacheRequests={true}
-                src={`/static/icons/ui/download.svg`} 
+              <SVG
+                className="w-10 h-10 svg-icon flex items-center"
+                cacheRequests
+                src="/static/icons/ui/download.svg"
                 aria-label="icon download"
               />
             </a>
-            <label 
-              htmlFor="upload" 
+            <label
+              htmlFor="upload"
               className="btn btn-default p-0 rounded-r shadow cursor-pointer	"
             >
-              <SVG 
-                className="w-10 h-10 svg-icon flex items-center" 
-                cacheRequests={true}
-                src={`/static/icons/ui/upload.svg`} 
+              <SVG
+                className="w-10 h-10 svg-icon flex items-center"
+                cacheRequests
+                src="/static/icons/ui/upload.svg"
                 aria-label="icon upload"
               />
-              <input type="file" id="upload" onChange={() => this.loadFile()} style={{"display":"none"}} />
+              <input type="file" id="upload" onChange={() => this.loadFile()} style={{ display: 'none' }} />
             </label>
           </>
-        }
-        {this.props.mode === EDITOR_MODE.DELETE &&
+          )}
+        {this.props.mode === EDITOR_MODE.DELETE
+          && (
           <button
             className="btn btn-default p-0 rounded shadow"
-            onClick={() => this.props.dispatch(setMode(EDITOR_MODE.EDIT))}
+            onClick={() => this.props.dispatch(setMode(this.props.lastEditingMode))}
           >
-            <SVG 
-              className="w-10 h-10 svg-icon flex items-center" 
-              cacheRequests={true}
-              src={`/static/icons/ui/close.svg`} 
+            <SVG
+              className="w-10 h-10 svg-icon flex items-center"
+              cacheRequests
+              src="/static/icons/ui/close.svg"
               aria-label="icon edit"
             />
           </button>
-        }
-        <style jsx>{`
+          )}
+        <style jsx>
+          {`
           .menu-active-areas {
             z-index: 8;
           }
-        `}</style>
+        `}
+        </style>
       </div>
-    )
+    );
   }
 }
 
-export default connect((state) => {
-  return {
-    countingAreas: state.counter.get('countingAreas'),
-    selectedCountingArea: state.counter.get('selectedCountingArea'),
-    mode: state.counter.get('mode')
-  }
-})(MenuCountingAreasEditor)
+export default connect((state) => ({
+  countingAreas: state.counter.get('countingAreas'),
+  selectedCountingArea: state.counter.get('selectedCountingArea'),
+  mode: state.counter.get('mode'),
+  lastEditingMode: state.counter.get('lastEditingMode'),
+}))(MenuCountingAreasEditor);
