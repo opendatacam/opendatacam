@@ -1,16 +1,25 @@
-# OpenDataCam 3.0.2 – An open source tool to quantify the world
+# OpenDataCam – An open source tool to quantify the world
 
-OpenDataCam is an open source tool to quantify the world. It quantifies and tracks moving objects with live video analysis. It is designed to be an accessible, affordable and open-source solution to better understand interactions in urban environments.
+OpenDataCam is an open source tool to quantify the world.
+It quantifies and tracks moving objects with live video analysis.
+It is designed to be an accessible, affordable and open-source solution to better understand interactions in urban environments.
 
-OpenDataCam never records any photo or video data. The system only saves surveyed meta-data, in particular the path an object moved or number of counted objects at a certain point. The novelty of OpenDataCam is, that everything happens on location, while no visual data is saved or sent to online cloud processing.
+OpenDataCam never records any photo or video data.
+The system only saves surveyed meta-data, in particular the path an object moved or number of counted objects at a certain point.
+The novelty of OpenDataCam is, that everything happens on location, while no visual data is saved or sent to online cloud processing.
 
-OpenDataCam runs on Linux and CUDA GPU enabled hardware. It is optimized for the NVIDIA Jetson Board series. The most affordable setup runs on a Jetson Nano (low cost, credit-card sized GPU-computer) combined with other other off-the-shelf equipment (webcam, power supply, housing), this entire setup is priced around $150. All software is based on open source components and runs completely locally. The software features a friendly user interface and is currently optimised for detecting and counting traffic participants, but is not limited to that.
+OpenDataCam runs on Linux and CUDA GPU enabled hardware.
+It is designed to run on Servers with NVIDIA GPU's or the NVIDIA Jetson Board series.
+The most affordable setup runs on either
 
-Both software and hardware setup are documented and offered as an open source project, to underline transparency and full disclosure on privacy questions. The simple OpenDataCam setup allows everybody to become an urban data miner.
+- a rented GPU powered server (a few cents per hour of rent)
+- a Jetson Nano (low cost, credit-card sized GPU-computer) combined with other other off-the-shelf equipment (webcam, power supply, housing), this entire setup is priced around $150
 
-OpenDataCam is very alpha and we do not provide any guarantee that this will work for your use case, but we conceived it as a starting point from where you can build-on & improve.
+All software is based on open source components and runs completely locally.
+The software features a friendly user interface and is currently optimised for detecting and counting traffic participants, but is not limited to that.
 
-Until v3.0.0 OpenDataCam has been mainly supported by [move lab](https://www.move-lab.com/). OpenDataCam was supported in part by a [residency](http://studioforcreativeinquiry.org/people/benedikt-gros) at the Frank-Ratchye [STUDIO for Creative Inquiry](http://studioforcreativeinquiry.org/) at Carnegie Mellon University. We are currently looking into potential funding sources to keep pushing the project. If you are interested, please be in touch.
+Both software and hardware setup are documented and offered as an open source project, to underline transparency and full disclosure on privacy questions.
+The simple OpenDataCam setup allows everybody to become an urban data miner.
 
 ## Demo Videos
 
@@ -18,11 +27,9 @@ Until v3.0.0 OpenDataCam has been mainly supported by [move lab](https://www.mov
 | ------------------------------------------------------------ | ------------------------------------------------------------ | ------------------------------------------------------------ |
 | [![OpenDataCam 3.0](https://i.vimeocdn.com/video/914771794_640.jpg)](https://vimeo.com/432747455) | [![Demo OpenDataCam](https://i.vimeocdn.com/video/805477718_640.jpg)](https://vimeo.com/346340651) | [![IoT](https://img.youtube.com/vi/YfRvUeSLi0M/hqdefault.jpg)](https://youtu.be/YfRvUeSLi0M?t=1000) |
 
-
-
 ## Table of content
 
-- [OpenDataCam 3.0.2 – An open source tool to quantify the world](#opendatacam-302--an-open-source-tool-to-quantify-the-world)
+- [OpenDataCam – An open source tool to quantify the world](#opendatacam-302--an-open-source-tool-to-quantify-the-world)
   - [Demo Videos](#demo-videos)
   - [Table of content](#table-of-content)
   - [💻 Hardware pre-requisite](#-hardware-pre-requisite)
@@ -60,42 +67,32 @@ _For Jetson Nano, [you can follow this dedicated quick start guide](documentatio
 
 ### 1. Software pre-requisite 📦
 
-#### For Jetson: Flash Jetson board to jetpack 4.3 ⚡️
+#### For Jetson: Flash Jetson board to JetPack 5 ⚡️
 
-- [Jetpack 4.3](https://developer.nvidia.com/jetpack-43-archive) : [How to find out your jetpack version](documentation/jetson/FLASH_JETSON.md#How-to-find-out-my-Jetpack-version), [Guide to flash your jetson](documentation/jetson/FLASH_JETSON.md)
-
-_!!! Warning !!! Note that [there is a performance drop](https://forums.developer.nvidia.com/t/darknet-slower-using-jetpack-4-4-cudnn-8-0-0-cuda-10-2-than-jetpack-4-3-cudnn-7-6-3-cuda-10-0/121579) if you use Jetpack 4.4 DP ([see nvidia forum open issue](https://forums.developer.nvidia.com/t/darknet-slower-using-jetpack-4-4-cudnn-8-0-0-cuda-10-2-than-jetpack-4-3-cudnn-7-6-3-cuda-10-0/121579))_
-
-- [Docker compose](https://blog.hypriot.com/post/nvidia-jetson-nano-install-docker-compose/) (no official installer available for ARM64 devices)
+- [Jetpack 5.x](https://developer.nvidia.com/embedded/jetpack-sdk-512)
+  - [How to find out your jetpack version](documentation/jetson/FLASH_JETSON.md#How-to-find-out-my-Jetpack-version)
+  - [Guide to flash your jetson](documentation/jetson/FLASH_JETSON.md)
+- Docker compose
 
 ```bash
-sudo apt install python3-pip
-
-sudo apt-get install -y libffi-dev
-sudo apt-get install -y python-openssl
-sudo apt-get install libssl-dev
-
-sudo pip3 install docker-compose
+sudo apt-get install --yes docker-compose
 ```
-
 
 #### For Desktop machine: Nvidia container toolkit 🔧
 
 - [Docker installed](https://docs.docker.com/install/linux/docker-ce/ubuntu/)
 - [Docker compose installed](https://docs.docker.com/compose/install/)
-- [Nvidia drivers installed](https://developer.nvidia.com/cuda-downloads) (you don't need all CUDA but we didn't found a easy install process for only the drivers)
+- [Nvidia CUDA 11 and cuDNN 8](https://developer.nvidia.com/cuda-downloads)
 - [Nvidia Container toolkit installed](https://github.com/NVIDIA/nvidia-docker)
+- You also need to install `nvidia-container-runtime`
 
+Once everything is installed, open the `daemon.json`
 
-For desktop there is a workaround to add with docker-compose to give access to the nvidia runtime. At the time of writing this documentation, GPUs for docker-compose aren't well supported yet, see [https://github.com/docker/compose/issues/6691](https://github.com/docker/compose/issues/6691)
-
-- Open the daemon.json
-
-```
+```bash
 sudo vim /etc/docker/daemon.json
 ```
 
-- Copy this inside and save the file
+Copy this inside and save the file
 
 ```json
 {
@@ -108,16 +105,10 @@ sudo vim /etc/docker/daemon.json
 }
 ```
 
-- Restart docker
+Restart docker
 
-```
+```bash
 systemctl restart docker
-```
-
-You also need to install `nvidia-container-runtime`
-
-```
-sudo apt install nvidia-container-runtime
 ```
 
 ### 2. Install and start OpenDataCam 🚀
@@ -127,7 +118,6 @@ Open a terminal or ssh to you machine and run the following commands depending o
 The install script will download a `docker-compose.yml` file and setup a default `config.json` depending on your platform.
 
 _Make sure you have previously installed `docker-compose` by running `docker-compose --version`_
-
 
 __Install commands:__
 
@@ -158,12 +148,12 @@ chmod 777 install-opendatacam.sh
 # Docker build for Jetson TX2 isn't available please install without docker (see in avanced use)
 ```
 
-This command will download and start a docker container on the machine. After it finishes the docker container starts a webserver on port 8080 (ports 8070 and 8090 are also used).
+This command will download and start a docker container on the machine.
+After it finishes the docker container starts a webserver on port 8080 (ports 8070 and 8090 are also used).
 
 The docker container is started in auto-restart mode, so if you reboot your machine it will automaticaly start opendatacam on startup. ([Learn more about the specificities of docker on jetson](#6-docker-playbook-))
 
 You can also [use opendatacam without docker](#how-to-use-opendatacam-without-docker)
-
 
 __Kubernetes Install:__
 
@@ -171,7 +161,7 @@ If you prefer to deploy OpenDataCam on Kubernetes rather than with Docker Compos
 
 Apart from that, a Kubernetes distribution custom made for the embedded world would be [K3s](https://k3s.io/), which can be installed in 30 seconds by running:
 
-```
+```bash
 curl -sfL https://get.k3s.io | sh -
 ```
 
@@ -194,37 +184,34 @@ chmod 777 install-opendatacam.sh
 ./install-opendatacam.sh --platform desktop --orchestrator k8s
 ```
 
-**Note:** NVIDIA offers a [Kubernetes device plugin](https://github.com/NVIDIA/k8s-device-plugin) for detecting GPUs on nodes in case you are managing a heterogeneous cluster. Support for Jetson boards is being worked [here](https://gitlab.com/nvidia/kubernetes/device-plugin/-/merge_requests/20)
-
+**Note:** NVIDIA offers a [Kubernetes device plugin](https://github.com/NVIDIA/k8s-device-plugin) for detecting GPUs on nodes in case you are managing a heterogeneous cluster.
+Support for Jetson boards is being worked [here](https://gitlab.com/nvidia/kubernetes/device-plugin/-/merge_requests/20)
 
 __balenaCloud Install:__
 
-If you have a fleet of one or more devices, you can use [balena](https://www.balena.io/) to streamline deployment and management of OpenDataCam. You can sign up for a free account [here](https://dashboard.balena-cloud.com/signup) and add up to ten devices at no charge. Use the button below to build OpenDataCam for a Jetson Nano, TX2, or Xavier. You can then download an image containing the OS, burn it to an SD card, and use balenaCloud to push OpenDataCam to your devices.
+If you have a fleet of one or more devices, you can use [balena](https://www.balena.io/) to streamline deployment and management of OpenDataCam.
+You can sign up for a free account [here](https://dashboard.balena-cloud.com/signup) and add up to ten devices at no charge.
+Use the button below to build OpenDataCam for a Jetson Nano, TX2, or Xavier.
+You can then download an image containing the OS, burn it to an SD card, and use balenaCloud to push OpenDataCam to your devices.
 
 [![](https://www.balena.io/deploy.png)](https://dashboard.balena-cloud.com/deploy?repoUrl=https://github.com/balenalabs-incubator/opendatacam)
 
 You can learn more about this deployment option along with a step-by-step guide in this [recent blog post](https://www.balena.io/blog/using-opendatacam-and-balena-to-quantify-the-world-with-ai/), or [view a screencast](https://www.youtube.com/watch?v=YfRvUeSLi0M&t=44m45s) of the deployment in action.
 
-__(optional) Upgrade OpenDataCam__
+#### (optional) Upgrade OpenDataCam
 
 - If you have modified the `config.json`, save it somewhere
 - Remove `config.json`, `docker-compose.yml`
 - Run the install steps again (previous section), this will download a new default `config.json` file compatible with the opendatacam version you are installing and setup a new docker container
-- Open the newly downloaded config.json script and modify with the things you had changed previously
-
-_NB: we do not handle auto update of the config.json file_
+- Open the newly downloaded config.json script and modify with the things you had changed previously, since we do not handle auto update of the config.json file
 
 ### 3. Use OpenDataCam 🖖
 
-Open your browser at http://IPOFJETSON:8080 .
-
-*If you are running with the jetson connected to a screen: http://localhost:8080*
-
-_NB: OpenDataCam only supports one client at a time, if you open the UI on two different devices, the stream will stop in one of them._
+Open your browser at `http://[IP_OF_JETSON]:8080``. (If you are running with the Jetson connected to a screen try: [http://localhost:8080](http://localhost:8080))
 
 See [Docker playbook ️📚](#6-docker-playbook-️) how to restart / stop OpenDataCam.
 
-__(optional) Run on USB Camera__
+#### (optional) Run on USB Camera
 
 By default, OpenDataCam will start on a demo file, but if you want to run from an usbcam you should
 
@@ -243,11 +230,11 @@ ls /dev/video*
 
 - Restart docker
 
-```
+```bash
 sudo docker-compose restart
 ```
 
-__(optional) Change file__
+#### (optional) Change file
 
 To run on another file, just drag & drop it on the UI
 
@@ -255,11 +242,9 @@ To run on another file, just drag & drop it on the UI
 
 We offer several customization options:
 
-- **Video input:** run from a file, change webcam resolution, change camera type (raspberry cam, usb cam...)
-
-- **Neural network:** change YOLO weights files depending on your hardware capacity, desired FPS
-
-- **Change display classes:** We default to mobility classes (car, bus, person...), but you can change this
+- __Video input:__ run from a file, change webcam resolution, change camera type (raspberry cam, usb cam...)
+- __Neural network:__ change YOLO weights files depending on your hardware capacity, desired FPS
+- __Change display classes:__ We default to mobility classes (car, bus, person...), but you can change this
 
 [Learn how to customize OpenDataCam](documentation/CONFIG.md)
 
@@ -271,7 +256,7 @@ See [Make jetson device / machine accessible via WIFI](documentation/WIFI_HOTSPO
 
 ### 6. Docker playbook ️📚
 
-**How to show OpenDataCam logs**
+#### How to show OpenDataCam logs
 
 ```bash
 # Go to the directory you ran install script (where is your docker-compose.yml file)
@@ -280,7 +265,7 @@ See [Make jetson device / machine accessible via WIFI](documentation/WIFI_HOTSPO
 sudo docker-compose logs
 ```
 
-**How to  stop / restart OpenDataCam**
+#### How to  stop / restart OpenDataCam
 
 ```bash
 # Go to the directory you ran install script (where is your docker-compose.yml file)
@@ -339,9 +324,7 @@ Read [How to use opendatacam without docker](documentation/USE_WITHOUT_DOCKER.md
 
 ### How to create / update the docker image
 
-We host our docker images on [Dockerhub](https://cloud.docker.com/repository/docker/opendatacam/opendatacam)
-
-To build your own images, see [How to create / update a docker image for a jetson device](documentation/CREATE_DOCKER_IMAGE.md)
+We host our docker images on [Dockerhub](https://cloud.docker.com/repository/docker/opendatacam/opendatacam). To build your own images, see [How to create / update a docker image for a jetson device](documentation/CREATE_DOCKER_IMAGE.md)
 
 ## 🎯 How accurate is OpenDataCam ?
 
@@ -360,7 +343,6 @@ We made the default settings to run at least at 10 FPS on any Jetson.
 
 Learn more in the [Customize OpenDataCam documentation](documentation/CONFIG.md#Change-neural-network-weights)
 
-
 ## 🛠 Development notes
 
 See [Development notes](documentation/DEVELOPMENT_NOTES.md)
@@ -368,7 +350,6 @@ See [Development notes](documentation/DEVELOPMENT_NOTES.md)
 Technical architecture overview:
 
 ![Technical architecture](https://user-images.githubusercontent.com/533590/60489282-3f2d1700-9ca4-11e9-932c-19bf84e04f9a.png)
-
 
 ## 💰️ Funded by the community
 
@@ -379,7 +360,7 @@ Technical architecture overview:
 Please ask any Questions you have around OpenDataCam in the [GitHub Discussions](https://github.com/opendatacam/opendatacam/discussions).
 Bugs, Features and anythings else regarding the development of OpenDataCam is tracked in [GitHub Issues](https://github.com/opendatacam/opendatacam/issues).
 
-For business inquiries or professional support requests please contact [Valentin Sawadski](https://opendata.cam/#people_involved).
+For business inquiries or professional support requests please contact [Valentin Sawadski](https://opendata.cam/#people_involved) or visit [OpenDataCam for Professionals](https://opendata.cam/professionals/).
 
 ## 💌 Acknowledgments
 
