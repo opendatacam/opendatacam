@@ -1,4 +1,4 @@
-FROM opendatacam/opendatacam-darknet-base:v1.1.0-odc-Yolo-v3-cpu-amd64
+FROM opendatacam/darknet:v1.1.0-odc-Yolo-v3-cpu-amd64
 # FROM darknet:latest
 
 ENV DEBIAN_FRONTEND noninteractive
