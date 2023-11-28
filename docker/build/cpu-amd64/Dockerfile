@@ -5,6 +5,14 @@ ENV DEBIAN_FRONTEND noninteractive
 
 RUN apt-get update && apt-get install -y jq wget
 
+# Install node.js
+RUN apt-get update \
+    && apt-get install --no-install-recommends --no-install-suggests -y curl \
+    && curl -sL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install --no-install-recommends --no-install-suggests -y nodejs \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
 WORKDIR /var/local/darknet
 
 # COPY weights, get them localy in the Dockerfile folder previously as they are slow to download each time
@@ -13,10 +21,6 @@ COPY yolov4-tiny.weights yolov4-tiny.weights
 
 # Include demo.mp4 file
 RUN mkdir opendatacam_videos && cd opendatacam_videos && wget https://github.com/opendatacam/opendatacam/raw/development/public/static/demo/demo.mp4
-
-# Install node.js
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
-    apt-get install -y nodejs
 
 # Copy source into Docker image
 COPY ./package*.json /var/local/opendatacam/

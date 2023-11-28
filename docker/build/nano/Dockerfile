@@ -2,6 +2,14 @@ FROM opendatacam/darknet:v1.1.0-odc-Yolo-v3-nano
 
 ENV DEBIAN_FRONTEND noninteractive
 
+# Install node.js
+RUN apt-get update \
+    && apt-get install --no-install-recommends --no-install-suggests -y curl \
+    && curl -sL https://deb.nodesource.com/setup_20.x | bash - \
+    && apt-get install --no-install-recommends --no-install-suggests -y nodejs \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
 WORKDIR /var/local/darknet
 
 # COPY weights, get them localy in the Dockerfile folder previously as they are slow to download each time
