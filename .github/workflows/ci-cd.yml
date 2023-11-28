@@ -21,7 +21,6 @@ jobs:
         node-version:
           - 18.x
           - 20.x
-          - 22.x
         architecture:
           - x64
           # FIXME: GitHub does not offer arm64 runners at the moment.
