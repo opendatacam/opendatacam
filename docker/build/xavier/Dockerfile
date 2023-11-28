@@ -6,9 +6,7 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y curl \
     && curl -sL https://deb.nodesource.com/setup_20.x | bash - \
-    && apt-get install --no-install-recommends --no-install-suggests -y nodejs \
-    && rm -rf /var/lib/apt/lists/* \
-    && apt-get clean
+    && apt-get install --no-install-recommends --no-install-suggests -y nodejs
 
 WORKDIR /var/local/darknet
 
