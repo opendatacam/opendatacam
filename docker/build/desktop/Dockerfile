@@ -6,6 +6,11 @@ ENV DEBIAN_FRONTEND noninteractive
 
 ARG NODE_MAJOR=20
 
+RUN apt-get update \
+    && apt-get install --no-install-recommends --no-install-suggests -y jq wget \
+    && rm -rf /var/lib/apt/lists/* \
+    && apt-get clean
+
 # Install node.js
 RUN apt-get update \
     && apt-get install --no-install-recommends --no-install-suggests -y curl gnupg \
