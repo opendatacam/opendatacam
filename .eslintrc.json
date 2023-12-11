@@ -126,6 +126,7 @@
       "react/jsx-wrap-multilines": "warn",
       "react/no-array-index-key": "warn",
       "react/no-unescaped-entities": "warn",
+      "react/no-unknown-property": ["error", { "ignore": ["jsx"] }],
       "react/no-unused-state": "warn",
       "react/prefer-stateless-function": "warn",
       "react/prop-types": "warn",

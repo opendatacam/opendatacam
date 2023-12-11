@@ -1,6 +1,5 @@
 import { createStore, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
-import { composeWithDevTools } from 'redux-devtools-extension';
 import { fromJS } from 'immutable';
 import reducers from './reducers';
 
@@ -8,10 +7,8 @@ export const makeStore = (initialState, { isServer }) => {
   const middlewares = [thunkMiddleware];
   const middlewareEnhancer = applyMiddleware(...middlewares);
 
-  const enhancers = [middlewareEnhancer];
-  const composedEnhancers = composeWithDevTools(...enhancers);
   if (isServer) {
-    const store = createStore(reducers, initialState, composedEnhancers);
+    const store = createStore(reducers, initialState, middlewareEnhancer);
     return store;
   }
   if (!window.store) {
@@ -20,7 +17,7 @@ export const makeStore = (initialState, { isServer }) => {
     Object.keys(initialState).map((key) => {
       initialState[key] = fromJS(initialState[key]);
     });
-    window.store = createStore(reducers, initialState, composedEnhancers);
+    window.store = createStore(reducers, initialState, middlewareEnhancer);
   }
   return window.store;
 };
