@@ -38,7 +38,6 @@
     "node-gpsd": "^0.3.2",
     "node-moving-things-tracker": "^0.9.1",
     "point-in-polygon": "^1.0.1",
-    "postcss": "^8.4.32",
     "postcss-import": "^15.1.0",
     "raf": "^3.4.1",
     "react": "^16.14.0",
@@ -70,6 +69,7 @@
     "eslint-plugin-react": "^7.21.5",
     "eslint-plugin-react-hooks": "^4.2.0",
     "jasmine": "^3.6.2",
-    "tailwindcss": "^2.2.19"
+    "postcss": "^8.4.32",
+    "tailwindcss": "^3.3.6"
   }
 }
