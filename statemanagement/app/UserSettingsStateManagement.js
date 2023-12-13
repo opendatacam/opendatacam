@@ -1,42 +1,46 @@
-import { fromJS } from 'immutable';
-
-// Initial state
-const initialState = fromJS({
-  dimmerOpacity: 0.1,
-  darkMode: false,
-});
+import { createSlice } from '@reduxjs/toolkit';
 
 const LOCALSTORAGE_KEY = 'opendatacam';
 
-// Actions
-const SET_USERSETTING = 'UserSettings/SET_USERSETTING';
+// Initial state
+const initialState = {
+  dimmerOpacity: 0.1,
+  darkMode: false,
+};
 
 function persistUserSettings(userSettings) {
   // Persist
   localStorage.setItem(LOCALSTORAGE_KEY, JSON.stringify(userSettings));
 }
 
-export function setUserSetting(userSetting, value) {
-  return (dispatch, getState) => {
-    dispatch({
-      type: SET_USERSETTING,
-      payload: {
-        userSetting,
-        value,
-      },
-    });
+const userSettingsSlice = createSlice({
+  name: 'usersettings',
+  initialState,
+  reducers: {
+    // Give case reducers meaningful past-tense "event"-style names
+    setUserSetting(state, action) {
+      // Specific side effect for darkMode
+      const { key, value } = action.payload;
+      if (key === 'darkMode' && value === true) {
+        document.getElementsByTagName('body')[0].className = 'theme-dark';
+      } else if (key === 'darkMode' && value === false) {
+        document.getElementsByTagName('body')[0].className = '';
+      }
 
-    // Specific side effect for darkMode
-    if (userSetting === 'darkMode' && value === true) {
-      document.getElementsByTagName('body')[0].className = 'theme-dark';
-    } else if (userSetting === 'darkMode' && value === false) {
-      document.getElementsByTagName('body')[0].className = '';
-    }
+      state[key] = value;
 
-    // Persist
-    persistUserSettings(getState().usersettings.toJS());
-  };
-}
+      // Persist
+      persistUserSettings(state);
+    },
+  },
+})
+
+// `createSlice` automatically generated action creators with these names.
+// export them as named exports from this "slice" file
+export const { setUserSetting, } = userSettingsSlice.actions;
+
+// Export the slice reducer as the default export
+export default userSettingsSlice.reducer;
 
 export function loadUserSettings() {
   return (dispatch) => {
@@ -44,27 +48,12 @@ export function loadUserSettings() {
     const persistedData = window.localStorage.getItem('opendatacam');
     if (persistedData) {
       const parsedData = JSON.parse(persistedData);
-      Object.keys(parsedData).map((key) => {
-        dispatch(setUserSetting(key, parsedData[key]));
+      Object.keys(parsedData).forEach((key) => {
+        dispatch(setUserSetting({ key, value: parsedData[key] }));
       });
-
-      // TODO for each key setUserSetting
     } else {
       // Nothing persisted yet, persist default
-      persistUserSettings(initialState.toJS());
+      persistUserSettings(initialState);
     }
   };
-}
-
-// Reducer
-export default function ViewportStateManagement(
-  state = initialState,
-  action = {},
-) {
-  switch (action.type) {
-    case SET_USERSETTING:
-      return state.set(action.payload.userSetting, fromJS(action.payload.value));
-    default:
-      return state;
-  }
 }

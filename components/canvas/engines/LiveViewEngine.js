@@ -103,14 +103,14 @@ class LiveViewEngine {
       const countedEvent = objectTracked.counted && objectTracked.counted[objectTracked.counted.length - 1];
 
       // For lines, display only during 1s after beeing counted
-      if (countedEvent && countingAreas.getIn([countedEvent.areaKey, 'type']) !== 'polygon') {
+      if (countedEvent && countingAreas[countedEvent.areaKey] && countingAreas[countedEvent.areaKey].type !== 'polygon') {
         if (timeNow - countedEvent.timeMs < 1000) {
           displayCountedArea = true;
         }
       }
 
       // For polygon, as long as it is still inside the area
-      if (countedEvent && countingAreas.getIn([countedEvent.areaKey, 'type']) === 'polygon') {
+      if (countedEvent && countingAreas[countedEvent.areaKey] && countingAreas[countedEvent.areaKey].type === 'polygon') {
         if (objectTracked.areas.indexOf(countedEvent.areaKey) > -1) {
           displayCountedArea = true;
         }
@@ -121,8 +121,8 @@ class LiveViewEngine {
       // => for polygons: as long as it remains inside the area
       if (displayCountedArea) {
         // displayCountedArea contain countingareakey : see Opendatacam.js on server side
-        context.strokeStyle = getCounterColor(countingAreas.getIn([countedEvent.areaKey, 'color']));
-        context.fillStyle = getCounterColor(countingAreas.getIn([countedEvent.areaKey, 'color']));
+        context.strokeStyle = getCounterColor(countingAreas[countedEvent.areaKey].color);
+        context.fillStyle = getCounterColor(countingAreas[countedEvent.areaKey].color);
         context.strokeRect(
           x + 5,
           y + 5,
@@ -156,10 +156,10 @@ class LiveViewEngine {
     countingAreas,
     canvasResolution,
   ) {
-    countingAreas.map((area, id) => {
-      if (area.get('location') !== null) {
-        const data = area.get('location').toJS();
-        const color = area.get('color');
+    Object.entries(countingAreas).forEach(([id, area]) => {
+      if (area.location) {
+        const data = area.location;
+        const color = area.color;
         context.strokeStyle = getCounterColor(color);
         context.fillStyle = getCounterColor(color);
         context.lineWidth = 5; // TODO Have those dynamic depending on canvas resolution
