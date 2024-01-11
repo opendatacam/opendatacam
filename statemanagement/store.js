@@ -1,26 +1,22 @@
-import { createStore, applyMiddleware } from 'redux';
-import thunkMiddleware from 'redux-thunk';
-import { composeWithDevTools } from 'redux-devtools-extension';
-import { fromJS } from 'immutable';
-import reducers from './reducers';
+import { configureStore } from '@reduxjs/toolkit';
 
-export const makeStore = (initialState, { isServer }) => {
-  const middlewares = [thunkMiddleware];
-  const middlewareEnhancer = applyMiddleware(...middlewares);
+import viewportReducer from './app/ViewportStateManagement';
+import appReducer from './app/AppStateManagement';
+import usersettingsReducer from './app/UserSettingsStateManagement';
+import counterReducer from './app/CounterStateManagement';
+import trackerReducer from './app/TrackerStateManagement';
+import historyReducer from './app/HistoryStateManagement';
 
-  const enhancers = [middlewareEnhancer];
-  const composedEnhancers = composeWithDevTools(...enhancers);
-  if (isServer) {
-    const store = createStore(reducers, initialState, composedEnhancers);
-    return store;
-  }
-  if (!window.store) {
-    // For each key of initialState, convert to Immutable object
-    // Because SSR passed it as plain object
-    Object.keys(initialState).map((key) => {
-      initialState[key] = fromJS(initialState[key]);
-    });
-    window.store = createStore(reducers, initialState, composedEnhancers);
-  }
-  return window.store;
-};
+export const store = configureStore({
+  // Automatically calls `combineReducers`
+  reducer: {
+    app: appReducer,
+    counter: counterReducer,
+    history: historyReducer,
+    tracker: trackerReducer,
+    usersettings: usersettingsReducer,
+    viewport: viewportReducer,
+  },
+});
+
+export default store;

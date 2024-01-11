@@ -38,8 +38,8 @@ class CanvasEngine extends PureComponent {
     this.canvasContext.clearRect(
       0,
       0,
-      this.props.fixedResolution && this.props.fixedResolution.w || this.props.canvasResolution.get('w'),
-      this.props.fixedResolution && this.props.fixedResolution.h || this.props.canvasResolution.get('h'),
+      this.props.fixedResolution && this.props.fixedResolution.w || this.props.canvasResolution.w,
+      this.props.fixedResolution && this.props.fixedResolution.h || this.props.canvasResolution.h,
     );
     if (this.props.mode === CANVAS_RENDERING_MODE.PATHVIEW) {
       this.PathViewEngine.resetLastFrameData();
@@ -61,7 +61,7 @@ class CanvasEngine extends PureComponent {
         LiveViewEngine.drawTrackerData(
           this.canvasContext,
           this.props.trackerData.data,
-          this.props.canvasResolution.toJS(),
+          this.props.canvasResolution,
           this.props.originalResolution,
         );
       }
@@ -71,7 +71,7 @@ class CanvasEngine extends PureComponent {
           this.canvasContext,
           this.props.trackerData.data,
           this.props.countingAreas,
-          this.props.canvasResolution.toJS(),
+          this.props.canvasResolution,
           this.props.originalResolution,
         );
       }
@@ -80,13 +80,13 @@ class CanvasEngine extends PureComponent {
         LiveViewEngine.drawCountingAreas(
           this.canvasContext,
           this.props.countingAreas,
-          this.props.canvasResolution.toJS(),
+          this.props.canvasResolution,
         );
         LiveViewEngine.drawTrackerDataCounterEditor(
           this.canvasContext,
           this.props.trackerData.data,
           this.props.countingAreas,
-          this.props.canvasResolution.toJS(),
+          this.props.canvasResolution,
           this.props.originalResolution,
         );
       }
@@ -95,7 +95,7 @@ class CanvasEngine extends PureComponent {
         LiveViewEngine.drawCountingAreas(
           this.canvasContext,
           this.props.countingAreas,
-          this.props.canvasResolution.toJS(),
+          this.props.canvasResolution,
         );
       }
 
@@ -103,7 +103,7 @@ class CanvasEngine extends PureComponent {
         this.PathViewEngine.drawPaths(
           this.canvasContext,
           this.props.trackerData.data,
-          this.props.fixedResolution || this.props.canvasResolution.toJS(),
+          this.props.fixedResolution || this.props.canvasResolution,
           this.props.originalResolution,
         );
       }
@@ -112,7 +112,7 @@ class CanvasEngine extends PureComponent {
         this.TrackerAccuracyEngine.drawAccuracyHeatmap(
           this.canvasContext,
           this.props.trackerData.data,
-          this.props.fixedResolution || this.props.canvasResolution.toJS(),
+          this.props.fixedResolution || this.props.canvasResolution,
           this.props.originalResolution,
         );
       }
@@ -147,8 +147,8 @@ class CanvasEngine extends PureComponent {
               }
             }
           }}
-          width={this.props.fixedResolution && this.props.fixedResolution.w || this.props.canvasResolution.get('w')}
-          height={this.props.fixedResolution && this.props.fixedResolution.h || this.props.canvasResolution.get('h')}
+          width={this.props.fixedResolution && this.props.fixedResolution.w || this.props.canvasResolution.w}
+          height={this.props.fixedResolution && this.props.fixedResolution.h || this.props.canvasResolution.h}
           className="canvas"
         />
         <style jsx>
@@ -170,7 +170,7 @@ class CanvasEngine extends PureComponent {
             z-index: 1;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,${this.props.userSettings.get('dimmerOpacity')});
+            background-color: rgba(0,0,0,${this.props.userSettings.dimmerOpacity});
           }
 
           {/* @media (min-aspect-ratio: 16/9) {
@@ -194,9 +194,9 @@ class CanvasEngine extends PureComponent {
 }
 
 export default connect((state) => ({
-  trackerData: state.tracker.get('trackerData').toJS(),
-  originalResolution: state.viewport.get('originalResolution').toJS(),
-  canvasResolution: state.viewport.get('canvasResolution'),
-  countingAreas: state.counter.get('countingAreas'),
+  trackerData: state.tracker.trackerData,
+  originalResolution: state.viewport.originalResolution,
+  canvasResolution: state.viewport.canvasResolution,
+  countingAreas: state.counter.countingAreas,
   userSettings: state.usersettings,
 }))(CanvasEngine);

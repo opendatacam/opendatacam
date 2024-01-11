@@ -28,15 +28,16 @@ class DeleteModal extends Component {
   render() {
     return (
       <div className="overlay">
-        {this.props.countingAreasWithCenters.entrySeq().map(([id, countingArea]) => (
+        {Object.entries(this.props.countingAreasWithCenters).map(([id, countingArea]) => (
           <div
             className="circle"
             key={id}
+            id={id}
             onClick={() => this.props.delete(id)}
             style={{
-              top: countingArea.getIn(['location', 'center', 'y']) - (CIRCLE_DELETE_RADIUS) / 2,
-              left: countingArea.getIn(['location', 'center', 'x']) - (CIRCLE_DELETE_RADIUS) / 2,
-              backgroundColor: getCounterColor(countingArea.get('color')),
+              top: countingArea.location.center.y - (CIRCLE_DELETE_RADIUS) / 2,
+              left: countingArea.location.center.x - (CIRCLE_DELETE_RADIUS) / 2,
+              backgroundColor: getCounterColor(countingArea.color),
             }}
           >
             <SVG

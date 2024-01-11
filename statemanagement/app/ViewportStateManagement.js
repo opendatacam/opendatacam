@@ -1,7 +1,7 @@
-import { fromJS } from 'immutable';
+import { createSlice } from '@reduxjs/toolkit';
 
 // Initial state
-const initialState = fromJS({
+const initialState = {
   listenersInitialized: false,
   deviceOrientation: 'none',
   canvasResolution: {
@@ -17,14 +17,7 @@ const initialState = fromJS({
     w: 0,
     h: 0,
   },
-});
-
-// Actions
-const SET_PORTRAIT = 'Viewport/SET_PORTRAIT';
-const SET_LANDSCAPE = 'Viewport/SET_LANDSCAPE';
-const INIT_LISTENERS = 'Viewport/INIT_LISTENERS';
-const SET_CANVAS_RESOLUTION = 'Viewport/SET_CANVAS_RESOLUTION';
-const SET_ORIGINAL_RESOLUTION = 'Viewport/SET_ORIGINAL_RESOLUTION';
+};
 
 export function getCanvasResolution() {
   const { innerWidth } = window;
@@ -50,32 +43,48 @@ export function getCanvasResolution() {
   };
 }
 
-export function setCanvasResolution(size) {
-  return {
-    type: SET_CANVAS_RESOLUTION,
-    payload: size,
-  };
-}
+const viewportSlice = createSlice({
+  name: 'viewport',
+  initialState,
+  reducers: {
+    // Give case reducers meaningful past-tense "event"-style names
+    listenersInitialized(state) {
+      state.listenersInitialized = true;
+    },
+    setCanvasResolution(state, action) {
+      state.canvasResolution.w = action.payload.w;
+      state.canvasResolution.h = action.payload.h;
+    },
+    setOriginalResolution(state, action) {
+      state.originalResolution.w = action.payload.w;
+      state.originalResolution.h = action.payload.h;
+    },
+    setPortrait(state) {
+      state.deviceOrientation = 'portrait';
+    },
+    setLandscape(state) {
+      state.deviceOrientation = 'landscape';
+    }
+  },
+});
 
-export function setLandscape() {
-  return {
-    type: SET_LANDSCAPE,
-  };
-}
+// `createSlice` automatically generated action creators with these names.
+// export them as named exports from this "slice" file
+export const {
+  listenersInitialized,
+  setCanvasResolution,
+  setLandscape,
+  setOriginalResolution,
+  setPortrait,
+} = viewportSlice.actions;
 
-export function setPortrait() {
-  return {
-    type: SET_PORTRAIT,
-  };
-}
+// Export the slice reducer as the default export
+export default viewportSlice.reducer;
 
 export function handleOrientationChange(dispatch) {
-  // console.log(window.orientation)
-  if (window.orientation === -90 || window.orientation === 90) {
-    // console.log('landscape')
+  if (window.orientation === -90 || window.orientation === 90 || window.screen.orientation.type.startsWith('landscape')) {
     dispatch(setLandscape());
-  } else if (window.orientation !== undefined) {
-    // console.log('portrait')
+  } else if (window.screen.orientation.type.startsWith('portrait') || window.orientation !== undefined) {
     dispatch(setPortrait());
   }
   dispatch(setCanvasResolution(getCanvasResolution()));
@@ -84,14 +93,15 @@ export function handleOrientationChange(dispatch) {
 export function initViewportListeners() {
   return (dispatch, getState) => {
     // Only if not initialized
-    if (!getState().viewport.get('listenersInitialized')) {
-      dispatch({
-        type: INIT_LISTENERS,
+    if (!getState().viewport.listenersInitialized) {
+      dispatch(listenersInitialized());
+      window.addEventListener('orientationchange', () => {
+        handleOrientationChange(dispatch);
       });
-      // console.log('init orientation change listener')
-      window.addEventListener('orientationchange', handleOrientationChange.bind(this, dispatch));
+      window.screen.orientation.addEventListener('change', () => {
+        handleOrientationChange(dispatch);
+      });
       handleOrientationChange(dispatch);
-      dispatch(setCanvasResolution(getCanvasResolution()));
 
       let resizeDebounceTimeout = null;
       window.addEventListener('resize', () => {
@@ -102,37 +112,8 @@ export function initViewportListeners() {
         // start timing for event "completion"
         resizeDebounceTimeout = setTimeout(() => {
           dispatch(setCanvasResolution(getCanvasResolution()));
-        },
-        250);
+        }, 250);
       });
     }
   };
-}
-
-export function setOriginalResolution(resolution) {
-  return {
-    type: SET_ORIGINAL_RESOLUTION,
-    payload: resolution,
-  };
-}
-
-// Reducer
-export default function ViewportStateManagement(
-  state = initialState,
-  action = {},
-) {
-  switch (action.type) {
-    case SET_LANDSCAPE:
-      return state.set('deviceOrientation', 'landscape');
-    case SET_PORTRAIT:
-      return state.set('deviceOrientation', 'portrait');
-    case INIT_LISTENERS:
-      return state.set('listenersInitialized', true);
-    case SET_CANVAS_RESOLUTION:
-      return state.set('canvasResolution', fromJS(action.payload));
-    case SET_ORIGINAL_RESOLUTION:
-      return state.set('originalResolution', fromJS(action.payload));
-    default:
-      return state;
-  }
 }

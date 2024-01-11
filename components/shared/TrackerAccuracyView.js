@@ -40,8 +40,8 @@ class TrackerAccuracyView extends Component {
         <CanvasEngine
           mode={CANVAS_RENDERING_MODE.TRACKER_ACCURACY}
           fixedResolution={{
-            w: this.props.canvasResolution.get('w') * getTrackerAccuracySettings().canvasResolutionFactor,
-            h: this.props.canvasResolution.get('h') * getTrackerAccuracySettings().canvasResolutionFactor,
+            w: this.props.canvasResolution.w * getTrackerAccuracySettings().canvasResolutionFactor,
+            h: this.props.canvasResolution.h * getTrackerAccuracySettings().canvasResolutionFactor,
           }}
           hidden={this.props.hidden}
           registerClearCanvas={(clearCanvas) => this.clearVisibleCanvas = clearCanvas}
@@ -52,5 +52,5 @@ class TrackerAccuracyView extends Component {
 }
 
 export default connect((state) => ({
-  canvasResolution: state.viewport.get('canvasResolution'),
+  canvasResolution: state.viewport.canvasResolution,
 }))(TrackerAccuracyView);

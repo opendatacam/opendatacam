@@ -6,7 +6,7 @@ import { setURLData, loadConfig, restoreUiSettings } from '../statemanagement/ap
 import { restoreCountingAreas } from '../statemanagement/app/CounterStateManagement';
 
 class Index extends React.Component {
-  static async getInitialProps(params) {
+  /* static async getInitialProps(params) {
     const {
       store, isServer, req, query,
     } = params;
@@ -16,7 +16,7 @@ class Index extends React.Component {
       await store.dispatch(setURLData(req));
       await store.dispatch(loadConfig(req));
     }
-  }
+  }*/
 
   render() {
     return (

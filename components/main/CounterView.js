@@ -49,10 +49,7 @@ class CounterView extends React.PureComponent {
   }
 }
 
-export default connect((state) => {
-
-  return {
-    isAtLeastOneCountingAreasDefined: state.counter.get('countingAreas').size > 0,
-    isRecording: state.app.getIn(['recordingStatus','isRecording'])
-  }
-})(CounterView);
+export default connect((state) => ({
+  isAtLeastOneCountingAreasDefined: state.counter.countingAreas.size > 0,
+  isRecording: state.app.recordingStatus.isRecording,
+}))(CounterView);

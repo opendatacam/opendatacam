@@ -8,10 +8,10 @@ import {
 
 class MenuCountingAreasEditor extends Component {
   handleDelete() {
-    if (this.props.countingAreas.size > 1) {
+    if (Object.keys(this.props.countingAreas).length > 1) {
       this.props.dispatch(setMode(EDITOR_MODE.DELETE));
     } else {
-      this.props.dispatch(deleteCountingArea(this.props.countingAreas.keySeq().first()));
+      this.props.dispatch(deleteCountingArea(Object.keys(this.props.countingAreas)[0]));
     }
   }
 
@@ -137,8 +137,8 @@ class MenuCountingAreasEditor extends Component {
 }
 
 export default connect((state) => ({
-  countingAreas: state.counter.get('countingAreas'),
-  selectedCountingArea: state.counter.get('selectedCountingArea'),
-  mode: state.counter.get('mode'),
-  lastEditingMode: state.counter.get('lastEditingMode'),
+  countingAreas: state.counter.countingAreas,
+  selectedCountingArea: state.counter.selectedCountingArea,
+  mode: state.counter.mode,
+  lastEditingMode: state.counter.lastEditingMode,
 }))(MenuCountingAreasEditor);

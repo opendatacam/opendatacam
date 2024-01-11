@@ -6,7 +6,8 @@ import AskLandscape from './shared/AskLandscape';
 import WebcamStream from './shared/WebcamStream';
 
 import { initViewportListeners } from '../statemanagement/app/ViewportStateManagement';
-import { startListeningToServerData } from '../statemanagement/app/AppStateManagement';
+import { loadConfig, restoreUiSettings, startListeningToServerData } from '../statemanagement/app/AppStateManagement';
+import { restoreCountingAreas } from '../statemanagement/app/CounterStateManagement';
 import LiveView from './main/LiveView';
 import CounterView from './main/CounterView';
 import PathView from './main/PathView';
@@ -36,7 +37,9 @@ class MainPage extends React.PureComponent {
     // TODO See how we handle the YOLO on / off situation
     this.props.dispatch(startListeningToServerData());
     // Make config available on window global
-    window.CONFIG = this.props.config.toJS();
+    this.props.dispatch(loadConfig());
+    this.props.dispatch(restoreUiSettings());
+    this.props.dispatch(restoreCountingAreas());
   }
 
   onDrop(event) {
@@ -101,13 +104,13 @@ class MainPage extends React.PureComponent {
               && <ConsoleView />}
             {this.props.mode === MODE.LIVEVIEW
               && <LiveView />}
-            {this.props.uiSettings.get('counterEnabled') && this.props.mode === MODE.COUNTERVIEW
+            {this.props.uiSettings.counterEnabled && this.props.mode === MODE.COUNTERVIEW
               && <CounterView />}
             {/* Need to keep pathview in the DOM as it continuously renders */}
-            {this.props.uiSettings.get('pathfinderEnabled')
+            {this.props.uiSettings.pathfinderEnabled
               && <PathView hidden={this.props.mode !== MODE.PATHVIEW} />}
             {/* Hide it on pathview mode */}
-            {this.props.uiSettings.get('heatmapEnabled')
+            {this.props.uiSettings.heatmapEnabled
               && <TrackerAccuracyView hidden={this.props.mode === MODE.PATHVIEW} />}
             <WebcamStream />
           </>
@@ -132,11 +135,11 @@ class MainPage extends React.PureComponent {
 }
 
 export default connect((state) => ({
-  deviceOrientation: state.viewport.get('deviceOrientation'),
-  mode: state.app.get('mode'),
-  isListeningToYOLO: state.app.get('isListeningToYOLO'),
-  requestedFileRecording: state.app.getIn(['recordingStatus', 'requestedFileRecording']),
-  showMenu: state.app.get('showMenu'),
-  uiSettings: state.app.get('uiSettings'),
-  config: state.app.get('config'),
+  deviceOrientation: state.viewport.deviceOrientation,
+  mode: state.app.mode,
+  isListeningToYOLO: state.app.isListeningToYOLO,
+  requestedFileRecording: state.app.recordingStatus.requestedFileRecording,
+  showMenu: state.app.showMenu,
+  uiSettings: state.app.uiSettings,
+  config: state.app.config,
 }))(MainPage);

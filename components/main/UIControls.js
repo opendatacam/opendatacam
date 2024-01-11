@@ -48,22 +48,22 @@ class UIControls extends Component {
 
             <div className="nav-left mt-2 ml-2 shadow flex">
               <button
-                className={`btn btn-default rounded-l ${this.props.mode === MODE.LIVEVIEW ? 'btn-default--active' : ''} ${!this.props.uiSettings.get('pathfinderEnabled') && !this.props.uiSettings.get('counterEnabled') ? 'rounded-r' : ''}`}
+                className={`btn btn-default rounded-l ${this.props.mode === MODE.LIVEVIEW ? 'btn-default--active' : ''} ${!this.props.uiSettings.pathfinderEnabled && !this.props.uiSettings.counterEnabled ? 'rounded-r' : ''}`}
                 onClick={() => this.props.dispatch(setMode(MODE.LIVEVIEW))}
               >
                 Live view
               </button>
-              {this.props.uiSettings.get('counterEnabled')
+              {this.props.uiSettings.counterEnabled
               && (!this.props.recordingStatus.isRecording || this.props.isAtLeastOneCountingAreasDefined)
                 && (
                 <button
-                  className={`btn btn-default border-r border-l border-default-soft border-solid ${this.props.mode === MODE.COUNTERVIEW ? 'btn-default--active' : ''} ${this.props.uiSettings.get('pathfinderEnabled') ? '' : 'rounded-r'}`}
+                  className={`btn btn-default border-r border-l border-default-soft border-solid ${this.props.mode === MODE.COUNTERVIEW ? 'btn-default--active' : ''} ${this.props.uiSettings.pathfinderEnabled ? '' : 'rounded-r'}`}
                   onClick={() => this.props.dispatch(setMode(MODE.COUNTERVIEW))}
                 >
                   Counter
                 </button>
                 )}
-              {this.props.uiSettings.get('pathfinderEnabled')
+              {this.props.uiSettings.pathfinderEnabled
                 && (
                 <button
                   className={`btn btn-default rounded-r ${this.props.mode === MODE.PATHVIEW ? 'btn-default--active' : ''}`}
@@ -87,6 +87,7 @@ class UIControls extends Component {
                 Console
               </button>
               <button
+                id="showMenuBtn"
                 className="btn btn-default shadow ml-2 py-0 px-3 rounded border border-default-soft border-solid"
                 onClick={() => this.props.dispatch(showMenu())}
               >
@@ -140,8 +141,8 @@ class UIControls extends Component {
 }
 
 export default connect((state) => ({
-  recordingStatus: state.app.get('recordingStatus').toJS(),
-  uiSettings: state.app.get('uiSettings'),
-  mode: state.app.get('mode'),
-  isAtLeastOneCountingAreasDefined: state.counter.get('countingAreas').size > 0,
+  recordingStatus: state.app.recordingStatus,
+  uiSettings: state.app.uiSettings,
+  mode: state.app.mode,
+  isAtLeastOneCountingAreasDefined: Object.keys(state.counter.countingAreas).length > 0,
 }))(UIControls);

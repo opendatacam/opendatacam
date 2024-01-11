@@ -67,6 +67,6 @@ class BtnRecording extends Component {
 }
 
 export default connect((state) => ({
-  recordingStatus: state.app.get('recordingStatus').toJS(),
-  mode: state.app.get('mode'),
+  recordingStatus: state.app.recordingStatus,
+  mode: state.app.mode,
 }))(BtnRecording);

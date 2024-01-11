@@ -23,36 +23,38 @@ class DataView extends PureComponent {
   }
 
   render() {
-    const pagination = this.props.recordingsCursor.toJS();
+    const pagination = this.props.recordingsCursor;
     const needPagination = pagination.total > pagination.limit;
     const nbPages = Math.ceil(pagination.total / pagination.limit);
     const pagesArray = new Array(nbPages).fill(0);
     const currentPage = Math.floor(pagination.offset / pagination.limit);
 
+    console.debug(this.props.recordingHistory);
+
     return (
       <div className="data-view bg-default-soft">
-        {this.props.recordingStatus.get('isRecording')
+        {this.props.recordingStatus.isRecording
             && (
             <Recording
-              id={this.props.recordingStatus.get('recordingId')}
-              dateStart={this.props.recordingStatus.get('dateStarted')}
+              id={this.props.recordingStatus.recordingId}
+              dateStart={this.props.recordingStatus.dateStarted}
               counterData={this.props.counterSummary}
               countingAreas={this.props.countingAreas}
               nbPaths={this.props.totalItemsTracked}
-              filename={this.props.recordingStatus.get('filename')}
+              filename={this.props.recordingStatus.filename}
               active
             />
             )}
         {this.props.recordingHistory.map((recording) => (
           <Recording
-            key={recording.get('id')}
-            id={recording.get('id')}
-            dateStart={recording.get('dateStart')}
-            dateEnd={recording.get('dateEnd')}
-            counterData={recording.get('counterSummary')}
-            countingAreas={recording.get('areas')}
-            filename={recording.get('filename')}
-            nbPaths={recording.getIn(['trackerSummary', 'totalItemsTracked'])}
+            key={recording.id}
+            id={recording.id}
+            dateStart={recording.dateStart}
+            dateEnd={recording.dateEnd}
+            counterData={recording.counterSummary}
+            countingAreas={recording.areas}
+            filename={recording.filename}
+            nbPaths={recording.trackerSummary.totalItemsTracked}
           />
         ))}
         {needPagination
@@ -87,10 +89,10 @@ class DataView extends PureComponent {
 }
 
 export default connect((state) => ({
-  recordingHistory: state.app.getIn(['recordingStatus', 'isRecording']) ? state.history.get('recordingHistory').skip(1) : state.history.get('recordingHistory'),
-  recordingStatus: state.app.get('recordingStatus'),
-  recordingsCursor: state.history.get('recordingsCursor'),
-  counterSummary: state.counter.get('counterSummary'),
-  countingAreas: state.counter.get('countingAreas'),
-  totalItemsTracked: state.counter.getIn(['trackerSummary', 'totalItemsTracked']),
+  recordingHistory: state.app.recordingStatus.isRecording ? state.history.recordingHistory.slice(1) : state.history.recordingHistory,
+  recordingStatus: state.app.recordingStatus,
+  recordingsCursor: state.history.recordingsCursor,
+  counterSummary: state.counter.counterSummary,
+  countingAreas: state.counter.countingAreas,
+  totalItemsTracked: state.counter.trackerSummary.totalItemsTracked,
 }))(DataView);

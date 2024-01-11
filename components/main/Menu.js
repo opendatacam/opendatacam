@@ -29,6 +29,11 @@ class Menu extends Component {
   }
 
   handleClick(e) {
+    const menuButton = document.getElementById('showMenuBtn');
+    if (e.target === menuButton || menuButton.contains(e.target)) {
+      // Menu button was clicked, do nothing
+      return;
+    }
     if (this.node.contains(e.target)) {
       // click inside menu, do nothing
       return;
@@ -61,28 +66,28 @@ class Menu extends Component {
             <Toggle
               label="Counter"
               description="Count objects on active areas"
-              enabled={this.props.uiSettings.get('counterEnabled')}
+              enabled={this.props.uiSettings.counterEnabled}
               onChange={(value) => this.props.dispatch(setUiSetting('counterEnabled', value))}
             />
             <Toggle
               label="Pathfinder"
               description="Display paths and positions"
-              enabled={this.props.uiSettings.get('pathfinderEnabled')}
+              enabled={this.props.uiSettings.pathfinderEnabled}
               onChange={(value) => this.props.dispatch(setUiSetting('pathfinderEnabled', value))}
             />
             <Toggle
               label="Tracker accuracy"
               description="Display tracker accuracy"
-              enabled={this.props.uiSettings.get('heatmapEnabled')}
+              enabled={this.props.uiSettings.heatmapEnabled}
               onChange={(value) => this.props.dispatch(setUiSetting('heatmapEnabled', value))}
             />
             <div className="mt-16" />
             <Toggle
               label="Dark mode"
               description="Turn dark UI elements on"
-              enabled={this.props.userSettings.get('darkMode')}
+              enabled={this.props.userSettings.darkMode}
               onChange={(darkMode) => {
-                this.props.dispatch(setUserSetting('darkMode', darkMode));
+                this.props.dispatch(setUserSetting({ key: 'darkMode', value: darkMode}));
               }}
             />
             <div className="mb-4 mt-4 flex items-center justify-between">
@@ -93,15 +98,15 @@ class Menu extends Component {
               <div className="flex">
                 <button
                   className="btn btn-light py-1 px-3 rounded-l border border-gray-100 border-solid flex items-center text-xl font-bold shadow"
-                  onClick={() => this.props.dispatch(setUserSetting('dimmerOpacity',
-                    Math.max(this.props.userSettings.get('dimmerOpacity') - 0.1, 0)))}
+                  onClick={() => this.props.dispatch(setUserSetting({ key: 'dimmerOpacity',
+                    value: Math.max(this.props.userSettings.dimmerOpacity - 0.1, 0)}))}
                 >
                   -
                 </button>
                 <button
                   className="btn btn-light py-1 px-3 rounded-r border border-gray-100 border-solid flex items-center text-xl font-bold shadow"
-                  onClick={() => this.props.dispatch(setUserSetting('dimmerOpacity',
-                    Math.min(this.props.userSettings.get('dimmerOpacity') + 0.1, 1)))}
+                  onClick={() => this.props.dispatch(setUserSetting({ key: 'dimmerOpacity',
+                    value: Math.min(this.props.userSettings.dimmerOpacity + 0.1, 1)}))}
                 >
                   +
                 </button>
@@ -111,8 +116,7 @@ class Menu extends Component {
           <div className="menu-footer bg-black text-white p-5 w-full">
             <div className="flex flex-col">
               <p>
-                Version
-                {this.props.version}
+                Version {this.props.version}
               </p>
               <a className="mt-2" target="_blank" href="/api/doc">API documentation</a>
               <a className="mt-2" href="https://github.com/opendatacam/opendatacam" target="_blank">About</a>
@@ -151,8 +155,8 @@ class Menu extends Component {
 }
 
 export default connect((state) => ({
-  mode: state.app.get('mode'),
+  mode: state.app.mode,
   userSettings: state.usersettings,
-  uiSettings: state.app.get('uiSettings'),
-  version: state.app.getIn(['config', 'OPENDATACAM_VERSION']),
+  uiSettings: state.app.uiSettings,
+  version: state.app.config.OPENDATACAM_VERSION,
 }))(Menu);

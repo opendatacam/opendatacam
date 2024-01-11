@@ -12,5 +12,8 @@ module.exports = {
   },
   variants: {},
   plugins: [],
-  purge: false,
+  content: [
+    './pages/**/*.{html,js}',
+    './components/**/*.{html,js}',
+  ],
 };

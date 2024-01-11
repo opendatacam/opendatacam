@@ -121,5 +121,5 @@ class InitializingView extends Component {
 }
 
 export default connect((state) => ({
-  fileName: state.app.getIn(['recordingStatus', 'filename']),
+  fileName: state.app.recordingStatus.filename,
 }))(InitializingView);

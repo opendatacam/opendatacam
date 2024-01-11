@@ -1,15 +1,12 @@
-import { fromJS } from 'immutable';
+import { createSlice } from '@reduxjs/toolkit';
 
 // Initial state
-const initialState = fromJS({
+const initialState = {
   trackerData: {
     frameIndex: 0,
     data: [],
   },
-});
-
-// Actions
-const UPDATE_DATA = 'Tracker/UPDATE_DATA';
+};
 
 export function getTrackerAccuracyNbFrameBuffer() {
   return window.CONFIG.TRACKER_ACCURACY_DISPLAY.nbFrameBuffer;
@@ -19,22 +16,22 @@ export function getTrackerAccuracySettings() {
   return window.CONFIG.TRACKER_ACCURACY_DISPLAY.settings;
 }
 
-export function updateTrackerData(trackerDataLastFrame) {
-  return (dispatch) => {
-    // Update tracker raw data
-    dispatch({
-      type: UPDATE_DATA,
-      payload: trackerDataLastFrame,
-    });
-  };
-}
+const trackerSlice = createSlice({
+  name: 'tracker',
+  initialState,
+  reducers: {
+    // Give case reducers meaningful past-tense "event"-style names
+    updateTrackerData(state, action) {
+      state.trackerData = action.payload;
+    },
+  },
+});
 
-// Reducer
-export default function TrackerReducer(state = initialState, action = {}) {
-  switch (action.type) {
-    case UPDATE_DATA:
-      return state.set('trackerData', fromJS(action.payload));
-    default:
-      return state;
-  }
-}
+// `createSlice` automatically generated action creators with these names.
+// export them as named exports from this "slice" file
+export const {
+  updateTrackerData,
+} = trackerSlice.actions;
+
+// Export the slice reducer as the default export
+export default trackerSlice.reducer;

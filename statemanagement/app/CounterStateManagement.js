@@ -1,8 +1,7 @@
-import { fromJS } from 'immutable';
 import axios from 'axios';
+import { createSlice } from '@reduxjs/toolkit';
 import { v4 as uuidv4 } from 'uuid';
 import { scalePoint } from '../../utils/resolution';
-import { getURLData } from '../../server/utils/urlHelper';
 import { getAvailableCounterColors, getDefaultCounterColor } from '../../utils/colors';
 import { computeLineBearing } from '../../server/tracker/utils';
 import { COUNTING_AREA_TYPE } from '../../utils/constants';
@@ -18,77 +17,20 @@ export const EDITOR_MODE = {
 };
 
 // Initial state
-const initialState = fromJS({
+const initialState = {
   countingAreas: {},
   selectedCountingArea: null,
   mode: EDITOR_MODE.EDIT_LINE, // oneOf EDITOR_MODE
   lastEditingMode: EDITOR_MODE.EDIT_LINE,
   counterSummary: {},
   trackerSummary: {},
-});
+};
 
 // Actions
-const SELECT_COUNTING_AREA = 'Counter/SELECT_COUNTING_AREA';
-const DELETE_COUNTING_AREA = 'Counter/DELETE_COUNTING_AREA';
 const SAVE_COUNTING_AREA_LOCATION = 'Counter/SAVE_COUNTING_AREA_LOCATION';
 const SAVE_COUNTING_AREA_BEARING = 'Counter/SAVE_COUNTING_AREA_BEARING';
 const SAVE_COUNTING_AREA_TYPE = 'Counter/SAVE_COUNTING_AREA_TYPE';
-const SET_MODE = 'Counter/SET_MODE';
-const SET_LAST_EDITING_MODE = 'Counter/SET_LAST_EDITING_MODE';
 const SAVE_COUNTING_AREA_NAME = 'Counter/SAVE_COUNTING_AREA_NAME';
-const ADD_COUNTING_AREA = 'Counter/ADD_COUNTING_AREA';
-const RESTORE_COUNTING_AREAS = 'Counter/RESTORE_COUNTING_AREAS';
-const RESET_COUNTING_AREAS = 'Counter/RESET_COUNTING_AREAS';
-const UPDATE_COUNTERSUMMARY = 'Counter/UPDATE_COUNTERSUMMARY';
-const UPDATE_TRACKERSUMMARY = 'Counter/UPDATE_TRACKERSUMMARY';
-
-export function setMode(mode) {
-  return (dispatch, getState) => {
-    // If leaving editing mode, store last editing mode for when we go back
-    const isEditLine = getState().counter.get('mode') === EDITOR_MODE.EDIT_LINE;
-    const isEditPolygon = getState().counter.get('mode') === EDITOR_MODE.EDIT_POLYGON;
-    if (isEditLine || isEditPolygon) {
-      // If new mode is also editing, store new mode
-      if (mode === EDITOR_MODE.EDIT_LINE || mode === EDITOR_MODE.EDIT_POLYGON) {
-        dispatch({
-          type: SET_LAST_EDITING_MODE,
-          payload: mode,
-        });
-      } else {
-        dispatch({
-          type: SET_LAST_EDITING_MODE,
-          payload: getState().counter.get('mode'),
-        });
-      }
-    }
-
-    dispatch({
-      type: SET_MODE,
-      payload: mode,
-    });
-  };
-}
-
-export function updateCounterSummary(data) {
-  return {
-    type: UPDATE_COUNTERSUMMARY,
-    payload: data,
-  };
-}
-
-export function updateTrackerSummary(data) {
-  return {
-    type: UPDATE_TRACKERSUMMARY,
-    payload: data,
-  };
-}
-
-export function selectCountingArea(id) {
-  return {
-    type: SELECT_COUNTING_AREA,
-    payload: id,
-  };
-}
 
 // TODO LATER , introduce Redux saga here to make it more explicit that this is triggered by
 // => SAVE_COUNTING_AREA_LOCATION
@@ -99,30 +41,24 @@ export function registerCountingAreasOnServer() {
   return (dispatch, getState) => {
     // Ping webservice to start storing data on server
     axios.post('/counter/areas', {
-      countingAreas: getState().counter.get('countingAreas').toJS(),
+      countingAreas: getState().counter.countingAreas,
     });
   };
 }
 
 export function resetCountingAreas() {
   return (dispatch) => {
-    dispatch({
-      type: RESET_COUNTING_AREAS,
-    });
-
+    dispatch(countingAreaReset());
     dispatch(registerCountingAreasOnServer());
   };
 }
 
 export function deleteCountingArea(id) {
   return (dispatch, getState) => {
-    dispatch({
-      type: DELETE_COUNTING_AREA,
-      payload: id,
-    });
+    dispatch(countingAreasDeleted(id));
 
-    if (getState().counter.get('countingAreas').size === 0) {
-      dispatch(setMode(getState().counter.get('lastEditingMode')));
+    if (Object.keys(getState().counter.countingAreas).length === 0) {
+      dispatch(setMode(getState().counter.lastEditingMode));
     }
     dispatch(registerCountingAreasOnServer());
   };
@@ -143,9 +79,11 @@ export function addCountingArea(type = 'bidirectional') {
 
     // Get a color unused
     let color = AVAILABLE_COLORS.find((potentialColor) => {
-      return getState().counter.get('countingAreas').findEntry((value) => {
-        return value.get('color') === potentialColor;
-      }) === undefined;
+      const areas = Object.values(getState().counter.countingAreas);
+      const areaWithSameColor = areas.find((area) => {
+        return area.color === potentialColor;
+      });
+      return areaWithSameColor === undefined;
     });
     /* eslint-enable */
 
@@ -153,16 +91,15 @@ export function addCountingArea(type = 'bidirectional') {
       color = DEFAULT_COLOR;
     }
 
-    dispatch({
-      type: ADD_COUNTING_AREA,
-      payload: {
-        id: newCountingAreaId,
-        color,
-        type,
-      },
-    });
-
+    const ret = {
+      id: newCountingAreaId,
+      color,
+      type,
+    };
+    dispatch(countingAreaAdded(ret));
     dispatch(selectCountingArea(newCountingAreaId));
+
+    return ret;
   };
 }
 
@@ -244,98 +181,39 @@ export function saveCountingAreaName(id, name) {
   };
 }
 
-export function restoreCountingAreasFromJSON(data) {
-  return (dispatch) => {
-    dispatch({
-      type: RESTORE_COUNTING_AREAS,
-      payload: data,
-    });
-    dispatch(registerCountingAreasOnServer());
-  };
-}
-
-export function restoreCountingAreas(req) {
-  return (dispatch) => new Promise((resolve, reject) => {
-    if (req) {
-      const urlData = getURLData(req);
-      const session = req && req.session ? req.session : null;
-      const url = `${urlData.protocol}://${urlData.address}:${urlData.port}/counter/areas`;
-
-      axios({
-        method: 'get',
-        url,
-        credentials: 'same-origin',
-        data: { session },
-      }).then((response) => {
-        dispatch({
-          type: RESTORE_COUNTING_AREAS,
-          payload: response.data,
-        });
-        resolve();
-      }, (error) => {
-        console.log(error);
-        reject();
-      }).catch((error) => {
-        console.log(error);
-        reject();
-      });
-    } else {
-      axios({
-        method: 'get',
-        url: '/counter/areas',
-      }).then((response) => {
-        dispatch({
-          type: RESTORE_COUNTING_AREAS,
-          payload: response.data,
-        });
-        resolve();
-      }, (error) => {
-        console.log(error);
-        reject();
-      }).catch((error) => {
-        console.log(error);
-        reject();
-      });
-    }
-  });
-}
-
 export function computeCountingAreasCenters(countingAreas, canvasResolution) {
-  return countingAreas.map((data) => {
-    const location = data.get('location');
+  const ret = {};
+  Object.entries(countingAreas).forEach((entry) => {
+    const key = entry[0];
+    const data = entry[1];
+
+    const { location } = data;
     if (location) {
-      const points = location.get('points').toJS();
+      const { points } = location;
       const x1 = points[0].x;
       const y1 = points[0].y;
       const x2 = points[1].x;
       const y2 = points[1].y;
 
-      return data.setIn(['location', 'center'], scalePoint(
+      ret[key].location.center = scalePoint(
         {
           x: Math.abs(x2 - x1) / 2 + Math.min(x1, x2),
           y: Math.abs(y2 - y1) / 2 + Math.min(y1, y2),
         },
         canvasResolution.toJS(),
         location.get('refResolution').toJS(),
-      ));
+      );
+    } else {
+      // return data;
+      ret[key] = data;
     }
-    return data;
   });
-}
-
-export function computeDistance(point1, point2) {
-  const xDist = (point2.x - point1.x) ** 2;
-  const yDist = (point2.y - point1.y) ** 2;
-  return Math.sqrt(xDist + yDist);
+  return ret;
 }
 
 // Reducer
-export default function CounterReducer(state = initialState, action = {}) {
+export function CounterReducer(state = initialState, action = {}) {
   switch (action.type) {
-    case SELECT_COUNTING_AREA:
-      return state.set('selectedCountingArea', action.payload);
-    case DELETE_COUNTING_AREA:
-      return state.deleteIn(['countingAreas', action.payload]);
     case SAVE_COUNTING_AREA_LOCATION:
       return state.setIn(['countingAreas', action.payload.id, 'location'], fromJS(action.payload.location));
     case SAVE_COUNTING_AREA_BEARING:
@@ -344,24 +222,105 @@ export default function CounterReducer(state = initialState, action = {}) {
       return state.setIn(['countingAreas', action.payload.id, 'name'], action.payload.name);
     case SAVE_COUNTING_AREA_TYPE:
       return state.setIn(['countingAreas', action.payload.id, 'type'], action.payload.type);
-    case ADD_COUNTING_AREA:
-      return state.setIn(['countingAreas', action.payload.id], fromJS({
-        color: action.payload.color,
-        type: action.payload.type,
-      }));
-    case RESET_COUNTING_AREAS:
-      return state.set('countingAreas', fromJS({}));
-    case SET_MODE:
-      return state.set('mode', action.payload);
-    case SET_LAST_EDITING_MODE:
-      return state.set('lastEditingMode', action.payload);
-    case RESTORE_COUNTING_AREAS:
-      return state.set('countingAreas', fromJS(action.payload));
-    case UPDATE_COUNTERSUMMARY:
-      return state.setIn(['counterSummary'], fromJS(action.payload));
-    case UPDATE_TRACKERSUMMARY:
-      return state.setIn(['trackerSummary'], fromJS(action.payload));
     default:
       return state;
   }
+}
+
+const counterSlice = createSlice({
+  name: 'counter',
+  initialState,
+  reducers: {
+    // Give case reducers meaningful past-tense "event"-style names
+    countingAreasRestored(state, action) {
+      state.countingAreas = action.payload;
+    },
+    updateCounterSummary(state, action) {
+      state.counterSummary = action.payload;
+    },
+    updateTrackerSummary(state, action) {
+      state.trackerSummary = action.payload;
+    },
+    setLastEditingMode(state, action) {
+      state.lastEditingMode = action.payload;
+    },
+    counterModeSet(state, action) {
+      state.mode = action.payload;
+    },
+    selectCountingArea(state, action) {
+      console.debug({event: "selectCountingArea", action});
+      state.selectedCountingArea = action.payload;
+    },
+    countingAreaAdded(state, action) {
+      console.debug({event: "countingAreaAdded", action});
+      state.countingAreas[action.payload.id] = {
+        color: action.payload.color,
+        type: action.payload.type,
+      };
+    },
+    countingAreasDeleted(state, action) {
+      delete state.countingAreas[action.payload];
+    },
+    countingAreaReset(state) {
+      state.countingAreas = {};
+    },
+  },
+});
+
+// `createSlice` automatically generated action creators with these names.
+// export them as named exports from this "slice" file
+export const {
+  countingAreasRestored,
+  updateCounterSummary,
+  updateTrackerSummary,
+  setLastEditingMode,
+  counterModeSet,
+  selectCountingArea,
+  countingAreaAdded,
+  countingAreasDeleted,
+  countingAreaReset,
+} = counterSlice.actions;
+
+// Export the slice reducer as the default export
+export default counterSlice.reducer;
+
+export function restoreCountingAreas() {
+  return (dispatch) => new Promise((resolve, reject) => {
+    axios({
+      method: 'get',
+      url: '/counter/areas',
+    }).then((response) => {
+      dispatch(countingAreasRestored(response.data));
+      resolve();
+    }, (error) => {
+      reject(error);
+    }).catch((error) => {
+      reject(error);
+    });
+  });
+}
+
+export function restoreCountingAreasFromJSON(data) {
+  return (dispatch) => {
+    dispatch(restoreCountingAreas(data));
+    dispatch(registerCountingAreasOnServer());
+  };
+}
+
+export function setMode(mode) {
+  return (dispatch, getState) => {
+    // If leaving editing mode, store last editing mode for when we go back
+    const isEditLine = getState().counter.mode === EDITOR_MODE.EDIT_LINE;
+    const isEditPolygon = getState().counter.mode === EDITOR_MODE.EDIT_POLYGON;
+    if (isEditLine || isEditPolygon) {
+      // If new mode is also editing, store new mode
+      if (mode === EDITOR_MODE.EDIT_LINE || mode === EDITOR_MODE.EDIT_POLYGON) {
+        dispatch(setLastEditingMode(mode));
+      } else {
+        dispatch(setLastEditingMode(getState().counter.mode));
+      }
+    }
+
+    dispatch(counterModeSet(mode));
+  };
 }
