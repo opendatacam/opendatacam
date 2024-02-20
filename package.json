@@ -25,7 +25,7 @@
     "forever-monitor": "^1.7.2",
     "immutable": "^4.0.0-rc.12",
     "intercept-stdout": "^0.1.2",
-    "ip": "^1.1.5",
+    "ip": "^1.1.9",
     "killable": "^1.0.1",
     "lodash.clonedeep": "^4.5.0",
     "lodash.flatten": "^4.4.0",
