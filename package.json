@@ -15,7 +15,7 @@
     "test": "scripts/npm/test.sh"
   },
   "dependencies": {
-    "axios": "^0.21.1",
+    "axios": "^0.28.0",
     "body-parser": "^1.19.0",
     "color-string": "1.5.3",
     "csv-express": "^1.2.2",
