@@ -1,0 +1,17 @@
+<svg id="emoji" viewBox="0 0 72 72" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <g id="line">
+    <path d="m32.03 40.84a2.839 2.839 0 1 1-2.839-2.839 2.847 2.847 0 0 1 2.839 2.839"/>
+    <path d="m45.65 40.84a2.839 2.839 0 1 1-2.839-2.839 2.847 2.847 0 0 1 2.839 2.839"/>
+    <path fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="m31.19 52.74c-0.0466 0.01 5.015 2.831 9.591 0"/>
+    <path fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="m25.9 34.07a11.61 11.61 0 0 1 6.596 0"/>
+    <path fill="none" stroke="#000" stroke-linecap="round" stroke-miterlimit="10" stroke-width="2" d="m39.51 34.07a11.61 11.61 0 0 1 6.596 0"/>
+    <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m56.99 22s-2.936-14.05-21.25-14.05-21.08 14.05-21.08 14.05"/>
+    <line x1="42.67" x2="42.67" y1="21" y2="9.596" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m60 31.03c-23.55-4.592-48.21-0.1832-48.18 0-0.5085-2.755-0.1064-5.38 1.004-7.903 29.86-4.891 45.62 0.1826 46.17 0 0.5151 1.408 0.9492 2.817 1.144 4.225 0.1694 1.226 0.1575 2.452-0.1401 3.678z"/>
+    <line x1="28.85" x2="28.85" y1="8.951" y2="21.22" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m55.9 41.34c-0.1719 0.0784 4.626-2.616 3.092-10.3"/>
+    <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m18.63 30.03c-0.8024 1.569-1.333 3.262-1.568 5.008-0.3463 1.91-0.5173 3.847-0.5107 5.788v0.34c0.1699 13.28 8.682 23.83 19.25 23.83s19.08-10.56 19.25-23.83v-0.34c0.0066-1.941-0.1644-3.878-0.5107-5.788-0.2355-1.746-0.7658-3.439-1.568-5.008"/>
+    <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m12.61 31.03c-1.534 7.687 3.264 10.38 3.092 10.3"/>
+    <circle cx="36" cy="24.98" r="3.953" fill="none" stroke="#000" stroke-miterlimit="10" stroke-width="2"/>
+  </g>
+</svg>

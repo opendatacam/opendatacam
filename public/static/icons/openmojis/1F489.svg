@@ -1,0 +1,12 @@
+<svg id="emoji" viewBox="0 0 72 72" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <g id="line">
+    <path transform="rotate(45)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m45.25-20.36h9.591v31.01h-9.591z"/>
+    <rect x="48.52" y="10.64" width="3.608" height="3.691" transform="rotate(45)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m58.61 15.46-7.123 7.123-3.283-3.283 7.108-7.108"/>
+    <line x1="24.95" x2="12.8" y1="46.21" y2="58.37" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <line x1="41.07" x2="43.16" y1="32.29" y2="34.37" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <line x1="43.93" x2="47.14" y1="27.18" y2="30.39" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"/>
+    <path transform="rotate(45)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m45.25-1.03h9.591v11.67h-9.591z"/>
+    <path fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m53.57 10.43 6.744 6.744"/>
+  </g>
+</svg>

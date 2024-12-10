@@ -1,0 +1,66 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: opendatacam
+  name: opendatacam
+spec:
+  ports:
+  - name: "8080"
+    port: 8080
+    targetPort: 8080
+  - name: "8070"
+    port: 8070
+    targetPort: 8070
+  - name: "8090"
+    port: 8090
+    targetPort: 8090
+  selector:
+    app: opendatacam
+    tier: frontend
+  type: LoadBalancer
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: opendatacam
+  name: opendatacam
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: opendatacam
+      tier: frontend
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: opendatacam
+        tier: frontend
+    spec:
+      containers:
+      - image: opendatacam/opendatacam:v3.0.2-desktop
+        command: ["/bin/bash"]
+        args: ["-c", "/var/local/opendatacam/launch.sh"]
+        name: opendatacam
+        ports:
+        - containerPort: 8080
+        - containerPort: 8070
+        - containerPort: 8090
+        resources: {}
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /var/local/opendatacam/config.json
+          name: opendatacam-config
+          subPath: "config.json"
+      restartPolicy: Always
+      volumes:
+      - name: opendatacam-config
+        configMap:
+          name: opendatacam
+          items:
+            - key: config.json
+              path: config.json

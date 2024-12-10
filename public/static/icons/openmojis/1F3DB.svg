@@ -1,0 +1,12 @@
+<svg id="emoji" viewBox="0 0 72 72" xmlns="http://www.w3.org/2000/svg">
+  <g id="line">
+    <rect x="11.99" y="55.89" width="48.01" height="3.993" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
+    <rect x="14.18" y="21.76" width="43.65" height="3.999" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2.001"/>
+    <rect x="15.27" y="51.76" width="41.47" height="3.993" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="2"/>
+    <rect x="18.35" y="25.61" width="4.298" height="26.3" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.702"/>
+    <rect x="27.35" y="25.61" width="4.298" height="26.3" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.702"/>
+    <rect x="49.35" y="25.61" width="4.298" height="26.3" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.702"/>
+    <polygon transform="matrix(1.091 0 0 .9982 -3.283 .098)" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.916" points="36 12 19 21.75 53 21.75"/>
+    <rect x="40.35" y="25.61" width="4.298" height="26.3" fill="none" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-miterlimit="10" stroke-width="1.702"/>
+  </g>
+</svg>

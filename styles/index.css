@@ -1,0 +1,93 @@
+@import "tailwindcss/base";
+
+@import "tailwindcss/components";
+
+@import "./components/buttons.css";
+@import "./components/toggle.css";
+
+@import "tailwindcss/utilities";
+
+
+@font-face {
+    font-family: 'WorkSans';
+    font-weight: normal;
+    src: url("/static/font/WorkSans-Regular.woff2");
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'WorkSans';
+    font-weight: 500;
+    src: url("/static/font/WorkSans-Medium.woff2");
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'WorkSans';
+    font-weight: bold;
+    src: url("/static/font/WorkSans-Bold.woff2");
+    font-display: swap;
+}
+
+html, body {
+    font-family: 'WorkSans', sans-serif;
+}
+ 
+body {
+    --color-default: #fff;
+    --color-default-soft: #F3F3F3;
+    --color-inverse: #000000;
+    --color-inverse-soft: #303030;
+}
+
+body.theme-dark {
+    --color-default: #000000;
+    --color-default-soft: #303030;
+    --color-inverse: #fff;
+    --color-inverse-soft: #F3F3F3;
+}
+
+body.theme-dark .overlay {
+    background-color: rgba(255,255,255,.9);
+}
+
+.svg-openmoji * {
+    stroke: currentColor !important;
+}
+
+.svg-icon * {
+    stroke: currentColor !important;
+    stroke-width: 1.5px;
+}
+
+::-webkit-scrollbar {
+    -webkit-appearance: none;
+    width: 5px;
+    height: 5px;
+}
+  
+::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: rgba(0,0,0,.5);
+    -webkit-box-shadow: 0 0 1px rgba(255,255,255,.5);
+}
+
+
+/** Responsive fixes */
+
+@media (min-width: 800px) and (max-width: 950px) {
+    html {
+        font-size: 90%;
+    }
+}
+
+
+@media (max-width: 800px) {
+    html {
+        font-size: 80%;
+    }
+
+    .recording-status {
+        margin-left: calc(50% + 2.8rem) !important;
+    }
+}

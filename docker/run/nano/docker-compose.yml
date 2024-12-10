@@ -1,0 +1,21 @@
+version: "2.3"
+services:
+  opendatacam:
+    restart: always
+    image: opendatacam/opendatacam:v3.0.2-nano
+    privileged: true
+    volumes:
+      - './config.json:/var/local/opendatacam/config.json'
+    ports:
+      - "8080:8080"
+      - "8070:8070"
+      - "8090:8090"
+  mongo:
+    image: mongo:4.4.8
+    restart: always
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data_container:/data/db
+volumes:
+  mongodb_data_container:

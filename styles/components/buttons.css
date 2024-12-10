@@ -1,0 +1,59 @@
+.btn {
+    @apply py-2 px-4 font-medium text-base;
+}
+
+.btn--disabled {
+    @apply opacity-75 cursor-not-allowed;
+}
+
+.btn:focus {
+    outline: none;
+}
+
+.btn-default {
+    @apply bg-default text-inverse;
+}
+
+.btn-default:hover {
+    @apply bg-default-soft;
+    /* text-shadow: 1px 0 0 currentColor; */
+}
+
+.btn-default--active {
+    @apply bg-default-soft;
+    /* text-shadow: 1px 0 0 currentColor; */
+}
+
+.btn-primary {
+    @apply bg-inverse text-default shadow;
+}
+
+.btn-primary:hover {
+    @apply bg-inverse-soft;
+}
+
+.btn-rounded {
+    @apply rounded-full;
+}
+
+.btn-text {
+    @apply text-gray-700 no-underline;
+}
+
+.btn-text:hover {
+    @apply text-gray-900;
+}
+
+.btn-light {
+    @apply bg-white text-black;
+}
+
+.btn-light:hover {
+    @apply bg-gray-100 text-primary;
+    /* text-shadow: 1px 0 0 currentColor; */
+}
+
+.btn-light--active {
+    @apply bg-gray-100 text-primary;
+    /* text-shadow: 1px 0 0 currentColor; */
+}

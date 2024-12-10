@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="52px" height="50px" viewBox="0 0 52 50" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 48.2 (47327) - http://www.bohemiancoding.com/sketch -->
+    <title>Group 7</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <rect id="path-1" x="0" y="0" width="52" height="50" rx="25"></rect>
+    </defs>
+    <g id="Design" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" transform="translate(-534.000000, -2033.000000)">
+        <g id="Group-7" transform="translate(534.000000, 2033.000000)">
+            <g id="Group-6">
+                <g id="Rectangle-2">
+                    <use fill="#FFFFFF" fill-rule="evenodd" xlink:href="#path-1"></use>
+                    <rect stroke="#FFFFFF" stroke-width="3" x="1.5" y="1.5" width="49" height="47" rx="23.5"></rect>
+                </g>
+                <rect id="Rectangle-2" fill="#FF0000" x="7" y="7" width="38" height="36" rx="18"></rect>
+            </g>
+            <rect id="Rectangle-5" fill="#FFFFFF" x="18" y="17" width="16" height="16"></rect>
+        </g>
+    </g>
+</svg>

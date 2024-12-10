@@ -1,0 +1,7 @@
+#! /bin/bash
+
+# Fake Darknet Script
+#
+# Just Dumps Darknet output and then sleeps
+echo "Video stream: 1280x720"
+sleep 1
