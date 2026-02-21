@@ -32,7 +32,7 @@
     "mjpeg-server": "^0.3.1",
     "mongodb": "^3.5.8",
     "multer": "^1.4.2",
-    "next": "^10.2.3",
+    "next": "^16.1.6",
     "next-redux-wrapper": "^5.0.0",
     "node-gpsd": "^0.3.2",
     "node-moving-things-tracker": "^0.9.1",
